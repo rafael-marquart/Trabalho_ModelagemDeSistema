@@ -1,2 +1,2 @@
 # Trabalho_ModelagemDeSistema
-repositório para o trabalho de modelagem de sistemas
+Repositório para o trabalho de modelagem de sistemas
