@@ -23,7 +23,8 @@ da acessibilidade ao longo do processo de recrutamento.
 - Sistema de checagem para analisar se existe compatibilidade entre o candidato e a empresa --> Métricas levadas em consideração: Atendimento
 as necessidades obrigatórias de conforto do candidato; Avaliação técnica (nível de escolaridade, formação, competências e idiomas); Modalidade
 da vaga (presencial, híbrido ou remoto); e Avaliação do deslocamento até empresa (tempo/distância);
-- Cadastro de vagas, facilitando a busca de profissionais deficientes;
+- Cadastro direto de vagas, facilitando a busca de profissionais deficientes;
+- Visualização de vagas publicadas fora da plataforma; 
 - Uso sem barreiras da plataforma, já que ela foi pensada e desenhada para que qualquer pessoa navegue com autonomia, usando leitores de tela,
 comando de voz, teclado e/ou alto contraste;
 - Sistema de Reputação e Avaliação: Validação real feita pelos candidatos após entrevista, transformando experiência individual em um
@@ -41,6 +42,9 @@ dos dados na plataforma.
    -
 - Mapeamento de necessidades e perfis: Cadastro estruturado dos candidatos (necessidades funcionais e perfil técnico), das empresas (infraestruturas
 e acessibilidades oferecidas) e administrador;
+- Gestão e Ingestão de vagas (nativas e externas):
+  1) Publicação nativa: Painel para recrutadores cadastrados criarem e gerenciarem vagas diretamente na plataforma;
+  2) Agregador Inteligente: Captura automatizada de vagas externas da web com padronização de dados de acessibilidade via IA (LLM) em formato JSON.
 - Motor de extração JSON via LLM: Módulo que funcionaria como leitor e organizador automático das vagas publicadas, auxiliando o futuro
 cálculo de compatibilidade;
 - Algoritmo determinístico de correspondência: Cálculo de compatibilidade em três dimensões (1) 50% - Acessibilidade geral, caso haja alguma
