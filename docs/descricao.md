@@ -1,6 +1,6 @@
 Documentação para contexto do projeto 
 -
-Nome do Projeto:
+Nome do Projeto: AcessaVagas
 -
 1) Questão problematizadora que desencadeou o surgimento da ideia:
    -
@@ -56,5 +56,14 @@ semânticos nos fluxos de busca, candidatura e acompanhamento;
 entrevista por meio de formulários adaptativos, alimentando a Nota Pública de Acessibilidade da organização e disparando o bloqueio preventivo
 de vagas para moderação em caso de divergências recorrentes.
 
-8) Benchmark:
+8) Tabela de Benchmarking Comparativo:
    -
+   
+| Critério de Avaliação | Portais Tradicionais (ex: LinkedIn, Gupy) | Portais PcD Legados (ex: PCD Online) | **AcessaVagas** (Solução Proposta) |
+| :--- | :--- | :--- | :--- |
+| **Mapeamento de Acessibilidade** | Checkbox genérico ("Vaga para PcD") sem especificação de infraestrutura. | Formulários estáticos e preenchimento manual restrito a laudos médicos. | **Mapeamento Detalhado e Dinâmico** de barreiras físicas e recursos digitais. |
+| **Algoritmo de Compatibilidade** | Baseado apenas em palavras-chave e competências técnicas. | Inexistente (Busca manual por lista de vagas ou envio de currículos por e-mail). | **Algoritmo Determinístico com Trava Crítica** (Zera a compatibilidade automaticamente em caso de barreiras eliminatórias). |
+| **Auditoria & Reputação** | Inexistente (Suscetível a anúncios com falsa acessibilidade). | Baixa ou manual (Baseada exclusivamente na autodeclaração inicial da empresa). | **Auditoria Colaborativa Anônima** pós-entrevista, gerando nivelamento de acessibilidade real e bloqueio preventivo de vagas. |
+| **Cadastro de Vagas (RH)** | Preenchimento manual extenso. | Preenchimento manual campo a campo em formulários legados. | **Extração Automática via IA (LLM)** que converte texto livre do anúncio das vagas em JSON estruturado. |
+| **Acessibilidade da Interface** | Parcial e inconsistente (Barreiras de navegação para leitores de tela). | Defasada (Interface antiga, baixo contraste e navegação rígida). | **Nativa WCAG 2.1 AA** (Suporte a leitores de tela, navegação por teclado, comandos de voz e alto contraste). |
+| **Gestão do Funil Seletivo** | Linha do tempo padrão com foco nas necessidades do recrutador. | Baixa visibilidade de status e etapas para o candidato. | **Funil Transparente e Acessível** com indicação clara de status e formato das entrevistas. |
