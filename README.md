@@ -1,5 +1,5 @@
 # Trabalho_ModelagemDeSistema
-Repositório para o trabalho de modelagem de sistemas - GRUPO: Gabriella Mansur (10735556), Julia Muniz (10737947) e Rafael Fontes (10737568)
+Repositório para o trabalho de modelagem de sistemas - GRUPO: Gabriella Mansur (10735556), Julia Muniz (10737947) e Rafael Fontes (10737568).
 
 # Visão Geral do Projeto
 - O **AcessaVagas** é uma plataforma de recrutamento e seleção inclusiva projetada para conectar profissionais com deficiência (PCD) a ambientes de trabalho genuinamente acessíveis, combatendo diretamente o fenômeno da falsa inclusão
