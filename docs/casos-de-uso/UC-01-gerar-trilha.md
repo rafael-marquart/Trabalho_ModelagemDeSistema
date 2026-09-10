@@ -91,4 +91,4 @@ Permitir que o candidato consulte uma trilha de vagas compatíveis com suas nece
 
 ## Referência visual
 
-As imagens usadas como referência para este caso de uso estão no arquivo [UC(imagens)](UC%28imagens%29), na mesma pasta.
+As imagens usadas como referência para este caso de uso estão na pasta [seq-UC-01.png](../uml/seq-UC-01.png).
