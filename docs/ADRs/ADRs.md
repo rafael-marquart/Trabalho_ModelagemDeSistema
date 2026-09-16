@@ -1,374 +1,236 @@
-# Drivers Arquiteturais (DAs) — AcessaVagas
+# ADRs — AcessaVagas
 
-Drivers arquiteturais são os requisitos, restrições e cenários que mais impactam as decisões de arquitetura do AcessaVagas.
+Uma ADR (Architecture Decision Record) registra uma decisão técnica que possui impacto estrutural e cujo desfazimento possui custo significativo.
 
-Não representam o inventário completo de RF, RNF e RB. São o subconjunto de requisitos que obriga a definir fronteiras, regras de domínio, integração com serviços externos, controle de acesso, processamento de dados e atributos de qualidade.
+Ela registra:
 
-## 1. Critério de seleção
+- o que foi decidido;
+- por que a decisão foi tomada;
+- quais alternativas foram consideradas;
+- quais consequências passam a valer.
 
-Um item entra neste documento quando atende a pelo menos um dos seguintes critérios:
+## Critério de reversibilidade
 
-1. **Obriga uma fronteira** entre componentes ou responsabilidades.
-2. **Define um invariante de domínio** que precisa ser garantido pelo sistema.
-3. **Impõe uma medida de qualidade** que influencia a estrutura da solução.
-4. **Cria uma tensão arquitetural** entre objetivos diferentes.
+Só entra neste arquivo a decisão que realmente amarra o projeto.
 
-Requisitos puramente relacionados à apresentação ou a detalhes de interface permanecem como requisitos de produto quando não provocam uma decisão arquitetural.
+Teste utilizado:
 
----
+- se desfazer custa apenas uma troca local, não há ADR;
+- se desfazer exige reescrever a arquitetura, contrato, modelo persistido ou fronteira de confiança, há ADR.
 
-## 2. Mapa priorizado
+Os Drivers Arquiteturais explicam **o que a arquitetura precisa satisfazer**.
 
-| ID | Tipo | Driver | Impacto na arquitetura | Prioridade |
-|---|---|---|---|---|
-| DA-01 | Qualidade | Acessibilidade nativa da interface | Arquitetura de apresentação, componentes acessíveis e suporte a tecnologias assistivas | Alta |
-| DA-02 | Restrição | Autenticação e autorização por perfil | Fronteira de segurança, controle de acesso e proteção das operações | Alta |
-| DA-03 | Restrição | Trava de compatibilidade por barreira crítica | Regra de domínio executada antes do cálculo de compatibilidade | Alta |
-| DA-04 | Requisito | Cálculo determinístico de compatibilidade | Serviço de domínio responsável pelo cálculo e aplicação dos pesos | Alta |
-| DA-05 | Restrição | LLM opcional, validada e substituível | Fronteira de integração, validação e independência do domínio em relação ao provedor | Alta |
-| DA-06 | Requisito | Padronização de vagas de múltiplas fontes | Modelo único de vaga e camada de normalização das diferentes origens | Alta |
-| DA-07 | Qualidade | Rastreabilidade e anonimato das avaliações | Separação entre dados de auditoria e informações apresentadas publicamente | Alta |
-| DA-08 | Qualidade | Desempenho das operações principais | Separação de operações locais de processos externos ou potencialmente demorados | Alta |
+As ADRs registram **o que foi escolhido** quando a escolha é estrutural e difícil de reverter.
 
 ---
 
-## 3. Requisitos arquiteturalmente significativos
+## 1. Mapa de ADRs
 
-### 3.1 DA-01 — Acessibilidade nativa da interface
+| ID | Decisão | Por que é cara |
+|---|---|---|
+| ADR-001 | Interface web acessível como requisito arquitetural | Alterar posteriormente toda a estratégia de apresentação e acessibilidade exigiria revisar componentes e fluxos da interface |
+| ADR-002 | Autenticação e autorização centralizadas no backend | Mover posteriormente a fronteira de confiança exigiria alterar todas as operações protegidas |
+| ADR-003 | LLM somente no backend, atrás de adaptador | Acoplar o domínio ou frontend ao fornecedor dificultaria substituição, testes e controle de segurança |
+| ADR-004 | Arquitetura em camadas | Alterar posteriormente a organização estrutural exigiria redistribuir responsabilidades e dependências do sistema |
 
-O AcessaVagas deve permitir que candidatos PcD utilizem a plataforma independentemente de suas necessidades funcionais.
+---
 
-A acessibilidade não deve ser tratada apenas como característica visual. Ela influencia a arquitetura da camada de apresentação e a forma como os componentes são construídos.
+## 2. O que deliberadamente não tem ADR
 
-A interface deve considerar:
+Estas escolhas são reversíveis ou ainda não foram tomadas.
+
+| Tema | Por que não é ADR agora |
+|---|---|
+| Biblioteca específica de componentes de UI | Pode ser substituída sem alterar o domínio |
+| Biblioteca CSS | Não altera o contrato do backend |
+| Framework HTTP específico | Pode ser trocado mantendo a API e as camadas |
+| Banco de dados específico | Ainda não existe driver que obrigue uma tecnologia específica |
+| JWT versus sessão/cookie | É um mecanismo de autenticação; a decisão estrutural é manter autorização no backend |
+| Provedor LLM específico | O adaptador permite substituir o fornecedor |
+| Fila assíncrona | Pode ser introduzida posteriormente caso o desempenho ou algum cenário exija |
+| Cache | Não é exigido pelos drivers atuais |
+| Microserviços | Os drivers não exigem distribuição; introduzir essa complexidade agora seria uma decisão estrutural adicional |
+| Biblioteca específica de leitor de tela | A arquitetura deve ser acessível, mas não depende de um fornecedor específico |
+| Serviço específico de hospedagem | Ainda não há driver que obrigue um provedor |
+
+---
+
+# ADR-001 — Interface web com acessibilidade incorporada à arquitetura
+
+## Status
+
+Proposta.
+
+## Decisão
+
+O AcessaVagas será desenvolvido como uma aplicação web cuja camada de apresentação incorpora acessibilidade desde a construção dos componentes e fluxos de interação.
+
+A acessibilidade será tratada como responsabilidade arquitetural da camada de apresentação, e não como uma adaptação posterior.
+
+A interface deverá considerar:
 
 - navegação por teclado;
-- compatibilidade com leitores de tela;
+- leitores de tela;
 - contraste adequado;
-- textos e controles semanticamente identificáveis;
-- suporte a diferentes dispositivos;
-- recursos de acessibilidade previstos no sistema.
+- estrutura semântica;
+- componentes acessíveis;
+- adaptação a diferentes dispositivos;
+- recursos de acessibilidade previstos pelo sistema.
 
-**Decisão que o driver força:** a camada de apresentação deve utilizar componentes e padrões que permitam acessibilidade desde a construção da interface, evitando uma adaptação posterior.
+A implementação específica de biblioteca de componentes ou CSS permanece aberta.
 
-**Origem:** RF-25, RNF-01, RNF-02 e RNF-07.
+## Por que foi tomada
+
+- DA-01 define acessibilidade como driver arquitetural.
+- RNF-01 estabelece conformidade com WCAG 2.1 nível AA.
+- RNF-02 exige compatibilidade com leitores de tela.
+- RF-25 exige recursos de acessibilidade.
+- Corrigir a acessibilidade apenas depois da construção da interface exigiria revisar componentes, fluxos e interações já implementados.
+
+## Alternativas consideradas
+
+| Alternativa | Por que foi rejeitada |
+|---|---|
+| Tratar acessibilidade apenas por CSS | Não cobre semântica, teclado, foco e tecnologias assistivas |
+| Implementar acessibilidade somente após a interface pronta | Tornaria correções estruturais mais caras |
+| Depender de uma biblioteca específica para garantir acessibilidade | Criaria dependência desnecessária de tecnologia |
+| Criar versões separadas da aplicação para diferentes necessidades | Duplicaria fluxos e aumentaria o custo de manutenção |
+
+## Consequências
+
+- A acessibilidade passa a ser considerada durante o desenho dos componentes.
+- Testes de interface devem verificar navegação por teclado e tecnologias assistivas.
+- A biblioteca visual específica permanece uma decisão reversível.
+- Alterações futuras de biblioteca não devem remover os requisitos de acessibilidade.
+
+**Drivers:** DA-01, RNF-01, RNF-02, RNF-07, RF-25.
 
 ---
 
-### 3.2 DA-02 — Autenticação e autorização por perfil
+# ADR-002 — Autenticação e autorização centralizadas no backend
 
-O sistema possui diferentes perfis de acesso:
+## Status
+
+Proposta.
+
+## Decisão
+
+Autenticação, autorização por perfil e validação das operações protegidas serão realizadas no backend.
+
+A aplicação terá perfis distintos, como:
 
 - candidato;
 - recrutador/empresa;
 - administrador.
 
-As permissões não podem depender apenas da interface. As operações devem ser protegidas no backend.
+O frontend poderá ocultar funcionalidades que o usuário não possui permissão para executar, mas a API será a fronteira de confiança e deverá validar todas as operações protegidas.
 
-| Operação | Candidato | Recrutador/Empresa | Administrador |
-|---|---|---|---|
-| Gerenciar perfil próprio | Sim | Sim | Conforme permissão |
-| Consultar vagas | Sim | — | Sim |
-| Cadastrar vaga | — | Sim | Sim |
-| Gerenciar usuários | — | — | Sim |
-| Gerenciar selos | — | — | Sim |
-| Administrar denúncias | — | — | Sim |
+A autorização será aplicada antes da execução das operações de escrita e das operações que envolvam dados protegidos.
 
-**Decisão que o driver força:** deve existir um mecanismo centralizado de autenticação e autorização por perfil, aplicado no backend nas operações protegidas.
+## Por que foi tomada
 
-A interface pode ocultar funcionalidades não permitidas, mas isso não substitui a validação no servidor.
+- DA-02 define autenticação e autorização como driver arquitetural.
+- RF-03 define perfis de acesso distintos.
+- RNF-10 exige segurança.
+- RNF-11 exige proteção de dados pessoais.
+- RB-21 define controle de acesso.
+- Uma autorização baseada somente na interface poderia ser contornada por requisições HTTP diretas.
 
-**Origem:** RF-01, RF-02, RF-03, RB-21, RNF-10 e RNF-11.
+A correção posterior de dados alterados por usuários sem permissão seria mais cara do que impedir a operação na fronteira do backend.
 
----
+## Alternativas consideradas
 
-### 3.3 DA-03 — Trava de compatibilidade por barreira crítica
-
-A compatibilidade entre candidato e vaga possui uma regra de bloqueio absoluto.
-
-Quando uma vaga apresenta uma barreira incompatível com uma necessidade funcional marcada como obrigatória pelo candidato, a vaga deve ser considerada incompatível independentemente da pontuação obtida nos demais critérios.
-
-**Decisão que o driver força:** a verificação de barreiras críticas deve ocorrer antes do cálculo ponderado de compatibilidade.
-
-Fluxo arquitetural:
-
-1. receber candidato e vaga;
-2. verificar necessidades obrigatórias;
-3. identificar barreiras incompatíveis;
-4. bloquear a vaga quando houver incompatibilidade crítica;
-5. somente então calcular a compatibilidade ponderada.
-
-**Origem:** RF-10, RF-11, RF-12, RB-02 e RB-06.
-
----
-
-### 3.4 DA-04 — Cálculo determinístico de compatibilidade
-
-A análise de compatibilidade deve produzir resultados consistentes para os mesmos dados de entrada.
-
-O cálculo utiliza os seguintes pesos:
-
-| Critério | Peso |
-|---|---:|
-| Acessibilidade | 50% |
-| Perfil técnico | 30% |
-| Distância e modalidade | 20% |
-
-A barreira crítica possui prioridade sobre a pontuação.
-
-**Decisão que o driver força:** o cálculo deve estar concentrado em um serviço de domínio específico, independente da interface e da persistência.
-
-Isso permite testar o algoritmo isoladamente e evita que regras de compatibilidade sejam espalhadas entre controllers, telas ou consultas ao banco.
-
-**Origem:** RF-10, RF-11, RN-03, RB-03, RB-04 e RB-05.
-
----
-
-### 3.5 DA-05 — LLM opcional, validada e substituível
-
-O sistema pode utilizar uma LLM para auxiliar na importação e interpretação de vagas externas.
-
-A resposta do modelo não deve ser considerada automaticamente como dado confiável.
-
-Fluxo esperado:
-
-1. receber conteúdo externo;
-2. enviar para o adaptador da LLM;
-3. receber a resposta;
-4. converter para uma estrutura padronizada;
-5. validar os campos;
-6. normalizar os dados;
-7. somente então encaminhar para o domínio.
-
-A aplicação deve permanecer funcional mesmo quando a LLM estiver indisponível.
-
-**Decisão que o driver força:** a integração com a LLM deve ficar atrás de uma porta/adaptador, mantendo o domínio independente do SDK ou fornecedor escolhido.
-
-A troca do provedor não deve exigir alterações no modelo de domínio.
-
-**Origem:** RF-05, RB-19, RB-20 e RNF-08.
-
----
-
-### 3.6 DA-06 — Padronização de vagas de múltiplas fontes
-
-O AcessaVagas trabalha com vagas cadastradas diretamente na plataforma e vagas obtidas de fontes externas.
-
-Apesar das diferentes origens, a análise de compatibilidade precisa utilizar uma estrutura única de vaga.
-
-| Origem | Tratamento |
+| Alternativa | Por que foi rejeitada |
 |---|---|
-| Vaga cadastrada na plataforma | Persistida diretamente no modelo de vaga |
-| Vaga externa | Extraída, validada e normalizada antes de entrar no domínio |
+| Controle de acesso somente no frontend | Pode ser contornado por requisições diretas à API |
+| Regras duplicadas em cada tela | Aumentaria inconsistências e dificultaria manutenção |
+| Gateway externo como única proteção | Ainda não existe provedor de identidade definido e as regras de negócio continuam pertencendo ao sistema |
+| Confiar no perfil enviado pelo cliente | Não oferece garantia de integridade da autorização |
 
-**Decisão que o driver força:** o domínio deve trabalhar com um modelo comum de `Vaga`, independentemente de sua origem.
+## Consequências
 
-A origem da vaga pode ser armazenada como informação do próprio modelo, sem criar modelos de domínio completamente separados.
+- A API passa a ser a fronteira de confiança.
+- Toda operação protegida precisa passar por autenticação e autorização.
+- O mecanismo de sessão pode ser alterado futuramente sem alterar esta ADR.
+- Testes de segurança devem verificar acesso por perfil diretamente na API.
+- O frontend não é considerado fonte de verdade para autorização.
 
-**Origem:** RF-05, RF-13, RB-19 e RB-20.
-
----
-
-### 3.7 DA-07 — Rastreabilidade e anonimato das avaliações
-
-O sistema permite avaliações e denúncias relacionadas à acessibilidade das empresas e vagas.
-
-Essas informações precisam ser utilizadas para auditoria e moderação sem expor desnecessariamente a identidade do candidato.
-
-O sistema deve diferenciar:
-
-- dados internos de auditoria;
-- informações utilizadas na moderação;
-- informações apresentadas publicamente.
-
-**Decisão que o driver força:** os dados de identidade e os dados públicos de avaliação devem possuir tratamento separado, permitindo anonimato na apresentação sem perder rastreabilidade administrativa.
-
-**Origem:** RF-20, RF-21, RNF-11, RNF-12 e RNF-13.
+**Drivers:** DA-02, RNF-10, RNF-11, RB-21.
 
 ---
 
-### 3.8 DA-08 — Desempenho das operações principais
+# ADR-003 — LLM somente no backend, atrás de adaptador
 
-As operações principais da plataforma devem apresentar resposta adequada ao usuário.
+## Status
 
-Operações locais, como autenticação, consulta de vagas, visualização de perfil e consulta de candidaturas, não devem ficar dependentes de processamento externo demorado.
+Proposta.
 
-Operações envolvendo fontes externas ou LLM podem possuir latência maior e devem ser tratadas separadamente.
+## Decisão
 
-**Decisão que o driver força:** o caminho local da aplicação deve ser separado das integrações externas potencialmente lentas.
+Toda integração com modelo de linguagem será realizada exclusivamente pelo backend.
 
-O uso de processamento assíncrono, filas ou mecanismos de cache permanece como decisão posterior, caso algum cenário ou medição demonstre necessidade.
+A integração será realizada por meio de uma porta/adaptador com contrato independente do fornecedor.
 
-**Origem:** RNF-08, RNF-09 e integração com fontes externas.
+Fluxo:
 
----
+1. aplicação envia dados ao backend;
+2. backend encaminha a solicitação ao adaptador;
+3. adaptador comunica-se com o provedor LLM;
+4. resposta retorna ao backend;
+5. sistema valida e normaliza os dados;
+6. somente dados válidos chegam ao domínio.
 
-## 4. Atributos de qualidade — cenários
+Nenhuma chave ou credencial do provedor deverá ficar no frontend.
 
-### DA-QA01 — Acessibilidade
+A LLM poderá ser desabilitada sem comprometer as funcionalidades que não dependem diretamente dela.
 
-| Parte | Conteúdo |
+## Por que foi tomada
+
+- DA-05 determina que a LLM seja opcional, validada e substituível.
+- DA-06 exige normalização das vagas externas.
+- RB-20 exige validação da resposta da IA.
+- A integração direta do frontend com um provedor exporia credenciais e misturaria a camada de apresentação com a integração externa.
+- Acoplar o domínio a um SDK específico tornaria a substituição do fornecedor mais cara.
+
+A referência do professor utiliza a mesma ideia: a LLM fica atrás de uma porta/adaptador, permitindo trocar o provedor sem criar uma nova ADR para cada fornecedor. :contentReference[oaicite:1]{index=1}
+
+## Alternativas consideradas
+
+| Alternativa | Por que foi rejeitada |
 |---|---|
-| Fonte | Candidato PcD |
-| Estímulo | Navegar, buscar vaga ou realizar candidatura |
-| Artefato | Interface web |
-| Ambiente | Desktop, tablet ou smartphone |
-| Resposta | Sistema permite utilização por tecnologias assistivas e diferentes formas de interação |
-| Medida | Conformidade com WCAG 2.1 nível AA |
+| Chamar a LLM diretamente pelo frontend | Exporia credenciais e acoplaria a interface ao fornecedor |
+| Acoplar o domínio ao SDK da LLM | Tornaria a troca de fornecedor mais cara |
+| Criar um microsserviço exclusivo para LLM | Os drivers atuais não exigem distribuição adicional |
+| Tornar a LLM obrigatória | A plataforma deve continuar funcionando quando a integração estiver indisponível |
+
+## Consequências
+
+- O domínio não conhece o SDK do fornecedor.
+- O adaptador pode ser substituído.
+- A resposta da LLM passa por validação antes de entrar no domínio.
+- Testes podem utilizar um adaptador falso.
+- O provedor específico permanece uma decisão reversível.
+- Uma fila assíncrona pode ser adicionada futuramente se houver necessidade comprovada.
+
+**Drivers:** DA-05, DA-06, DA-08, RB-19, RB-20, RNF-08.
 
 ---
 
-### DA-QA02 — Segurança de acesso
+# ADR-004 — Arquitetura em camadas
 
-| Parte | Conteúdo |
-|---|---|
-| Fonte | Usuário autenticado ou não autenticado |
-| Estímulo | Solicitação de operação protegida |
-| Artefato | API/backend |
-| Ambiente | Operação normal ou tentativa indevida |
-| Resposta | Sistema permite a operação somente quando o perfil possui autorização |
-| Medida | Usuário não autorizado não consegue executar operação protegida mesmo ignorando a interface |
+## Status
 
----
+Proposta.
 
-### DA-QA03 — Desempenho
+## Decisão
 
-| Parte | Conteúdo |
-|---|---|
-| Fonte | Usuário da plataforma |
-| Estímulo | Consulta ou operação local |
-| Artefato | Backend e frontend |
-| Ambiente | Operação normal |
-| Resposta | Resultado apresentado sem dependência de processamento externo desnecessário |
-| Medida | Operações principais devem respeitar o tempo definido pelo RNF-08 |
+O AcessaVagas será organizado em camadas com responsabilidades separadas:
 
----
-
-### DA-QA04 — Manutenibilidade
-
-| Parte | Conteúdo |
-|---|---|
-| Fonte | Equipe de desenvolvimento |
-| Estímulo | Alteração de regra, integração ou funcionalidade |
-| Artefato | Código do sistema |
-| Ambiente | Evolução normal |
-| Resposta | Alteração localizada no módulo responsável |
-| Medida | Alterações no provedor LLM não exigem alteração no domínio de compatibilidade ou vagas |
-
----
-
-## 5. Cenários arquiteturalmente significativos
-
-### DA-CEN01 — Analisar compatibilidade de candidato e vaga
-
-1. Candidato autenticado consulta uma vaga.
-2. Sistema obtém os dados do candidato e da vaga.
-3. Sistema verifica as necessidades obrigatórias.
-4. Sistema identifica possíveis barreiras críticas.
-5. Caso exista incompatibilidade crítica, a vaga é bloqueada.
-6. Caso contrário, o sistema calcula a compatibilidade pelos pesos definidos.
-7. Resultado é apresentado ao candidato.
-
-**O que a arquitetura precisa ter:** serviço de domínio para compatibilidade, validação de barreiras críticas e separação entre regra de negócio e interface.
-
----
-
-### DA-CEN02 — Importar vaga externa
-
-1. Sistema recebe uma vaga de fonte externa.
-2. Conteúdo é encaminhado para o mecanismo de extração.
-3. A LLM retorna dados estruturados.
-4. Sistema valida a resposta.
-5. Dados são normalizados para o modelo comum de `Vaga`.
-6. Vaga validada é disponibilizada para análise.
-
-**Falha:** resposta inválida ou indisponibilidade da LLM não deve gerar uma vaga inconsistente.
-
-**O que a arquitetura precisa ter:** adaptador de LLM, camada de validação e modelo comum de vaga.
-
----
-
-### DA-CEN03 — Tentar acessar operação sem autorização
-
-1. Usuário realiza uma requisição.
-2. Backend identifica o usuário e seu perfil.
-3. Sistema verifica a permissão para a operação.
-4. Caso autorizado, executa a operação.
-5. Caso não autorizado, rejeita a solicitação.
-
-**O que a arquitetura precisa ter:** autenticação e autorização centralizadas na fronteira do backend.
-
----
-
-### DA-CEN04 — Registrar avaliação de acessibilidade
-
-1. Candidato registra uma avaliação ou denúncia.
-2. Sistema associa o registro ao contexto da vaga/empresa.
-3. Identidade é armazenada para fins internos quando necessário.
-4. Dados apresentados publicamente não expõem informações pessoais do candidato.
-5. Administrador pode consultar informações necessárias para moderação.
-
-**O que a arquitetura precisa ter:** separação entre dados internos de auditoria e dados públicos.
-
----
-
-## 6. Tensões que a arquitetura precisa equilibrar
-
-| Tensão | Polo A | Polo B | Direção indicada pelos drivers |
-|---|---|---|---|
-| Compatibilidade | Pontuação ponderada | Barreira crítica absoluta | Barreira crítica deve ser avaliada primeiro |
-| LLM | Flexibilidade da IA | Confiabilidade dos dados | LLM atrás de adaptador + validação |
-| Origem das vagas | Cadastro interno | Vagas externas | Modelo comum de `Vaga` |
-| Acessibilidade | Recursos avançados | Simplicidade de uso | Acessibilidade incorporada à apresentação |
-| Privacidade | Rastreabilidade administrativa | Anonimato público | Separação entre dados internos e públicos |
-| Desempenho | Operações rápidas | Integrações externas | Isolamento do caminho externo |
-
----
-
-## 7. O que os drivers não decidem ainda
-
-Os DAs não determinam, neste momento:
-
-- banco de dados específico;
-- framework HTTP específico;
-- biblioteca específica de componentes de interface;
-- mecanismo específico de autenticação, como JWT ou sessão/cookie;
-- provedor LLM definitivo;
-- uso obrigatório de filas assíncronas;
-- uso obrigatório de cache;
-- arquitetura de microserviços;
-- infraestrutura específica de hospedagem.
-
-Essas escolhas podem ser realizadas posteriormente, desde que respeitem os drivers arquiteturais definidos.
-
----
-
-## 8. Rastreabilidade
-
-| Driver | RF | RNF | RB | Modelo conceitual / domínio |
-|---|---|---|---|---|
-| DA-01 | RF-25 | RNF-01, RNF-02, RNF-07 | — | Interface e componentes acessíveis |
-| DA-02 | RF-01, RF-02, RF-03 | RNF-10, RNF-11 | RB-21 | Usuário, Candidato, Empresa, Administrador |
-| DA-03 | RF-10, RF-11, RF-12 | — | RB-02, RB-06 | Necessidade, Barreira, Compatibilidade |
-| DA-04 | RF-10 | — | RB-03, RB-04, RB-05 | Compatibilidade |
-| DA-05 | RF-05 | RNF-08 | RB-19, RB-20 | Integração LLM |
-| DA-06 | RF-05, RF-13 | — | RB-19, RB-20 | Vaga |
-| DA-07 | RF-20, RF-21 | RNF-11, RNF-12, RNF-13 | — | Avaliação, Denúncia |
-| DA-08 | — | RNF-08, RNF-09 | — | Caminho local / integrações externas |
-
----
-
-## 9. Síntese para as próximas decisões
-
-A arquitetura do AcessaVagas precisa, no mínimo:
-
-1. Possuir uma **camada de apresentação acessível**.
-2. Possuir **backend responsável por autenticação, autorização e regras de domínio**.
-3. Concentrar a **trava de barreiras críticas** antes do cálculo de compatibilidade.
-4. Isolar o **serviço determinístico de compatibilidade**.
-5. Manter a **LLM atrás de uma porta/adaptador**, com validação da resposta.
-6. Utilizar um **modelo comum de vaga** para diferentes fontes.
-7. Separar **dados internos de auditoria** das informações apresentadas publicamente.
-8. Separar operações locais das **integrações externas potencialmente lentas**.
-
-Esse conjunto representa as principais restrições que o desenho arquitetural posterior deve satisfazer.
+```text
+Apresentação
+      ↓
+Aplicação
+      ↓
+Domínio
+      ↓
+Infraestrutura
