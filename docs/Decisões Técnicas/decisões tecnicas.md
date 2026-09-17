@@ -1,3 +1,6 @@
+## Nota do Projeto AcessaVagas: 
+Todas as Decisões Técnicas (DT-01 a DT-12) foram revisadas, validadas e oficialmente aprovadas (Status: Aceito) pela equipe, tornando-se diretrizes obrigatórias para o desenvolvimento da plataforma.
+
 ## Tabela de Decisões Técnicas
 
 | ID | Driver | Decisão técnica |
@@ -216,3 +219,51 @@ A arquitetura em camadas permite separar as regras centrais do AcessaVagas das t
 Essa separação é especialmente importante para o projeto devido à existência de regras de negócio relevantes, como a trava de acessibilidade e o cálculo de compatibilidade, além da integração com LLM e fontes externas.
 
 A decisão também facilita a manutenção, os testes e a evolução do sistema, reduzindo o acoplamento entre as diferentes partes da aplicação.
+
+
+---
+### Outras decisões técnicas que são indispensáveis para o desenvolvimento da plataforma:
+
+## DT-10 — Proteção de Dados Médicos e Laudos (LGPD)
+
+* **Driver Relacionado:** **DA-09 — Conformidade com a LGPD e proteção de dados sensíveis de saúde**
+* **O Problema:** Laudos médicos referentes às descrições de deficiências são classificados legalmente como dados pessoais sensíveis. Um vazamento exporia gravemente a privacidade dos candidatos e sujeitaria a plataforma a punições severas da Lei Geral de Proteção de Dados (LGPD).
+* **Decisão Técnica:** Criptografar todos os arquivos de laudos e observações médicas, caso forem adicionados à plataforma, antes da gravação no banco de dados, utilizando a tecnologia **AES-256** na camada de infraestrutura. 
+* **Alternativas Consideradas:**
+* *Armazenar em texto simples com restrição de acesso por senha:* Rejeitado. Inseguro, pois invasões diretas à base de dados exporiam os laudos dos usuários.
+* *Anonimização irreversível dos laudos:* Rejeitado. Impede a validação dos documentos pela equipe de RH no momento da contratação do candidato.
+
+* **Consequências e Trade-offs:**
+* *Positivas:* Alto nível de segurança, conformidade total com a LGPD e blindagem dos dados dos candidatos.
+* *Negativas / Riscos:* Exige o gerenciamento e armazenamento seguro da chave de criptografia fora do banco de dados.
+
+---
+
+## DT-11 — Navegação por Voz e Áudio Assistivo Nativo
+
+* **Driver Relacionado:** **DA-10 — Autonomia de navegação por áudio e ditado por voz sem custos de infraestrutura**
+* **O Problema:** A plataforma disponibiliza botões universais de leitura de tela (`🔊`) e ditado de comandos (`🎙️`). O envio dessas requisições para APIs pagas de voz na nuvem geraria custos recorrentes inviáveis e introduziria atrasos de rede na navegação.
+* **Decisão Técnica:** Adotar exclusivamente a **Web Speech API** (recurso nativo do próprio navegador do usuário) para síntese e reconhecimento de voz, eliminando custos com APIs externas de voz. Se o navegador for antigo e não suportar a tecnologia, a plataforma usa como alternativa os leitores de tela padrão do dispositivo do usuário.
+* **Alternativas Consideradas:**
+* *Integrar APIs de voz pagas na nuvem:* Rejeitado. Geraria custo financeiro imprevisível por requisição e dependência de fornecedores externos.
+* *Depender apenas de leitores de tela externos pré-instalados:* Rejeitado. Dificulta a navegação para candidatos em computadores públicos ou sem leitores previamente configurados.
+
+* **Consequências e Trade-offs:**
+* *Positivas:* Custo zero de execução, resposta instantânea, privacidade total dos áudios e alta autonomia.
+* *Negativas / Riscos:* A qualidade da voz sintetizada depende do navegador e do sistema operacional instalado no dispositivo do candidato.
+  
+---
+
+## DT-12 — Banco de Dados Relacional e Consistência Forte para Vagas e Match
+
+* **Driver Relacionado:** **DA-11 — Garantia de integridade transacional no cálculo de vagas e candidaturas**
+* **O Problema:** O algoritmo de compatibilidade cruza vagas, candidaturas e barreiras impeditivas, assegurando que, em caso de falha de qualquer etapa da candidatura ou atualização da vaga, o banco cancela a operação inteira e evita inconsistências no sistema. Gravar operações "pela metade" devido a oscilações de conexão geraria registros corrompidos e notas erradas de compatibilidade.
+* **Decisão Técnica:** Adotar Banco de Dados Relacional com suporte completo a transações **ACID** (Atomicidade, Consistência, Isolamento e Durabilidade) para o núcleo da aplicação.
+* **Alternativas Consideradas:**
+* *Usar banco de dados NoSQL (orientado a documentos):* Rejeitado. Dificulta relacionamentos complexos e não garante transações ACID rígidas no núcleo do negócio.
+* *Guardar cadastros diretamente em Banco Vetorial de IA:* Rejeitado. Bancos vetoriais trabalham com buscas probabilísticas de aproximação, incompatíveis com regras de negócio exatas.
+
+
+* **Consequências e Trade-offs:**
+* *Positivas:* Integridade de dados garantida, histórico de candidaturas 100% confiável e facilidade de auditoria.
+* *Negativas / Riscos:* Exige a modelagem prévia de tabelas e relacionamentos bem estruturados antes do desenvolvimento.
