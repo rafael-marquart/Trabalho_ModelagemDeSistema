@@ -1,4 +1,4 @@
-# UC-01 — Gerenciar Perfil e Necessidades Funcionais
+# UC-01 — Gerenciar Perfil
 
 ## Objetivo
 
@@ -14,7 +14,7 @@ Cadastrar e atualizar dados pessoais, laudos/documentações e o vetor de necess
 
 ## Pontos de Inclusão e Extensão
 
-- Inclusão (<<include>>): Validar Estrutura do Vetor de Acessibilidade.
+- Inclusão (<<include>>): UC-13 (Calcular Match Determinístico).
 
 ## Fluxo Principal
 
@@ -37,14 +37,14 @@ Cadastrar e atualizar dados pessoais, laudos/documentações e o vetor de necess
 
 ## Regras de negócio relacionadas
 
-- RB-02: Trava de acessibilidade — apenas vagas compatíveis com necessidades essenciais são apresentadas no motor de busca (aplicado em UC02).
+- RB-02: Trava de acessibilidade — apenas vagas compatíveis com necessidades essenciais são apresentadas no motor de busca (aplicado em UC-02).
 - RB-06: Necessidades obrigatórias — determinados itens do vetor podem ser marcados como obrigatórios pelo candidato (ex.: intérprete de LIBRAS), tornando-os eliminatórios no cálculo de compatibilidade.
 - RB-07: Perfil técnico — o vetor de necessidades deve ser combinado com o perfil técnico ao calcular match.
 - RB-26: Validação de documentos — laudos aceitos têm formato, tamanho e validade definidos; documentos inválidos ou expirados devem ser sinalizados.
 - RB-27: Confidencialidade de documentação — laudos e documentos sensíveis só são visíveis para usuários autorizados (recrutador com permissão) e dentro do contexto de candidatura.
 - RB-28: Histórico de alterações — alterações no vetor funcional devem ser versionadas com carimbo de tempo para rastreabilidade.
 - RB-29: Autodeclaração — o candidato pode optar por autodeclarar necessidades quando não possuir laudo; nesse caso, o sistema deve indicar a natureza da informação (autodeclarada vs. comprovada).
-- RB-30: Entrada mínima — para que o candidato seja elegível ao UC02, um vetor funcional básico (conjunto mínimo de campos) deve estar preenchido.
+- RB-30: Entrada mínima — para que o candidato seja elegível ao UC-02, um vetor funcional básico (conjunto mínimo de campos) deve estar preenchido.
 
 ## Requisitos relacionados
 
@@ -62,6 +62,6 @@ Cadastrar e atualizar dados pessoais, laudos/documentações e o vetor de necess
 - O candidato consegue salvar o vetor funcional quando os campos obrigatórios estão preenchidos.
 - Laudos/documentos aceitos são armazenados e vinculados ao perfil; tipos inválidos são rejeitados com mensagem clara.
 - Alterações ao vetor geram nova versão com timestamp.
-- Perfil atualizado é considerado pelo motor de match (UC13) nas buscas subsequentes.
+- Perfil atualizado é considerado pelo motor de match (UC-13) nas buscas subsequentes.
 
 ---
