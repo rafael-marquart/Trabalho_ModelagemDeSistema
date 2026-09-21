@@ -1,13 +1,20 @@
-# UC-01 — Gerar trilha de vagas compatíveis
+# Estado da trilha de vagas compatíveis
+
+## Observação
+ 
+Este documento descreve o fluxo e os estados da trilha de vagas compatíveis dentro do sistema. Ele não representa um caso de uso tradicional, e sim a lógica de processamento e apresentação das vagas que passam pela análise de compatibilidade com o perfil do candidato.
+
+A finalidade principal é registrar como a trilha é construída, quais vagas são eliminadas por incompatibilidade, como a pontuação é calculada e em que momento a vaga torna-se recomendada ao candidato.
 
 ## Objetivo
 
 Permitir que o candidato consulte uma trilha de vagas compatíveis com suas necessidades funcionais de acessibilidade, seu perfil técnico, sua localização e sua modalidade de trabalho preferida.
 
-## Atores
+## Ator principal
 
-- **Ator principal:** candidato.
-- **Atores secundários:** sistema de compatibilidade e base de vagas.
+- Candidato PcD.
+- Sistema de compatibilidade.
+- Base de vagas.
 
 ## Pré-condições
 
@@ -15,7 +22,7 @@ Permitir que o candidato consulte uma trilha de vagas compatíveis com suas nece
 - O perfil do candidato possui suas necessidades funcionais e informações profissionais.
 - Existem vagas cadastradas ou importadas para análise.
 
-## Fluxo principal
+## Fluxo Principal
 
 1. O candidato acessa a área de busca ou recomendações de vagas.
 2. O sistema recupera as necessidades funcionais obrigatórias, formação, competências, idiomas, localização e preferência de modalidade do candidato.
@@ -30,7 +37,7 @@ Permitir que o candidato consulte uma trilha de vagas compatíveis com suas nece
 8. O sistema apresenta a trilha ao candidato, incluindo acessibilidade, requisitos técnicos, modalidade e localização.
 9. O candidato consulta os detalhes de uma vaga e pode iniciar uma candidatura.
 
-## Fluxos alternativos
+## Fluxos Alternativos
 
 ### A1 — Vaga externa
 
@@ -89,6 +96,3 @@ Permitir que o candidato consulte uma trilha de vagas compatíveis com suas nece
 - Vagas externas são identificadas e estruturadas antes da análise.
 - Dados extraídos por inteligência artificial são validados antes de serem utilizados.
 
-## Referência visual
-
-As imagens usadas como referência para este caso de uso estão na pasta [seq-UC-01.png](../uml/seq-UC-01.png).
