@@ -84,7 +84,8 @@ A implementação específica de biblioteca de componentes ou CSS permanece aber
 - DA-01 define acessibilidade como driver arquitetural.
 - RNF-01 estabelece conformidade com WCAG 2.1 nível AA.
 - RNF-02 exige compatibilidade com leitores de tela.
-- RF-25 exige recursos de acessibilidade.
+- RNF-04 exige usabilidade e autonomia.
+- RF-16 exige recursos de acessibilidade.
 - Corrigir a acessibilidade apenas depois da construção da interface exigiria revisar componentes, fluxos e interações já implementados.
 
 ## Alternativas consideradas
@@ -103,7 +104,7 @@ A implementação específica de biblioteca de componentes ou CSS permanece aber
 - A biblioteca visual específica permanece uma decisão reversível.
 - Alterações futuras de biblioteca não devem remover os requisitos de acessibilidade.
 
-**Drivers:** DA-01, RNF-01, RNF-02, RNF-07, RF-25.
+**Drivers:** DA-01, RNF-01, RNF-02, RNF-04, RF-16.
 
 ---
 
@@ -131,12 +132,10 @@ A autorização será aplicada antes da execução das operações de escrita e 
 
 - DA-02 define autenticação e autorização como driver arquitetural.
 - RF-03 define perfis de acesso distintos.
-- RNF-10 exige segurança.
-- RNF-11 exige proteção de dados pessoais.
-- RB-21 define controle de acesso.
+- RNF-07 exige segurança.
+- RNF-08 exige proteção de dados pessoais.
+- RB-12 define controle de acesso.
 - Uma autorização baseada somente na interface poderia ser contornada por requisições HTTP diretas.
-
-A correção posterior de dados alterados por usuários sem permissão seria mais cara do que impedir a operação na fronteira do backend.
 
 ## Alternativas consideradas
 
@@ -144,7 +143,7 @@ A correção posterior de dados alterados por usuários sem permissão seria mai
 |---|---|
 | Controle de acesso somente no frontend | Pode ser contornado por requisições diretas à API |
 | Regras duplicadas em cada tela | Aumentaria inconsistências e dificultaria manutenção |
-| Gateway externo como única proteção | Ainda não existe provedor de identidade definido e as regras de negócio continuam pertencendo ao sistema |
+| Gateway externo como única proteção | As regras de negócio e autorização continuam pertencendo ao sistema |
 | Confiar no perfil enviado pelo cliente | Não oferece garantia de integridade da autorização |
 
 ## Consequências
@@ -155,7 +154,7 @@ A correção posterior de dados alterados por usuários sem permissão seria mai
 - Testes de segurança devem verificar acesso por perfil diretamente na API.
 - O frontend não é considerado fonte de verdade para autorização.
 
-**Drivers:** DA-02, RNF-10, RNF-11, RB-21.
+**Drivers:** DA-02, RNF-07, RNF-08, RB-12.
 
 ---
 
@@ -188,11 +187,11 @@ A LLM poderá ser desabilitada sem comprometer as funcionalidades que não depen
 
 - DA-05 determina que a LLM seja opcional, validada e substituível.
 - DA-06 exige normalização das vagas externas.
-- RB-20 exige validação da resposta da IA.
+- RB-11 exige validação das informações extraídas por LLM.
+- RB-17 exige validação de vagas externas antes da análise.
+- RB-18 estabelece que o resultado da LLM não é fonte de verdade.
 - A integração direta do frontend com um provedor exporia credenciais e misturaria a camada de apresentação com a integração externa.
 - Acoplar o domínio a um SDK específico tornaria a substituição do fornecedor mais cara.
-
-A referência do professor utiliza a mesma ideia: a LLM fica atrás de uma porta/adaptador, permitindo trocar o provedor sem criar uma nova ADR para cada fornecedor. :contentReference[oaicite:1]{index=1}
 
 ## Alternativas consideradas
 
@@ -212,7 +211,7 @@ A referência do professor utiliza a mesma ideia: a LLM fica atrás de uma porta
 - O provedor específico permanece uma decisão reversível.
 - Uma fila assíncrona pode ser adicionada futuramente se houver necessidade comprovada.
 
-**Drivers:** DA-05, DA-06, DA-08, RB-19, RB-20, RNF-08.
+**Drivers:** DA-05, DA-06, DA-08, RNF-05, RNF-16, RB-11, RB-17, RB-18.
 
 ---
 
@@ -226,11 +225,75 @@ Proposta.
 
 O AcessaVagas será organizado em camadas com responsabilidades separadas:
 
-```text
-Apresentação
-      ↓
-Aplicação
-      ↓
-Domínio
-      ↓
-Infraestrutura
+    Apresentação
+          ↓
+      Aplicação
+          ↓
+       Domínio
+          ↓
+    Infraestrutura
+
+A camada de domínio será responsável pelas regras de negócio centrais, incluindo:
+
+- compatibilidade;
+- barreiras críticas;
+- necessidades obrigatórias;
+- regras de candidatura;
+- avaliação e critérios de acessibilidade.
+
+A infraestrutura será responsável por integrações externas e mecanismos técnicos, incluindo persistência e comunicação com serviços externos.
+
+A camada de aplicação coordenará os casos de uso sem concentrar as regras de negócio que pertencem ao domínio.
+
+## Por que foi tomada
+
+- DA-02 exige uma fronteira clara para autenticação e autorização.
+- DA-03 e DA-04 exigem concentração das regras de compatibilidade no domínio.
+- DA-05 e DA-06 exigem isolamento das integrações externas.
+- DA-08 exige separação entre operações locais e integrações potencialmente lentas.
+- A separação reduz o acoplamento entre regras de negócio, interface e infraestrutura.
+
+## Alternativas consideradas
+
+| Alternativa | Por que foi rejeitada |
+|---|---|
+| Concentrar regras nos controllers | Espalharia regras de negócio e dificultaria testes e manutenção |
+| Concentrar regras no frontend | Não garantiria a aplicação das regras para todas as entradas |
+| Não estabelecer separação de responsabilidades | Aumentaria o acoplamento entre domínio e tecnologia |
+| Utilizar microserviços desde o início | Os drivers atuais não exigem distribuição adicional |
+
+## Consequências
+
+- As regras de negócio ficam independentes da interface e da infraestrutura.
+- Integrações externas podem ser substituídas com menor impacto no domínio.
+- O projeto exige disciplina na separação de responsabilidades.
+- A arquitetura não implica adoção de microserviços.
+
+**Drivers:** DA-02, DA-03, DA-04, DA-05, DA-06, DA-08.
+
+---
+
+## 3. Relação entre ADRs e drivers
+
+| ADR | Drivers relacionados | Decisão em aberto |
+|---|---|---|
+| ADR-001 | DA-01 | Biblioteca de componentes e CSS |
+| ADR-002 | DA-02 | Mecanismo específico de sessão/autenticação |
+| ADR-003 | DA-05, DA-06, DA-08 | Provedor LLM específico |
+| ADR-004 | DA-02, DA-03, DA-04, DA-05, DA-06, DA-08 | Tecnologias específicas de cada camada |
+
+---
+
+## 4. Síntese
+
+A relação entre os artefatos segue a seguinte lógica:
+
+**RF/RNF/RB → Drivers Arquiteturais → ADRs → Arquitetura**
+
+Os requisitos definem o comportamento e as qualidades esperadas.
+
+Os Drivers Arquiteturais identificam quais desses elementos realmente pressionam a estrutura da solução.
+
+As ADRs registram as decisões estruturais que foram tomadas para atender aos drivers.
+
+As escolhas ainda reversíveis ou sem evidência suficiente permanecem abertas e não são transformadas em ADRs.
