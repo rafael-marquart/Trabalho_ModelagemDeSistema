@@ -52,3 +52,15 @@ O sistema deve possuir estrutura que facilite correções, manutenção e evolu�
 
 ### **RNF-13 Compatibilidade**
 O sistema deve funcionar nos principais navegadores e dispositivos utilizados pelos usuários.
+
+
+### **RNF-14 Rastreabilidade e auditoria**
+O sistema deve manter informações suficientes para permitir a rastreabilidade de operações relevantes de administração, avaliação, denúncia e alteração de dados.
+
+
+### **RNF-15 Testabilidade**
+O sistema deve possuir estrutura que permita testar isoladamente as funcionalidades e regras de negócio críticas.
+
+
+### **RNF-16 Interoperabilidade**
+O sistema deve permitir a integração com fontes externas e a normalização das informações recebidas para o modelo utilizado pela plataforma.
