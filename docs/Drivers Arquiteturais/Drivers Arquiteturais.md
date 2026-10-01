@@ -51,7 +51,7 @@ A interface deve considerar:
 
 **Decisão que o driver força:** a camada de apresentação deve utilizar componentes e padrões que permitam acessibilidade desde a construção da interface, evitando uma adaptação posterior.
 
-**Origem:** RF-25, RNF-01, RNF-02 e RNF-07.
+**Origem:** RF-16, RNF-01, RNF-02, RNF-04.
 
 ---
 
@@ -65,20 +65,11 @@ O sistema possui diferentes perfis de acesso:
 
 As permissões não podem depender apenas da interface. As operações devem ser protegidas no backend.
 
-| Operação | Candidato | Recrutador/Empresa | Administrador |
-|---|---|---|---|
-| Gerenciar perfil próprio | Sim | Sim | Conforme permissão |
-| Consultar vagas | Sim | — | Sim |
-| Cadastrar vaga | — | Sim | Sim |
-| Gerenciar usuários | — | — | Sim |
-| Gerenciar selos | — | — | Sim |
-| Administrar denúncias | — | — | Sim |
-
 **Decisão que o driver força:** deve existir um mecanismo centralizado de autenticação e autorização por perfil, aplicado no backend nas operações protegidas.
 
 A interface pode ocultar funcionalidades não permitidas, mas isso não substitui a validação no servidor.
 
-**Origem:** RF-01, RF-02, RF-03, RB-21, RNF-10 e RNF-11.
+**Origem:** RF-01, RF-02, RF-03, RNF-07, RNF-08, RB-12.
 
 ---
 
@@ -98,7 +89,7 @@ Fluxo arquitetural:
 4. bloquear a vaga quando houver incompatibilidade crítica;
 5. somente então calcular a compatibilidade ponderada.
 
-**Origem:** RF-10, RF-11, RF-12, RB-02 e RB-06.
+**Origem:** RF-07, RF-08, RF-09, RB-02, RB-06, RB-15.
 
 ---
 
@@ -120,7 +111,7 @@ A barreira crítica possui prioridade sobre a pontuação.
 
 Isso permite testar o algoritmo isoladamente e evita que regras de compatibilidade sejam espalhadas entre controllers, telas ou consultas ao banco.
 
-**Origem:** RF-10, RF-11, RN-03, RB-03, RB-04 e RB-05.
+**Origem:** RF-07, RF-08, RF-09, RNF-10, RB-03, RB-04, RB-05, RB-15.
 
 ---
 
@@ -144,9 +135,7 @@ A aplicação deve permanecer funcional mesmo quando a LLM estiver indisponível
 
 **Decisão que o driver força:** a integração com a LLM deve ficar atrás de uma porta/adaptador, mantendo o domínio independente do SDK ou fornecedor escolhido.
 
-A troca do provedor não deve exigir alterações no modelo de domínio.
-
-**Origem:** RF-05, RB-19, RB-20 e RNF-08.
+**Origem:** RF-05, RF-18, RB-10, RB-11, RB-17, RB-18, RNF-05, RNF-16.
 
 ---
 
@@ -161,11 +150,9 @@ Apesar das diferentes origens, a análise de compatibilidade precisa utilizar um
 | Vaga cadastrada na plataforma | Persistida diretamente no modelo de vaga |
 | Vaga externa | Extraída, validada e normalizada antes de entrar no domínio |
 
-**Decisão que o driver força:** o domínio deve trabalhar com um modelo comum de `Vaga`, independentemente de sua origem.
+**Decisão que o driver força:** o domínio deve trabalhar com um modelo comum de Vaga, independentemente de sua origem.
 
-A origem da vaga pode ser armazenada como informação do próprio modelo, sem criar modelos de domínio completamente separados.
-
-**Origem:** RF-05, RF-13, RB-19 e RB-20.
+**Origem:** RF-05, RF-18, RB-10, RB-17, RB-18, RNF-16.
 
 ---
 
@@ -183,7 +170,7 @@ O sistema deve diferenciar:
 
 **Decisão que o driver força:** os dados de identidade e os dados públicos de avaliação devem possuir tratamento separado, permitindo anonimato na apresentação sem perder rastreabilidade administrativa.
 
-**Origem:** RF-20, RF-21, RNF-11, RNF-12 e RNF-13.
+**Origem:** RF-13, RF-14, RF-21, RF-22, RNF-08, RNF-09, RNF-14, RB-19, RB-20.
 
 ---
 
@@ -199,7 +186,7 @@ Operações envolvendo fontes externas ou LLM podem possuir latência maior e de
 
 O uso de processamento assíncrono, filas ou mecanismos de cache permanece como decisão posterior, caso algum cenário ou medição demonstre necessidade.
 
-**Origem:** RNF-08, RNF-09 e integração com fontes externas.
+**Origem:** RNF-05, RNF-11 e integração com fontes externas.
 
 ---
 
@@ -240,7 +227,7 @@ O uso de processamento assíncrono, filas ou mecanismos de cache permanece como 
 | Artefato | Backend e frontend |
 | Ambiente | Operação normal |
 | Resposta | Resultado apresentado sem dependência de processamento externo desnecessário |
-| Medida | Operações principais devem respeitar o tempo definido pelo RNF-08 |
+| Medida | Operações principais devem respeitar o tempo definido pelo RNF-05 |
 
 ---
 
@@ -279,7 +266,7 @@ O uso de processamento assíncrono, filas ou mecanismos de cache permanece como 
 2. Conteúdo é encaminhado para o mecanismo de extração.
 3. A LLM retorna dados estruturados.
 4. Sistema valida a resposta.
-5. Dados são normalizados para o modelo comum de `Vaga`.
+5. Dados são normalizados para o modelo comum de Vaga.
 6. Vaga validada é disponibilizada para análise.
 
 **Falha:** resposta inválida ou indisponibilidade da LLM não deve gerar uma vaga inconsistente.
@@ -303,7 +290,7 @@ O uso de processamento assíncrono, filas ou mecanismos de cache permanece como 
 ### DA-CEN04 — Registrar avaliação de acessibilidade
 
 1. Candidato registra uma avaliação ou denúncia.
-2. Sistema associa o registro ao contexto da vaga/empresa.
+2. Sistema associa o registro ao contexto da vaga ou empresa.
 3. Identidade é armazenada para fins internos quando necessário.
 4. Dados apresentados publicamente não expõem informações pessoais do candidato.
 5. Administrador pode consultar informações necessárias para moderação.
@@ -318,7 +305,7 @@ O uso de processamento assíncrono, filas ou mecanismos de cache permanece como 
 |---|---|---|---|
 | Compatibilidade | Pontuação ponderada | Barreira crítica absoluta | Barreira crítica deve ser avaliada primeiro |
 | LLM | Flexibilidade da IA | Confiabilidade dos dados | LLM atrás de adaptador + validação |
-| Origem das vagas | Cadastro interno | Vagas externas | Modelo comum de `Vaga` |
+| Origem das vagas | Cadastro interno | Vagas externas | Modelo comum de Vaga |
 | Acessibilidade | Recursos avançados | Simplicidade de uso | Acessibilidade incorporada à apresentação |
 | Privacidade | Rastreabilidade administrativa | Anonimato público | Separação entre dados internos e públicos |
 | Desempenho | Operações rápidas | Integrações externas | Isolamento do caminho externo |
@@ -347,14 +334,14 @@ Essas escolhas podem ser realizadas posteriormente, desde que respeitem os drive
 
 | Driver | RF | RNF | RB | Modelo conceitual / domínio |
 |---|---|---|---|---|
-| DA-01 | RF-25 | RNF-01, RNF-02, RNF-07 | — | Interface e componentes acessíveis |
-| DA-02 | RF-01, RF-02, RF-03 | RNF-10, RNF-11 | RB-21 | Usuário, Candidato, Empresa, Administrador |
-| DA-03 | RF-10, RF-11, RF-12 | — | RB-02, RB-06 | Necessidade, Barreira, Compatibilidade |
-| DA-04 | RF-10 | — | RB-03, RB-04, RB-05 | Compatibilidade |
-| DA-05 | RF-05 | RNF-08 | RB-19, RB-20 | Integração LLM |
-| DA-06 | RF-05, RF-13 | — | RB-19, RB-20 | Vaga |
-| DA-07 | RF-20, RF-21 | RNF-11, RNF-12, RNF-13 | — | Avaliação, Denúncia |
-| DA-08 | — | RNF-08, RNF-09 | — | Caminho local / integrações externas |
+| DA-01 | RF-16 | RNF-01, RNF-02, RNF-04 | — | Interface e componentes acessíveis |
+| DA-02 | RF-01, RF-02, RF-03 | RNF-07, RNF-08 | RB-12 | Usuário, Candidato, Empresa, Administrador |
+| DA-03 | RF-07, RF-08, RF-09 | — | RB-02, RB-06, RB-15 | Necessidade, Barreira, Compatibilidade |
+| DA-04 | RF-07, RF-08, RF-09 | RNF-10, RNF-15 | RB-03, RB-04, RB-05, RB-15 | Compatibilidade |
+| DA-05 | RF-05, RF-18 | RNF-05, RNF-16 | RB-10, RB-11, RB-17, RB-18 | Integração LLM, Vaga |
+| DA-06 | RF-05, RF-18 | RNF-16 | RB-10, RB-17, RB-18 | Vaga |
+| DA-07 | RF-13, RF-14, RF-21, RF-22 | RNF-08, RNF-09, RNF-14 | RB-19, RB-20 | Avaliação, Denúncia, Empresa |
+| DA-08 | — | RNF-05, RNF-11 | — | Caminho local / integrações externas |
 
 ---
 
