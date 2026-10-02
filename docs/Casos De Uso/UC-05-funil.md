@@ -35,21 +35,21 @@ Monitorar em tempo real a evolução de suas candidaturas, visualizar confirmaç
 
 ## Regras de negócio relacionadas
 
-- RB-37: Registro de resposta — recrutador deve registrar aceite, negativa ou contraproposta; resposta gera notificação ao candidato (aplicável também ao UC05).
-- RB-40: Cancelamento de candidatura — candidato pode cancelar sua candidatura até um prazo definido antes de etapas críticas (por exemplo, 24 horas antes da entrevista), dependendo das regras da vaga.
-- RB-41: Estados do funil — o sistema deve padronizar os estados do funil (Inscrito, Triagem, Selecionado para Entrevista, Entrevista Agendada, Finalizado, Rejeitado) e impedir transições inválidas.
-- RB-42: Visibilidade de acomodações — confirmação/recusa de solicitações de acomodação deve ser claramente exibida no funil.
-- RB-43: Auditoria de alterações — mudanças de status e cancelamentos devem ser versionadas e registradas com usuário e timestamp.
-- RB-44: Notificação de vaga encerrada — quando a vaga é encerrada, candidatos em fase ativa recebem aviso e a vaga é removida do painel ativo.
+- RB-23
+- RB-27
+- RB-36
+- RB-38
+- RB-39
+- RB-40
+- RB-42
 
 ## Requisitos relacionados
 
-- RF-27 — Notificações ao recrutador e candidato (e-mail/SMS/alerta interno).
-- RF-26 — Registro de candidatura (persistência e associação com o funil de seleção).
-- RF-30 — Visibilidade para recrutadores (painel com gestão de solicitações e emissão de respostas).
-- RF-31 — Notificações e rastreamento (notificar candidato sobre decisão e registrar timestamps).
-- RF-12 — Gestão de sessão e tokens (garantir que apenas usuário autenticado veja o funil).
-- RF-35 — Cancelamento de candidatura (função para alterar status por iniciativa do candidato, com regras de bloqueio temporal).
+- RF-11
+- RF-27
+- RF-31
+- RF-34
+- RF-33
 
 ## Critérios de aceitação
 
