@@ -332,18 +332,37 @@ Essas escolhas podem ser realizadas posteriormente, desde que respeitem os drive
 
 ## 8. Rastreabilidade
 
-| Driver | RF | RNF | RB | Modelo conceitual / domínio |
-|---|---|---|---|---|
-| DA-01 | RF-16 | RNF-01, RNF-02, RNF-04 | — | Interface e componentes acessíveis |
-| DA-02 | RF-01, RF-02, RF-03 | RNF-07, RNF-08 | RB-12 | Usuário, Candidato, Empresa, Administrador |
-| DA-03 | RF-07, RF-08, RF-09 | — | RB-02, RB-06, RB-15 | Necessidade, Barreira, Compatibilidade |
-| DA-04 | RF-07, RF-08, RF-09 | RNF-10, RNF-15 | RB-03, RB-04, RB-05, RB-15 | Compatibilidade |
-| DA-05 | RF-05, RF-18 | RNF-05, RNF-16 | RB-10, RB-11, RB-17, RB-18 | Integração LLM, Vaga |
-| DA-06 | RF-05, RF-18 | RNF-16 | RB-10, RB-17, RB-18 | Vaga |
-| DA-07 | RF-13, RF-14, RF-21, RF-22 | RNF-08, RNF-09, RNF-14 | RB-19, RB-20 | Avaliação, Denúncia, Empresa |
-| DA-08 | — | RNF-05, RNF-11 | — | Caminho local / integrações externas |
+A rastreabilidade dos Drivers deve permitir seguir a cadeia:
 
----
+**Requisito / Regra → Driver → Caso de Uso → ADR / Decisão Técnica**
+
+| Driver | RF | RNF | RB | Casos de Uso | ADR | Decisão Técnica |
+|---|---|---|---|---|---|---|
+| DA-01 | RF-16 | RNF-01, RNF-02, RNF-04 | — | UC-01, UC-02, UC-03, UC-16 | ADR-001 | DT-01 |
+| DA-02 | RF-01, RF-02, RF-03, RF-40 | RNF-07, RNF-08 | RB-12, RB-21, RB-22 | UC-00, UC-09, UC-10, UC-14 | ADR-002, ADR-004 | DT-02, DT-08 |
+| DA-03 | RF-07, RF-08, RF-09 | — | RB-02, RB-06, RB-15 | UC-02, UC-03, UC-13 | ADR-004 | DT-03, DT-08 |
+| DA-04 | RF-07, RF-08, RF-09, RF-24, RF-25 | RNF-10, RNF-15 | RB-03, RB-04, RB-05, RB-07, RB-15, RB-16, RB-30 | UC-02, UC-13 | ADR-004 | DT-04, DT-08 |
+| DA-05 | RF-05, RF-36, RF-37, RF-39 | RNF-05, RNF-16 | RB-10, RB-11, RB-17, RB-18, RB-32 | UC-14 | ADR-003, ADR-004 | DT-05, DT-08 |
+| DA-06 | RF-05, RF-18, RF-36, RF-37, RF-39 | RNF-16 | RB-10, RB-17, RB-18, RB-31, RB-32, RB-33 | UC-08, UC-14 | ADR-003, ADR-004 | DT-06, DT-08 |
+| DA-07 | RF-13, RF-14, RF-21, RF-22, RF-38 | RNF-08, RNF-09, RNF-14 | RB-19, RB-20, RB-24, RB-25, RB-27, RB-37, RB-44, RB-45 | UC-06, UC-11 | — | DT-07 |
+| DA-08 | — | RNF-05, RNF-11 | — | UC-14 e operações locais da plataforma | ADR-003, ADR-004 | — |
+
+### Observações de rastreabilidade
+
+- **DA-01** conecta a acessibilidade da apresentação ao RF-16 e aos RNFs de acessibilidade e usabilidade. A implementação específica de biblioteca continua deliberadamente aberta pela ADR-001.
+- **DA-02** conecta autenticação/autorização aos RFs de acesso, às regras de segurança e às operações administrativas. A fronteira de confiança está registrada na ADR-002 e a separação de camadas na ADR-004.
+- **DA-03** e **DA-04** são drivers complementares: o primeiro define a precedência da barreira crítica; o segundo define o cálculo ponderado. Ambos convergem para o domínio e são sustentados por DT-03 e DT-04.
+- **DA-05** e **DA-06** formam a cadeia de ingestão externa: extração → validação → normalização → modelo comum de vaga. A ADR-003 trata o isolamento da LLM; a ADR-004 trata a separação arquitetural.
+- **DA-07** possui decisão técnica explícita em **DT-07**, mas **não possui ADR específica**. Isso é intencional neste momento: a baseline registra a separação entre dados internos e públicos como decisão técnica, mas não há uma ADR dedicada para essa decisão estrutural.
+- **DA-08** influencia o isolamento das integrações externas, mas não fixa fila, cache ou outro mecanismo específico. Por isso, não há decisão técnica específica para uma tecnologia de desempenho.
+
+### Lacunas identificadas
+
+| Lacuna | Situação |
+|---|---|
+| DA-07 sem ADR específica | Decisão registrada em DT-07; nenhuma nova ADR é criada sem evidência de que a decisão seja estrutural e de difícil reversão. |
+| DA-08 sem RF diretamente associado | O driver deriva de RNF-05/RNF-11 e da necessidade arquitetural de separar integrações externas; não foi criado RF artificial para preenchê-lo. |
+| Tecnologias específicas | Permanecem abertas conforme seção 7 e conforme as ADRs existentes. |
 
 ## 9. Síntese para as próximas decisões
 
