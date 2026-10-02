@@ -273,14 +273,32 @@ A camada de aplicação coordenará os casos de uso sem concentrar as regras de 
 
 ---
 
-## 3. Relação entre ADRs e drivers
+## 3. Rastreabilidade entre ADRs, Drivers e baseline
 
-| ADR | Drivers relacionados | Decisão em aberto |
-|---|---|---|
-| ADR-001 | DA-01 | Biblioteca de componentes e CSS |
-| ADR-002 | DA-02 | Mecanismo específico de sessão/autenticação |
-| ADR-003 | DA-05, DA-06, DA-08 | Provedor LLM específico |
-| ADR-004 | DA-02, DA-03, DA-04, DA-05, DA-06, DA-08 | Tecnologias específicas de cada camada |
+| ADR | Drivers | RF | RNF | RB | Casos de Uso | Decisão Técnica |
+|---|---|---|---|---|---|---|
+| ADR-001 | DA-01 | RF-16 | RNF-01, RNF-02, RNF-04 | — | UC-01, UC-02, UC-03 | DT-01 |
+| ADR-002 | DA-02 | RF-01, RF-02, RF-03, RF-40 | RNF-07, RNF-08 | RB-12, RB-21, RB-22 | UC-00, UC-09, UC-10, UC-14 | DT-02 |
+| ADR-003 | DA-05, DA-06, DA-08 | RF-05, RF-36, RF-37, RF-39 | RNF-05, RNF-16 | RB-10, RB-11, RB-17, RB-18, RB-31, RB-32, RB-33 | UC-08, UC-14 | DT-05, DT-06 |
+| ADR-004 | DA-02, DA-03, DA-04, DA-05, DA-06, DA-08 | RF-01, RF-03, RF-05, RF-07, RF-08, RF-09, RF-18, RF-36, RF-37, RF-38, RF-39, RF-40 | RNF-05, RNF-07, RNF-08, RNF-10, RNF-11, RNF-15, RNF-16 | RB-02, RB-03, RB-04, RB-05, RB-06, RB-07, RB-10, RB-11, RB-12, RB-15, RB-17, RB-18, RB-32, RB-39, RB-41 | UC-00, UC-02, UC-03, UC-09, UC-10, UC-14 | DT-08 |
+
+### Critério de leitura
+
+- Os **Drivers** representam as pressões arquiteturais originadas da baseline.
+- As **ADRs** registram decisões estruturais tomadas para responder a essas pressões.
+- As **Decisões Técnicas** registram escolhas técnicas diretamente sustentadas pelos Drivers/ADRs.
+- Os **Casos de Uso** mostram onde essas decisões e restrições aparecem no comportamento do sistema.
+- Uma mesma baseline pode aparecer em mais de uma ADR quando diferentes decisões estruturais são necessárias para atendê-la.
+
+### Decisões em aberto por ADR
+
+| ADR | Decisão em aberto |
+|---|---|
+| ADR-001 | Biblioteca específica de componentes e CSS. |
+| ADR-002 | Mecanismo específico de sessão/autenticação. |
+| ADR-003 | Provedor LLM específico e eventual mecanismo assíncrono. |
+| ADR-004 | Tecnologias específicas de cada camada. |
+
 
 ---
 
