@@ -50,6 +50,7 @@ Permitir que a empresa ou recrutador cadastre e publique uma vaga em um catálog
 - RB-16
 - RB-27
 - RB-31
+- RB-31
 - RB-33
 
 ## Requisitos relacionados
