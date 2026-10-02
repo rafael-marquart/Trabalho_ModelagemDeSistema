@@ -43,20 +43,18 @@ Registrar e encaminhar a solicitação de recursos de acessibilidade ou de adequ
 
 ## Regras de negócio relacionadas
 
-- RB-35: Prazo mínimo para atendimento — solicitações com menos de 24 horas de antecedência podem ser avaliadas, mas dependem de aprovação do recrutador.
-- RB-36: Priorização de solicitações — dificuldades confirmadas e necessidades críticas podem ter prioridade na organização da etapa.
-- RB-37: Registro de resposta — o recrutador deve registrar aceite, recusa ou contraproposta, e a decisão deve gerar notificação ao candidato.
-- RB-38: Documentação obrigatória — em alguns casos, pode ser exigida documentação complementar para validar a necessidade da acomodação.
-- RB-39: Confidencialidade das solicitações — informações sensíveis sobre a necessidade de acessibilidade devem ser compartilhadas apenas com pessoas diretamente envolvidas no processo seletivo.
+- RB-23
+- RB-26
+- RB-27
+- RB-37
+- RB-40
 
 ## Requisitos relacionados
 
-- RF-29 — Formulário de solicitação de acomodação com campos padronizados e opcionais.
-- RF-30 — Visibilidade do pedido para o recrutador e gestão da análise da solicitação.
-- RF-31 — Notificações e rastreio do status da acomodação.
-- RF-32 — Registro de prazo de resposta e SLA interno do recrutador.
-- RF-33 — Upload de anexos e documentação complementar, quando exigido.
-- RF-34 — Controle de acesso para quem pode visualizar e responder à solicitação.
+- RF-29
+- RF-32
+- RF-33
+- RF-27
 
 ## Critérios de aceitação
 
