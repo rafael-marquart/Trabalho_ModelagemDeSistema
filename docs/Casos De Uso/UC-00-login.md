@@ -16,12 +16,6 @@ Permitir que o usuário acesse o sistema de forma segura e autenticada, validand
 - O usuário deve ter acesso à plataforma por meio de credenciais válidas.
 - O sistema deve estar disponível e operacional.
 
-## Pontos de Inclusão e Extensão
-
-- Inclusão (<<include>>): UC-01 (Gerenciar Perfil).
-- Inclusão (<<include>>): UC-02 (Buscar Vagas).
-- Extensão (<<extend>>): UC-03 (Candidatar-se a Vaga).
-
 ## Fluxo Principal
 
 1. O usuário acessa a página inicial da plataforma.
@@ -44,12 +38,14 @@ Permitir que o usuário acesse o sistema de forma segura e autenticada, validand
 - O usuário pode acessar as funcionalidades disponíveis conforme seu perfil.
 
 ## Regras de negócio relacionadas
-\n- RB-21: Segurança de autenticação — credenciais devem ser validadas antes de autorizar acesso.
+
+- RB-21: Segurança de autenticação — credenciais devem ser validadas antes de autorizar acesso.
 - RB-22: Controle de sessão — a sessão deve expirar ou invalidar conforme as condições definidas pelo sistema.
 - RB-12: Controle de acesso — operações protegidas devem respeitar o perfil autorizado.
 
 ## Requisitos relacionados
-\n- RF-01 — Autenticação.
+
+- RF-01 — Autenticação.
 - RF-02 — Recuperação de senha.
 - RF-03 — Perfis de acesso.
 
