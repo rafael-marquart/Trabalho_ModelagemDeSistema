@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Monitorar em tempo real a evolução de suas candidaturas, visualizar confirmações de acomodações solicitadas e acessar detalhes de agendamentos.
+Permitir ao candidato acompanhar suas candidaturas, etapas, status e decisões relacionadas às acomodações.
 
 ## Ator principal
 
@@ -10,51 +10,49 @@ Monitorar em tempo real a evolução de suas candidaturas, visualizar confirmaç
 
 ## Pré-condições
 
-- Candidato autenticado com pelo menos uma candidatura ativa.
-
-## Pontos de Inclusão e Extensão
-
-- Extensão (<<extend>>): FA01 (Cancelar Candidatura), FA02 (Visualizar Agendamento), EX01 (Alerta de Vaga Encerrada).
+- Candidato autenticado.
+- Existe candidatura registrada.
 
 ## Fluxo Principal
 
-1. O candidato acessa a área "Minhas Candidaturas".
-2. O sistema exibe o painel consolidado com a lista de vagas e a etapa atual de cada processo (Inscrito, Triagem, Entrevista Agendada, Finalizado).
-3. O candidato seleciona um item para visualizar a linha do tempo detalhada e o status do aceite da sua solicitação de acomodação (UC04).
+1. O candidato acessa “Minhas Candidaturas”.
+2. O sistema apresenta as candidaturas e o estado atual de cada processo.
+3. O candidato seleciona uma candidatura para consultar sua linha do tempo.
+4. O sistema apresenta alterações de status, decisões e informações de acomodação autorizadas.
+5. O sistema permite cancelar a candidatura quando as regras do processo permitirem.
 
-## Exceções e Fluxos Alternativos
+## Exceções
 
-- FA01 (Cancelar Candidatura): O candidato opta por desistir do processo seletivo, alterando o status da inscrição e liberando sua participação.
-- FA02 (Visualizar Detalhes do Agendamento): Quando o status for Entrevista Agendada, o candidato acessa local, horário e recursos confirmados (UC10).
-- EX01 (Vaga Cancelada pela Empresa): O sistema sinaliza quando uma oportunidade foi encerrada precocemente pela empresa.
+- EX01: vaga encerrada é apresentada com o novo status e impede novas ações incompatíveis.
+- EX02: candidatura cancelada permanece no histórico conforme as regras aplicáveis.
 
 ## Pós-condições
 
-- Status das candidaturas atualizado no painel do candidato.
-- Notificações geradas para o candidato sobre alterações críticas (cancelamento, reagendamento, resposta à solicitação de acomodação).
+- O candidato visualiza o estado atualizado de suas candidaturas.
+- Alterações relevantes permanecem registradas.
 
 ## Regras de negócio relacionadas
 
-- RB-23
-- RB-27
-- RB-36
-- RB-38
-- RB-39
-- RB-40
-- RB-42
+- RB-23 — Transparência de status.
+- RB-27 — Histórico de alterações.
+- RB-36 — Cancelamento de candidatura.
+- RB-38 — Estados do funil.
+- RB-39 — Transições válidas do funil.
+- RB-40 — Visibilidade das acomodações.
+- RB-41 — Auditoria das alterações.
+- RB-42 — Vaga encerrada.
 
 ## Requisitos relacionados
 
-- RF-11
-- RF-27
-- RF-31
-- RF-34
-- RF-33
+- RF-11 — Minhas candidaturas.
+- RF-27 — Notificações do processo seletivo.
+- RF-31 — Acompanhamento do processo seletivo.
+- RF-33 — Histórico das acomodações.
+- RF-34 — Cancelamento de candidatura.
 
 ## Critérios de aceitação
 
-- O candidato visualiza sua lista de candidaturas com o estado correto atualizado.
-- O candidato recebe notificação quando uma acomodação é aceita/recusada pelo recrutador.
-- Candidaturas canceladas pelo candidato são registradas e removidas/arquivadas do funil ativo conforme regras.
-
----
+- O candidato visualiza candidaturas e estados atualizados.
+- Alterações relevantes são comunicadas conforme as regras.
+- Cancelamento respeita as regras do processo.
+- Histórico permanece disponível para rastreabilidade.
