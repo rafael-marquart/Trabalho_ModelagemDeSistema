@@ -35,20 +35,16 @@ Mapear e declarar os recursos físicos, digitais, tecnológicos e organizacionai
 
 ## Regras de negócio relacionadas
 
-- RB-50: Evidência obrigatória — determinados itens (por ex., existência de acessos físicos básicos) podem exigir evidências quando marcados como presentes.
-- RB-51: Importação por filial — permitir reutilização de mapeamentos entre filiais com registro de autoria e data.
-- RB-52: Validação por auditoria — dados de infraestrutura podem ser auditados por equipe interna ou parceiros terceiros para garantir veracidade.
-- RB-53: Publicação de informações — informações básicas de acessibilidade devem ser exibidas nas páginas de vaga; detalhes sensíveis ficam restritos.
-- RB-54: Atualização periódica — empresas são solicitadas a revisar mapeamentos a cada período (ex.: 12 meses).
+- RB-08
+- RB-20
+- RB-27
+- RB-37
 
 ## Requisitos relacionados
 
-- RF-40 — Formulário de mapeamento de infraestrutura (campos padronizados por categoria e unidade).
-- RF-41 — Upload de evidências (armazenamento seguro de imagens/documentos com metadados).
-- RF-42 — Gestão de filiais/unidades (associação de mapeamentos a localidades específicas).
-- RF-43 — Auditoria e verificação (ferramentas para marcar verificado/pendente por equipe de auditoria).
-- RF-44 — Exposição pública (campos que aparecem na visualização da vaga e no perfil da empresa).
-- RF-45 — Histórico de mudanças (registro de alterações com usuário e timestamp).
+- RF-17
+- RF-18
+- RF-38
 
 ## Critérios de aceitação
 
