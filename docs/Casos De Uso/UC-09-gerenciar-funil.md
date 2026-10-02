@@ -39,7 +39,7 @@ Permitir que o recrutador acompanhe, avalie e gerencie candidaturas dentro do fu
 - O status da candidatura é atualizado no funil de seleção.
 - O histórico da movimentação fica registrado para auditoria.
 - O candidato recebe notificação sobre a decisão ou etapa atual.
-- A vaga permanece organizada e rastreável pelos gestores e recrutadores.
+- A vaga permanece organizada e rastreável pelo Recrutador autorizado.
 
 ## Regras de negócio relacionadas
 
