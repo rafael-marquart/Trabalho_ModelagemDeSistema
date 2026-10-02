@@ -44,19 +44,14 @@ Permitir que o usuário acesse o sistema de forma segura e autenticada, validand
 - O usuário pode acessar as funcionalidades disponíveis conforme seu perfil.
 
 ## Regras de negócio relacionadas
-
-- RB-19: Segurança de autenticação — credenciais devem ser validadas antes de autorizar acesso.
-- RB-20: Bloqueio por tentativas — múltiplas tentativas inválidas podem resultar em bloqueio temporário ou permanente.
-- RB-21: Sessão segura — a sessão deve expirar ou invalidar quando houver inatividade ou logout.
-- RB-22: Transparência de status — o sistema deve informar corretamente quando o acesso foi negado.
+\n- RB-21: Segurança de autenticação — credenciais devem ser validadas antes de autorizar acesso.
+- RB-22: Controle de sessão — a sessão deve expirar ou invalidar conforme as condições definidas pelo sistema.
+- RB-12: Controle de acesso — operações protegidas devem respeitar o perfil autorizado.
 
 ## Requisitos relacionados
-
-- RF-01 — Login e autenticação.
+\n- RF-01 — Autenticação.
 - RF-02 — Recuperação de senha.
-- RF-03 — Proteção contra brute force.
-- RF-04 — Sessão e controle de acesso.
-- RF-05 — Interface acessível.
+- RF-03 — Perfis de acesso.
 
 ## Critérios de aceitação
 
