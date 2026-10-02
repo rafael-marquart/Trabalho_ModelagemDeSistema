@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Permitir que o candidato e a empresa visualizem o estado atual de uma vaga, identificando se ela está aberta, encerrada, em análise, indisponível ou sem oportunidades compatíveis, de forma clara e acessível.
+Permitir que o candidato e a empresa visualizem o estado atual de uma vaga, identificando se ela está aberta, encerrada ou indisponível, de forma clara e acessível.
 
 ## Ator principal
 
@@ -23,14 +23,13 @@ Permitir que o candidato e a empresa visualizem o estado atual de uma vaga, iden
 
 1. O candidato acessa a lista de vagas ou o detalhe de uma oportunidade.
 2. O sistema consulta o status atual da vaga no catálogo e na regra de negócios aplicáveis.
-3. O sistema exibe o estado da vaga, como “Aberta”, “Em análise”, “Encerrada” ou “Sem vagas compatíveis”.
-4. Se a vaga estiver aberta e compatível, o candidato pode seguir para a candidatura ou visualização do detalhamento.
+3. O sistema exibe o estado da vaga, como “Aberta”, “Em análise” ou “Encerrada”.
+4. Se a vaga estiver aberta, o candidato pode consultar o detalhamento e, caso seja elegível, seguir para a candidatura.
 5. Se a vaga estiver encerrada ou indisponível, o sistema informa a condição e bloqueia ações incompatíveis.
 
 ## Exceções e Fluxos Alternativos
 
 - EX01 (Vaga encerrada): Se a vaga foi encerrada após a busca, o sistema mostra mensagem informativa e não permite candidatura.
-- EX02 (Sem vagas compatíveis): Se a busca não retorna resultados devido à trava crítica, o sistema informa que não há vagas elegíveis no momento.
 - EX03 (Status em atualização): Se a vaga estiver em processamento ou com alteração recente de dados, o sistema comunica que o status pode mudar em breve.
 
 ## Pós-condições
@@ -55,7 +54,6 @@ Permitir que o candidato e a empresa visualizem o estado atual de uma vaga, iden
 ## Critérios de aceitação
 
 - O sistema informa corretamente o estado atual da vaga.
-- Quando não houver vagas compatíveis, o candidato recebe mensagem clara sobre a ausência de oportunidade.
 - Vagas encerradas ou indisponíveis bloqueiam ações de candidatura.
 - O status é atualizado de forma consistente com o estado real da vaga.
 
