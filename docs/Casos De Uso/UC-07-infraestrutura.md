@@ -6,15 +6,11 @@ Mapear e declarar os recursos físicos, digitais, tecnológicos e organizacionai
 
 ## Ator principal
 
-- Recrutador / RH.
+- Recrutador.
 
 ## Pré-condições
 
 - Recrutador autenticado e vinculado a um perfil corporativo cadastrado.
-
-## Pontos de Inclusão e Extensão
-
-- Extensão (<<extend>>): FA01 (Importar por Filial), FA02 (Anexar Evidências/Fotos).
 
 ## Fluxo Principal
 
@@ -24,14 +20,11 @@ Mapear e declarar os recursos físicos, digitais, tecnológicos e organizacionai
 
 ## Exceções e Fluxos Alternativos
 
-- FA01 (Importar Mapeamento por Filial): O recrutador clona as configurações de acessibilidade de uma unidade existente para cadastrar uma nova sede.
-- FA02 (Anexar Evidências/Fotos): O recrutador anexa fotos/evidências que serão validadas internamente.
 - EX01 (Alerta de Campos Obrigatórios Pendentes): O sistema impede o salvamento caso os itens de infraestrutura básica não sejam respondidos.
 
 ## Pós-condições
 
 - Vetor de infraestrutura da empresa persistido e disponível para uso pelo motor de compatibilidade e para exibição nas vagas.
-- Evidências anexadas vinculadas ao perfil da filial/unidade.
 
 ## Regras de negócio relacionadas
 
@@ -50,8 +43,6 @@ Mapear e declarar os recursos físicos, digitais, tecnológicos e organizacionai
 
 - Recrutador consegue preencher e salvar o mapeamento por unidade.
 - Itens obrigatórios bloqueiam o salvamento quando pendentes.
-- Evidências anexadas são armazenadas com metadados e vinculadas ao mapeamento.
-- Mapeamentos podem ser importados entre filiais e recebem registro de autoria.
 
 ---
 
