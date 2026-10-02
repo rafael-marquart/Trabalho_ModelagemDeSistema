@@ -43,20 +43,19 @@ Validar a documentação e os requisitos exigidos para a etapa de seleção, gar
 
 ## Regras de negócio relacionadas
 
-- RB-26: Validação de documentos na candidatura — anexos exigidos na candidatura devem ser validados.
-- RB-37: Registro de resposta — respostas sobre acolhimento de acomodação devem ser registradas.
-- RB-41: Estados do funil — o sistema deve padronizar os estados e impedir transições inválidas.
-- RB-43: Auditoria de alterações — mudanças de status e validação devem ser registradas com usuário e timestamp.
-- RB-45: Confiança da seleção — somente candidatos com documentação validada podem ser avançados para etapas críticas.
+- RB-23
+- RB-27
+- RB-39
+- RB-40
+- RB-41
+- RB-43
 
 ## Requisitos relacionados
 
-- RF-19 — Upload seguro de documentos.
-- RF-26 — Registro de candidatura.
-- RF-27 — Notificações ao recrutador e candidato.
-- RF-30 — Visibilidade para recrutadores.
-- RF-31 — Notificações e rastreamento.
-- RF-40 — Controle de acesso para gestão do processo.
+- RF-30
+- RF-31
+- RF-35
+- RF-38
 
 ## Critérios de aceitação
 
