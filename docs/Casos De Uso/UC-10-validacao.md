@@ -1,8 +1,8 @@
-# UC-10 — Validar Documentação e Requisitos da Seleção
+# UC-10 — Validar Requisitos da Seleção
 
 ## Objetivo
 
-Validar a documentação e os requisitos exigidos para a etapa de seleção, garantindo que o candidato esteja apto para avançar no processo, que os documentos estejam corretos e que o recrutador possa tomar a decisão com base em informações consistentes.
+Validar os requisitos exigidos para a etapa de seleção, garantindo que o recrutador possa decidir sobre o avanço do candidato com base em informações consistentes.
 
 ## Ator principal
 
@@ -22,16 +22,16 @@ Validar a documentação e os requisitos exigidos para a etapa de seleção, gar
 ## Fluxo Principal
 
 1. O recrutador acessa a avaliação da candidatura ou da etapa de seleção.
-2. O sistema exibe os requisitos exigidos para a etapa, como documentos, formulários ou critérios de elegibilidade.
-3. O recrutador valida se o candidato enviou os itens esperados e se os dados estão completos e consistentes.
-4. O sistema verifica se há pendências, inconsistências ou ausência de documentos.
+2. O sistema exibe os requisitos exigidos para a etapa, como formulários, critérios de elegibilidade ou itens solicitados no processo.
+3. O recrutador valida se os requisitos esperados foram atendidos e se os dados estão completos e consistentes.
+4. O sistema verifica se há pendências ou inconsistências nos requisitos.
 5. O recrutador aprova, solicita complementação ou rejeita a candidatura conforme a validação.
 6. O sistema registra a decisão, atualiza o status e notifica o candidato.
 
 ## Exceções e Fluxos Alternativos
 
-- EX01 (Documentação incompleta): Se o candidato não enviou os documentos necessários, o sistema solicita a complementação e mantém a etapa em pendência.
-- EX02 (Documento inválido): Se o documento enviado não atender ao padrão esperado, o sistema identifica o problema e informa a correção necessária.
+- EX01 (Documentação incompleta): Se o candidato não atendeu aos requisitos necessários, o sistema solicita a complementação e mantém a etapa em pendência.
+- EX02 (Documento inválido): Se um item ou informação não atender ao padrão esperado, o sistema identifica o problema e informa a correção necessária.
 - EX03 (Solicitação de acomodação pendente): Se houver reclamação ou necessidade de acomodação em análise, a validação pode aguardar a decisão do recrutador antes de avançar a etapa.
 
 ## Pós-condições
@@ -59,7 +59,7 @@ Validar a documentação e os requisitos exigidos para a etapa de seleção, gar
 
 ## Critérios de aceitação
 
-- O recrutador consegue validar documentos e requisitos da etapa de seleção.
+- O recrutador consegue validar os requisitos da etapa de seleção.
 - O sistema sinaliza pendências e impedimentos de avanço quando necessário.
 - O candidato recebe o retorno da validação com status claro.
 - O histórico da decisão é mantido para rastreio e auditoria.
