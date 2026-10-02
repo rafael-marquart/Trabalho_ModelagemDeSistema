@@ -41,19 +41,16 @@ Permitir que o candidato e a empresa visualizem o estado atual de uma vaga, iden
 
 ## Regras de negócio relacionadas
 
-- RB-02: Trava de acessibilidade — barreiras incompatíveis tornam a vaga não elegível.
-- RB-06: Status da vaga — a vaga deve expressar corretamente seu estado atual.
-- RB-22: Transparência de status — o sistema deve informar ao usuário quando a vaga não está disponível.
-- RB-31: Transparência do resultado — resultados de compatibilidade devem ser explicados ao candidato.
-- RB-44: Notificação de vaga encerrada — quando a vaga for encerrada, candidatos ativos devem receber aviso.
+- RB-01
+- RB-13
+- RB-23
+- RB-42
 
 ## Requisitos relacionados
 
-- RF-10 — Visualização da vaga.
-- RF-06 — Busca e filtro.
-- RF-07 — Análise de compatibilidade.
-- RF-25 — Transparência de pontuação.
-- RF-27 — Notificações ao recrutador e candidato.
+- RF-10
+- RF-12
+- RF-27
 
 ## Critérios de aceitação
 
