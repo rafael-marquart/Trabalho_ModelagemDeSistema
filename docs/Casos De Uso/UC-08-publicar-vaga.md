@@ -44,20 +44,19 @@ Permitir que a empresa ou recrutador cadastre e publique uma vaga em um catálog
 
 ## Regras de negócio relacionadas
 
-- RB-14: Tratamento de erro — falhas na publicação não devem criar vagas inconsistentes.
-- RB-15: Publicação de vagas — somente usuários autorizados podem publicar oportunidades da organização.
-- RB-16: Validação de atributos da vaga — cargo, modalidade, localização, exigências e prazo devem ser validados antes da publicação.
-- RB-17: Transparência de requisitos — regras de acessibilidade e elegibilidade devem ser visíveis ao candidato antes da candidatura.
-- RB-18: Auditoria de publicação — registro da criação e do estado da vaga deve ser mantido com responsável e timestamp.
+- RB-01
+- RB-09
+- RB-13
+- RB-16
+- RB-27
+- RB-33
 
 ## Requisitos relacionados
 
-- RF-10 — Visualização da vaga.
-- RF-11 — Cadastro e edição de vagas.
-- RF-12 — Gestão de sessão e tokens.
-- RF-13 — Validação de dados da vaga.
-- RF-26 — Registro de candidatura.
-- RF-27 — Notificações ao recrutador e candidato.
+- RF-17
+- RF-18
+- RF-25
+- RF-38
 
 ## Critérios de aceitação
 
