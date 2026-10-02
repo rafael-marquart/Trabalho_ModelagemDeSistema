@@ -36,21 +36,16 @@ Registrar formalmente a candidatura em uma vaga elegível e disponibilizar o per
 - Histórico de candidaturas atualizado no perfil do candidato.
 
 ## Regras de negócio relacionadas
-
-- RB-01: Limite de candidaturas — política de limite (por dia ou por vaga) quando aplicável.
-- RB-09: Restrição de vaga incompatível — vagas incompatíveis não permitem candidatura através da trilha.
-- RB-26: Validação de documentos na candidatura — anexos exigidos na candidatura devem ser validados.
-- RB-33: Confirmação explícita — candidatura só é enviada após confirmação explícita do candidato.
-- RB-34: Privacidade de perfil — informações sensíveis do candidato só são enviadas ao recrutador mediante consentimento e conforme necessidade.
+\n- RB-01: Elegibilidade para candidatura — a candidatura depende da elegibilidade da vaga e do candidato.
+- RB-14: Uma candidatura ativa por vaga — o candidato não mantém mais de uma candidatura ativa para a mesma vaga.
+- RB-15: Barreira crítica prevalece sobre a pontuação — incompatibilidade crítica impede a candidatura independentemente do score.
+- RB-34: Candidatura somente em vaga elegível — vagas não elegíveis não permitem candidatura.
+- RB-35: Uma candidatura ativa por vaga — uma nova candidatura ativa duplicada deve ser impedida.
 
 ## Requisitos relacionados
-
-- RF-03 — Recuperação de senha (apenas se necessário no fluxo de candidatura enviado por usuário não logado — cenário raro).
-- RF-10 — Visualização da vaga (botões de candidatura e indicação de elegibilidade).
-- RF-26 — Registro de candidatura (persistência e associação com o funil de seleção).
-- RF-19 — Upload seguro de documentos (quando anexos são solicitados na candidatura).
-- RF-27 — Notificações ao recrutador e candidato (e-mail/SMS/alerta interno).
-- RF-28 — Prevenção de candidaturas duplicadas (verificação prévia).
+\n- RF-26 — Registro de candidatura.
+- RF-28 — Gestão da candidatura pelo candidato.
+- RF-27 — Notificações do processo seletivo.
 
 ## Critérios de aceitação
 
