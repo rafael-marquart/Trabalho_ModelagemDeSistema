@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Registrar e encaminhar a solicitação de recursos de acessibilidade ou de adequação de condições de participação em etapas seletivas, garantindo que o candidato possa participar de forma justa e acessível.
+Registrar e encaminhar solicitações de recursos de acessibilidade ou adequação de condições de participação em etapas seletivas.
 
 ## Ator principal
 
@@ -10,57 +10,49 @@ Registrar e encaminhar a solicitação de recursos de acessibilidade ou de adequ
 
 ## Pré-condições
 
-- O candidato deve estar autenticado no sistema.
-- O candidato deve estar em candidatura ativa em uma vaga ou em processo seletivo em andamento.
-- A etapa ou a seleção em que a acomodação será solicitada deve estar registrada no sistema.
-
-## Pontos de Inclusão e Extensão
-
-- Extensão (<<extend>>): UC-03 (Candidatar-se a Vaga).
-- Extensão (<<extend>>): UC-05 (Acompanhar Funil).
+- Candidato autenticado.
+- Candidatura ativa ou processo seletivo em andamento.
+- Etapa relacionada à solicitação registrada no processo.
 
 ## Fluxo Principal
 
-1. O candidato acessa a candidatura ou o painel de processo seletivo e seleciona a opção “Solicitar Acomodação”.
-2. O sistema exibe um formulário com opções de necessidades de acessibilidade e recursos solicitados (por exemplo: intérprete de LIBRAS, tempo extra, ambiente adequado, tecnologia assistiva, entre outros).
-3. O candidato descreve as necessidades específicas, informa a etapa afetada e, quando necessário, adiciona observações adicionais.
-4. O sistema valida os dados preenchidos e associa a solicitação à candidatura ou ao processo seletivo correspondente.
-5. O sistema registra a solicitação e informa ao candidato que a demanda foi enviada para análise do recrutador.
-6. O sistema notifica o recrutador responsável para que avalie a necessidade e responda.
+1. O candidato acessa a candidatura ou etapa e seleciona “Solicitar Acomodação”.
+2. O sistema apresenta opções de necessidades e recursos solicitados.
+3. O candidato descreve a necessidade e a etapa afetada.
+4. O sistema valida e associa a solicitação à candidatura.
+5. O sistema registra a solicitação e encaminha ao recrutador autorizado.
+6. O sistema notifica o recrutador e mantém o histórico da solicitação.
 
-## Exceções e Fluxos Alternativos
+## Exceções
 
-- EX01 (Solicitação fora do prazo mínimo): Se a solicitação for enviada com menos de 24 horas de antecedência da etapa, o sistema emite alerta informando que a viabilização depende da aprovação do recrutador.
-- EX02 (Campo obrigatório ausente): Se o candidato não preencher informações mínimas exigidas para a solicitação, o sistema bloqueia o envio e solicita correção.
-- EX03 (Acomodação não viável): Se a necessidade solicitada não puder ser atendida por limitações técnicas ou operacionais, o sistema registra a resposta do recrutador e a comunica ao candidato.
+- EX01: dados mínimos ausentes impedem o envio.
+- EX02: necessidade não atendida é registrada com a decisão do recrutador e comunicada ao candidato.
 
 ## Pós-condições
 
-- Solicitação registrada e vinculada à vaga ou ao processo seletivo.
-- Recrutador recebe a demanda para análise e resposta.
-- Histórico da solicitação e da decisão ficam disponíveis para auditoria e acompanhamento.
-- Candidato recebe atualização sobre a decisão e, quando necessário, pode ajustar a solicitação.
+- Solicitação registrada e vinculada à candidatura.
+- Recrutador recebe a demanda.
+- Histórico e decisão permanecem disponíveis para acompanhamento e auditoria.
 
 ## Regras de negócio relacionadas
 
-- RB-23
-- RB-26
-- RB-27
-- RB-37
-- RB-40
+- RB-23 — Transparência de status.
+- RB-26 — Confidencialidade das informações de acessibilidade.
+- RB-27 — Histórico de alterações.
+- RB-37 — Registro das decisões.
+- RB-40 — Visibilidade das acomodações.
+- RB-41 — Auditoria das alterações.
 
 ## Requisitos relacionados
 
-- RF-29
-- RF-32
-- RF-33
-- RF-27
+- RF-29 — Solicitação de acomodação.
+- RF-32 — Gestão das solicitações de acomodação.
+- RF-33 — Histórico das acomodações.
+- RF-27 — Notificações do processo seletivo.
 
 ## Critérios de aceitação
 
-- O candidato consegue solicitar uma acomodação vinculada à sua candidatura ou etapa seletiva.
-- O recrutador visualiza a solicitação e pode registrar uma resposta formal.
-- Solicitações tardias são sinalizadas com alerta e, se aprovadas, precisam de validação manual.
-- O sistema mantém histórico do pedido, da resposta e das alterações no status.
-
----
+- O candidato consegue solicitar acomodação vinculada à candidatura.
+- O recrutador autorizado visualiza e trata a solicitação.
+- O sistema mantém histórico do pedido e da decisão.
+- Informações da solicitação são visíveis somente aos usuários autorizados envolvidos.
