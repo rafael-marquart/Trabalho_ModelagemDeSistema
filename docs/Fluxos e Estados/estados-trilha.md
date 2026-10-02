@@ -42,3 +42,32 @@ O sistema informa o resultado e permite nova busca com filtros não obrigatório
 ## Requisitos relacionados
 
 - RF-05, RF-06, RF-07, RF-08, RF-09, RF-10, RF-24, RF-25.
+
+
+## Estados do funil de seleção
+
+Os estados padronizados do funil de seleção são:
+
+1. **Inscrito** — candidatura registrada para a vaga.
+2. **Triagem** — candidatura em avaliação inicial.
+3. **Entrevista** — candidato em etapa de entrevista.
+4. **Finalista** — candidato selecionado para a etapa final do processo.
+5. **Contratado** — decisão final de contratação registrada.
+6. **Recusado** — candidatura encerrada sem contratação.
+
+### Transições válidas
+
+- Inscrito → Triagem.
+- Triagem → Entrevista.
+- Triagem → Recusado.
+- Entrevista → Finalista.
+- Entrevista → Recusado.
+- Finalista → Contratado.
+- Finalista → Recusado.
+
+O sistema deve impedir transições que não estejam previstas nesse conjunto.
+
+## Regras relacionadas ao funil
+
+- RB-38 — Estados do funil.
+- RB-39 — Transições válidas do funil.
