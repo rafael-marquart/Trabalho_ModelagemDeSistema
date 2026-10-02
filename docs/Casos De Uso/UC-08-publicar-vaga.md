@@ -32,7 +32,7 @@ Permitir que a empresa ou recrutador cadastre e publique uma vaga em um catálog
 ## Exceções e Fluxos Alternativos
 
 - EX01 (Dados incompletos): Se a vaga estiver sem informações mínimas obrigatórias, o sistema bloqueia a publicação e aponta os campos pendentes.
-- EX02 (Vaga duplicada): Se a empresa tentar publicar uma vaga com dados equivalentes a outra já existente, o sistema sugere revisão ou bloqueia a criação.
+- EX02 (Inconsistência de dados): Se os dados da vaga apresentarem inconsistências, o sistema bloqueia a publicação até a correção.
 - EX03 (Publicação fora do prazo): Se a vaga for publicada com data de encerramento inválida ou anterior à data atual, o sistema rejeita a ação.
 
 ## Pós-condições
@@ -49,6 +49,7 @@ Permitir que a empresa ou recrutador cadastre e publique uma vaga em um catálog
 - RB-13
 - RB-16
 - RB-27
+- RB-31
 - RB-33
 
 ## Requisitos relacionados
