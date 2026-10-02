@@ -43,20 +43,24 @@ Permitir que o recrutador acompanhe, avalie e gerencie candidaturas dentro do fu
 
 ## Regras de negócio relacionadas
 
-- RB-37: Registro de resposta — recrutador deve registrar aceite, negativa ou contraproposta da solicitação de acomodação.
-- RB-41: Estados do funil — o sistema deve padronizar os estados e impedir transições inválidas.
-- RB-42: Visibilidade de acomodações — decisões sobre acomodação devem ser claramente exibidas no funil.
-- RB-43: Auditoria de alterações — mudanças de status devem ser versionadas com usuário e timestamp.
-- RB-44: Notificação de vaga encerrada — quando a vaga for encerrada, candidatos ativos devem receber aviso do encerramento.
+- RB-23
+- RB-27
+- RB-37
+- RB-38
+- RB-39
+- RB-40
+- RB-41
+- RB-42
+- RB-43
 
 ## Requisitos relacionados
 
-- RF-26 — Registro de candidatura.
-- RF-27 — Notificações ao recrutador e candidato.
-- RF-30 — Visibilidade para recrutadores.
-- RF-31 — Notificações e rastreamento.
-- RF-35 — Cancelamento de candidatura.
-- RF-40 — Controle de acesso para gestão do funil.
+- RF-20
+- RF-30
+- RF-32
+- RF-35
+- RF-38
+- RF-40
 
 ## Critérios de aceitação
 
