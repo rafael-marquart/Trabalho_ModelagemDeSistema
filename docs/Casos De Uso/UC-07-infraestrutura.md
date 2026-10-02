@@ -41,11 +41,5 @@ Mapear e declarar os recursos físicos, digitais, tecnológicos e organizacionai
 
 ## Critérios de aceitação
 
-- Recrutador consegue preencher e salvar o mapeamento por unidade.
+- Recrutador consegue preencher e salvar o mapeamento de infraestrutura da empresa.
 - Itens obrigatórios bloqueiam o salvamento quando pendentes.
-
----
-
-## Observação
-
-Posso criar este arquivo em `docs/casos-de-uso/UC-05-07-funil-infra.md` no repositório e abrir um pull request caso deseje revisão antes do merge.
