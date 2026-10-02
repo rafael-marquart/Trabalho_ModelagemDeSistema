@@ -21,12 +21,11 @@ Permitir que o candidato reporte uma vaga que seja inadequada, incompatível ou 
 
 ## Fluxo Principal
 
-1. O candidato acessa a vaga ou o resultado de busca e seleciona a opção “Denunciar incompatibilidade”.
-2. O sistema exibe um formulário para registrar a razão da denúncia, como barreiras de acessibilidade, requisitos incompatíveis, ausência de recursos esperados ou inconsistência com o perfil informado.
-3. O candidato descreve o problema e, se necessário, anexa evidências ou observações complementares.
-4. O sistema valida os dados da denúncia e registra o relato com data, usuário e vaga relacionada.
-5. O sistema encaminha a denúncia para a equipe responsável por revisão da vaga ou do catálogo.
-6. O sistema informa ao candidato que a denúncia foi registrada e que a situação será analisada.
+1. O usuário registra uma denúncia de incompatibilidade.
+2. O sistema registra a denúncia e a encaminha ao Administrador.
+3. O Administrador analisa a denúncia e os dados disponíveis.
+4. O Administrador registra a decisão da apuração.
+5. Eventual bloqueio, correção ou alteração de nota ocorre somente conforme a decisão administrativa e as regras aplicáveis.
 
 ## Exceções e Fluxos Alternativos
 
@@ -43,20 +42,19 @@ Permitir que o candidato reporte uma vaga que seja inadequada, incompatível ou 
 
 ## Regras de negócio relacionadas
 
-- RB-02: Trava de acessibilidade — barreiras incompatíveis tornam a vaga não elegível.
-- RB-06: Status da vaga — a vaga deve manter status consistente após revisão.
-- RB-22: Transparência de status — o usuário deve receber retorno claro sobre a disponibilidade da vaga.
-- RB-23: Denúncia e apuração — ocorrências de incompatibilidade devem ser registradas para análise interna.
-- RB-24: Proteção contra abuso — denúncias repetidas ou falsas podem ser rastreadas e limitar novas submissões.
+- RB-20
+- RB-24
+- RB-25
+- RB-37
+- RB-44
+- RB-45
 
 ## Requisitos relacionados
 
-- RF-06 — Busca e filtro.
-- RF-07 — Análise de compatibilidade.
-- RF-10 — Visualização da vaga.
-- RF-25 — Transparência de pontuação.
-- RF-38 — Registro de logs e auditoria.
-- RF-39 — Tratamento de erros e relatórios de inconsistências.
+- RF-14
+- RF-22
+- RF-38
+- RF-39
 
 ## Critérios de aceitação
 
