@@ -338,7 +338,7 @@ A rastreabilidade dos Drivers deve permitir seguir a cadeia:
 
 | Driver | RF | RNF | RB | Casos de Uso | ADR | Decisão Técnica |
 |---|---|---|---|---|---|---|
-| DA-01 | RF-16 | RNF-01, RNF-02, RNF-04 | — | UC-01, UC-02, UC-03, UC-16 | ADR-001 | DT-01 |
+| DA-01 | RF-16 | RNF-01, RNF-02, RNF-04 | — | UC-01, UC-02, UC-03 | ADR-001 | DT-01 |
 | DA-02 | RF-01, RF-02, RF-03, RF-40 | RNF-07, RNF-08 | RB-12, RB-21, RB-22 | UC-00, UC-09, UC-10, UC-14 | ADR-002, ADR-004 | DT-02, DT-08 |
 | DA-03 | RF-07, RF-08, RF-09 | — | RB-02, RB-06, RB-15 | UC-02, UC-03, UC-13 | ADR-004 | DT-03, DT-08 |
 | DA-04 | RF-07, RF-08, RF-09, RF-24, RF-25 | RNF-10, RNF-15 | RB-03, RB-04, RB-05, RB-07, RB-15, RB-16, RB-30 | UC-02, UC-13 | ADR-004 | DT-04, DT-08 |
