@@ -49,8 +49,6 @@ Permitir que a empresa ou recrutador cadastre e publique uma vaga em um catálog
 - RB-13
 - RB-16
 - RB-27
-- RB-31
-- RB-31
 - RB-33
 
 ## Requisitos relacionados
@@ -66,5 +64,3 @@ Permitir que a empresa ou recrutador cadastre e publique uma vaga em um catálog
 - A vaga só é exibida para candidatos quando os dados obrigatórios estão consistentes.
 - A publicação é registrada com histórico e responsável.
 - A empresa consegue acompanhar candidaturas após a publicação da vaga.
-
----
