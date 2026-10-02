@@ -18,9 +18,11 @@ Avaliar a experiência da entrevista quanto ao cumprimento dos recursos de acess
 
 ## Fluxo Principal
 
-1. Após a data do evento seletivo, o candidato recebe notificação e clica em "Avaliar Entrevista".
-2. O candidato responde ao checklist sobre cumprimento dos recursos solicitados (UC04) e atitude dos entrevistadores.
-3. O sistema grava os dados e atualiza a média de pontuação de acessibilidade da empresa.
+1. O candidato registra uma avaliação sobre o processo seletivo.
+2. O sistema registra a avaliação e preserva os dados necessários à moderação.
+3. Quando houver denúncia ou indício de abuso, o registro segue para análise administrativa.
+4. O Administrador analisa a ocorrência e registra a decisão.
+5. Qualquer alteração de nota ou efeito de moderação ocorre somente após a decisão administrativa.
 
 ## Exceções e Fluxos Alternativos
 
@@ -35,19 +37,21 @@ Avaliar a experiência da entrevista quanto ao cumprimento dos recursos de acess
 
 ## Regras de negócio relacionadas
 
-- RB-45: Avaliação anônima opcional — permitir avaliações anônimas mantendo integridade dos dados para prevenção de abuso.
-- RB-46: Prazo de avaliação — avaliações só podem ser submetidas até 30 dias após a entrevista.
-- RB-47: Impacto na reputação — pontuação agregada de acessibilidade influencia métricas públicas/privadas da empresa (conforme política de transparência).
-- RB-48: Triagem de denúncias — denúncias abertas por avaliações devem seguir um fluxo de moderação com evidências antes de ações punitivas.
-- RB-49: Confidencialidade — conteúdo da avaliação só é visível ao nível adequado (anônimo à empresa quando necessário, detalhado para moderadores internos).
+- RB-19
+- RB-20
+- RB-24
+- RB-25
+- RB-37
+- RB-44
+- RB-45
 
 ## Requisitos relacionados
 
-- RF-36 — Formulário de avaliação pós-entrevista (questões padronizadas e escala de avaliação).
-- RF-37 — Anonimização de respostas (opção para enviar sem identificar o candidato ao recrutador).
-- RF-11 — Autenticação em Dois Fatores (para verificações em casos de disputas/denúncias críticas).
-- RF-38 — Fluxo de moderação (ferramentas para analisar denúncias e tomar ações).
-- RF-39 — Métricas e dashboard (visualização agregada das avaliações por empresa/unidade).
+- RF-21
+- RF-13
+- RF-14
+- RF-22
+- RF-38
 
 ## Critérios de aceitação
 
