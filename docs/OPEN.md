@@ -1,8 +1,5 @@
 # Questões em Aberto
 
-## OPEN-01 — Consolidação da baseline
-
-A baseline funcional e arquitetural foi revisada conforme as decisões registradas no projeto. Permanecem em aberto apenas decisões técnicas ou de modelagem que ainda não possuem fundamento suficiente nos requisitos, regras de negócio, drivers ou ADRs.
 
 ## OPEN-02 — Representação de usuário e recrutador no modelo conceitual
 
