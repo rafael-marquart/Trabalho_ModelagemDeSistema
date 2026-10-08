@@ -1,7 +1,7 @@
-# UC-14 — Ingerir Dados em JSON e Gerenciar Selos
+# UC-14 — Ingerir Dados em JSON
 
 ## Objetivo
-Importar dados estruturados de fontes autorizadas, especialmente vagas externas, com validação, normalização, deduplicação e rastreabilidade, e permitir ao administrador gerenciar os selos da plataforma conforme os critérios definidos.
+Importar dados estruturados de fontes autorizadas, especialmente vagas externas, com validação, normalização, deduplicação e rastreabilidade.
 
 ## Ator principal
 - Administrador do sistema.
@@ -14,10 +14,7 @@ Importar dados estruturados de fontes autorizadas, especialmente vagas externas,
 5. Dados extraídos por LLM passam pela validação antes do uso.
 6. Sistema registra origem e resultado da importação.
 7. Sistema persiste registros válidos sem comprometer dados válidos existentes.
-8. Administrador acessa a gestão de selos.
-9. Sistema apresenta os selos e os critérios aplicáveis.
-10. Administrador concede, atualiza ou remove um selo conforme os critérios da plataforma.
-11. Sistema valida a autorização da operação e registra a alteração para rastreabilidade.
+
 
 ## Regras de negócio relacionadas
 - RB-10
@@ -32,7 +29,6 @@ Importar dados estruturados de fontes autorizadas, especialmente vagas externas,
 
 ## Requisitos relacionados
 - RF-05
-- RF-15
 - RF-36
 - RF-37
 - RF-38
@@ -45,5 +41,3 @@ Importar dados estruturados de fontes autorizadas, especialmente vagas externas,
 - Duplicados não geram duplicidade.
 - Dados de LLM somente são usados após validação.
 - Origem e resultado ficam registrados.
-- Somente administrador autorizado consegue conceder, atualizar ou remover selos.
-- Alterações de selos ficam registradas para rastreabilidade.
