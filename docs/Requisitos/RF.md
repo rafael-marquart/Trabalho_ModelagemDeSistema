@@ -42,9 +42,6 @@ O sistema calcula e exibe avaliação pública de acessibilidade da empresa com 
 ### RF-14 Denúncia de incompatibilidade
 O sistema permite registrar denúncias sobre divergências de acessibilidade ou incompatibilidade.
 
-### RF-15 Gestão de selos
-O sistema permite ao administrador conceder, atualizar ou remover selos conforme os critérios da plataforma.
-
 ### RF-16 Recursos de acessibilidade
 O sistema oferece leitores de tela, navegação por teclado, alto contraste e comandos de voz.
 
