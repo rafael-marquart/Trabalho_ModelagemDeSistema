@@ -130,3 +130,5 @@ Denúncia não altera automaticamente nota nem bloqueia vaga; exige análise adm
 Após análise, a denúncia pode resultar em alteração conforme decisão registrada e regras da plataforma.
 
 > RB-35 foi removida por duplicidade com RB-14.
+### RB-46 Cadastro de recrutador pela empresa
+Somente uma empresa autenticada pode cadastrar ou vincular um usuário ao perfil de Recrutador dentro das configurações da própria empresa. O recrutador deve permanecer vinculado à empresa que o cadastrou.
