@@ -4,7 +4,7 @@
 Os RFs abaixo mantêm o escopo definido em RF.md e são expressos em formato EARS.
 
 ### RF-01 Autenticação
-WHEN um usuário solicitar acesso, THE SYSTEM SHALL validar suas credenciais e iniciar uma sessão autorizada.
+WHEN um usuário ou empresa solicitar acesso, THE SYSTEM SHALL validar suas credenciais e iniciar uma sessão autorizada.
 ### RF-02 Recuperação de senha
 WHEN um usuário solicitar recuperação de senha, THE SYSTEM SHALL disponibilizar o fluxo de redefinição por e-mail.
 ### RF-03 Perfis de acesso
@@ -34,7 +34,7 @@ WHEN um candidato identificar divergência de acessibilidade, THE SYSTEM SHALL p
 ### RF-16 Recursos de acessibilidade
 WHILE o usuário utilizar a plataforma, THE SYSTEM SHALL disponibilizar os recursos de acessibilidade definidos.
 ### RF-17 Cadastro de empresa
-WHEN uma empresa for cadastrada, THE SYSTEM SHALL permitir registrar sua entidade organizacional e associar usuários com perfil de recrutador.
+WHEN uma empresa for cadastrada, THE SYSTEM SHALL permitir registrar sua conta organizacional e, nas configurações da empresa, cadastrar usuários com perfil de Recrutador e vinculá-los à própria empresa.
 ### RF-18 Gestão de vagas
 WHEN um recrutador autorizado gerenciar uma vaga, THE SYSTEM SHALL permitir cadastrar, editar, publicar e gerenciar a vaga vinculada à empresa.
 ### RF-19 Gestão do perfil e necessidades de acessibilidade
