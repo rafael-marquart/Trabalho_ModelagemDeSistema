@@ -35,7 +35,7 @@ indicador coletivo de confiabilidade, autenticando a infraestrutura prometida pe
 - Candidato PCD: Profissionais com deficiências físicas, auditivas, visuais ou neurodivergências que buscam confiança, inclusão e
 acessibilidade em processos de recrutamento;
 - Recrutador/Empresa: Equipes de RH que almejam encontrar novos talentos, garantindo a manutenção da inclusão;
-- Administrador: Responsáveis por moderar denúncias de incompatibilidade, gerenciar selos de acessibilidade e manter a integridade
+- Administrador: Responsáveis por moderar denúncias de incompatibilidade, manter a integridade
 dos dados na plataforma.
 
 7) Escopo:
