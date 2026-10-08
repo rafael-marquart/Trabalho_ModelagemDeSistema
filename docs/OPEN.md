@@ -9,13 +9,6 @@ A baseline funcional define que a **Empresa** é uma entidade organizacional ass
 
 **Impacto:** SPEC-001, SPEC-004, SPEC-006, SPEC-013 e SPEC-015.
 
-## OPEN-03 — Representação de selo de acessibilidade no modelo conceitual
-
-RF-15 e UC-14 definem a gestão de **selos de acessibilidade**, incluindo concessão, atualização e remoção por Administrador. Entretanto, o modelo conceitual atual não apresenta uma entidade **SELO**, seus atributos ou seus relacionamentos.
-
-**Decisão necessária:** definir a entidade SELO e sua relação com a empresa e/ou demais dados que sustentam os critérios de concessão.
-
-**Impacto:** SPEC-023 e, conforme a decisão, as capacidades de consulta e transparência de acessibilidade.
 
 ## Decisões consolidadas
 
