@@ -97,7 +97,7 @@ As Specs que dependem dessas definições registram explicitamente essas questõ
 | **Objetivo** | Permitir que recrutadores autorizados cadastrem, editem, publiquem e gerenciem vagas próprias da empresa. |
 | **Valor** | Disponibiliza vagas internas com informações necessárias para busca, transparência e compatibilidade. |
 | **RF** | RF-18, RF-25 |
-| **RB** | RB-01, RB-09, RB-13, RB-16, RB-27 |
+| **RB** | RB-01, RB-13, RB-16, RB-27 |
 | **RNF** | RNF-07, RNF-09, RNF-14 |
 | **UC / fluxo** | UC-08 — Publicar Vaga |
 | **Entidades** | EMPRESA, VAGA, TRAVA_CRITICA_VAGA, INFRAESTRUTURA_EMPRESA |
