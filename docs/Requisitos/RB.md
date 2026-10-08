@@ -24,9 +24,6 @@ O cálculo considera escolaridade, formação, competências e idiomas exigidos.
 ### RB-08 Divergências recorrentes
 Divergências recorrentes entre acessibilidade declarada e experiência podem permitir alteração após análise administrativa.
 
-### RB-09 Selos de acessibilidade
-Selos são concedidos somente conforme os critérios da plataforma.
-
 ### RB-10 Vagas externas
 Vagas externas devem ser identificadas e estruturadas antes do uso.
 
