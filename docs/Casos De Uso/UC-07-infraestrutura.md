@@ -2,21 +2,23 @@
 
 ## Objetivo
 
-Mapear e declarar os recursos físicos, digitais, tecnológicos e organizacionais de acessibilidade presentes na empresa.
+Permitir à empresa manter suas informações de acessibilidade e administrar os recrutadores vinculados à sua conta.
 
 ## Ator principal
 
-- Recrutador.
+- Empresa.
 
 ## Pré-condições
 
-- Recrutador autenticado e vinculado a um perfil corporativo cadastrado.
+- A empresa deve estar autenticada e possuir uma conta corporativa cadastrada.
 
 ## Fluxo Principal
 
-1. O recrutador acessa "Perfil da Empresa" -> "Mapeamento de Infraestrutura".
-2. O recrutador preenche o questionário estruturado sobre a presença de rampas, elevadores, banheiros adaptados, leitores de tela, sinalização e políticas inclusivas.
-3. O sistema valida as informações e grava o vetor de infraestrutura da empresa no banco de dados.
+1. A empresa acessa "Configurações da Empresa".
+2. A empresa pode acessar o "Mapeamento de Infraestrutura" e preencher o questionário estruturado sobre a presença de rampas, elevadores, banheiros adaptados, leitores de tela, sinalização e políticas inclusivas.
+3. A empresa pode acessar a seção "Recrutadores" para cadastrar um novo recrutador.
+4. A empresa informa os dados necessários do recrutador e o sistema cria ou associa uma conta de usuário com perfil de Recrutador à empresa.
+5. O sistema valida as informações e registra o vínculo do recrutador com a empresa.
 
 ## Exceções e Fluxos Alternativos
 
@@ -29,6 +31,7 @@ Mapear e declarar os recursos físicos, digitais, tecnológicos e organizacionai
 ## Regras de negócio relacionadas
 
 - RB-08
+- RB-46
 - RB-20
 - RB-27
 - RB-37
@@ -41,5 +44,7 @@ Mapear e declarar os recursos físicos, digitais, tecnológicos e organizacionai
 
 ## Critérios de aceitação
 
-- Recrutador consegue preencher e salvar o mapeamento de infraestrutura da empresa.
+- A empresa consegue preencher e salvar o mapeamento de infraestrutura.
+- A empresa consegue cadastrar recrutadores pela área de configurações.
+- O recrutador cadastrado fica vinculado à empresa responsável.
 - Itens obrigatórios bloqueiam o salvamento quando pendentes.
