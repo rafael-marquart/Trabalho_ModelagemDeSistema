@@ -440,7 +440,6 @@ As ADRs não originam Specs técnicas independentes:
 
 ## 7. Questões em aberto
 
-- **OPEN-02:** representação de USUÁRIO/RECRUTADOR no modelo conceitual.
 
 Nenhuma dessas lacunas foi resolvida silenciosamente neste mapa.
 
