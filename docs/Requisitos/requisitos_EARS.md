@@ -31,8 +31,6 @@ WHEN ocorrer alteração relevante em vaga, candidatura ou etapa, THE SYSTEM SHA
 WHEN houver dados válidos para avaliação, THE SYSTEM SHALL calcular e exibir a nota pública de acessibilidade da empresa.
 ### RF-14 Denúncia de incompatibilidade
 WHEN um candidato identificar divergência de acessibilidade, THE SYSTEM SHALL permitir o registro de denúncia vinculada à vaga ou empresa.
-### RF-15 Gestão de selos
-WHEN um administrador gerenciar selos, THE SYSTEM SHALL permitir conceder, atualizar ou remover selos conforme os critérios da plataforma.
 ### RF-16 Recursos de acessibilidade
 WHILE o usuário utilizar a plataforma, THE SYSTEM SHALL disponibilizar os recursos de acessibilidade definidos.
 ### RF-17 Cadastro de empresa
