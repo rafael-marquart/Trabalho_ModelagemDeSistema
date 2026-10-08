@@ -8,14 +8,6 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 
 > **Importante:** este arquivo é somente o mapa. O conteúdo completo de cada Spec, código, banco, endpoints ou contratos técnicos detalhados não faz parte desta etapa.
 
-## 2. Questões em aberto que afetam o mapa
-
-A baseline possui duas lacunas de modelagem que não foram resolvidas silenciosamente:
-
-- **OPEN-02:** a baseline funcional define usuários com perfil de Recrutador associados à Empresa, mas o modelo conceitual não possui uma entidade explícita para usuário/recrutador.
-- **OPEN-03:** RF-15 e UC-14 definem gestão de selos, mas o modelo conceitual não possui uma entidade **SELO**.
-
-As Specs que dependem dessas definições registram explicitamente essas questões.
 
 ---
 
@@ -26,17 +18,17 @@ As Specs que dependem dessas definições registram explicitamente essas questõ
 | Campo | Conteúdo |
 |---|---|
 | **ID** | SPEC-001 |
-| **Objetivo** | Permitir cadastro, autenticação, recuperação de senha, aplicação das permissões correspondentes aos perfis de acesso e, para o perfil de Recrutador, o cadastro/associação da Empresa responsável pela atuação na plataforma. |
+| **Objetivo** | Permitir cadastro e autenticação de usuários e empresas, recuperação de senha, aplicação das permissões correspondentes aos perfis de acesso e, para o perfil de Recrutador, permitir que uma Empresa o cadastre e mantenha seu vínculo organizacional. |
 | **Valor** | Estabelece a identidade, a autorização e o vínculo organizacional necessários para que candidatos, recrutadores e administradores acessem as capacidades correspondentes. |
 | **RF** | RF-01, RF-02, RF-03, RF-17, RF-40 |
 | **RB** | RB-12, RB-21, RB-22, RB-27 |
 | **RNF** | RNF-07, RNF-08, RNF-09, RNF-14 |
 | **UC / fluxo** | UC-00 — Login; UC-07 — Infraestrutura / gestão da empresa |
-| **Entidades** | CANDIDATO, ADMINISTRADOR, EMPRESA; associação de USUÁRIO/RECRUTADOR depende de OPEN-02. |
+| **Entidades** | USUARIO, CANDIDATO, ADMINISTRADOR, EMPRESA e RECRUTADOR como perfil de USUARIO vinculado à EMPRESA. |
 | **Drivers** | DA-02 |
 | **ADRs** | ADR-002, ADR-004 |
 | **Dependências** | Nenhuma. |
-| **Justificativa da ordem** | A entrada na plataforma e a identificação do perfil organizacional formam uma capacidade inicial única: primeiro o usuário é autenticado e autorizado e, quando aplicável, estabelece seu vínculo com a Empresa. As capacidades posteriores dependem dessa identidade e autorização. |
+| **Justificativa da ordem** | A entrada na plataforma estabelece a identidade e autorização. Contas de usuário e empresa são criadas pelos respectivos fluxos, enquanto o perfil de Recrutador somente é atribuído dentro das configurações de uma Empresa. As capacidades posteriores dependem dessa identidade, autorização e vínculo organizacional. |
 
 ### SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato
 
@@ -83,7 +75,7 @@ As Specs que dependem dessas definições registram explicitamente essas questõ
 | **RB** | RB-08, RB-20, RB-27, RB-37 |
 | **RNF** | RNF-09, RNF-14 |
 | **UC / fluxo** | UC-07 — Infraestrutura |
-| **Entidades** | EMPRESA, INFRAESTRUTURA_EMPRESA |
+| **Entidades** | EMPRESA, USUARIO/RECRUTADOR, INFRAESTRUTURA_EMPRESA |
 | **Drivers** | DA-01, DA-04, DA-07 |
 | **ADRs** | ADR-001, ADR-004 |
 | **Dependências** | SPEC-001. |
@@ -219,7 +211,7 @@ As Specs que dependem dessas definições registram explicitamente essas questõ
 | **RB** | RB-23, RB-27, RB-37, RB-38, RB-39, RB-40, RB-41, RB-42, RB-43 |
 | **RNF** | RNF-07, RNF-09, RNF-14, RNF-15 |
 | **UC / fluxo** | UC-09 — Gerenciar Funil; estados e transições definidos em docs/Fluxos e Estados/estados-trilha.md. |
-| **Entidades** | CANDIDATURA, VAGA, ENTREVISTA; RECRUTADOR/USUÁRIO depende de OPEN-02. |
+| **Entidades** | CANDIDATURA, VAGA, ENTREVISTA, USUARIO/RECRUTADOR vinculado à EMPRESA. |
 | **Drivers** | DA-02, DA-07 |
 | **ADRs** | ADR-002, ADR-004 |
 | **Dependências** | SPEC-001, SPEC-004, SPEC-010. |
@@ -253,7 +245,7 @@ As Specs que dependem dessas definições registram explicitamente essas questõ
 | **RB** | RB-23, RB-27, RB-37, RB-40, RB-41 |
 | **RNF** | RNF-08, RNF-09, RNF-14 |
 | **UC / fluxo** | UC-04 — Acomodação; UC-09 — Gerenciar Funil |
-| **Entidades** | SOLICITACAO_ACOMODACAO, CANDIDATURA; RECRUTADOR/USUÁRIO depende de OPEN-02. |
+| **Entidades** | SOLICITACAO_ACOMODACAO, CANDIDATURA, USUARIO/RECRUTADOR vinculado à EMPRESA. |
 | **Drivers** | DA-02, DA-07 |
 | **ADRs** | ADR-002, ADR-004 |
 | **Dependências** | SPEC-012, SPEC-013. |
