@@ -378,22 +378,6 @@ As Specs que dependem dessas definições registram explicitamente essas questõ
 | **Dependências** | SPEC-005, SPEC-006, SPEC-010, SPEC-012. |
 | **Justificativa da ordem** | O status precisa refletir o estado real de vagas e processos já cadastrados para ser usado na elegibilidade e comunicação ao candidato. |
 
-### SPEC-022 — Gerenciar selos de acessibilidade
-
-| Campo | Conteúdo |
-|---|---|
-| **ID** | SPEC-022 |
-| **Objetivo** | Permitir ao Administrador conceder, atualizar e remover selos de acessibilidade conforme os critérios definidos pela plataforma, registrando as alterações. |
-| **Valor** | Formaliza sinais públicos de acessibilidade baseados em critérios administrados pela plataforma. |
-| **RF** | RF-15 |
-| **RB** | RB-09, RB-27, RB-37 |
-| **RNF** | RNF-07, RNF-09, RNF-14 |
-| **UC / fluxo** | UC-14 — Ingestão de JSON e Gestão de Selos |
-| **Entidades** | ADMINISTRADOR; entidade SELO ausente no modelo conceitual — OPEN-03. |
-| **Drivers** | DA-02, DA-07 |
-| **ADRs** | ADR-002, ADR-004 |
-| **Dependências** | SPEC-001, SPEC-004, SPEC-005, SPEC-017, SPEC-019, SPEC-020. |
-| **Justificativa da ordem** | A gestão de selos depende da autorização administrativa e pode utilizar informações de acessibilidade já registradas e avaliadas. A lacuna de modelagem de SELO deve ser resolvida antes da Spec individual. |
 
 ---
 
@@ -418,7 +402,6 @@ A ordem proposta é:
 → **SPEC-019**
 → **SPEC-020**
 → **SPEC-021**
-→ **SPEC-022**
 
 A ordem não significa que cada Spec precise ser implementada de forma estritamente serial quando não houver dependência direta; ela representa uma **ordem de implementação e validação orientada pelas dependências funcionais e arquiteturais**.
 
@@ -448,7 +431,6 @@ As ADRs não originam Specs técnicas independentes:
 ## 7. Questões em aberto
 
 - **OPEN-02:** representação de USUÁRIO/RECRUTADOR no modelo conceitual.
-- **OPEN-03:** representação da entidade SELO e seus relacionamentos no modelo conceitual.
 
 Nenhuma dessas lacunas foi resolvida silenciosamente neste mapa.
 
