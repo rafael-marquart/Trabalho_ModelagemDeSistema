@@ -3,7 +3,7 @@
 ## Atores principais
 
 - Candidato PcD.
-- Recrutador, associado a uma Empresa.
+- Usuário com perfil de Recrutador, vinculado a uma Empresa.
 - Administrador do sistema.
 
 ## Visão geral
