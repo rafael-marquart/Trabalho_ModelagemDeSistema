@@ -45,7 +45,6 @@ Permitir que a empresa ou recrutador cadastre e publique uma vaga em um catálog
 ## Regras de negócio relacionadas
 
 - RB-01
-- RB-09
 - RB-13
 - RB-16
 - RB-27
