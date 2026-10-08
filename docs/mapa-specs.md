@@ -381,6 +381,23 @@ As Specs que dependem dessas definições registram explicitamente essas questõ
 
 ---
 
+### SPEC-022 — Ingerir dados externos
+
+| Campo | Conteúdo |
+|---|---|
+| **ID** | SPEC-022 |
+| **Objetivo** | Permitir a ingestão de dados estruturados provenientes de fontes externas, especialmente vagas, realizando validação, normalização, deduplicação e registro da origem antes da disponibilização para uso na plataforma. |
+| **Valor** | Integra fontes externas ao AcessaVagas de forma controlada, reduzindo inconsistências e preservando a rastreabilidade dos dados importados. |
+| **RF** | RF-05, RF-36, RF-37, RF-38, RF-39 |
+| **RB** | RB-10, RB-11, RB-17, RB-18, RB-31, RB-32, RB-33, RB-37, RB-41 |
+| **RNF** | RNF-07, RNF-09, RNF-14, RNF-16 |
+| **UC / fluxo** | UC-14 — Ingerir Dados em JSON |
+| **Entidades** | VAGA e dados estruturados de origem externa; detalhes de integração dependem da implementação técnica. |
+| **Drivers** | DA-02, DA-07 |
+| **ADRs** | ADR-002, ADR-003, ADR-004 |
+| **Dependências** | SPEC-001, SPEC-004, SPEC-005, SPEC-019, SPEC-020, SPEC-021. |
+| **Justificativa da ordem** | A ingestão externa depende de identidade/autorização, estrutura de vagas e capacidades de validação e auditoria. Os dados importados devem estar normalizados e validados antes de serem utilizados pelas demais capacidades da plataforma. |
+
 ## 4. Dependências resumidas
 
 A ordem proposta é:
@@ -402,6 +419,7 @@ A ordem proposta é:
 → **SPEC-019**
 → **SPEC-020**
 → **SPEC-021**
+→ **SPEC-022**
 
 A ordem não significa que cada Spec precise ser implementada de forma estritamente serial quando não houver dependência direta; ela representa uma **ordem de implementação e validação orientada pelas dependências funcionais e arquiteturais**.
 
