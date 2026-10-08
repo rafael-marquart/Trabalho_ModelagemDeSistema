@@ -1,7 +1,7 @@
 ## Requisitos Funcionais
 
 ### RF-01 Autenticação
-O sistema permite cadastro e login de candidatos, recrutadores e administradores.
+O sistema permite cadastro e login de usuários e empresas, além do acesso de administradores. Usuários podem receber o perfil de Recrutador quando forem cadastrados por uma empresa.
 
 ### RF-02 Recuperação de senha
 O sistema permite recuperação e redefinição de senha por e-mail.
@@ -46,7 +46,7 @@ O sistema permite registrar denúncias sobre divergências de acessibilidade ou 
 O sistema oferece leitores de tela, navegação por teclado, alto contraste e comandos de voz.
 
 ### RF-17 Cadastro de empresa
-O sistema permite cadastrar a empresa como entidade organizacional e associar usuários com perfil de recrutador.
+O sistema permite cadastrar uma empresa como conta organizacional e, dentro das configurações da empresa, cadastrar usuários com perfil de Recrutador e vinculá-los à empresa.
 
 ### RF-18 Gestão de vagas
 O sistema permite que recrutadores vinculados à empresa cadastrem, editem, publiquem e gerenciem vagas.
