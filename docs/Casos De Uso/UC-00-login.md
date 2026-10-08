@@ -2,28 +2,29 @@
 
 ## Objetivo
 
-Permitir que o usuário acesse o sistema de forma segura e autenticada, validando suas credenciais e garantindo o acesso às funcionalidades compatíveis com seu perfil e papel dentro da plataforma.
+Permitir que o usuário acesse o sistema de forma segura e autenticada, validando suas credenciais e garantindo o acesso às funcionalidades compatíveis com seu perfil e papel dentro da plataforma. A tela inicial de acesso oferece apenas as opções de criação de conta como usuário ou como empresa.
 
 ## Ator principal
 
 - Candidato PcD.
-- Recrutador.
+- Usuário.
 - Administrador.
 
 ## Pré-condições
 
-- O usuário deve possuir cadastro no sistema.
+- O usuário deve possuir cadastro no sistema, ou escolher uma das opções de criação de conta disponíveis.
 - O usuário deve ter acesso à plataforma por meio de credenciais válidas.
 - O sistema deve estar disponível e operacional.
 
 ## Fluxo Principal
 
 1. O usuário acessa a página inicial da plataforma.
-2. O sistema apresenta o formulário de login com campos para e-mail e senha.
-3. O usuário informa suas credenciais e confirma a autenticação.
-4. O sistema valida os dados informados.
-5. Se as credenciais forem válidas, o sistema autentica o usuário e redireciona para a área correspondente ao seu perfil.
-6. O sistema mantém a sessão ativa conforme a política de segurança definida.
+2. O sistema apresenta o formulário de login com campos para e-mail e senha e as opções de criação de conta como usuário ou empresa.
+3. Se o usuário escolher criar uma conta, o sistema direciona para o fluxo correspondente.
+4. Se o usuário já possuir uma conta, informa suas credenciais e confirma a autenticação.
+5. O sistema valida os dados informados.
+6. Se as credenciais forem válidas, o sistema autentica o usuário e redireciona para a área correspondente ao seu perfil.
+7. O sistema mantém a sessão ativa conforme a política de segurança definida.
 
 ## Exceções e Fluxos Alternativos
 
@@ -34,6 +35,7 @@ Permitir que o usuário acesse o sistema de forma segura e autenticada, validand
 ## Pós-condições
 
 - O usuário fica autenticado no sistema.
+- Contas de recrutador não são criadas diretamente na tela inicial; o recrutador deve ser cadastrado pela empresa em suas configurações.
 - A sessão é iniciada com permissões compatíveis com o papel do usuário.
 - O usuário pode acessar as funcionalidades disponíveis conforme seu perfil.
 
