@@ -2,7 +2,20 @@
 
 ## Entidades e Atributos
 
+### USUARIO
+- `id_usuario`
+- `nome`
+- `email`
+- `credenciais`
+- `perfil`
+
+
 ### EMPRESA
+- `id_empresa`
+- `cnpj`
+- `razao_social`
+- `nome_fantasia`
+- `nota_reputacao_acessibilidade`
 
 - `id_empresa` (PK)
 - `cnpj`
@@ -105,6 +118,8 @@
 
 | Entidade Origem | Relação | Entidade Destino |
 | --- | --- | --- |
+| EMPRESA | cadastra e vincula | USUARIO com perfil de RECRUTADOR |
+| USUARIO | possui perfil | RECRUTADOR (perfil de usuário, não entidade independente) |
 | EMPRESA | possui | INFRAESTRUTURA_EMPRESA |
 | EMPRESA | publica | VAGA |
 | EMPRESA | recebe | DENUNCIA_FALSA_INCLUSAO |
