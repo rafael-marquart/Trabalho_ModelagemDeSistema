@@ -98,22 +98,22 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Dependências** | SPEC-001, SPEC-004. |
 | **Justificativa da ordem** | A vaga própria depende da empresa e das informações de acessibilidade que serão utilizadas nas etapas posteriores. |
 
-### SPEC-006 — Importar e normalizar vagas externas
+### SPEC-006 — Importar, ingerir e normalizar vagas externas
 
 | Campo | Conteúdo |
 |---|---|
 | **ID** | SPEC-006 |
-| **Objetivo** | Receber dados externos estruturados, validar, normalizar, deduplicar e registrar a origem das vagas antes de disponibilizá-las ao domínio. |
-| **Valor** | Permite ampliar o catálogo sem perder integridade, rastreabilidade ou padronização. |
+| **Objetivo** | Ingerir dados estruturados de fontes externas, especialmente vagas, validar o JSON recebido, tratar registros inválidos ou incompletos, validar dados extraídos por LLM, normalizar e deduplicar registros e registrar a origem e o resultado da importação antes de disponibilizar vagas válidas ao domínio, preservando os registros válidos existentes. |
+| **Valor** | Integra fontes externas ao AcessaVagas de forma controlada, ampliando o catálogo sem perder integridade, rastreabilidade ou padronização. |
 | **RF** | RF-05, RF-36, RF-37, RF-38, RF-39 |
 | **RB** | RB-10, RB-11, RB-17, RB-18, RB-31, RB-32, RB-33, RB-37, RB-41 |
-| **RNF** | RNF-05, RNF-09, RNF-14, RNF-16 |
+| **RNF** | RNF-05, RNF-07, RNF-09, RNF-14, RNF-16 |
 | **UC / fluxo** | UC-14 — Ingestão de JSON |
 | **Entidades** | VAGA |
-| **Drivers** | DA-05, DA-06, DA-08 |
-| **ADRs** | ADR-003, ADR-004 |
+| **Drivers** | DA-02, DA-05, DA-06, DA-07, DA-08 |
+| **ADRs** | ADR-002, ADR-003, ADR-004 |
 | **Dependências** | SPEC-001. |
-| **Justificativa da ordem** | A ingestão externa precisa produzir uma vaga válida no modelo da plataforma antes de entrar na busca e na compatibilidade. |
+| **Justificativa da ordem** | A ingestão externa precisa produzir registros válidos e rastreáveis no modelo da plataforma antes de entrarem na busca e na compatibilidade. |
 
 ### SPEC-007 — Calcular compatibilidade entre candidato e vaga
 
@@ -149,11 +149,11 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Dependências** | SPEC-002, SPEC-005, SPEC-006, SPEC-007. |
 | **Justificativa da ordem** | A busca depende do catálogo e do mecanismo de compatibilidade para aplicar as restrições relevantes. |
 
-### SPEC-009 — Visualizar vaga e resultado de compatibilidade
+### SPEC-010 — Visualizar vaga e resultado de compatibilidade
 
 | Campo | Conteúdo |
 |---|---|
-| **ID** | SPEC-009 |
+| **ID** | SPEC-010 |
 | **Objetivo** | Exibir detalhes da vaga, informações de acessibilidade e os principais fatores considerados no resultado de compatibilidade. |
 | **Valor** | Garante transparência antes da candidatura e permite decisão informada. |
 | **RF** | RF-10, RF-24, RF-25 |
@@ -166,11 +166,11 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Dependências** | SPEC-007, SPEC-008. |
 | **Justificativa da ordem** | A visualização transparente só pode ser validada depois que a vaga e o resultado de compatibilidade existem. |
 
-### SPEC-010 — Registrar candidatura
+### SPEC-011 — Registrar candidatura
 
 | Campo | Conteúdo |
 |---|---|
-| **ID** | SPEC-010 |
+| **ID** | SPEC-011 |
 | **Objetivo** | Registrar uma candidatura somente quando a vaga estiver disponível, elegível e sem incompatibilidade crítica, respeitando a unicidade de candidatura ativa. |
 | **Valor** | Permite ao candidato iniciar formalmente um processo seletivo sem contornar as regras de acessibilidade. |
 | **RF** | RF-26 |
@@ -180,14 +180,14 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Entidades** | CANDIDATO, VAGA, CANDIDATURA |
 | **Drivers** | DA-02, DA-03, DA-04 |
 | **ADRs** | ADR-002, ADR-004 |
-| **Dependências** | SPEC-001, SPEC-002, SPEC-007, SPEC-009. |
+| **Dependências** | SPEC-001, SPEC-002, SPEC-007, SPEC-010. |
 | **Justificativa da ordem** | A candidatura depende de identidade, perfil, vaga elegível e compatibilidade previamente estabelecidos. |
 
-### SPEC-011 — Gerenciar candidatura pelo candidato
+### SPEC-012 — Gerenciar candidatura pelo candidato
 
 | Campo | Conteúdo |
 |---|---|
-| **ID** | SPEC-011 |
+| **ID** | SPEC-012 |
 | **Objetivo** | Permitir ao candidato consultar e gerenciar sua candidatura, incluindo o cancelamento quando permitido pelas regras do processo. |
 | **Valor** | Dá autonomia ao candidato sobre sua participação no processo seletivo. |
 | **RF** | RF-28, RF-34 |
@@ -197,14 +197,14 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Entidades** | CANDIDATO, CANDIDATURA, VAGA |
 | **Drivers** | DA-02, DA-07 |
 | **ADRs** | ADR-002, ADR-004 |
-| **Dependências** | SPEC-010. |
+| **Dependências** | SPEC-011. |
 | **Justificativa da ordem** | A gestão da candidatura só existe depois do seu registro e depende de seus estados e regras de cancelamento. |
 
-### SPEC-012 — Gerenciar processo seletivo e funil
+### SPEC-013 — Gerenciar processo seletivo e funil
 
 | Campo | Conteúdo |
 |---|---|
-| **ID** | SPEC-012 |
+| **ID** | SPEC-013 |
 | **Objetivo** | Permitir ao recrutador autorizado consultar candidatos e administrar o andamento das candidaturas no funil, respeitando estados e transições válidas. |
 | **Valor** | Estrutura o processo seletivo da empresa e evita alterações de etapa inconsistentes. |
 | **RF** | RF-20, RF-30, RF-35 |
@@ -214,14 +214,14 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Entidades** | CANDIDATURA, VAGA, ENTREVISTA, USUARIO/RECRUTADOR vinculado à EMPRESA. |
 | **Drivers** | DA-02, DA-07 |
 | **ADRs** | ADR-002, ADR-004 |
-| **Dependências** | SPEC-001, SPEC-004, SPEC-010. |
+| **Dependências** | SPEC-001, SPEC-004, SPEC-011. |
 | **Justificativa da ordem** | A gestão do funil depende de recrutador autorizado, empresa/vaga e candidaturas já registradas. |
 
-### SPEC-013 — Solicitar acomodação
+### SPEC-014 — Solicitar acomodação
 
 | Campo | Conteúdo |
 |---|---|
-| **ID** | SPEC-013 |
+| **ID** | SPEC-014 |
 | **Objetivo** | Permitir ao candidato solicitar acomodações necessárias para participar do processo seletivo. |
 | **Valor** | Transforma necessidades declaradas em uma solicitação formal de apoio no processo. |
 | **RF** | RF-29 |
@@ -231,14 +231,14 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Entidades** | CANDIDATURA, SOLICITACAO_ACOMODACAO |
 | **Drivers** | DA-02 |
 | **ADRs** | ADR-002, ADR-004 |
-| **Dependências** | SPEC-010, SPEC-011. |
+| **Dependências** | SPEC-011, SPEC-012. |
 | **Justificativa da ordem** | A solicitação depende de uma candidatura existente e de acesso autorizado às informações de acessibilidade. |
 
-### SPEC-014 — Processar solicitação de acomodação
+### SPEC-015 — Processar solicitação de acomodação
 
 | Campo | Conteúdo |
 |---|---|
-| **ID** | SPEC-014 |
+| **ID** | SPEC-015 |
 | **Objetivo** | Permitir ao recrutador autorizado consultar, tratar e registrar decisões sobre solicitações de acomodação, mantendo histórico. |
 | **Valor** | Dá continuidade operacional às solicitações e preserva rastreabilidade das decisões. |
 | **RF** | RF-32, RF-33 |
@@ -248,14 +248,14 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Entidades** | SOLICITACAO_ACOMODACAO, CANDIDATURA, USUARIO/RECRUTADOR vinculado à EMPRESA. |
 | **Drivers** | DA-02, DA-07 |
 | **ADRs** | ADR-002, ADR-004 |
-| **Dependências** | SPEC-012, SPEC-013. |
+| **Dependências** | SPEC-013, SPEC-014. |
 | **Justificativa da ordem** | O tratamento exige uma solicitação já registrada e um recrutador autorizado para decidir sobre ela. |
 
-### SPEC-015 — Acompanhar candidatura e processo seletivo
+### SPEC-016 — Acompanhar candidatura e processo seletivo
 
 | Campo | Conteúdo |
 |---|---|
-| **ID** | SPEC-015 |
+| **ID** | SPEC-016 |
 | **Objetivo** | Permitir ao candidato acompanhar etapas e status da candidatura durante o processo seletivo. |
 | **Valor** | Dá visibilidade sobre o andamento do processo e reduz incerteza sobre a situação da candidatura. |
 | **RF** | RF-11, RF-31 |
@@ -265,14 +265,14 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Entidades** | CANDIDATURA, VAGA, ENTREVISTA |
 | **Drivers** | DA-01, DA-02, DA-07 |
 | **ADRs** | ADR-001, ADR-002, ADR-004 |
-| **Dependências** | SPEC-011, SPEC-012. |
+| **Dependências** | SPEC-012, SPEC-013. |
 | **Justificativa da ordem** | O acompanhamento depende dos estados efetivamente registrados no funil. |
 
-### SPEC-016 — Notificar alterações do processo seletivo
+### SPEC-017 — Notificar alterações do processo seletivo
 
 | Campo | Conteúdo |
 |---|---|
-| **ID** | SPEC-016 |
+| **ID** | SPEC-017 |
 | **Objetivo** | Informar alterações relevantes em vagas, candidaturas e etapas do processo seletivo. |
 | **Valor** | Mantém candidatos informados sobre mudanças que afetam sua participação. |
 | **RF** | RF-12, RF-27 |
@@ -282,14 +282,14 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Entidades** | VAGA, CANDIDATURA |
 | **Drivers** | DA-02, DA-08 |
 | **ADRs** | ADR-002, ADR-004 |
-| **Dependências** | SPEC-011, SPEC-012, SPEC-015. |
+| **Dependências** | SPEC-012, SPEC-013, SPEC-016. |
 | **Justificativa da ordem** | As notificações precisam de eventos de mudança de status já produzidos pelas capacidades de candidatura e funil. |
 
-### SPEC-017 — Avaliar processo seletivo
+### SPEC-018 — Avaliar processo seletivo
 
 | Campo | Conteúdo |
 |---|---|
-| **ID** | SPEC-017 |
+| **ID** | SPEC-018 |
 | **Objetivo** | Permitir ao candidato registrar avaliação sobre a acessibilidade e a experiência encontrada no processo seletivo. |
 | **Valor** | Produz dados de avaliação que alimentam transparência e reputação de acessibilidade. |
 | **RF** | RF-21 |
@@ -299,14 +299,14 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Entidades** | ENTREVISTA, AVALIACAO_POS_ENTREVISTA |
 | **Drivers** | DA-07 |
 | **ADRs** | ADR-004 |
-| **Dependências** | SPEC-012, SPEC-015. |
+| **Dependências** | SPEC-013, SPEC-016. |
 | **Justificativa da ordem** | A avaliação depende de participação no processo seletivo e de uma entrevista/processo já existente para contextualizar o registro. |
 
-### SPEC-018 — Denunciar incompatibilidade ou falsa inclusão
+### SPEC-019 — Denunciar incompatibilidade ou falsa inclusão
 
 | Campo | Conteúdo |
 |---|---|
-| **ID** | SPEC-018 |
+| **ID** | SPEC-019 |
 | **Objetivo** | Permitir registrar denúncia sobre divergência de acessibilidade, incompatibilidade ou falsa inclusão, sem produzir bloqueio ou alteração automática. |
 | **Valor** | Cria um mecanismo formal de sinalização de problemas de acessibilidade. |
 | **RF** | RF-14 |
@@ -316,14 +316,14 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Entidades** | DENUNCIA_FALSA_INCLUSAO, AVALIACAO_POS_ENTREVISTA, EMPRESA |
 | **Drivers** | DA-07 |
 | **ADRs** | ADR-004 |
-| **Dependências** | SPEC-017. |
+| **Dependências** | SPEC-018. |
 | **Justificativa da ordem** | A denúncia usa informações do processo/avaliação e deve existir antes da capacidade administrativa de moderação. |
 
-### SPEC-019 — Moderar denúncias de incompatibilidade
+### SPEC-020 — Moderar denúncias de incompatibilidade
 
 | Campo | Conteúdo |
 |---|---|
-| **ID** | SPEC-019 |
+| **ID** | SPEC-020 |
 | **Objetivo** | Permitir ao Administrador consultar, analisar e decidir sobre denúncias antes de qualquer bloqueio ou alteração de nota. |
 | **Valor** | Evita decisões automáticas sobre reputação ou disponibilidade de vagas e estabelece apuração administrativa. |
 | **RF** | RF-22 |
@@ -333,14 +333,14 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Entidades** | ADMINISTRADOR, DENUNCIA_FALSA_INCLUSAO, AVALIACAO_POS_ENTREVISTA, EMPRESA |
 | **Drivers** | DA-02, DA-07 |
 | **ADRs** | ADR-002, ADR-004 |
-| **Dependências** | SPEC-001, SPEC-018. |
+| **Dependências** | SPEC-001, SPEC-019. |
 | **Justificativa da ordem** | A moderação depende da denúncia registrada e da identidade administrativa autorizada. |
 
-### SPEC-020 — Gerenciar nota pública de acessibilidade
+### SPEC-021 — Gerenciar nota pública de acessibilidade
 
 | Campo | Conteúdo |
 |---|---|
-| **ID** | SPEC-020 |
+| **ID** | SPEC-021 |
 | **Objetivo** | Calcular, atualizar e disponibilizar a nota pública de acessibilidade da empresa com base em informações e avaliações válidas, respeitando decisões administrativas. |
 | **Valor** | Oferece transparência pública sobre acessibilidade sem expor a identidade dos avaliadores. |
 | **RF** | RF-13 |
@@ -350,14 +350,14 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Entidades** | EMPRESA, AVALIACAO_POS_ENTREVISTA, DENUNCIA_FALSA_INCLUSAO |
 | **Drivers** | DA-07 |
 | **ADRs** | ADR-004 |
-| **Dependências** | SPEC-017, SPEC-019. |
+| **Dependências** | SPEC-018, SPEC-020. |
 | **Justificativa da ordem** | A nota depende de avaliações válidas e, quando aplicável, das decisões administrativas que podem afetar os dados considerados. |
 
-### SPEC-021 — Consultar status e disponibilidade da vaga
+### SPEC-009 — Consultar status e disponibilidade da vaga
 
 | Campo | Conteúdo |
 |---|---|
-| **ID** | SPEC-021 |
+| **ID** | SPEC-009 |
 | **Objetivo** | Permitir consultar o estado atual da vaga e refletir alterações que afetem a possibilidade de candidatura. |
 | **Valor** | Evita candidaturas em vagas encerradas ou indisponíveis e mantém o candidato informado. |
 | **RF** | RF-10, RF-12, RF-27 |
@@ -367,28 +367,11 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Entidades** | VAGA, CANDIDATURA |
 | **Drivers** | DA-02, DA-08 |
 | **ADRs** | ADR-002, ADR-004 |
-| **Dependências** | SPEC-005, SPEC-006, SPEC-010, SPEC-012. |
-| **Justificativa da ordem** | O status precisa refletir o estado real de vagas e processos já cadastrados para ser usado na elegibilidade e comunicação ao candidato. |
+| **Dependências** | SPEC-005, SPEC-006, SPEC-011, SPEC-013. |
+| **Justificativa da ordem** | Após localizar vagas na busca, o candidato consulta o status atualizado antes de decidir se seguirá para os detalhes e a candidatura; a disponibilidade também é revalidada no registro da candidatura. |
 
 
 ---
-
-### SPEC-022 — Ingerir dados externos
-
-| Campo | Conteúdo |
-|---|---|
-| **ID** | SPEC-022 |
-| **Objetivo** | Permitir a ingestão de dados estruturados provenientes de fontes externas, especialmente vagas, realizando validação, normalização, deduplicação e registro da origem antes da disponibilização para uso na plataforma. |
-| **Valor** | Integra fontes externas ao AcessaVagas de forma controlada, reduzindo inconsistências e preservando a rastreabilidade dos dados importados. |
-| **RF** | RF-05, RF-36, RF-37, RF-38, RF-39 |
-| **RB** | RB-10, RB-11, RB-17, RB-18, RB-31, RB-32, RB-33, RB-37, RB-41 |
-| **RNF** | RNF-07, RNF-09, RNF-14, RNF-16 |
-| **UC / fluxo** | UC-14 — Ingerir Dados em JSON |
-| **Entidades** | VAGA e dados estruturados de origem externa; detalhes de integração dependem da implementação técnica. |
-| **Drivers** | DA-02, DA-07 |
-| **ADRs** | ADR-002, ADR-003, ADR-004 |
-| **Dependências** | SPEC-001, SPEC-004, SPEC-005, SPEC-019, SPEC-020, SPEC-021. |
-| **Justificativa da ordem** | A ingestão externa depende de identidade/autorização, estrutura de vagas e capacidades de validação e auditoria. Os dados importados devem estar normalizados e validados antes de serem utilizados pelas demais capacidades da plataforma. |
 
 ## 4. Dependências resumidas
 
@@ -399,10 +382,9 @@ A ordem proposta é:
 → **SPEC-005**, **SPEC-006**
 → **SPEC-007**
 → **SPEC-008**
-→ **SPEC-009**
 → **SPEC-010**
-→ **SPEC-011**, **SPEC-012**
-→ **SPEC-013**
+→ **SPEC-011**
+→ **SPEC-012**, **SPEC-013**
 → **SPEC-014**
 → **SPEC-015**
 → **SPEC-016**
@@ -411,6 +393,7 @@ A ordem proposta é:
 → **SPEC-019**
 → **SPEC-020**
 → **SPEC-021**
+→ **SPEC-009**
 → **SPEC-022**
 
 A ordem não significa que cada Spec precise ser implementada de forma estritamente serial quando não houver dependência direta; ela representa uma **ordem de implementação e validação orientada pelas dependências funcionais e arquiteturais**.
