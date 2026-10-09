@@ -353,26 +353,6 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Dependências** | SPEC-018, SPEC-020. |
 | **Justificativa da ordem** | A nota depende de avaliações válidas e, quando aplicável, das decisões administrativas que podem afetar os dados considerados. |
 
-### SPEC-009 — Consultar status e disponibilidade da vaga
-
-| Campo | Conteúdo |
-|---|---|
-| **ID** | SPEC-009 |
-| **Objetivo** | Permitir consultar o estado atual da vaga e refletir alterações que afetem a possibilidade de candidatura. |
-| **Valor** | Evita candidaturas em vagas encerradas ou indisponíveis e mantém o candidato informado. |
-| **RF** | RF-10, RF-12, RF-27 |
-| **RB** | RB-01, RB-23, RB-42 |
-| **RNF** | RNF-05, RNF-08, RNF-09 |
-| **UC / fluxo** | UC-12 — Status da Vaga |
-| **Entidades** | VAGA, CANDIDATURA |
-| **Drivers** | DA-02, DA-08 |
-| **ADRs** | ADR-002, ADR-004 |
-| **Dependências** | SPEC-005, SPEC-006, SPEC-011, SPEC-013. |
-| **Justificativa da ordem** | Após localizar vagas na busca, o candidato consulta o status atualizado antes de decidir se seguirá para os detalhes e a candidatura; a disponibilidade também é revalidada no registro da candidatura. |
-
-
----
-
 ## 4. Dependências resumidas
 
 A ordem proposta é:
@@ -382,8 +362,9 @@ A ordem proposta é:
 → **SPEC-005**, **SPEC-006**
 → **SPEC-007**
 → **SPEC-008**
-→ **SPEC-010**
-→ **SPEC-011**
+→ **SPEC-009** (consultar status e disponibilidade)
+→ **SPEC-010** (visualizar vaga e compatibilidade)
+→ **SPEC-011** (registrar candidatura)
 → **SPEC-012**, **SPEC-013**
 → **SPEC-014**
 → **SPEC-015**
@@ -393,8 +374,6 @@ A ordem proposta é:
 → **SPEC-019**
 → **SPEC-020**
 → **SPEC-021**
-→ **SPEC-009**
-→ **SPEC-022**
 
 A ordem não significa que cada Spec precise ser implementada de forma estritamente serial quando não houver dependência direta; ela representa uma **ordem de implementação e validação orientada pelas dependências funcionais e arquiteturais**.
 
