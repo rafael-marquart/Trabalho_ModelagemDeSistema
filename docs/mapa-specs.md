@@ -149,6 +149,24 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Dependências** | SPEC-002, SPEC-005, SPEC-006, SPEC-007. |
 | **Justificativa da ordem** | A busca depende do catálogo e do mecanismo de compatibilidade para aplicar as restrições relevantes. |
 
+### SPEC-009 — Consultar status e disponibilidade da vaga
+
+| Campo | Conteúdo |
+|---|---|
+| **ID** | SPEC-009 |
+| **Objetivo** | Permitir consultar o estado atual da vaga e refletir alterações que afetem a possibilidade de candidatura. |
+| **Valor** | Evita candidaturas em vagas encerradas ou indisponíveis e mantém o candidato informado. |
+| **RF** | RF-10, RF-12, RF-27 |
+| **RB** | RB-01, RB-23, RB-42 |
+| **RNF** | RNF-05, RNF-08, RNF-09 |
+| **UC / fluxo** | UC-12 — Status da Vaga |
+| **Entidades** | VAGA, CANDIDATURA |
+| **Drivers** | DA-02, DA-08 |
+| **ADRs** | ADR-002, ADR-004 |
+| **Dependências** | SPEC-005, SPEC-006, SPEC-008, SPEC-010, SPEC-012. |
+| **Justificativa da ordem** | Após localizar vagas na busca, o candidato consulta o status atualizado antes de decidir se seguirá para os detalhes e a candidatura; a disponibilidade também é revalidada no registro da candidatura. |
+
+
 ### SPEC-010 — Visualizar vaga e resultado de compatibilidade
 
 | Campo | Conteúdo |
