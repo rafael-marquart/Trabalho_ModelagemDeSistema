@@ -11,11 +11,6 @@
 
 
 ### EMPRESA
-- `id_empresa`
-- `cnpj`
-- `razao_social`
-- `nome_fantasia`
-- `nota_reputacao_acessibilidade`
 
 - `id_empresa` (PK)
 - `cnpj`
