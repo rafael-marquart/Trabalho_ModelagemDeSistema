@@ -21,10 +21,10 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Objetivo** | Permitir cadastro e autenticação de usuários e empresas, recuperação de senha, aplicação das permissões correspondentes aos perfis de acesso e, para o perfil de Recrutador, permitir que uma Empresa o cadastre e mantenha seu vínculo organizacional. |
 | **Valor** | Estabelece a identidade, a autorização e o vínculo organizacional necessários para que candidatos, recrutadores e administradores acessem as capacidades correspondentes. |
 | **RF** | RF-01, RF-02, RF-03, RF-17, RF-40 |
-| **RB** | RB-12, RB-21, RB-22, RB-27 |
+| **RB** | RB-12, RB-21, RB-22, RB-27, RB-46 |
 | **RNF** | RNF-07, RNF-08, RNF-09, RNF-14 |
 | **UC / fluxo** | UC-00 — Login; UC-07 — Infraestrutura / gestão da empresa |
-| **Entidades** | USUARIO, CANDIDATO, ADMINISTRADOR, EMPRESA e RECRUTADOR como perfil de USUARIO vinculado à EMPRESA. |
+| **Entidades** | USUARIO, CANDIDATO, ADMINISTRADOR, EMPRESA e RECRUTADOR como perfil de USUARIO vinculado à EMPRESA; a Empresa cadastra e vincula o Recrutador conforme RB-46. |
 | **Drivers** | DA-02 |
 | **ADRs** | ADR-002, ADR-004 |
 | **Dependências** | Nenhuma. |
@@ -440,8 +440,7 @@ As ADRs não originam Specs técnicas independentes:
 
 ## 7. Questões em aberto
 
-
-Nenhuma dessas lacunas foi resolvida silenciosamente neste mapa.
+**Sem questões em aberto.**
 
 ## 8. Parada obrigatória
 
