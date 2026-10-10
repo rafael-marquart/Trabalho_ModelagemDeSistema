@@ -607,7 +607,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato | especificada | pendente | aguardando |
 | SPEC-003 — Disponibilizar recursos de acessibilidade da interface | especificada | pendente | aguardando |
 
-**Próxima etapa:** detalhar o Bloco 2. A revisão coletiva das questões em aberto pode ocorrer depois que todas as Specs estiverem detalhadas.
+**Próxima etapa:** detalhar o Bloco 3. A revisão coletiva das questões em aberto pode ocorrer depois que todas as Specs estiverem detalhadas.
 
 
 # Bloco 2 — Empresa, vagas próprias e ingestão externa
@@ -1215,3 +1215,498 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 | SPEC-006 — Importar, ingerir e normalizar vagas externas | especificada | não se aplica ao núcleo; interface opcional pendente | aguardando |
 
 **Próxima etapa:** detalhar o Bloco 3 após registrar este bloco no documento. A revisão coletiva das questões em aberto pode ocorrer depois que todas as Specs estiverem detalhadas.
+
+
+# Bloco 3 — Compatibilidade e descoberta de vagas
+
+Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN.md; a descrição não representa aprovação do texto nem dos layouts.
+
+---
+
+# SPEC-007 — Calcular compatibilidade entre candidato e vaga
+
+## 1. Identificação
+| Campo | Valor |
+|---|---|
+| ID | SPEC-007 |
+| Bloco | 3 — Compatibilidade e descoberta |
+| Estado do texto | especificada |
+| Estado do layout | não se aplica ao cálculo; apresentação do resultado pertence à SPEC-010 |
+| Capacidade | Aplicar trava crítica e calcular score determinístico de compatibilidade |
+
+## 2. Rastreabilidade
+- **RF:** RF-07, RF-08, RF-09, RF-24, RF-25.
+- **RB:** RB-02, RB-03, RB-04, RB-05, RB-06, RB-07, RB-15, RB-16, RB-30.
+- **RNF:** RNF-10, RNF-15.
+- **UC:** UC-13 — Calcular Match Determinístico; acionado também pela busca UC-02.
+- **Modelo:** CANDIDATO, VETOR_ACESSIBILIDADE_CANDIDATO, VAGA, TRAVA_CRITICA_VAGA.
+- **Drivers:** DA-03, DA-04. **ADR:** ADR-004.
+- **Dependências:** SPEC-002, SPEC-004, SPEC-005 e SPEC-006.
+- **Questões:** OPEN-031 a OPEN-035.
+
+## 3. Escopo
+**Incluído:** verificar dados mínimos; comparar necessidades obrigatórias com barreiras da vaga; aplicar trava eliminatória; calcular score quando a vaga passar pela trava; produzir fatores que expliquem o resultado.
+
+**Fora do escopo:** editar perfil/vaga; definir campos ainda não estabelecidos como obrigatórios; executar busca ou apresentar página detalhada; registrar candidatura; inferir compatibilidade quando faltam dados.
+
+## 3.1. Telas e evidência de layout
+O cálculo é uma capacidade de domínio e não exige tela própria. A visualização do percentual, fatores e explicação pertence à SPEC-010; o layout dessa apresentação permanece pendente.
+
+## 4. Dependências
+- SPEC-002 fornece perfil e necessidades.
+- SPEC-004, SPEC-005 e SPEC-006 fornecem informações de acessibilidade e vagas próprias/externas válidas.
+- SPEC-008 consome resultados para busca e ordenação.
+- SPEC-010 apresenta score e fatores.
+
+## 5. Comportamento esperado
+1. Receber candidato e vaga preparada para análise.
+2. Verificar se os dados mínimos estão disponíveis; caso contrário, indicar que não é possível concluir a análise sem presumir valores.
+3. Comparar necessidades funcionais obrigatórias com barreiras e recursos eliminatórios registrados para a vaga.
+4. Se houver barreira incompatível com necessidade obrigatória, classificar a vaga como incompatível, independentemente de qualquer score.
+5. Se não houver trava crítica, calcular o score determinístico com os pesos definidos na baseline.
+6. Produzir resultado e fatores considerados, preservando transparência.
+7. Ao analisar várias vagas, permitir que a capacidade consumidora ordene os resultados por score.
+
+## 6. Regras e invariantes
+1. Barreira incompatível com necessidade obrigatória torna a vaga incompatível (RB-02).
+2. A trava crítica prevalece sobre a pontuação (RB-15).
+3. Pesos: acessibilidade 50%, perfil técnico 30%, distância e modalidade 20% (RB-03 a RB-05).
+4. Perfil técnico considera escolaridade, formação, competências e idiomas exigidos (RB-07).
+5. Necessidades marcadas como obrigatórias participam da análise (RB-06).
+6. Informação de acessibilidade ausente permanece não informada; não se presume compatibilidade (RB-16).
+7. Resultado apresenta principais fatores considerados (RB-30).
+8. Mesmas entradas e mesmas regras devem produzir resultado consistente (RNF-10).
+9. Cálculo deve ser testável isoladamente (RNF-15).
+10. A fórmula detalhada das subpontuações e do arredondamento não é definida quando a baseline não a especifica.
+
+## 7. Modelo de domínio
+- **CANDIDATO:** dados profissionais.
+- **VETOR_ACESSIBILIDADE_CANDIDATO:** necessidades funcionais e indicação de obrigatoriedade.
+- **VAGA:** requisitos, modalidade, localização e dados de acessibilidade.
+- **TRAVA_CRITICA_VAGA:** recursos eliminatórios e barreiras impeditivas.
+- **Resultado de compatibilidade:** resultado lógico, score e fatores produzidos pelo cálculo; atributos persistidos adicionais não são presumidos.
+
+## 8. Impacto arquitetural
+A lógica fica concentrada em serviço de domínio independente da interface e da persistência. A trava ocorre antes do score. Dados externos precisam ter passado pela SPEC-006. Não se escolhe linguagem, biblioteca ou algoritmo auxiliar.
+
+## 9. Contratos necessários
+- **Verificar elegibilidade por barreiras:** compara necessidades obrigatórias e barreiras registradas.
+- **Calcular score:** aplica pesos e critérios aprovados, quando aplicável.
+- **Explicar resultado:** retorna os principais fatores considerados.
+- **Analisar candidato/vaga:** coordena validação dos dados, trava e score.
+
+Contratos conceituais, sem endpoints HTTP.
+
+## 10. RNFs aplicáveis
+- **RNF-10:** consistência dos resultados.
+- **RNF-15:** testabilidade isolada.
+- **RNF-09/RNF-14:** aplicáveis quando resultado e parâmetros forem registrados conforme regras de rastreabilidade.
+
+## 11. Critérios de aceitação
+- [ ] Barreira incompatível com necessidade obrigatória elimina a vaga independentemente do score.
+- [ ] Score usa pesos 50%/30%/20%.
+- [ ] Dados insuficientes não são convertidos em compatibilidade presumida.
+- [ ] Perfil incompleto gera indicação de complementação, conforme UC-13.
+- [ ] Resultado expõe fatores considerados.
+- [ ] Mesmas entradas e regras produzem resultado consistente.
+- [ ] Vaga externa só é analisada depois de validada e normalizada.
+- [ ] Cálculo pode ser testado isoladamente.
+- [ ] Não é inventada fórmula detalhada ausente da baseline.
+
+## 12. Casos de teste derivados
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-007-01 | Necessidade obrigatória encontra barreira impeditiva | Vaga incompatível |
+| T-007-02 | Sem barreira crítica e dados completos | Score calculado |
+| T-007-03 | Score alto, mas há barreira crítica | Vaga permanece incompatível |
+| T-007-04 | Dados de acessibilidade ausentes | Não se presume compatibilidade |
+| T-007-05 | Perfil sem dados mínimos | Solicita complementação |
+| T-007-06 | Mesmas entradas em duas execuções | Resultado consistente |
+| T-007-07 | Consultar explicação | Principais fatores retornados |
+| T-007-08 | Vaga externa não validada | Não participa da análise |
+
+## 13. Questões em aberto
+- **OPEN-031:** fórmula detalhada das subpontuações, normalização e arredondamento.
+- **OPEN-032:** dados mínimos necessários para cada dimensão do cálculo.
+- **OPEN-033:** representação de falta de dados versus incompatibilidade comprovada.
+- **OPEN-034:** medição de distância/modalidade quando faltam localização ou preferências.
+- **OPEN-035:** parâmetros e resultados que devem ser armazenados para rastreabilidade.
+
+## 14. Definition of Done
+- [ ] Texto aprovado.
+- [ ] Fórmula e dados mínimos confirmados na baseline ou por decisão registrada.
+- [ ] Trava crítica e pesos cobertos por testes.
+- [ ] Apresentação do resultado aprovada na SPEC-010.
+- [ ] Critérios e testes revisados.
+- [ ] Sem implementação antes das aprovações necessárias.
+
+---
+
+# SPEC-008 — Buscar e filtrar vagas
+
+## 1. Identificação
+| Campo | Valor |
+|---|---|
+| ID | SPEC-008 |
+| Bloco | 3 — Compatibilidade e descoberta |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Buscar e filtrar vagas elegíveis e ordená-las por compatibilidade |
+
+## 2. Rastreabilidade
+- **RF:** RF-06, RF-09, RF-24, RF-25.
+- **RB:** RB-02, RB-03, RB-04, RB-05, RB-10, RB-13, RB-16, RB-17, RB-30.
+- **RNF:** RNF-01, RNF-03, RNF-04, RNF-05, RNF-13.
+- **UC:** UC-02 — Buscar Vagas; integra UC-13.
+- **Modelo:** VAGA, EMPRESA, INFRAESTRUTURA_EMPRESA, TRAVA_CRITICA_VAGA.
+- **Drivers:** DA-01, DA-03, DA-04, DA-06, DA-08. **ADRs:** ADR-001, ADR-004.
+- **Dependências:** SPEC-002, SPEC-005, SPEC-006, SPEC-007.
+- **Questões:** OPEN-036 a OPEN-039.
+
+## 3. Escopo
+**Incluído:** buscar por termos de interesse e filtros citados nos casos de uso, incluindo cargo/localização e modalidade; consultar vagas ativas; aplicar a trava crítica pela SPEC-007; ordenar resultados elegíveis por compatibilidade; informar ausência de resultados.
+
+**Fora do escopo:** cálculo do score; detalhe completo da vaga; candidatura; edição/publicação; alertas por e-mail, cuja inclusão precisa ser confirmada; inventar filtros ausentes da baseline.
+
+## 3.1. Telas e evidência de layout
+| Tela/área | Finalidade | Layout |
+|---|---|---|
+| Busca de vagas | Informar termos e critérios | Pendente |
+| Filtros | Refinar resultados por critérios suportados | Pendente |
+| Lista de resultados | Mostrar vagas elegíveis e compatibilidade | Pendente |
+| Estado sem resultados | Informar ausência de vagas compatíveis | Pendente |
+
+Protótipos devem seguir a identidade visual e acessibilidade transversal, ser anexados em docs/layout/ e aprovados separadamente.
+
+## 4. Dependências
+- SPEC-002: dados do candidato.
+- SPEC-005/SPEC-006: catálogo de vagas próprias e externas válidas.
+- SPEC-007: elegibilidade e score.
+- SPEC-009: estado e disponibilidade.
+- SPEC-010: detalhe do resultado.
+
+## 5. Comportamento esperado
+1. Candidato autenticado acessa a busca.
+2. Informa termos e filtros disponíveis.
+3. Sistema consulta vagas ativas e aplica filtros solicitados.
+4. Sistema solicita à SPEC-007 a análise de compatibilidade das vagas candidatas.
+5. Vagas que falham na trava crítica não são apresentadas como elegíveis.
+6. Vagas elegíveis são ordenadas por compatibilidade conforme UC-02/UC-13.
+7. Sistema apresenta resultados e informações relevantes de acessibilidade antes da candidatura.
+8. Se nenhuma vaga passar pela trava, informa ausência de oportunidades elegíveis e permite ajustar critérios.
+9. Alterações de status devem respeitar a SPEC-009.
+
+## 6. Regras e invariantes
+1. Busca respeita os filtros suportados.
+2. Vagas incompatíveis por barreira crítica não aparecem como elegíveis (RF-09, RB-02, RB-15).
+3. Vagas externas só participam após validação (RB-10, RB-17).
+4. Dados ausentes não significam compatibilidade (RB-16).
+5. Informações relevantes de acessibilidade devem estar disponíveis antes da candidatura (RB-13).
+6. Ordenação usa resultado da SPEC-007, sem duplicar o algoritmo.
+7. Fatores relevantes devem ser apresentados (RB-30).
+8. Busca e filtros devem ser utilizáveis por teclado, leitores de tela e diferentes tamanhos de tela.
+9. Salvar alertas por e-mail é citado como sugestão em UC-02, mas não é presumido como parte desta capacidade.
+
+## 7. Modelo de domínio
+- **VAGA:** oportunidade e status.
+- **EMPRESA/INFRAESTRUTURA_EMPRESA:** informações organizacionais de acessibilidade.
+- **TRAVA_CRITICA_VAGA:** barreiras impeditivas.
+- **Resultado de compatibilidade:** fornecido pela SPEC-007.
+
+## 8. Impacto arquitetural
+A busca coordena consulta ao catálogo, filtros e serviço de compatibilidade sem duplicar o algoritmo. Deve respeitar RNF-05, sem presumir cache, indexador ou tecnologia específica. A interface precisa ser acessível e responsiva.
+
+## 9. Contratos necessários
+- **Buscar vagas:** recebe critérios suportados e retorna vagas candidatas.
+- **Filtrar vagas:** aplica filtros aprovados.
+- **Obter elegibilidade e score:** consome SPEC-007.
+- **Consultar status:** confirma disponibilidade conforme SPEC-009.
+- **Retornar resultados:** apresenta vagas elegíveis ordenadas.
+- **Retornar estado sem resultados:** comunica ausência e permite revisar filtros.
+
+## 10. RNFs aplicáveis
+RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabilidade); RNF-05 (desempenho); RNF-13 (compatibilidade). RNF-10/15 aplicam-se ao cálculo consumido na SPEC-007.
+
+## 11. Critérios de aceitação
+- [ ] Candidato busca vagas com critérios suportados.
+- [ ] Filtros restringem resultados conforme solicitado.
+- [ ] Vagas com barreira crítica não aparecem como elegíveis.
+- [ ] Resultados seguem o score da SPEC-007.
+- [ ] Vagas externas não validadas são excluídas.
+- [ ] Status atual da vaga é respeitado.
+- [ ] Informações de acessibilidade aparecem antes da candidatura.
+- [ ] Estado sem resultados é comunicado de forma acessível.
+
+## 12. Casos de teste derivados
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-008-01 | Buscar termo existente | Resultados correspondentes |
+| T-008-02 | Filtrar modalidade | Resultados respeitam filtro |
+| T-008-03 | Vaga falha na trava crítica | Não aparece como elegível |
+| T-008-04 | Vagas elegíveis com scores diferentes | Ordem segue score |
+| T-008-05 | Vaga externa não validada | Não aparece como elegível |
+| T-008-06 | Vaga encerra após busca inicial | Estado atualizado é respeitado |
+| T-008-07 | Nenhuma vaga elegível | Mensagem e ajuste de filtros |
+| T-008-08 | Navegar filtros por teclado | Operação sem mouse possível |
+
+## 13. Questões em aberto
+- **OPEN-036:** filtros definitivos e combinação entre eles.
+- **OPEN-037:** campos consultáveis e regras de busca textual.
+- **OPEN-038:** paginação, limites de resultados e ordenações alternativas.
+- **OPEN-039:** se alertas/salvamento de busca fazem parte do escopo ou são apenas sugestão.
+
+## 14. Definition of Done
+- [ ] Texto aprovado.
+- [ ] Filtros conferidos na baseline.
+- [ ] Integração com SPEC-007/SPEC-009 testável.
+- [ ] Layouts e estados vazios anexados e aprovados.
+- [ ] Acessibilidade e desempenho verificáveis.
+- [ ] Sem implementação antes das aprovações necessárias.
+
+---
+
+# SPEC-009 — Consultar status e disponibilidade da vaga
+
+## 1. Identificação
+| Campo | Valor |
+|---|---|
+| ID | SPEC-009 |
+| Bloco | 3 — Compatibilidade e descoberta |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Exibir o estado atual da vaga e impedir ações incompatíveis com sua disponibilidade |
+
+## 2. Rastreabilidade
+- **RF:** RF-10, RF-12, RF-27.
+- **RB:** RB-01, RB-13, RB-23, RB-42.
+- **RNF:** RNF-05, RNF-09, RNF-14.
+- **UC:** UC-12 — Status da Vaga; integra UC-02 e é relevante para UC-03.
+- **Modelo:** VAGA, CANDIDATURA.
+- **Drivers:** DA-02, DA-08. **ADRs:** ADR-002, ADR-004.
+- **Dependências:** SPEC-001, SPEC-005 e SPEC-006.
+- **Questões:** OPEN-040 a OPEN-042.
+
+## 3. Escopo
+**Incluído:** consultar e apresentar status atual; distinguir estados citados na baseline (aberta, encerrada ou indisponível); refletir alterações recentes; bloquear ações incompatíveis; identificar candidatos ativos afetados por encerramento para comunicação, conforme RB-42.
+
+**Fora do escopo:** criar estados/transições novos; gerenciar o funil; publicar/editar vaga; implementar todos os tipos de notificação.
+
+## 3.1. Telas e evidência de layout
+| Tela/área | Finalidade | Layout |
+|---|---|---|
+| Indicador de status | Mostrar estado atual | Pendente |
+| Mensagem de encerrada/indisponível | Explicar condição e bloquear ações incompatíveis | Pendente |
+| Estado atualizado | Informar mudança desde consulta anterior | Pendente |
+
+## 4. Dependências
+- SPEC-005/SPEC-006 fornecem vagas.
+- SPEC-008 apresenta vagas na busca.
+- SPEC-010 exibe status no detalhe.
+- SPEC-011 verifica disponibilidade antes de candidatura.
+- SPEC-016/017 tratam acompanhamento e comunicação.
+
+## 5. Comportamento esperado
+1. Candidato consulta uma vaga no catálogo, busca ou detalhe.
+2. Sistema recupera o status atual registrado.
+3. Sistema apresenta o estado de forma clara e acessível.
+4. Se aberta, o candidato pode seguir às verificações de elegibilidade.
+5. Se encerrada ou indisponível, o sistema informa a condição e bloqueia ações incompatíveis, incluindo nova candidatura.
+6. Se o status mudar após a busca, a operação seguinte verifica o estado atual.
+7. Ao encerrar uma vaga, candidatos ativos são identificados para comunicação conforme RB-42 e a Spec de notificação.
+8. Alterações relevantes são rastreáveis.
+
+## 6. Regras e invariantes
+1. Candidatura somente em vaga disponível e não bloqueada (RB-01).
+2. Vaga encerrada não aceita novas candidaturas e candidatos ativos são informados (RB-42).
+3. Status relevante deve ser claro antes da candidatura (RB-13, RB-23).
+4. Estado exibido reflete o registro atual.
+5. Estados novos não são criados sem decisão formal.
+6. Esta Spec trata consulta e aplicação de restrições; não concede ao candidato permissão para alterar status.
+7. Consulta de status não substitui verificação de compatibilidade da SPEC-007.
+
+## 7. Modelo de domínio
+- **VAGA:** contém status_vaga no modelo conceitual.
+- **CANDIDATURA:** identifica candidatos ativos potencialmente afetados por encerramento.
+- Estados e transições permanecem limitados à baseline.
+
+## 8. Impacto arquitetural
+A disponibilidade deve ser consultada por operações que dependem dela, especialmente candidatura. A validação ocorre no backend para impedir ações com estado desatualizado. A comunicação pode ser delegada à SPEC-017. Não se escolhe mecanismo em tempo real nem tecnologia de notificação.
+
+## 9. Contratos necessários
+- **Consultar status da vaga:** retorna estado atual.
+- **Verificar disponibilidade:** informa se a ação solicitada é permitida.
+- **Aplicar restrições por status:** bloqueia operações incompatíveis.
+- **Identificar candidaturas afetadas:** fornece o conjunto para notificação.
+- **Registrar alteração de status:** mantém rastreabilidade quando houver operação que altere estado.
+
+## 10. RNFs aplicáveis
+RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (controle de acesso às operações protegidas).
+
+## 11. Critérios de aceitação
+- [ ] Candidato visualiza estado atual.
+- [ ] Vaga encerrada/indisponível bloqueia novas candidaturas.
+- [ ] Mudança após a busca é respeitada pela operação seguinte.
+- [ ] Encerramento identifica candidatos ativos para comunicação.
+- [ ] O sistema não inventa status.
+- [ ] Consulta e restrições são consistentes no backend.
+- [ ] Mensagens são acessíveis e compreensíveis.
+
+## 12. Casos de teste derivados
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-009-01 | Consultar vaga aberta | Estado aberto |
+| T-009-02 | Consultar vaga encerrada | Estado encerrado |
+| T-009-03 | Candidatar-se em vaga encerrada | Ação bloqueada |
+| T-009-04 | Vaga encerra após busca | Estado atualizado respeitado |
+| T-009-05 | Encerrar vaga com candidaturas ativas | Candidatos identificados para notificação |
+| T-009-06 | Status não definido/indisponível | Comunicar apenas estado registrado |
+
+## 13. Questões em aberto
+- **OPEN-040:** catálogo formal de status e significado de indisponível versus encerrada.
+- **OPEN-041:** papéis que podem alterar status e transições permitidas.
+- **OPEN-042:** prazo e canal para informar candidatos ativos após encerramento.
+
+## 14. Definition of Done
+- [ ] Texto aprovado.
+- [ ] Estados e permissões conferidos.
+- [ ] Verificação de disponibilidade testável no backend.
+- [ ] Layouts dos estados aprovados.
+- [ ] Integração com candidatura/notificação testável.
+- [ ] Sem implementação antes das aprovações necessárias.
+
+---
+
+# SPEC-010 — Visualizar vaga e resultado de compatibilidade
+
+## 1. Identificação
+| Campo | Valor |
+|---|---|
+| ID | SPEC-010 |
+| Bloco | 3 — Compatibilidade e descoberta |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Apresentar detalhes da vaga, acessibilidade, status e explicação de compatibilidade |
+
+## 2. Rastreabilidade
+- **RF:** RF-10, RF-24, RF-25.
+- **RB:** RB-13, RB-16, RB-30, RB-01, RB-34.
+- **RNF:** RNF-01, RNF-02, RNF-03, RNF-04, RNF-13.
+- **UC:** UC-02, UC-12, UC-13.
+- **Modelo:** VAGA, EMPRESA, INFRAESTRUTURA_EMPRESA, TRAVA_CRITICA_VAGA.
+- **Drivers:** DA-01, DA-03, DA-04. **ADRs:** ADR-001, ADR-004.
+- **Dependências:** SPEC-004 a SPEC-009, especialmente SPEC-007 e SPEC-009.
+- **Questões:** OPEN-043 a OPEN-046.
+
+## 3. Escopo
+**Incluído:** apresentar título, descrição, requisitos, modalidade, localização, faixa salarial quando disponível, informações de acessibilidade e origem quando aplicável; mostrar status atual e resultado/fatores de compatibilidade; distinguir dados conhecidos dos não informados; permitir continuidade para candidatura somente quando status e elegibilidade permitirem.
+
+**Fora do escopo:** editar vaga; recalcular compatibilidade; realizar candidatura; alterar status; inferir atributos ausentes ou prometer acessibilidade não comprovada.
+
+## 3.1. Telas e evidência de layout
+| Tela/área | Finalidade | Layout |
+|---|---|---|
+| Detalhe da vaga | Apresentar informações disponíveis | Pendente |
+| Seção de acessibilidade | Exibir informações declaradas e ausentes | Pendente |
+| Resultado de compatibilidade | Mostrar score e fatores da SPEC-007 | Pendente |
+| Estado incompatível | Explicar inelegibilidade com fatores disponíveis | Pendente |
+| Ações conforme status | Permitir ou bloquear continuidade | Pendente |
+
+O layout não deve depender apenas de cor para indicar compatibilidade, deve permitir leitura acessível e distinguir informação declarada, não informada e calculada.
+
+## 4. Dependências
+- SPEC-004/005/006 fornecem dados de vaga e acessibilidade.
+- SPEC-007 fornece resultado e fatores.
+- SPEC-009 fornece status/disponibilidade.
+- SPEC-011 registra candidatura.
+- SPEC-003 orienta acessibilidade da apresentação.
+
+## 5. Comportamento esperado
+1. Candidato abre vaga a partir da busca ou acesso autorizado.
+2. Sistema recupera detalhes disponíveis e status atual.
+3. Sistema apresenta os dados da oportunidade e acessibilidade registrada.
+4. Campos ausentes são identificados como não informados.
+5. Se existir resultado de compatibilidade, apresenta score e fatores retornados pela SPEC-007.
+6. Se houver incompatibilidade por trava crítica, comunica que a vaga não é elegível para aquele candidato e apresenta fatores disponíveis.
+7. Apresenta status aberto/encerrado/indisponível conforme registro atual.
+8. A continuidade para candidatura só é oferecida quando status e elegibilidade permitirem; SPEC-011 fará validação final.
+9. Apresentação funciona com teclado, leitores de tela e dispositivos suportados.
+
+## 6. Regras e invariantes
+1. Informações relevantes de acessibilidade disponíveis antes da candidatura (RB-13).
+2. Dados ausentes não aparecem como confirmados (RB-16).
+3. Principais fatores de compatibilidade apresentados (RB-30).
+4. Trava crítica prevalece sobre score; incompatibilidade não pode ser apresentada como elegibilidade (RB-15).
+5. Status reflete consulta atual (RB-23, RB-42).
+6. Tela não calcula score alternativo nem altera resultado da SPEC-007.
+7. Não revelar dados pessoais do candidato desnecessários à própria consulta.
+8. A apresentação segue RNF-01/02/03/04/13.
+
+## 7. Modelo de domínio
+- **VAGA:** título, descrição, modalidade, faixa salarial, status e origem conforme modelo conceitual.
+- **EMPRESA/INFRAESTRUTURA_EMPRESA:** informações organizacionais de acessibilidade.
+- **TRAVA_CRITICA_VAGA:** barreiras e recursos eliminatórios.
+- **Resultado de compatibilidade:** score e fatores calculados pela SPEC-007.
+O modelo não define todos os campos visíveis nem a política de ocultação por campo; ver OPEN-043/044.
+
+## 8. Impacto arquitetural
+A apresentação compõe dados dos serviços de vaga, status e compatibilidade, sem duplicar regras. Deve distinguir score de trava crítica e manter semântica acessível. Não é definida biblioteca de UI.
+
+## 9. Contratos necessários
+- **Consultar detalhes da vaga:** retorna campos disponíveis e origem.
+- **Consultar status:** obtém estado atual conforme SPEC-009.
+- **Consultar compatibilidade:** obtém resultado/fatores da SPEC-007.
+- **Montar apresentação transparente:** distingue dado registrado, não informado e calculado.
+- **Verificar possibilidade de prosseguir:** orienta a ação, sem substituir validação final da SPEC-011.
+
+## 10. RNFs aplicáveis
+RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04 (usabilidade), RNF-13 (compatibilidade) e RNF-08 (privacidade).
+
+## 11. Critérios de aceitação
+- [ ] Detalhes disponíveis da vaga apresentados.
+- [ ] Informações de acessibilidade exibidas antes da candidatura.
+- [ ] Campos ausentes identificados como não informados.
+- [ ] Score/fatores correspondem à SPEC-007.
+- [ ] Vaga incompatível não é apresentada como elegível.
+- [ ] Status atual apresentado e ações incompatíveis bloqueadas.
+- [ ] Dados pessoais desnecessários não são expostos.
+- [ ] Conteúdo navegável por teclado e leitores de tela.
+- [ ] Interface responsiva nos dispositivos suportados.
+
+## 12. Casos de teste derivados
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-010-01 | Abrir vaga com dados completos | Detalhes apresentados |
+| T-010-02 | Campo de acessibilidade ausente | Campo indicado como não informado |
+| T-010-03 | Compatibilidade calculada | Score e fatores apresentados |
+| T-010-04 | Incompatibilidade crítica | Mensagem de incompatibilidade, sem elegibilidade |
+| T-010-05 | Vaga encerrada | Status e bloqueio de candidatura |
+| T-010-06 | Navegar por teclado | Seções e ações acessíveis |
+| T-010-07 | Leitor de tela lê resultado | Rótulos/status compreensíveis |
+| T-010-08 | Resultado é atualizado | Tela reflete resultado atualizado |
+
+## 13. Questões em aberto
+- **OPEN-043:** campos do detalhe e regras de visibilidade.
+- **OPEN-044:** formato e granularidade da explicação de compatibilidade.
+- **OPEN-045:** apresentação de faixa salarial, localização e origem quando ausentes/variáveis.
+- **OPEN-046:** apresentação do score quando os dados do candidato não estão completos.
+
+## 14. Definition of Done
+- [ ] Texto aprovado.
+- [ ] Campos e explicação confirmados com a baseline.
+- [ ] Integração com compatibilidade e status testável.
+- [ ] Protótipos anexados em docs/layout/ e aprovados separadamente.
+- [ ] Acessibilidade validável.
+- [ ] Sem implementação antes das aprovações necessárias.
+
+---
+
+## Registro de revisão do Bloco 3
+
+| Spec | Estado do texto | Estado do layout | Revisão humana |
+|---|---|---|---|
+| SPEC-007 — Calcular compatibilidade entre candidato e vaga | especificada | não se aplica ao cálculo; apresentação na SPEC-010 | aguardando |
+| SPEC-008 — Buscar e filtrar vagas | especificada | pendente | aguardando |
+| SPEC-009 — Consultar status e disponibilidade da vaga | especificada | pendente | aguardando |
+| SPEC-010 — Visualizar vaga e resultado de compatibilidade | especificada | pendente | aguardando |
+
+**Próxima etapa:** detalhar o Bloco 4 na ordem do mapa. A revisão coletiva de OPENs fica para depois do detalhamento de todas as Specs.
