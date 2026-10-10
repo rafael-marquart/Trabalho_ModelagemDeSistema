@@ -1,6 +1,6 @@
 # Specs — AcessaVagas
 
-Documento de detalhamento das Specs do **Bloco 1 — Acesso e perfis**, baseado na baseline do projeto e na estrutura do documento de referência do processo SDD.
+Documento de detalhamento das Specs do AcessaVagas, organizado nos Blocos 1 a 6, baseado na baseline do projeto e na estrutura do documento de referência do processo SDD.
 
 ## Controle do documento
 
@@ -2753,3 +2753,16 @@ Nota pública; explicação; estado sem dados suficientes. Questões estão cent
 | 5 — Acomodações, acompanhamento e notificações | SPEC-014 a SPEC-017 | especificadas, aguardando revisão | pendentes conforme aplicabilidade |
 | 6 — Avaliações, denúncias e nota pública | SPEC-018 a SPEC-021 | especificadas, aguardando revisão | pendentes |
 
+
+## Registro consolidado de revisão
+
+| Bloco | Specs | Estado dos textos | Estado dos layouts |
+|---|---|---|---|
+| 1 — Acesso e perfis | SPEC-001 a SPEC-003 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
+| 2 — Empresa, vagas próprias e ingestão externa | SPEC-004 a SPEC-006 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
+| 3 — Compatibilidade e descoberta | SPEC-007 a SPEC-010 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
+| 4 — Candidaturas e processo seletivo | SPEC-011 a SPEC-013 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
+| 5 — Acomodações, acompanhamento e notificações | SPEC-014 a SPEC-017 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
+| 6 — Avaliações, denúncias e nota pública | SPEC-018 a SPEC-021 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
+
+A revisão cruzada dos artefatos está registrada em [revisao-consistencia-specs.md](revisao-consistencia-specs.md). A inclusão no registro não significa aprovação. Implementação permanece bloqueada até aprovação do texto e dos layouts aplicáveis.
