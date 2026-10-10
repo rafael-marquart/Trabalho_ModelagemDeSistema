@@ -112,6 +112,96 @@ Este arquivo centraliza lacunas e decisões pendentes da baseline. Cada questão
 | OPEN-045 | aberta | Como exibir faixa salarial, localização e origem quando os dados estiverem ausentes ou variarem por fonte? | O modelo contempla alguns campos, mas não a política de apresentação para ausências. |
 | OPEN-046 | aberta | Como apresentar o resultado de compatibilidade quando o perfil do candidato estiver incompleto? | UC-13 prevê solicitar complementação, mas a apresentação do score parcial ou sua ausência precisa ser confirmada. |
 
+
+## Bloco 4 — Candidaturas e processo seletivo
+
+### SPEC-011 — Registrar candidatura
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-047 | aberta | Qual caso de uso descreve integralmente o registro de candidatura e seu fluxo principal? | RF-26 define a capacidade, mas o mapeamento do caso de uso específico deve ser confirmado. |
+| OPEN-048 | aberta | Quais verificações de elegibilidade são realizadas no registro e como cada recusa é comunicada? | É necessário conciliar status, compatibilidade e regras de candidatura. |
+| OPEN-049 | aberta | Qual é o estado inicial e quais dados obrigatórios são registrados na candidatura? | O modelo apresenta etapa_funil/data_inscricao, mas a inicialização completa precisa ser confirmada. |
+
+### SPEC-012 — Gerenciar candidatura pelo candidato
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-050 | aberta | Em quais estados e condições o candidato pode cancelar a candidatura? | RB-36 remete às regras/estados do processo, mas não detalha todos os casos. |
+| OPEN-051 | aberta | Quais eventos e dados compõem o histórico mostrado ao candidato? | UC-05 exige acompanhamento, mas a granularidade da linha do tempo precisa ser definida. |
+| OPEN-052 | aberta | Quais operações, além de consultar e cancelar, estão incluídas em RF-28? | O requisito fala em gerenciar conforme regras do processo; o conjunto completo de ações deve ser confirmado. |
+
+### SPEC-013 — Gerenciar processo seletivo e funil
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-053 | aberta | Qual caso de uso descreve especificamente a gestão do funil pelo Recrutador? | UC-05 descreve principalmente o acompanhamento pelo candidato; confirmar artefato de gestão empresarial. |
+| OPEN-054 | aberta | Quais condições formais precisam ser satisfeitas para avançar em cada etapa? | RB-43 exige condições de avanço, mas não detalha todos os critérios. |
+| OPEN-055 | aberta | Quais dados do candidato são visíveis ao Recrutador em cada etapa? | RB-26 exige confidencialidade e necessidade de acesso. |
+| OPEN-056 | aberta | Quais dados de decisão/histórico são obrigatórios e é permitido reverter transições? | RB-27/RB-41 exigem rastreabilidade; regras de reversão precisam ser confirmadas. |
+
+## Bloco 5 — Acomodações, acompanhamento e notificações
+
+### SPEC-014 — Solicitar acomodação
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-057 | aberta | Qual catálogo de recursos, campos e obrigatoriedades compõe a solicitação? | RF-29 descreve a capacidade sem detalhar o formulário integral. |
+| OPEN-058 | aberta | Qual é o estado inicial e quais estados/transições a solicitação pode assumir? | O modelo possui status_confirmacao, mas o ciclo de vida precisa ser confirmado. |
+| OPEN-059 | aberta | O candidato pode editar ou retirar uma solicitação? Em quais condições? | A baseline consultada não define os limites operacionais. |
+
+### SPEC-015 — Processar solicitação de acomodação
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-060 | aberta | Quais campos, justificativas e dados são obrigatórios ao registrar decisão sobre acomodação? | RF-32 descreve gestão, mas não detalha todos os campos da decisão. |
+| OPEN-061 | aberta | Quais estados e transições de processamento são permitidos? | Evita inventar estados além dos artefatos de baseline. |
+| OPEN-062 | aberta | Uma decisão pode ser reconsiderada ou alterada? Em quais condições? | Necessário definir histórico e efeitos sem inferir política. |
+
+### SPEC-016 — Acompanhar candidatura e processo seletivo
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-063 | aberta | Quais eventos, datas e campos compõem a linha do tempo? | UC-05 pede histórico, mas a composição detalhada não está definida. |
+| OPEN-064 | aberta | Qual granularidade das informações de acomodação é apresentada ao candidato? | RB-40 exige visibilidade autorizada; os detalhes exibidos precisam ser delimitados. |
+| OPEN-065 | aberta | Por quanto tempo o histórico fica disponível após cancelamento ou encerramento? | A baseline exige rastreabilidade, mas não define retenção. |
+
+### SPEC-017 — Notificar alterações do processo seletivo
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-066 | aberta | Quais eventos geram notificações obrigatórias? | RF-12/RF-27 falam em alterações relevantes, sem catálogo completo. |
+| OPEN-067 | aberta | Quais canais de envio e preferências do usuário serão suportados? | RF-02 cita e-mail para recuperação de senha, mas não determina o canal das notificações do processo. |
+| OPEN-068 | aberta | Quais prazos, retentativas e políticas de falha/reenvio serão aplicados? | Necessário para operacionalizar a entrega sem presumir infraestrutura. |
+| OPEN-069 | aberta | Haverá central/histórico interno de notificações e qual será sua retenção? | A baseline exige comunicação, mas não estabelece central nem política de retenção. |
+
+## Bloco 6 — Avaliações, denúncias e nota pública
+
+### SPEC-018 — Avaliar processo seletivo
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-070 | aberta | Quem pode avaliar e qual é a janela temporal de elegibilidade? | RF-21 define avaliação pós-processo, mas os critérios de elegibilidade precisam ser confirmados. |
+| OPEN-071 | aberta | Quais critérios, escalas, campos obrigatórios e possibilidades de edição compõem a avaliação? | O modelo contém notas de acessibilidade e postura, mas não define a forma completa. |
+| OPEN-072 | aberta | Quantas avaliações podem ser registradas por candidatura/entrevista e quais controles evitam abuso? | Necessário preservar integridade e confiabilidade. |
+| OPEN-073 | aberta | Quais dados da avaliação podem ser publicados anonimamente e por quanto tempo são retidos? | RB-19 exige anonimato público; conteúdo publicado e retenção precisam ser definidos. |
+
+### SPEC-019 — Denunciar incompatibilidade ou falsa inclusão
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-074 | aberta | Quem pode denunciar e em quais circunstâncias? | RF-14 descreve a capacidade sem detalhar toda elegibilidade. |
+| OPEN-075 | aberta | Quais campos/evidências são permitidos e como a denúncia se associa à avaliação/empresa? | O modelo prevê descrição e referências, mas não detalha evidências adicionais. |
+| OPEN-076 | aberta | Quais controles antiabuso e limites de frequência serão usados? | RB-24 exige proteção contra abuso, mas os parâmetros não estão definidos. |
+| OPEN-077 | aberta | Qual conteúdo e andamento podem ser vistos pelo denunciante e pelo denunciado? | A política de confidencialidade e comunicação precisa ser delimitada. |
+
+### SPEC-020 — Moderar denúncias de incompatibilidade
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-078 | aberta | Quais critérios e evidências o Administrador consulta para analisar uma denúncia? | RB-25 exige análise administrativa, mas não define o procedimento completo. |
+| OPEN-079 | aberta | Qual catálogo de decisões e quais efeitos cada decisão pode autorizar? | RB-45 prevê consequências conforme decisão registrada; efeitos precisam ser explícitos. |
+| OPEN-080 | aberta | Quais prazos e prioridades serão aplicados à fila de moderação? | A baseline não estabelece SLA ou priorização. |
+| OPEN-081 | aberta | Quais informações da decisão serão comunicadas às partes e quais permanecem confidenciais? | Impacta transparência, privacidade e segurança. |
+
+### SPEC-021 — Gerenciar nota pública de acessibilidade
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-082 | aberta | Qual fórmula, pesos e método de agregação definem a nota pública? | RF-13/RB-20 definem a fonte geral, mas não a fórmula detalhada. |
+| OPEN-083 | aberta | Qual quantidade mínima e quais critérios de validade tornam dados/avaliações suficientes para a nota? | Necessário evitar nota baseada em dados insuficientes ou inválidos. |
+| OPEN-084 | aberta | Como a nota será apresentada quando os dados forem insuficientes ou conflitantes? | O sistema não deve inventar valor nem presumir acessibilidade. |
+| OPEN-085 | aberta | Quais efeitos uma decisão de moderação pode produzir na nota e nos dados publicados? | A alteração só pode ocorrer após decisão registrada, mas os efeitos autorizados precisam ser definidos. |
+
 ## Decisões consolidadas
 
 - A **Empresa** existe como conta organizacional e pode cadastrar um ou mais usuários com perfil de **Recrutador** dentro de suas configurações.
