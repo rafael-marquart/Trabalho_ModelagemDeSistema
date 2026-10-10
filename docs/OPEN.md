@@ -73,6 +73,45 @@ Este arquivo centraliza lacunas e decisões pendentes da baseline. Cada questão
 | OPEN-029 | aberta | Qual política de transação, repetição, recuperação e tratamento de falhas parciais será usada? | RB-32 exige preservar registros válidos existentes; a estratégia operacional não está especificada. |
 | OPEN-030 | aberta | Qual é a formulação exata de RNF-16 e como será verificada no contexto da ingestão/normalização? | O mapa associa RNF-16 à Spec, mas é necessário confirmar o texto e a medida na baseline antes de fechar os testes. |
 
+
+## Bloco 3 — Compatibilidade e descoberta de vagas
+
+### SPEC-007 — Calcular compatibilidade entre candidato e vaga
+
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-031 | aberta | Qual fórmula detalhada será usada para subpontuações, normalização e arredondamento? | A baseline define pesos gerais, mas não detalha todos os cálculos intermediários. |
+| OPEN-032 | aberta | Quais campos constituem os dados mínimos para cada dimensão do cálculo? | RB-29 exige dados mínimos, mas a lista completa precisa ser confirmada antes de definir validações. |
+| OPEN-033 | aberta | Como distinguir e representar ausência de dados de acessibilidade de incompatibilidade comprovada? | RB-16 proíbe presumir compatibilidade quando faltam informações. |
+| OPEN-034 | aberta | Como distância e modalidade serão avaliadas quando localização ou preferências do candidato estiverem ausentes? | RB-05 atribui peso conjunto a distância/modalidade, mas não resolve os dados incompletos. |
+| OPEN-035 | aberta | Quais parâmetros e resultados precisam ser armazenados para permitir rastreabilidade ou reprodução do cálculo? | UC-13 menciona histórico/parâmetros, mas o formato e a retenção não estão definidos. |
+
+### SPEC-008 — Buscar e filtrar vagas
+
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-036 | aberta | Qual é a lista definitiva de filtros e como filtros combinados devem ser aplicados? | UC-02 cita termos, localização/cargo e modalidade, mas não define o catálogo completo e a combinação. |
+| OPEN-037 | aberta | Quais campos são consultáveis por busca textual e quais regras de correspondência devem ser usadas? | RF-06 descreve critérios gerais sem detalhar busca textual. |
+| OPEN-038 | aberta | Quais limites de resultados, paginação e ordenações alternativas serão oferecidos? | A baseline não define esses comportamentos de interface/consulta. |
+| OPEN-039 | aberta | Alertas por e-mail ou salvamento de busca fazem parte do escopo ou são apenas sugestões de UC-02? | A possibilidade é mencionada no caso de uso, mas não está estabelecida como requisito funcional próprio. |
+
+### SPEC-009 — Consultar status e disponibilidade da vaga
+
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-040 | aberta | Qual é o catálogo formal de status e qual a diferença operacional entre “indisponível” e “encerrada”? | UC-12 apresenta exemplos, mas os significados e estados completos precisam ser confirmados. |
+| OPEN-041 | aberta | Quais perfis/operações podem alterar status e quais transições são permitidas? | A Spec trata principalmente de consulta; as permissões de alteração precisam ser rastreadas na baseline. |
+| OPEN-042 | aberta | Qual prazo e canal serão usados para informar candidatos ativos após encerramento da vaga? | RB-42 exige informar candidatos ativos, mas não define prazo/canal. |
+
+### SPEC-010 — Visualizar vaga e resultado de compatibilidade
+
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-043 | aberta | Quais campos do detalhe da vaga devem ser exibidos e quais regras de visibilidade se aplicam? | RF-10 e o modelo conceitual oferecem campos, mas a apresentação completa não está especificada. |
+| OPEN-044 | aberta | Qual formato e nível de detalhe serão usados para explicar a compatibilidade ao candidato? | RF-24/RF-25 e RB-30 exigem transparência, mas não determinam granularidade ou visualização. |
+| OPEN-045 | aberta | Como exibir faixa salarial, localização e origem quando os dados estiverem ausentes ou variarem por fonte? | O modelo contempla alguns campos, mas não a política de apresentação para ausências. |
+| OPEN-046 | aberta | Como apresentar o resultado de compatibilidade quando o perfil do candidato estiver incompleto? | UC-13 prevê solicitar complementação, mas a apresentação do score parcial ou sua ausência precisa ser confirmada. |
+
 ## Decisões consolidadas
 
 - A **Empresa** existe como conta organizacional e pode cadastrar um ou mais usuários com perfil de **Recrutador** dentro de suas configurações.
