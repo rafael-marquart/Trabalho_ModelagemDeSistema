@@ -1724,28 +1724,33 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 | Capacidade | Registrar candidatura |
 
 ## 2. Rastreabilidade
-- **Baseline:** RF-26; RB-01, RB-14, RB-15, RB-34, RB-41, RB-42; RNF-07/08/09/14; CANDIDATO, VAGA, CANDIDATURA.
+- **Baseline:** RF-26, RF-34; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 002, 007, 009, 010.
-- **Questões abertas:** OPEN-047 a OPEN-049.
+- **Caso de uso:** UC-03 — Candidatar-se a Vaga.
+- **Questões abertas:** OPEN-082 a OPEN-085.
 
 ## 3. Escopo
 Validar autenticação, status atual da vaga, compatibilidade/trava crítica e candidatura ativa existente; se válido, registrar candidato, vaga, data e estado inicial previsto na baseline. Não permitir candidatura duplicada ativa.
 
 ## 3.1. Telas e evidência de layout
-Elegibilidade; duplicidade; estado inicial; caso de uso específico precisa ser confirmado.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+| Área/tela | Finalidade | Layout |
+|---|---|---|
+| Confirmação de candidatura | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Resultado do registro | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Estado não elegível | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+
+O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
 ## 4. Dependências
 SPEC-001, 002, 007, 009, 010. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
-1. O ator autorizado acessa a capacidade correspondente.
-2. O sistema valida identidade, vínculo e permissões aplicáveis.
-3. O sistema recupera os dados necessários e valida pré-condições.
-4. O usuário solicita a operação prevista no escopo.
-5. O sistema valida regras de negócio e integridade no backend.
-6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
-7. Se permitida, persiste a alteração e registra os eventos relevantes.
-8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+1. Candidato autenticado seleciona vaga elegível e solicita candidatura.
+2. Sistema consulta o status atual da vaga e verifica bloqueio, trava crítica e compatibilidade obrigatória.
+3. Sistema verifica se já existe candidatura ativa do candidato para a vaga.
+4. Se alguma condição falhar, recusa o registro e informa o motivo; nenhuma candidatura parcial é criada.
+5. Se todas as condições forem satisfeitas, registra a candidatura e disponibiliza o resultado ao candidato.
+6. Sistema registra o evento e aciona a capacidade de notificação quando aplicável.
 
 ## 6. Regras e invariantes
 - Vaga disponível e não bloqueada; trava crítica prevalece; uma candidatura ativa por vaga; operação auditável.
@@ -1793,7 +1798,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-011-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Registro; confirmação/recusa; estado não elegível. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -1818,28 +1823,33 @@ Registro; confirmação/recusa; estado não elegível. Questões estão centrali
 | Capacidade | Gerenciar candidatura pelo candidato |
 
 ## 2. Rastreabilidade
-- **Baseline:** RF-11, RF-28; RB-14, RB-23, RB-27, RB-36, RB-38, RB-39, RB-41, RB-42; CANDIDATO, CANDIDATURA, VAGA.
+- **Baseline:** RF-11, RF-28, RF-34; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 011, 013, 016, 017.
-- **Questões abertas:** OPEN-050 a OPEN-052.
+- **Caso de uso:** UC-05 — Acompanhar Funil de Candidaturas; RF-34 — Cancelamento de candidatura.
+- **Questões abertas:** OPEN-082 a OPEN-085.
 
 ## 3. Escopo
 Listar somente candidaturas próprias; consultar estado/histórico; permitir cancelamento apenas quando estado e regras permitirem; preservar histórico após cancelamento.
 
 ## 3.1. Telas e evidência de layout
-Estados de cancelamento, dados do histórico e outras ações previstas em RF-28.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+| Área/tela | Finalidade | Layout |
+|---|---|---|
+| Minhas candidaturas | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Detalhe e histórico | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Confirmação de cancelamento | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+
+O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
 ## 4. Dependências
 SPEC-001, 011, 013, 016, 017. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
-1. O ator autorizado acessa a capacidade correspondente.
-2. O sistema valida identidade, vínculo e permissões aplicáveis.
-3. O sistema recupera os dados necessários e valida pré-condições.
-4. O usuário solicita a operação prevista no escopo.
-5. O sistema valida regras de negócio e integridade no backend.
-6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
-7. Se permitida, persiste a alteração e registra os eventos relevantes.
-8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+1. Candidato autenticado abre a lista de candidaturas próprias.
+2. Sistema retorna apenas candidaturas associadas ao candidato autenticado.
+3. Ao selecionar uma candidatura, apresenta estado atual, vaga e histórico disponível.
+4. Ao solicitar cancelamento, sistema verifica as condições aplicáveis antes de alterar o estado.
+5. Se permitido, registra o cancelamento e preserva o histórico; se não, informa que a ação não pode ser executada.
+6. Sistema disponibiliza o estado atualizado para acompanhamento e notificação.
 
 ## 6. Regras e invariantes
 - Candidato só acessa seus processos; cancelamento respeita RB-36; estados/transições válidos; histórico preservado; dados de acomodação restritos.
@@ -1887,7 +1897,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-012-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Minhas candidaturas; detalhe/histórico; confirmação de cancelamento. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -1912,28 +1922,34 @@ Minhas candidaturas; detalhe/histórico; confirmação de cancelamento. Questõe
 | Capacidade | Gerenciar processo seletivo e funil |
 
 ## 2. Rastreabilidade
-- **Baseline:** RF-20, RF-30; RB-12, RB-27, RB-38, RB-39, RB-41, RB-43; CANDIDATURA, CANDIDATO, VAGA, ENTREVISTA.
+- **Baseline:** RF-20, RF-30, RF-35; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 005, 011.
-- **Questões abertas:** OPEN-053 a OPEN-056.
+- **Caso de uso:** UC-09 — Gerenciar Funil de Seleção.
+- **Questões abertas:** OPEN-082 a OPEN-085.
 
 ## 3. Escopo
 Recrutador autorizado consulta candidaturas das próprias vagas; solicita mudança de etapa; backend valida transição e condições de avanço; registra estado, decisão e histórico.
 
 ## 3.1. Telas e evidência de layout
-Caso de uso do recrutador, condições de avanço, visibilidade por etapa e reversão de transições.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+| Área/tela | Finalidade | Layout |
+|---|---|---|
+| Painel de candidaturas | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Visão do funil | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Detalhe da candidatura | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Alteração de etapa | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+
+O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
 ## 4. Dependências
 SPEC-001, 005, 011. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
-1. O ator autorizado acessa a capacidade correspondente.
-2. O sistema valida identidade, vínculo e permissões aplicáveis.
-3. O sistema recupera os dados necessários e valida pré-condições.
-4. O usuário solicita a operação prevista no escopo.
-5. O sistema valida regras de negócio e integridade no backend.
-6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
-7. Se permitida, persiste a alteração e registra os eventos relevantes.
-8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+1. Recrutador autenticado acessa candidaturas somente das vagas da Empresa a que está vinculado e autorizado.
+2. Sistema apresenta candidaturas e etapa atual.
+3. Recrutador seleciona uma candidatura e solicita mudança de etapa.
+4. Sistema valida a transição contra o fluxo definido e as condições de avanço aplicáveis.
+5. Transição inválida é recusada sem alterar o estado.
+6. Transição válida atualiza etapa e histórico, incluindo responsável e data quando esses campos estiverem definidos na baseline.
 
 ## 6. Regras e invariantes
 - Transições padronizadas: Inscrito→Triagem; Triagem→Entrevista/Recusado; Entrevista→Finalista/Recusado; Finalista→Contratado/Recusado. Transições inválidas recusadas; dados visíveis conforme autorização.
@@ -1981,7 +1997,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-013-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Painel de candidaturas; funil; detalhe; alteração de etapa. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2006,28 +2022,33 @@ Painel de candidaturas; funil; detalhe; alteração de etapa. Questões estão c
 | Capacidade | Solicitar acomodação |
 
 ## 2. Rastreabilidade
-- **Baseline:** RF-29; RB-26, RB-27, RB-40, RB-41; SOLICITACAO_ACOMODACAO, CANDIDATURA.
+- **Baseline:** RF-29; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 011, 012, 013.
-- **Questões abertas:** OPEN-057 a OPEN-059.
+- **Caso de uso:** UC-04 — Solicitar Acomodação no Processo Seletivo.
+- **Questões abertas:** OPEN-082 a OPEN-085.
 
 ## 3. Escopo
 Candidato autenticado solicita acomodação vinculada à própria candidatura; preenche campos previstos; sistema valida, registra estado inicial e permite consulta autorizada.
 
 ## 3.1. Telas e evidência de layout
-Campos/recursos, estados iniciais e permitidos, edição/retirada pelo candidato.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+| Área/tela | Finalidade | Layout |
+|---|---|---|
+| Formulário de solicitação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Confirmação de envio | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Consulta do estado da solicitação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+
+O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
 ## 4. Dependências
 SPEC-001, 011, 012, 013. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
-1. O ator autorizado acessa a capacidade correspondente.
-2. O sistema valida identidade, vínculo e permissões aplicáveis.
-3. O sistema recupera os dados necessários e valida pré-condições.
-4. O usuário solicita a operação prevista no escopo.
-5. O sistema valida regras de negócio e integridade no backend.
-6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
-7. Se permitida, persiste a alteração e registra os eventos relevantes.
-8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+1. Candidato autenticado acessa candidatura própria ativa ou processo seletivo em andamento.
+2. Sistema apresenta opções de necessidades/recursos e campos definidos no caso de uso.
+3. Candidato informa recurso solicitado e etapa afetada.
+4. Sistema valida dados mínimos e associa a solicitação à candidatura correta.
+5. Solicitação é registrada e encaminhada ao Recrutador autorizado; isso não significa aprovação.
+6. O sistema mantém o histórico e permite consulta autorizada do estado.
 
 ## 6. Regras e invariantes
 - Pedido não implica aprovação; dados somente a envolvidos autorizados; não exigir nem armazenar laudo médico; registrar alterações.
@@ -2075,7 +2096,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-014-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Formulário; confirmação; consulta de estado. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2100,28 +2121,33 @@ Formulário; confirmação; consulta de estado. Questões estão centralizadas e
 | Capacidade | Processar solicitação de acomodação |
 
 ## 2. Rastreabilidade
-- **Baseline:** RF-32; RB-26, RB-27, RB-37, RB-40, RB-41; SOLICITACAO_ACOMODACAO, CANDIDATURA, EMPRESA/RECRUTADOR.
+- **Baseline:** RF-32, RF-33; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 013, 014.
-- **Questões abertas:** OPEN-060 a OPEN-062.
+- **Caso de uso:** UC-04 — Solicitar Acomodação no Processo Seletivo (tratamento pelo Recrutador); confirmar rastreabilidade do fluxo decisório.
+- **Questões abertas:** OPEN-082 a OPEN-085.
 
 ## 3. Escopo
 Recrutador autorizado consulta solicitações das vagas sob sua responsabilidade, avalia e registra decisão válida; sistema atualiza estado e histórico, permitindo consulta ao candidato.
 
 ## 3.1. Telas e evidência de layout
-Campos/justificativa, estados/transições, reconsideração.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+| Área/tela | Finalidade | Layout |
+|---|---|---|
+| Solicitações recebidas | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Detalhe da solicitação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Registro de decisão | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+
+O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
 ## 4. Dependências
 SPEC-001, 013, 014. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
-1. O ator autorizado acessa a capacidade correspondente.
-2. O sistema valida identidade, vínculo e permissões aplicáveis.
-3. O sistema recupera os dados necessários e valida pré-condições.
-4. O usuário solicita a operação prevista no escopo.
-5. O sistema valida regras de negócio e integridade no backend.
-6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
-7. Se permitida, persiste a alteração e registra os eventos relevantes.
-8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+1. Recrutador autenticado acessa solicitações relacionadas às vagas autorizadas.
+2. Sistema limita a visualização às informações necessárias para avaliar o pedido.
+3. Recrutador registra decisão conforme opções e campos definidos na baseline.
+4. Sistema valida a transição de estado; decisões inválidas não são persistidas.
+5. Decisão válida atualiza estado e histórico e fica disponível ao candidato.
+6. Notificação da decisão ocorre pela SPEC-017 conforme eventos e canais aprovados.
 
 ## 6. Regras e invariantes
 - Acesso por autorização; exposição mínima; decisões rastreáveis; não alterar score/nota pública automaticamente.
@@ -2169,7 +2195,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-015-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Lista; detalhe; registro de decisão. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2194,28 +2220,34 @@ Lista; detalhe; registro de decisão. Questões estão centralizadas em docs/OPE
 | Capacidade | Acompanhar candidatura e processo seletivo |
 
 ## 2. Rastreabilidade
-- **Baseline:** RF-11, RF-27, RF-31, RF-33; RB-23, RB-27, RB-36, RB-38, RB-39, RB-40, RB-41, RB-42; CANDIDATURA, VAGA, SOLICITACAO_ACOMODACAO, ENTREVISTA.
+- **Baseline:** RF-11, RF-27, RF-31, RF-33; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-011 a 015.
-- **Questões abertas:** OPEN-063 a OPEN-065.
+- **Caso de uso:** UC-05 — Acompanhar Funil de Candidaturas.
+- **Questões abertas:** OPEN-082 a OPEN-085.
 
 ## 3. Escopo
 Listar candidaturas próprias; apresentar status/etapa atual, linha do tempo, decisões e acomodações autorizadas; refletir cancelamento e encerramento sem confundir eventos antigos com estado atual.
 
 ## 3.1. Telas e evidência de layout
-Eventos e datas do histórico, granularidade de acomodação, retenção após cancelamento.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+| Área/tela | Finalidade | Layout |
+|---|---|---|
+| Painel de acompanhamento | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Linha do tempo | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Detalhes da etapa e acomodação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Estado encerrado/cancelado | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+
+O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
 ## 4. Dependências
 SPEC-011 a 015. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
-1. O ator autorizado acessa a capacidade correspondente.
-2. O sistema valida identidade, vínculo e permissões aplicáveis.
-3. O sistema recupera os dados necessários e valida pré-condições.
-4. O usuário solicita a operação prevista no escopo.
-5. O sistema valida regras de negócio e integridade no backend.
-6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
-7. Se permitida, persiste a alteração e registra os eventos relevantes.
-8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+1. Candidato autenticado consulta somente candidaturas próprias.
+2. Sistema apresenta etapa/status atual e vaga correspondente.
+3. Sistema apresenta eventos históricos com datas disponíveis, distinguindo histórico de estado atual.
+4. Informações de acomodação são exibidas somente conforme autorização.
+5. Cancelamento ou encerramento da vaga é refletido no acompanhamento.
+6. O fluxo é somente de consulta; não altera etapa ou decisão do processo.
 
 ## 6. Regras e invariantes
 - Apenas processos próprios; privacidade de acomodações; histórico preservado; não altera etapas nem decisões.
@@ -2263,7 +2295,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-016-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Painel; linha do tempo; detalhe de etapa/acomodação. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2288,28 +2320,31 @@ Painel; linha do tempo; detalhe de etapa/acomodação. Questões estão centrali
 | Capacidade | Notificar alterações do processo seletivo |
 
 ## 2. Rastreabilidade
-- **Baseline:** RF-12, RF-27; RB-23, RB-27, RB-37, RB-41, RB-42; CANDIDATURA, VAGA, SOLICITACAO_ACOMODACAO.
+- **Baseline:** RF-12, RF-27; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-009, 011 a 016.
-- **Questões abertas:** OPEN-066 a OPEN-069.
+- **Caso de uso:** Fluxos de notificação referenciados por UC-03, UC-04, UC-05 e UC-09; canais dependem de decisão em OPEN.
+- **Questões abertas:** OPEN-082 a OPEN-085.
 
 ## 3. Escopo
 Diante de alteração relevante, identificar destinatários autorizados, preparar e enviar comunicação pelo canal aprovado, registrar resultado conforme política; falha no envio não reverte alteração de domínio.
 
 ## 3.1. Telas e evidência de layout
-Eventos, canais/preferências, prazos/repetição/retentativas, central e retenção.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+| Área/tela | Finalidade | Layout |
+|---|---|---|
+| Não se aplica ao envio em si; central de notificações somente se aprovada | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+
+O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
 ## 4. Dependências
 SPEC-009, 011 a 016. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
-1. O ator autorizado acessa a capacidade correspondente.
-2. O sistema valida identidade, vínculo e permissões aplicáveis.
-3. O sistema recupera os dados necessários e valida pré-condições.
-4. O usuário solicita a operação prevista no escopo.
-5. O sistema valida regras de negócio e integridade no backend.
-6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
-7. Se permitida, persiste a alteração e registra os eventos relevantes.
-8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+1. Uma capacidade de origem persiste uma alteração relevante.
+2. Sistema identifica evento e destinatários autorizados.
+3. Sistema prepara comunicação com o mínimo de dados necessário.
+4. Sistema envia pelo canal definido após decisão do projeto.
+5. Resultado de envio é registrado conforme política aprovada; falha de envio não desfaz a alteração de domínio.
+6. Usuário consulta o estado oficial na capacidade de origem/acompanhamento.
 
 ## 6. Regras e invariantes
 - Destinatário autorizado; conteúdo mínimo; encerramento informa candidatos ativos; notificação não substitui estado atual nem altera estado por si só.
@@ -2357,7 +2392,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-017-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Central visual pendente se prevista; envio em si não exige tela. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2382,28 +2417,33 @@ Central visual pendente se prevista; envio em si não exige tela. Questões est�
 | Capacidade | Avaliar processo seletivo |
 
 ## 2. Rastreabilidade
-- **Baseline:** RF-21; RB-19, RB-20, RB-27, RB-37, RB-41; ENTREVISTA, AVALIACAO_POS_ENTREVISTA, CANDIDATURA, EMPRESA.
+- **Baseline:** RF-21; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 011, 016.
-- **Questões abertas:** OPEN-070 a OPEN-073.
+- **Caso de uso:** UC-06 — Avaliar Pós-Entrevista.
+- **Questões abertas:** OPEN-082 a OPEN-085.
 
 ## 3. Escopo
 Candidato elegível registra avaliação com campos definidos na baseline; sistema valida associação e conteúdo, armazena e disponibiliza avaliações válidas para nota pública, preservando anonimato na apresentação pública.
 
 ## 3.1. Telas e evidência de layout
-Elegibilidade/janela, critérios/escala, limites por candidatura e dados públicos/retensão.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+| Área/tela | Finalidade | Layout |
+|---|---|---|
+| Formulário de avaliação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Confirmação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Consulta de avaliação própria, se prevista | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+
+O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
 ## 4. Dependências
 SPEC-001, 011, 016. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
-1. O ator autorizado acessa a capacidade correspondente.
-2. O sistema valida identidade, vínculo e permissões aplicáveis.
-3. O sistema recupera os dados necessários e valida pré-condições.
-4. O usuário solicita a operação prevista no escopo.
-5. O sistema valida regras de negócio e integridade no backend.
-6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
-7. Se permitida, persiste a alteração e registra os eventos relevantes.
-8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+1. Candidato autenticado acessa avaliação somente se elegível segundo o fluxo aprovado.
+2. Sistema apresenta critérios e escala definidos na baseline.
+3. Candidato preenche e envia a avaliação.
+4. Sistema valida campos e vínculo com entrevista/processo correspondente.
+5. Avaliação válida é registrada e disponibilizada à SPEC-021 sem expor publicamente a identidade do candidato.
+6. Avaliação não altera diretamente a nota pública nesta capacidade.
 
 ## 6. Regras e invariantes
 - Só avaliação válida participa da nota; identidade não é pública; avaliação não altera nota diretamente nesta Spec; registrar auditoria.
@@ -2451,7 +2491,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-018-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Formulário; confirmação; consulta permitida. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2476,28 +2516,33 @@ Formulário; confirmação; consulta permitida. Questões estão centralizadas e
 | Capacidade | Denunciar incompatibilidade ou falsa inclusão |
 
 ## 2. Rastreabilidade
-- **Baseline:** RF-14; RB-24, RB-25, RB-27, RB-37, RB-44, RB-45; DENUNCIA_FALSA_INCLUSAO, AVALIACAO_POS_ENTREVISTA, EMPRESA.
+- **Baseline:** RF-14; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 018, 020.
-- **Questões abertas:** OPEN-074 a OPEN-077.
+- **Caso de uso:** UC-11 — Denunciar Vaga Incompatível.
+- **Questões abertas:** OPEN-082 a OPEN-085.
 
 ## 3. Escopo
 Usuário elegível registra denúncia com descrição e referências previstas; sistema valida e encaminha para moderação, confirmando registro sem antecipar conclusão.
 
 ## 3.1. Telas e evidência de layout
-Quem pode denunciar, campos/evidências, limites antiabuso, visibilidade e comunicação.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+| Área/tela | Finalidade | Layout |
+|---|---|---|
+| Formulário de denúncia | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Confirmação de registro | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Consulta de andamento, se prevista | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+
+O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
 ## 4. Dependências
 SPEC-001, 018, 020. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
-1. O ator autorizado acessa a capacidade correspondente.
-2. O sistema valida identidade, vínculo e permissões aplicáveis.
-3. O sistema recupera os dados necessários e valida pré-condições.
-4. O usuário solicita a operação prevista no escopo.
-5. O sistema valida regras de negócio e integridade no backend.
-6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
-7. Se permitida, persiste a alteração e registra os eventos relevantes.
-8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+1. Candidato autenticado seleciona vaga visível e registra motivo/descrição da incompatibilidade.
+2. Sistema valida justificativa mínima e controles de duplicidade/abuso definidos na baseline.
+3. Denúncia é registrada e encaminhada à moderação.
+4. Sistema confirma o registro sem antecipar a decisão.
+5. O registro da denúncia não bloqueia vaga nem altera nota automaticamente.
+6. Estado e informações são expostos apenas conforme política de confidencialidade aprovada.
 
 ## 6. Regras e invariantes
 - Denúncia não bloqueia vaga nem altera nota automaticamente; Administrador analisa antes de consequência; controles antiabuso e auditoria.
@@ -2545,7 +2590,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-019-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Formulário; confirmação; estado se previsto. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2570,28 +2615,34 @@ Formulário; confirmação; estado se previsto. Questões estão centralizadas e
 | Capacidade | Moderar denúncias de incompatibilidade |
 
 ## 2. Rastreabilidade
-- **Baseline:** RF-22; RB-24, RB-25, RB-27, RB-37, RB-41, RB-44, RB-45; ADMINISTRADOR, DENUNCIA_FALSA_INCLUSAO, AVALIACAO_POS_ENTREVISTA, EMPRESA.
+- **Baseline:** RF-22; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 019, 021.
-- **Questões abertas:** OPEN-078 a OPEN-081.
+- **Caso de uso:** UC-11 — Denunciar Vaga Incompatível (fluxo de análise administrativa).
+- **Questões abertas:** OPEN-082 a OPEN-085.
 
 ## 3. Escopo
 Administrador da plataforma consulta fila e contexto autorizado, analisa e registra decisão/fundamento; efeitos autorizados são encaminhados às capacidades correspondentes.
 
 ## 3.1. Telas e evidência de layout
-Critérios/evidências, catálogo de decisões/efeitos, prazos, comunicação e confidencialidade.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+| Área/tela | Finalidade | Layout |
+|---|---|---|
+| Fila de moderação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Detalhe da denúncia | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Registro de decisão | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Histórico de moderação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+
+O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
 ## 4. Dependências
 SPEC-001, 019, 021. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
-1. O ator autorizado acessa a capacidade correspondente.
-2. O sistema valida identidade, vínculo e permissões aplicáveis.
-3. O sistema recupera os dados necessários e valida pré-condições.
-4. O usuário solicita a operação prevista no escopo.
-5. O sistema valida regras de negócio e integridade no backend.
-6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
-7. Se permitida, persiste a alteração e registra os eventos relevantes.
-8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+1. Administrador autenticado da plataforma acessa fila de denúncias.
+2. Sistema verifica o papel de Administrador da plataforma; Recrutadores não recebem essa permissão por vínculo com Empresa.
+3. Administrador consulta denúncia e contexto autorizado, analisa e registra decisão.
+4. Sistema persiste decisão e responsável, mantendo histórico.
+5. Efeito sobre vaga ou nota só ocorre quando explicitamente autorizado pela decisão e pelas regras aplicáveis.
+6. Denúncia sem decisão não altera nota nem bloqueia vaga.
 
 ## 6. Regras e invariantes
 - Só Administrador da plataforma modera; denúncia sem decisão não gera sanção; nota/status só mudam após decisão autorizadora e registro.
@@ -2639,7 +2690,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-020-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Fila; detalhe; decisão; histórico. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2664,28 +2715,33 @@ Fila; detalhe; decisão; histórico. Questões estão centralizadas em docs/OPEN
 | Capacidade | Gerenciar nota pública de acessibilidade |
 
 ## 2. Rastreabilidade
-- **Baseline:** RF-13; RB-08, RB-19, RB-20, RB-25, RB-27, RB-37, RB-45; EMPRESA, INFRAESTRUTURA_EMPRESA, AVALIACAO_POS_ENTREVISTA, DENUNCIA_FALSA_INCLUSAO.
+- **Baseline:** RF-13; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-004, 018, 020.
+- **Caso de uso:** Capacidade de nota pública; dependências em SPEC-004, SPEC-018 e SPEC-020.
 - **Questões abertas:** OPEN-082 a OPEN-085.
 
 ## 3. Escopo
 Calcular/exibir nota a partir de informações e avaliações válidas; preservar anonimato; tratar ausência de dados sem inventar valor; refletir decisão de moderação somente quando autorizar efeito.
 
 ## 3.1. Telas e evidência de layout
-Fórmula/pesos, quantidade mínima/validade, insuficiência/conflito, efeitos de decisões.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+| Área/tela | Finalidade | Layout |
+|---|---|---|
+| Nota pública da Empresa | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Explicação/fatores da nota, se definidos | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Estado sem dados suficientes | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+
+O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
 ## 4. Dependências
 SPEC-004, 018, 020. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
-1. O ator autorizado acessa a capacidade correspondente.
-2. O sistema valida identidade, vínculo e permissões aplicáveis.
-3. O sistema recupera os dados necessários e valida pré-condições.
-4. O usuário solicita a operação prevista no escopo.
-5. O sistema valida regras de negócio e integridade no backend.
-6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
-7. Se permitida, persiste a alteração e registra os eventos relevantes.
-8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+1. Sistema recupera somente dados registrados e válidos para cálculo.
+2. Aplica a fórmula aprovada; enquanto não definida, fórmula e pesos permanecem em OPEN-082.
+3. Sistema preserva anonimato público das avaliações.
+4. Sem dados suficientes, apresenta estado conforme regra aprovada, sem inventar nota.
+5. Denúncia sem decisão administrativa não altera a nota.
+6. Cálculos e alterações são rastreáveis.
 
 ## 6. Regras e invariantes
 - Nota baseada em dados válidos; denúncia não muda nota automaticamente; dados ausentes não são afirmação positiva/negativa; cálculo e alterações rastreáveis.
@@ -2733,7 +2789,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-021-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Nota pública; explicação; estado sem dados suficientes. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
