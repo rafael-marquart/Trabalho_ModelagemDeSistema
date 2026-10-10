@@ -2,16 +2,12 @@
 
 Este arquivo centraliza lacunas e decisões pendentes da baseline. Cada questão possui um ID estável e aponta para as Specs afetadas. A presença de uma questão aqui **não significa que a decisão já foi tomada**.
 
-# Questões em Aberto
-
-Este arquivo centraliza lacunas e decisões pendentes da baseline. Cada questão possui um ID estável e aponta para as Specs afetadas. A presença de uma questão aqui **não significa que a decisão já foi tomada**.
-
 ## Antes de revisar as questões em aberto
 
 Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguintes pontos documentais. Eles são correções/checagens da consistência das Specs, não decisões de produto; não marcar OPEN como resolvida por causa deles.
 
 1. **Rastreabilidade dos requisitos — parcialmente corrigida:** RF-34 foi associado à SPEC-012 e RF-35 à SPEC-013. Conferir se os fluxos e critérios dessas Specs cobrem integralmente cancelamento e gestão do funil.
-2. **Fluxos específicos das Specs 011–021 — revisar:** os comportamentos foram tornados mais específicos, mas o grupo deve conferir se exceções, pré/pós-condições, entradas/saídas e critérios de aceitação refletem os casos de uso e requisitos sem omissões.
+2. **Fluxos específicos das Specs 011–021 — revisão ainda necessária:** os comportamentos principais foram explicitados, mas critérios de aceitação/testes e detalhes de exceções, pré/pós-condições e dados de entrada/saída ainda precisam de conferência e aprofundamento contra os casos de uso. Não considerar esse ponto encerrado.
 3. **Referências a casos de uso — validar contra os arquivos individuais:** UC-03, UC-04, UC-05, UC-06, UC-09 e UC-11 foram associados às capacidades correspondentes. Verificar especialmente UC-14/ingestão e se cada referência descreve realmente o fluxo citado.
 4. **Seção de layout — conferir todas as Specs:** separar descrição das telas/áreas das questões OPEN. Layout é protótipo/evidência visual, não código; o estado de layout continua sendo uma aprovação separada.
 5. **Requisitos transversais — tornar verificáveis:** revisar critérios de aceitação de acessibilidade, segurança, privacidade, integridade e auditoria por operação, sem inventar métricas ausentes da baseline.
