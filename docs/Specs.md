@@ -7,10 +7,11 @@ Documento de detalhamento das Specs do **Bloco 1 — Acesso e perfis**, baseado 
 - Escopo: SPEC-001, SPEC-002 e SPEC-003.
 - Estado dos textos: especificada, aguardando revisão e aprovação humana.
 - Estado dos layouts: pendente.
+- **Layout significa evidência visual/protótipo, não código.** A identidade visual existente é uma referência inicial de estilo; ainda será necessário especificar e aprovar os layouts das telas aplicáveis.
 - Implementação: não autorizada. A aprovação do texto e a aprovação do layout são etapas separadas.
-- Lacunas e conflitos são registrados como questões em aberto; não são resolvidos silenciosamente.
+- Lacunas e conflitos são registrados em `docs/OPEN.md`, com IDs OPEN associados às Specs; não são resolvidos silenciosamente.
 
-Estados possíveis: especificada, aprovada, em implementação, implementada ou fora de escopo. O estado do layout pode ser pendente, aprovado ou não se aplica.
+Estados possíveis: especificada, aprovada, em implementação, implementada ou fora de escopo. O estado do layout pode ser pendente, aprovado ou não se aplica. A identidade visual é uma referência de direção visual, mas não equivale à aprovação dos layouts funcionais.
 
 ---
 
@@ -104,14 +105,14 @@ A baseline não determina canal de entrega, formato de token, validade do link o
 5. Sessão inválida ou expirada não autoriza operações protegidas.
 
 ### 5.4 Cadastro de Recrutador
-1. Usuário com permissão de administração da conta Empresa acessa as configurações.
+1. Uma Empresa autenticada e autorizada acessa as próprias configurações. **Não existe papel de Administrador associado à Empresa**; o perfil Administrador é reservado à moderação/gestão da plataforma.
 2. A Empresa abre a área de Recrutadores e informa os dados necessários.
 3. O sistema valida os dados e cria ou associa uma conta USUARIO com perfil de Recrutador.
 4. O sistema mantém o vínculo com a Empresa que realizou o cadastro.
 5. O sistema registra a alteração conforme as regras aplicáveis.
 6. A Empresa não pode administrar vínculos de Recrutadores pertencentes a outra organização.
 
-O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou tratar um e-mail que já pertença a uma conta precisa ser decidida antes da implementação.
+O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou tratar um e-mail que já pertença a uma conta precisa ser decidida antes da implementação. O perfil Administrador é exclusivo da plataforma e não participa da administração da conta Empresa.
 
 ## 6. Regras e invariantes
 
@@ -202,12 +203,14 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 ## 13. Questões em aberto
 
-1. **Recuperação de senha:** mecanismo de verificação, validade da solicitação e canal de envio não estão especificados em RF-02.
-2. **Política de sessão:** tempos de expiração e eventos de invalidação precisam ser definidos; RB-22 estabelece o princípio, não todos os parâmetros.
-3. **Política de senha e bloqueio:** critérios específicos não estão completamente definidos, embora UC-00 mencione usuário bloqueado.
-4. **Cadastro de Empresa:** campos obrigatórios e validação da identidade organizacional devem ser conferidos na definição integral de RF-17.
-5. **Recrutador existente:** UC-07 permite criar ou associar, mas não detalha o tratamento de e-mail já cadastrado nem o consentimento.
-6. **Auditoria:** eventos e prazo de retenção não estão definidos em detalhe.
+As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decisões tomadas nesta Spec.
+
+- **OPEN-001:** recuperação de senha — verificação, validade e canal de envio.
+- **OPEN-002:** política de sessão — expiração e eventos de invalidação.
+- **OPEN-003:** política de senha e bloqueio.
+- **OPEN-004:** campos obrigatórios e validação do cadastro de Empresa.
+- **OPEN-005:** associação de Recrutador cujo e-mail já pertence a uma conta e consentimento.
+- **OPEN-006:** eventos de auditoria e prazo de retenção.
 
 ## 14. Definition of Done
 
@@ -385,11 +388,13 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 
 ## 13. Questões em aberto
 
-1. **Campos do perfil:** a lista final de campos profissionais, obrigatoriedade e validação deve ser confirmada em RF-04/RF-19 e UC-01; o modelo usa o agregado dados_profissionais.
-2. **Catálogo de necessidades:** opções detalhadas por categoria e representação de necessidade obrigatória precisam ser confirmadas. RB-06 exige considerar necessidades obrigatórias, mas não define sozinho o catálogo completo.
-3. **Histórico:** campos/versões registrados e prazo de retenção não estão detalhados em RB-27.
-4. **Relação USUARIO–CANDIDATO:** o modelo conceitual não detalha a chave ou associação entre identidade e perfil.
-5. **Visibilidade para recrutadores:** quais informações de perfil/necessidades podem ser vistas por recrutador e em qual etapa? RB-26 exige confidencialidade, mas não define a matriz completa.
+As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decisões tomadas nesta Spec.
+
+- **OPEN-007:** campos profissionais, obrigatoriedade e validação do perfil.
+- **OPEN-008:** catálogo de necessidades por categoria e representação de necessidades obrigatórias.
+- **OPEN-009:** dados/versionamento do histórico e prazo de retenção.
+- **OPEN-010:** associação entre USUARIO e CANDIDATO no modelo.
+- **OPEN-011:** matriz de visibilidade de perfil e necessidades para Recrutadores.
 
 ## 14. Definition of Done
 
@@ -573,11 +578,13 @@ A referência a WCAG 2.1 AA não determina por si só ferramentas, combinações
 
 ## 13. Questões em aberto
 
-1. **Alto contraste:** será modo controlado pela aplicação ou dependerá das configurações do sistema operacional/navegador? RF-16 não define mecanismo.
-2. **Persistência:** preferências de acessibilidade persistem entre sessões ou só durante a sessão?
-3. **Comandos de voz:** quais comandos, fluxos, idiomas e mecanismo de reconhecimento serão suportados? RF-16 não especifica catálogo.
-4. **Ambientes de validação:** quais combinações de navegadores, leitores de tela e dispositivos serão referência?
-5. **Evidência WCAG:** qual processo de verificação e quais evidências demonstrarão conformidade com WCAG 2.1 AA?
+As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decisões tomadas nesta Spec.
+
+- **OPEN-012:** mecanismo de alto contraste — controle da aplicação ou configuração do sistema/navegador.
+- **OPEN-013:** persistência das preferências de acessibilidade entre sessões.
+- **OPEN-014:** comandos, fluxos, idiomas e tecnologia para interação por voz.
+- **OPEN-015:** ambientes de referência para validação (navegadores, leitores de tela e dispositivos).
+- **OPEN-016:** processo e evidências para avaliar conformidade com WCAG 2.1 AA.
 
 ## 14. Definition of Done
 
