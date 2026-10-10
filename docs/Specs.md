@@ -1710,3 +1710,1046 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 | SPEC-010 — Visualizar vaga e resultado de compatibilidade | especificada | pendente | aguardando |
 
 **Próxima etapa:** detalhar o Bloco 4 na ordem do mapa. A revisão coletiva de OPENs fica para depois do detalhamento de todas as Specs.
+
+
+# SPEC-011 — Registrar candidatura
+
+## 1. Identificação
+| Campo | Valor |
+|---|---|
+| ID | SPEC-011 |
+| Bloco | 4 — Candidaturas e processo seletivo |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Registrar candidatura |
+
+## 2. Rastreabilidade
+- **Baseline:** RF-26; RB-01, RB-14, RB-15, RB-34, RB-41, RB-42; RNF-07/08/09/14; CANDIDATO, VAGA, CANDIDATURA.
+- **Dependências:** SPEC-001, 002, 007, 009, 010.
+- **Questões abertas:** OPEN-047 a OPEN-049.
+
+## 3. Escopo
+Validar autenticação, status atual da vaga, compatibilidade/trava crítica e candidatura ativa existente; se válido, registrar candidato, vaga, data e estado inicial previsto na baseline. Não permitir candidatura duplicada ativa.
+
+## 3.1. Telas e evidência de layout
+Elegibilidade; duplicidade; estado inicial; caso de uso específico precisa ser confirmado.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+
+## 4. Dependências
+SPEC-001, 002, 007, 009, 010. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
+
+## 5. Comportamento esperado
+1. O ator autorizado acessa a capacidade correspondente.
+2. O sistema valida identidade, vínculo e permissões aplicáveis.
+3. O sistema recupera os dados necessários e valida pré-condições.
+4. O usuário solicita a operação prevista no escopo.
+5. O sistema valida regras de negócio e integridade no backend.
+6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
+7. Se permitida, persiste a alteração e registra os eventos relevantes.
+8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+
+## 6. Regras e invariantes
+- Vaga disponível e não bloqueada; trava crítica prevalece; uma candidatura ativa por vaga; operação auditável.
+- Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
+- Operações protegidas são validadas no backend.
+- Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
+- Alterações relevantes devem ser rastreáveis conforme RB/RNF aplicáveis.
+
+## 7. Modelo de domínio
+RF-26; RB-01, RB-14, RB-15, RB-34, RB-41, RB-42; RNF-07/08/09/14; CANDIDATO, VAGA, CANDIDATURA. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
+
+## 8. Impacto arquitetural
+A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
+
+## 9. Contratos necessários
+- **Consultar dados autorizados** necessários à operação.
+- **Validar pré-condições e regras** antes de alterar estado.
+- **Executar operação principal** somente se válida.
+- **Consultar resultado/estado atualizado**.
+- **Registrar alteração ou decisão** quando aplicável.
+
+Contratos conceituais; não definem endpoints HTTP.
+
+## 10. RNFs aplicáveis
+RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
+
+## 11. Critérios de aceitação
+- [ ] Acesso limitado ao ator autorizado.
+- [ ] Pré-condições e regras são validadas no backend.
+- [ ] Operações inválidas são recusadas sem alteração indevida.
+- [ ] Operação válida produz o estado esperado.
+- [ ] Dados pessoais e de acessibilidade respeitam autorização.
+- [ ] Alterações relevantes ficam rastreáveis.
+- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [ ] Lacunas permanecem explicitadas em OPEN.md.
+
+## 12. Casos de teste derivados
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-011-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
+| T-011-02 | Ator sem autorização tenta acessar dados | Acesso negado |
+| T-011-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
+| T-011-04 | Estado muda antes da operação | Regra/estado atual prevalece |
+| T-011-05 | Operação válida altera dados | Estado e histórico atualizados |
+| T-011-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+
+## 13. Questões em aberto
+Registro; confirmação/recusa; estado não elegível. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+
+## 14. Definition of Done
+- [ ] Texto revisado e aprovado.
+- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [ ] Questões decididas ou mantidas explicitamente em aberto.
+- [ ] Layout funcional anexado e aprovado quando aplicável.
+- [ ] Critérios de aceitação e testes revisados.
+- [ ] Nenhuma implementação antes das aprovações exigidas.
+
+---
+
+
+# SPEC-012 — Gerenciar candidatura pelo candidato
+
+## 1. Identificação
+| Campo | Valor |
+|---|---|
+| ID | SPEC-012 |
+| Bloco | 4 — Candidaturas e processo seletivo |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Gerenciar candidatura pelo candidato |
+
+## 2. Rastreabilidade
+- **Baseline:** RF-11, RF-28; RB-14, RB-23, RB-27, RB-36, RB-38, RB-39, RB-41, RB-42; CANDIDATO, CANDIDATURA, VAGA.
+- **Dependências:** SPEC-001, 011, 013, 016, 017.
+- **Questões abertas:** OPEN-050 a OPEN-052.
+
+## 3. Escopo
+Listar somente candidaturas próprias; consultar estado/histórico; permitir cancelamento apenas quando estado e regras permitirem; preservar histórico após cancelamento.
+
+## 3.1. Telas e evidência de layout
+Estados de cancelamento, dados do histórico e outras ações previstas em RF-28.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+
+## 4. Dependências
+SPEC-001, 011, 013, 016, 017. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
+
+## 5. Comportamento esperado
+1. O ator autorizado acessa a capacidade correspondente.
+2. O sistema valida identidade, vínculo e permissões aplicáveis.
+3. O sistema recupera os dados necessários e valida pré-condições.
+4. O usuário solicita a operação prevista no escopo.
+5. O sistema valida regras de negócio e integridade no backend.
+6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
+7. Se permitida, persiste a alteração e registra os eventos relevantes.
+8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+
+## 6. Regras e invariantes
+- Candidato só acessa seus processos; cancelamento respeita RB-36; estados/transições válidos; histórico preservado; dados de acomodação restritos.
+- Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
+- Operações protegidas são validadas no backend.
+- Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
+- Alterações relevantes devem ser rastreáveis conforme RB/RNF aplicáveis.
+
+## 7. Modelo de domínio
+RF-11, RF-28; RB-14, RB-23, RB-27, RB-36, RB-38, RB-39, RB-41, RB-42; CANDIDATO, CANDIDATURA, VAGA. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
+
+## 8. Impacto arquitetural
+A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
+
+## 9. Contratos necessários
+- **Consultar dados autorizados** necessários à operação.
+- **Validar pré-condições e regras** antes de alterar estado.
+- **Executar operação principal** somente se válida.
+- **Consultar resultado/estado atualizado**.
+- **Registrar alteração ou decisão** quando aplicável.
+
+Contratos conceituais; não definem endpoints HTTP.
+
+## 10. RNFs aplicáveis
+RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
+
+## 11. Critérios de aceitação
+- [ ] Acesso limitado ao ator autorizado.
+- [ ] Pré-condições e regras são validadas no backend.
+- [ ] Operações inválidas são recusadas sem alteração indevida.
+- [ ] Operação válida produz o estado esperado.
+- [ ] Dados pessoais e de acessibilidade respeitam autorização.
+- [ ] Alterações relevantes ficam rastreáveis.
+- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [ ] Lacunas permanecem explicitadas em OPEN.md.
+
+## 12. Casos de teste derivados
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-012-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
+| T-012-02 | Ator sem autorização tenta acessar dados | Acesso negado |
+| T-012-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
+| T-012-04 | Estado muda antes da operação | Regra/estado atual prevalece |
+| T-012-05 | Operação válida altera dados | Estado e histórico atualizados |
+| T-012-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+
+## 13. Questões em aberto
+Minhas candidaturas; detalhe/histórico; confirmação de cancelamento. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+
+## 14. Definition of Done
+- [ ] Texto revisado e aprovado.
+- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [ ] Questões decididas ou mantidas explicitamente em aberto.
+- [ ] Layout funcional anexado e aprovado quando aplicável.
+- [ ] Critérios de aceitação e testes revisados.
+- [ ] Nenhuma implementação antes das aprovações exigidas.
+
+---
+
+
+# SPEC-013 — Gerenciar processo seletivo e funil
+
+## 1. Identificação
+| Campo | Valor |
+|---|---|
+| ID | SPEC-013 |
+| Bloco | 4 — Candidaturas e processo seletivo |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Gerenciar processo seletivo e funil |
+
+## 2. Rastreabilidade
+- **Baseline:** RF-20, RF-30; RB-12, RB-27, RB-38, RB-39, RB-41, RB-43; CANDIDATURA, CANDIDATO, VAGA, ENTREVISTA.
+- **Dependências:** SPEC-001, 005, 011.
+- **Questões abertas:** OPEN-053 a OPEN-056.
+
+## 3. Escopo
+Recrutador autorizado consulta candidaturas das próprias vagas; solicita mudança de etapa; backend valida transição e condições de avanço; registra estado, decisão e histórico.
+
+## 3.1. Telas e evidência de layout
+Caso de uso do recrutador, condições de avanço, visibilidade por etapa e reversão de transições.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+
+## 4. Dependências
+SPEC-001, 005, 011. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
+
+## 5. Comportamento esperado
+1. O ator autorizado acessa a capacidade correspondente.
+2. O sistema valida identidade, vínculo e permissões aplicáveis.
+3. O sistema recupera os dados necessários e valida pré-condições.
+4. O usuário solicita a operação prevista no escopo.
+5. O sistema valida regras de negócio e integridade no backend.
+6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
+7. Se permitida, persiste a alteração e registra os eventos relevantes.
+8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+
+## 6. Regras e invariantes
+- Transições padronizadas: Inscrito→Triagem; Triagem→Entrevista/Recusado; Entrevista→Finalista/Recusado; Finalista→Contratado/Recusado. Transições inválidas recusadas; dados visíveis conforme autorização.
+- Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
+- Operações protegidas são validadas no backend.
+- Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
+- Alterações relevantes devem ser rastreáveis conforme RB/RNF aplicáveis.
+
+## 7. Modelo de domínio
+RF-20, RF-30; RB-12, RB-27, RB-38, RB-39, RB-41, RB-43; CANDIDATURA, CANDIDATO, VAGA, ENTREVISTA. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
+
+## 8. Impacto arquitetural
+A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
+
+## 9. Contratos necessários
+- **Consultar dados autorizados** necessários à operação.
+- **Validar pré-condições e regras** antes de alterar estado.
+- **Executar operação principal** somente se válida.
+- **Consultar resultado/estado atualizado**.
+- **Registrar alteração ou decisão** quando aplicável.
+
+Contratos conceituais; não definem endpoints HTTP.
+
+## 10. RNFs aplicáveis
+RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
+
+## 11. Critérios de aceitação
+- [ ] Acesso limitado ao ator autorizado.
+- [ ] Pré-condições e regras são validadas no backend.
+- [ ] Operações inválidas são recusadas sem alteração indevida.
+- [ ] Operação válida produz o estado esperado.
+- [ ] Dados pessoais e de acessibilidade respeitam autorização.
+- [ ] Alterações relevantes ficam rastreáveis.
+- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [ ] Lacunas permanecem explicitadas em OPEN.md.
+
+## 12. Casos de teste derivados
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-013-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
+| T-013-02 | Ator sem autorização tenta acessar dados | Acesso negado |
+| T-013-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
+| T-013-04 | Estado muda antes da operação | Regra/estado atual prevalece |
+| T-013-05 | Operação válida altera dados | Estado e histórico atualizados |
+| T-013-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+
+## 13. Questões em aberto
+Painel de candidaturas; funil; detalhe; alteração de etapa. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+
+## 14. Definition of Done
+- [ ] Texto revisado e aprovado.
+- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [ ] Questões decididas ou mantidas explicitamente em aberto.
+- [ ] Layout funcional anexado e aprovado quando aplicável.
+- [ ] Critérios de aceitação e testes revisados.
+- [ ] Nenhuma implementação antes das aprovações exigidas.
+
+---
+
+
+# SPEC-014 — Solicitar acomodação
+
+## 1. Identificação
+| Campo | Valor |
+|---|---|
+| ID | SPEC-014 |
+| Bloco | 5 — Acomodações, acompanhamento e notificações |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Solicitar acomodação |
+
+## 2. Rastreabilidade
+- **Baseline:** RF-29; RB-26, RB-27, RB-40, RB-41; SOLICITACAO_ACOMODACAO, CANDIDATURA.
+- **Dependências:** SPEC-001, 011, 012, 013.
+- **Questões abertas:** OPEN-057 a OPEN-059.
+
+## 3. Escopo
+Candidato autenticado solicita acomodação vinculada à própria candidatura; preenche campos previstos; sistema valida, registra estado inicial e permite consulta autorizada.
+
+## 3.1. Telas e evidência de layout
+Campos/recursos, estados iniciais e permitidos, edição/retirada pelo candidato.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+
+## 4. Dependências
+SPEC-001, 011, 012, 013. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
+
+## 5. Comportamento esperado
+1. O ator autorizado acessa a capacidade correspondente.
+2. O sistema valida identidade, vínculo e permissões aplicáveis.
+3. O sistema recupera os dados necessários e valida pré-condições.
+4. O usuário solicita a operação prevista no escopo.
+5. O sistema valida regras de negócio e integridade no backend.
+6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
+7. Se permitida, persiste a alteração e registra os eventos relevantes.
+8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+
+## 6. Regras e invariantes
+- Pedido não implica aprovação; dados somente a envolvidos autorizados; não exigir nem armazenar laudo médico; registrar alterações.
+- Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
+- Operações protegidas são validadas no backend.
+- Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
+- Alterações relevantes devem ser rastreáveis conforme RB/RNF aplicáveis.
+
+## 7. Modelo de domínio
+RF-29; RB-26, RB-27, RB-40, RB-41; SOLICITACAO_ACOMODACAO, CANDIDATURA. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
+
+## 8. Impacto arquitetural
+A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
+
+## 9. Contratos necessários
+- **Consultar dados autorizados** necessários à operação.
+- **Validar pré-condições e regras** antes de alterar estado.
+- **Executar operação principal** somente se válida.
+- **Consultar resultado/estado atualizado**.
+- **Registrar alteração ou decisão** quando aplicável.
+
+Contratos conceituais; não definem endpoints HTTP.
+
+## 10. RNFs aplicáveis
+RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
+
+## 11. Critérios de aceitação
+- [ ] Acesso limitado ao ator autorizado.
+- [ ] Pré-condições e regras são validadas no backend.
+- [ ] Operações inválidas são recusadas sem alteração indevida.
+- [ ] Operação válida produz o estado esperado.
+- [ ] Dados pessoais e de acessibilidade respeitam autorização.
+- [ ] Alterações relevantes ficam rastreáveis.
+- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [ ] Lacunas permanecem explicitadas em OPEN.md.
+
+## 12. Casos de teste derivados
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-014-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
+| T-014-02 | Ator sem autorização tenta acessar dados | Acesso negado |
+| T-014-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
+| T-014-04 | Estado muda antes da operação | Regra/estado atual prevalece |
+| T-014-05 | Operação válida altera dados | Estado e histórico atualizados |
+| T-014-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+
+## 13. Questões em aberto
+Formulário; confirmação; consulta de estado. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+
+## 14. Definition of Done
+- [ ] Texto revisado e aprovado.
+- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [ ] Questões decididas ou mantidas explicitamente em aberto.
+- [ ] Layout funcional anexado e aprovado quando aplicável.
+- [ ] Critérios de aceitação e testes revisados.
+- [ ] Nenhuma implementação antes das aprovações exigidas.
+
+---
+
+
+# SPEC-015 — Processar solicitação de acomodação
+
+## 1. Identificação
+| Campo | Valor |
+|---|---|
+| ID | SPEC-015 |
+| Bloco | 5 — Acomodações, acompanhamento e notificações |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Processar solicitação de acomodação |
+
+## 2. Rastreabilidade
+- **Baseline:** RF-32; RB-26, RB-27, RB-37, RB-40, RB-41; SOLICITACAO_ACOMODACAO, CANDIDATURA, EMPRESA/RECRUTADOR.
+- **Dependências:** SPEC-001, 013, 014.
+- **Questões abertas:** OPEN-060 a OPEN-062.
+
+## 3. Escopo
+Recrutador autorizado consulta solicitações das vagas sob sua responsabilidade, avalia e registra decisão válida; sistema atualiza estado e histórico, permitindo consulta ao candidato.
+
+## 3.1. Telas e evidência de layout
+Campos/justificativa, estados/transições, reconsideração.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+
+## 4. Dependências
+SPEC-001, 013, 014. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
+
+## 5. Comportamento esperado
+1. O ator autorizado acessa a capacidade correspondente.
+2. O sistema valida identidade, vínculo e permissões aplicáveis.
+3. O sistema recupera os dados necessários e valida pré-condições.
+4. O usuário solicita a operação prevista no escopo.
+5. O sistema valida regras de negócio e integridade no backend.
+6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
+7. Se permitida, persiste a alteração e registra os eventos relevantes.
+8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+
+## 6. Regras e invariantes
+- Acesso por autorização; exposição mínima; decisões rastreáveis; não alterar score/nota pública automaticamente.
+- Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
+- Operações protegidas são validadas no backend.
+- Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
+- Alterações relevantes devem ser rastreáveis conforme RB/RNF aplicáveis.
+
+## 7. Modelo de domínio
+RF-32; RB-26, RB-27, RB-37, RB-40, RB-41; SOLICITACAO_ACOMODACAO, CANDIDATURA, EMPRESA/RECRUTADOR. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
+
+## 8. Impacto arquitetural
+A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
+
+## 9. Contratos necessários
+- **Consultar dados autorizados** necessários à operação.
+- **Validar pré-condições e regras** antes de alterar estado.
+- **Executar operação principal** somente se válida.
+- **Consultar resultado/estado atualizado**.
+- **Registrar alteração ou decisão** quando aplicável.
+
+Contratos conceituais; não definem endpoints HTTP.
+
+## 10. RNFs aplicáveis
+RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
+
+## 11. Critérios de aceitação
+- [ ] Acesso limitado ao ator autorizado.
+- [ ] Pré-condições e regras são validadas no backend.
+- [ ] Operações inválidas são recusadas sem alteração indevida.
+- [ ] Operação válida produz o estado esperado.
+- [ ] Dados pessoais e de acessibilidade respeitam autorização.
+- [ ] Alterações relevantes ficam rastreáveis.
+- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [ ] Lacunas permanecem explicitadas em OPEN.md.
+
+## 12. Casos de teste derivados
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-015-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
+| T-015-02 | Ator sem autorização tenta acessar dados | Acesso negado |
+| T-015-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
+| T-015-04 | Estado muda antes da operação | Regra/estado atual prevalece |
+| T-015-05 | Operação válida altera dados | Estado e histórico atualizados |
+| T-015-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+
+## 13. Questões em aberto
+Lista; detalhe; registro de decisão. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+
+## 14. Definition of Done
+- [ ] Texto revisado e aprovado.
+- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [ ] Questões decididas ou mantidas explicitamente em aberto.
+- [ ] Layout funcional anexado e aprovado quando aplicável.
+- [ ] Critérios de aceitação e testes revisados.
+- [ ] Nenhuma implementação antes das aprovações exigidas.
+
+---
+
+
+# SPEC-016 — Acompanhar candidatura e processo seletivo
+
+## 1. Identificação
+| Campo | Valor |
+|---|---|
+| ID | SPEC-016 |
+| Bloco | 5 — Acomodações, acompanhamento e notificações |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Acompanhar candidatura e processo seletivo |
+
+## 2. Rastreabilidade
+- **Baseline:** RF-11, RF-27, RF-31, RF-33; RB-23, RB-27, RB-36, RB-38, RB-39, RB-40, RB-41, RB-42; CANDIDATURA, VAGA, SOLICITACAO_ACOMODACAO, ENTREVISTA.
+- **Dependências:** SPEC-011 a 015.
+- **Questões abertas:** OPEN-063 a OPEN-065.
+
+## 3. Escopo
+Listar candidaturas próprias; apresentar status/etapa atual, linha do tempo, decisões e acomodações autorizadas; refletir cancelamento e encerramento sem confundir eventos antigos com estado atual.
+
+## 3.1. Telas e evidência de layout
+Eventos e datas do histórico, granularidade de acomodação, retenção após cancelamento.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+
+## 4. Dependências
+SPEC-011 a 015. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
+
+## 5. Comportamento esperado
+1. O ator autorizado acessa a capacidade correspondente.
+2. O sistema valida identidade, vínculo e permissões aplicáveis.
+3. O sistema recupera os dados necessários e valida pré-condições.
+4. O usuário solicita a operação prevista no escopo.
+5. O sistema valida regras de negócio e integridade no backend.
+6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
+7. Se permitida, persiste a alteração e registra os eventos relevantes.
+8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+
+## 6. Regras e invariantes
+- Apenas processos próprios; privacidade de acomodações; histórico preservado; não altera etapas nem decisões.
+- Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
+- Operações protegidas são validadas no backend.
+- Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
+- Alterações relevantes devem ser rastreáveis conforme RB/RNF aplicáveis.
+
+## 7. Modelo de domínio
+RF-11, RF-27, RF-31, RF-33; RB-23, RB-27, RB-36, RB-38, RB-39, RB-40, RB-41, RB-42; CANDIDATURA, VAGA, SOLICITACAO_ACOMODACAO, ENTREVISTA. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
+
+## 8. Impacto arquitetural
+A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
+
+## 9. Contratos necessários
+- **Consultar dados autorizados** necessários à operação.
+- **Validar pré-condições e regras** antes de alterar estado.
+- **Executar operação principal** somente se válida.
+- **Consultar resultado/estado atualizado**.
+- **Registrar alteração ou decisão** quando aplicável.
+
+Contratos conceituais; não definem endpoints HTTP.
+
+## 10. RNFs aplicáveis
+RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
+
+## 11. Critérios de aceitação
+- [ ] Acesso limitado ao ator autorizado.
+- [ ] Pré-condições e regras são validadas no backend.
+- [ ] Operações inválidas são recusadas sem alteração indevida.
+- [ ] Operação válida produz o estado esperado.
+- [ ] Dados pessoais e de acessibilidade respeitam autorização.
+- [ ] Alterações relevantes ficam rastreáveis.
+- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [ ] Lacunas permanecem explicitadas em OPEN.md.
+
+## 12. Casos de teste derivados
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-016-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
+| T-016-02 | Ator sem autorização tenta acessar dados | Acesso negado |
+| T-016-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
+| T-016-04 | Estado muda antes da operação | Regra/estado atual prevalece |
+| T-016-05 | Operação válida altera dados | Estado e histórico atualizados |
+| T-016-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+
+## 13. Questões em aberto
+Painel; linha do tempo; detalhe de etapa/acomodação. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+
+## 14. Definition of Done
+- [ ] Texto revisado e aprovado.
+- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [ ] Questões decididas ou mantidas explicitamente em aberto.
+- [ ] Layout funcional anexado e aprovado quando aplicável.
+- [ ] Critérios de aceitação e testes revisados.
+- [ ] Nenhuma implementação antes das aprovações exigidas.
+
+---
+
+
+# SPEC-017 — Notificar alterações do processo seletivo
+
+## 1. Identificação
+| Campo | Valor |
+|---|---|
+| ID | SPEC-017 |
+| Bloco | 5 — Acomodações, acompanhamento e notificações |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Notificar alterações do processo seletivo |
+
+## 2. Rastreabilidade
+- **Baseline:** RF-12, RF-27; RB-23, RB-27, RB-37, RB-41, RB-42; CANDIDATURA, VAGA, SOLICITACAO_ACOMODACAO.
+- **Dependências:** SPEC-009, 011 a 016.
+- **Questões abertas:** OPEN-066 a OPEN-069.
+
+## 3. Escopo
+Diante de alteração relevante, identificar destinatários autorizados, preparar e enviar comunicação pelo canal aprovado, registrar resultado conforme política; falha no envio não reverte alteração de domínio.
+
+## 3.1. Telas e evidência de layout
+Eventos, canais/preferências, prazos/repetição/retentativas, central e retenção.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+
+## 4. Dependências
+SPEC-009, 011 a 016. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
+
+## 5. Comportamento esperado
+1. O ator autorizado acessa a capacidade correspondente.
+2. O sistema valida identidade, vínculo e permissões aplicáveis.
+3. O sistema recupera os dados necessários e valida pré-condições.
+4. O usuário solicita a operação prevista no escopo.
+5. O sistema valida regras de negócio e integridade no backend.
+6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
+7. Se permitida, persiste a alteração e registra os eventos relevantes.
+8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+
+## 6. Regras e invariantes
+- Destinatário autorizado; conteúdo mínimo; encerramento informa candidatos ativos; notificação não substitui estado atual nem altera estado por si só.
+- Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
+- Operações protegidas são validadas no backend.
+- Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
+- Alterações relevantes devem ser rastreáveis conforme RB/RNF aplicáveis.
+
+## 7. Modelo de domínio
+RF-12, RF-27; RB-23, RB-27, RB-37, RB-41, RB-42; CANDIDATURA, VAGA, SOLICITACAO_ACOMODACAO. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
+
+## 8. Impacto arquitetural
+A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
+
+## 9. Contratos necessários
+- **Consultar dados autorizados** necessários à operação.
+- **Validar pré-condições e regras** antes de alterar estado.
+- **Executar operação principal** somente se válida.
+- **Consultar resultado/estado atualizado**.
+- **Registrar alteração ou decisão** quando aplicável.
+
+Contratos conceituais; não definem endpoints HTTP.
+
+## 10. RNFs aplicáveis
+RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
+
+## 11. Critérios de aceitação
+- [ ] Acesso limitado ao ator autorizado.
+- [ ] Pré-condições e regras são validadas no backend.
+- [ ] Operações inválidas são recusadas sem alteração indevida.
+- [ ] Operação válida produz o estado esperado.
+- [ ] Dados pessoais e de acessibilidade respeitam autorização.
+- [ ] Alterações relevantes ficam rastreáveis.
+- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [ ] Lacunas permanecem explicitadas em OPEN.md.
+
+## 12. Casos de teste derivados
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-017-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
+| T-017-02 | Ator sem autorização tenta acessar dados | Acesso negado |
+| T-017-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
+| T-017-04 | Estado muda antes da operação | Regra/estado atual prevalece |
+| T-017-05 | Operação válida altera dados | Estado e histórico atualizados |
+| T-017-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+
+## 13. Questões em aberto
+Central visual pendente se prevista; envio em si não exige tela. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+
+## 14. Definition of Done
+- [ ] Texto revisado e aprovado.
+- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [ ] Questões decididas ou mantidas explicitamente em aberto.
+- [ ] Layout funcional anexado e aprovado quando aplicável.
+- [ ] Critérios de aceitação e testes revisados.
+- [ ] Nenhuma implementação antes das aprovações exigidas.
+
+---
+
+
+# SPEC-018 — Avaliar processo seletivo
+
+## 1. Identificação
+| Campo | Valor |
+|---|---|
+| ID | SPEC-018 |
+| Bloco | 6 — Avaliações, denúncias e nota pública |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Avaliar processo seletivo |
+
+## 2. Rastreabilidade
+- **Baseline:** RF-21; RB-19, RB-20, RB-27, RB-37, RB-41; ENTREVISTA, AVALIACAO_POS_ENTREVISTA, CANDIDATURA, EMPRESA.
+- **Dependências:** SPEC-001, 011, 016.
+- **Questões abertas:** OPEN-070 a OPEN-073.
+
+## 3. Escopo
+Candidato elegível registra avaliação com campos definidos na baseline; sistema valida associação e conteúdo, armazena e disponibiliza avaliações válidas para nota pública, preservando anonimato na apresentação pública.
+
+## 3.1. Telas e evidência de layout
+Elegibilidade/janela, critérios/escala, limites por candidatura e dados públicos/retensão.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+
+## 4. Dependências
+SPEC-001, 011, 016. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
+
+## 5. Comportamento esperado
+1. O ator autorizado acessa a capacidade correspondente.
+2. O sistema valida identidade, vínculo e permissões aplicáveis.
+3. O sistema recupera os dados necessários e valida pré-condições.
+4. O usuário solicita a operação prevista no escopo.
+5. O sistema valida regras de negócio e integridade no backend.
+6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
+7. Se permitida, persiste a alteração e registra os eventos relevantes.
+8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+
+## 6. Regras e invariantes
+- Só avaliação válida participa da nota; identidade não é pública; avaliação não altera nota diretamente nesta Spec; registrar auditoria.
+- Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
+- Operações protegidas são validadas no backend.
+- Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
+- Alterações relevantes devem ser rastreáveis conforme RB/RNF aplicáveis.
+
+## 7. Modelo de domínio
+RF-21; RB-19, RB-20, RB-27, RB-37, RB-41; ENTREVISTA, AVALIACAO_POS_ENTREVISTA, CANDIDATURA, EMPRESA. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
+
+## 8. Impacto arquitetural
+A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
+
+## 9. Contratos necessários
+- **Consultar dados autorizados** necessários à operação.
+- **Validar pré-condições e regras** antes de alterar estado.
+- **Executar operação principal** somente se válida.
+- **Consultar resultado/estado atualizado**.
+- **Registrar alteração ou decisão** quando aplicável.
+
+Contratos conceituais; não definem endpoints HTTP.
+
+## 10. RNFs aplicáveis
+RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
+
+## 11. Critérios de aceitação
+- [ ] Acesso limitado ao ator autorizado.
+- [ ] Pré-condições e regras são validadas no backend.
+- [ ] Operações inválidas são recusadas sem alteração indevida.
+- [ ] Operação válida produz o estado esperado.
+- [ ] Dados pessoais e de acessibilidade respeitam autorização.
+- [ ] Alterações relevantes ficam rastreáveis.
+- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [ ] Lacunas permanecem explicitadas em OPEN.md.
+
+## 12. Casos de teste derivados
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-018-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
+| T-018-02 | Ator sem autorização tenta acessar dados | Acesso negado |
+| T-018-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
+| T-018-04 | Estado muda antes da operação | Regra/estado atual prevalece |
+| T-018-05 | Operação válida altera dados | Estado e histórico atualizados |
+| T-018-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+
+## 13. Questões em aberto
+Formulário; confirmação; consulta permitida. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+
+## 14. Definition of Done
+- [ ] Texto revisado e aprovado.
+- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [ ] Questões decididas ou mantidas explicitamente em aberto.
+- [ ] Layout funcional anexado e aprovado quando aplicável.
+- [ ] Critérios de aceitação e testes revisados.
+- [ ] Nenhuma implementação antes das aprovações exigidas.
+
+---
+
+
+# SPEC-019 — Denunciar incompatibilidade ou falsa inclusão
+
+## 1. Identificação
+| Campo | Valor |
+|---|---|
+| ID | SPEC-019 |
+| Bloco | 6 — Avaliações, denúncias e nota pública |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Denunciar incompatibilidade ou falsa inclusão |
+
+## 2. Rastreabilidade
+- **Baseline:** RF-14; RB-24, RB-25, RB-27, RB-37, RB-44, RB-45; DENUNCIA_FALSA_INCLUSAO, AVALIACAO_POS_ENTREVISTA, EMPRESA.
+- **Dependências:** SPEC-001, 018, 020.
+- **Questões abertas:** OPEN-074 a OPEN-077.
+
+## 3. Escopo
+Usuário elegível registra denúncia com descrição e referências previstas; sistema valida e encaminha para moderação, confirmando registro sem antecipar conclusão.
+
+## 3.1. Telas e evidência de layout
+Quem pode denunciar, campos/evidências, limites antiabuso, visibilidade e comunicação.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+
+## 4. Dependências
+SPEC-001, 018, 020. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
+
+## 5. Comportamento esperado
+1. O ator autorizado acessa a capacidade correspondente.
+2. O sistema valida identidade, vínculo e permissões aplicáveis.
+3. O sistema recupera os dados necessários e valida pré-condições.
+4. O usuário solicita a operação prevista no escopo.
+5. O sistema valida regras de negócio e integridade no backend.
+6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
+7. Se permitida, persiste a alteração e registra os eventos relevantes.
+8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+
+## 6. Regras e invariantes
+- Denúncia não bloqueia vaga nem altera nota automaticamente; Administrador analisa antes de consequência; controles antiabuso e auditoria.
+- Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
+- Operações protegidas são validadas no backend.
+- Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
+- Alterações relevantes devem ser rastreáveis conforme RB/RNF aplicáveis.
+
+## 7. Modelo de domínio
+RF-14; RB-24, RB-25, RB-27, RB-37, RB-44, RB-45; DENUNCIA_FALSA_INCLUSAO, AVALIACAO_POS_ENTREVISTA, EMPRESA. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
+
+## 8. Impacto arquitetural
+A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
+
+## 9. Contratos necessários
+- **Consultar dados autorizados** necessários à operação.
+- **Validar pré-condições e regras** antes de alterar estado.
+- **Executar operação principal** somente se válida.
+- **Consultar resultado/estado atualizado**.
+- **Registrar alteração ou decisão** quando aplicável.
+
+Contratos conceituais; não definem endpoints HTTP.
+
+## 10. RNFs aplicáveis
+RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
+
+## 11. Critérios de aceitação
+- [ ] Acesso limitado ao ator autorizado.
+- [ ] Pré-condições e regras são validadas no backend.
+- [ ] Operações inválidas são recusadas sem alteração indevida.
+- [ ] Operação válida produz o estado esperado.
+- [ ] Dados pessoais e de acessibilidade respeitam autorização.
+- [ ] Alterações relevantes ficam rastreáveis.
+- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [ ] Lacunas permanecem explicitadas em OPEN.md.
+
+## 12. Casos de teste derivados
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-019-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
+| T-019-02 | Ator sem autorização tenta acessar dados | Acesso negado |
+| T-019-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
+| T-019-04 | Estado muda antes da operação | Regra/estado atual prevalece |
+| T-019-05 | Operação válida altera dados | Estado e histórico atualizados |
+| T-019-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+
+## 13. Questões em aberto
+Formulário; confirmação; estado se previsto. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+
+## 14. Definition of Done
+- [ ] Texto revisado e aprovado.
+- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [ ] Questões decididas ou mantidas explicitamente em aberto.
+- [ ] Layout funcional anexado e aprovado quando aplicável.
+- [ ] Critérios de aceitação e testes revisados.
+- [ ] Nenhuma implementação antes das aprovações exigidas.
+
+---
+
+
+# SPEC-020 — Moderar denúncias de incompatibilidade
+
+## 1. Identificação
+| Campo | Valor |
+|---|---|
+| ID | SPEC-020 |
+| Bloco | 6 — Avaliações, denúncias e nota pública |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Moderar denúncias de incompatibilidade |
+
+## 2. Rastreabilidade
+- **Baseline:** RF-22; RB-24, RB-25, RB-27, RB-37, RB-41, RB-44, RB-45; ADMINISTRADOR, DENUNCIA_FALSA_INCLUSAO, AVALIACAO_POS_ENTREVISTA, EMPRESA.
+- **Dependências:** SPEC-001, 019, 021.
+- **Questões abertas:** OPEN-078 a OPEN-081.
+
+## 3. Escopo
+Administrador da plataforma consulta fila e contexto autorizado, analisa e registra decisão/fundamento; efeitos autorizados são encaminhados às capacidades correspondentes.
+
+## 3.1. Telas e evidência de layout
+Critérios/evidências, catálogo de decisões/efeitos, prazos, comunicação e confidencialidade.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+
+## 4. Dependências
+SPEC-001, 019, 021. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
+
+## 5. Comportamento esperado
+1. O ator autorizado acessa a capacidade correspondente.
+2. O sistema valida identidade, vínculo e permissões aplicáveis.
+3. O sistema recupera os dados necessários e valida pré-condições.
+4. O usuário solicita a operação prevista no escopo.
+5. O sistema valida regras de negócio e integridade no backend.
+6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
+7. Se permitida, persiste a alteração e registra os eventos relevantes.
+8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+
+## 6. Regras e invariantes
+- Só Administrador da plataforma modera; denúncia sem decisão não gera sanção; nota/status só mudam após decisão autorizadora e registro.
+- Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
+- Operações protegidas são validadas no backend.
+- Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
+- Alterações relevantes devem ser rastreáveis conforme RB/RNF aplicáveis.
+
+## 7. Modelo de domínio
+RF-22; RB-24, RB-25, RB-27, RB-37, RB-41, RB-44, RB-45; ADMINISTRADOR, DENUNCIA_FALSA_INCLUSAO, AVALIACAO_POS_ENTREVISTA, EMPRESA. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
+
+## 8. Impacto arquitetural
+A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
+
+## 9. Contratos necessários
+- **Consultar dados autorizados** necessários à operação.
+- **Validar pré-condições e regras** antes de alterar estado.
+- **Executar operação principal** somente se válida.
+- **Consultar resultado/estado atualizado**.
+- **Registrar alteração ou decisão** quando aplicável.
+
+Contratos conceituais; não definem endpoints HTTP.
+
+## 10. RNFs aplicáveis
+RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
+
+## 11. Critérios de aceitação
+- [ ] Acesso limitado ao ator autorizado.
+- [ ] Pré-condições e regras são validadas no backend.
+- [ ] Operações inválidas são recusadas sem alteração indevida.
+- [ ] Operação válida produz o estado esperado.
+- [ ] Dados pessoais e de acessibilidade respeitam autorização.
+- [ ] Alterações relevantes ficam rastreáveis.
+- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [ ] Lacunas permanecem explicitadas em OPEN.md.
+
+## 12. Casos de teste derivados
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-020-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
+| T-020-02 | Ator sem autorização tenta acessar dados | Acesso negado |
+| T-020-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
+| T-020-04 | Estado muda antes da operação | Regra/estado atual prevalece |
+| T-020-05 | Operação válida altera dados | Estado e histórico atualizados |
+| T-020-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+
+## 13. Questões em aberto
+Fila; detalhe; decisão; histórico. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+
+## 14. Definition of Done
+- [ ] Texto revisado e aprovado.
+- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [ ] Questões decididas ou mantidas explicitamente em aberto.
+- [ ] Layout funcional anexado e aprovado quando aplicável.
+- [ ] Critérios de aceitação e testes revisados.
+- [ ] Nenhuma implementação antes das aprovações exigidas.
+
+---
+
+
+# SPEC-021 — Gerenciar nota pública de acessibilidade
+
+## 1. Identificação
+| Campo | Valor |
+|---|---|
+| ID | SPEC-021 |
+| Bloco | 6 — Avaliações, denúncias e nota pública |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Gerenciar nota pública de acessibilidade |
+
+## 2. Rastreabilidade
+- **Baseline:** RF-13; RB-08, RB-19, RB-20, RB-25, RB-27, RB-37, RB-45; EMPRESA, INFRAESTRUTURA_EMPRESA, AVALIACAO_POS_ENTREVISTA, DENUNCIA_FALSA_INCLUSAO.
+- **Dependências:** SPEC-004, 018, 020.
+- **Questões abertas:** OPEN-082 a OPEN-085.
+
+## 3. Escopo
+Calcular/exibir nota a partir de informações e avaliações válidas; preservar anonimato; tratar ausência de dados sem inventar valor; refletir decisão de moderação somente quando autorizar efeito.
+
+## 3.1. Telas e evidência de layout
+Fórmula/pesos, quantidade mínima/validade, insuficiência/conflito, efeitos de decisões.. O layout funcional deve ser anexado em docs/layout/ e aprovado separadamente. A identidade visual é referência de estilo, não aprovação do layout.
+
+## 4. Dependências
+SPEC-004, 018, 020. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
+
+## 5. Comportamento esperado
+1. O ator autorizado acessa a capacidade correspondente.
+2. O sistema valida identidade, vínculo e permissões aplicáveis.
+3. O sistema recupera os dados necessários e valida pré-condições.
+4. O usuário solicita a operação prevista no escopo.
+5. O sistema valida regras de negócio e integridade no backend.
+6. Se a operação não for permitida, informa o motivo sem executar alteração inválida.
+7. Se permitida, persiste a alteração e registra os eventos relevantes.
+8. O estado resultante fica disponível às capacidades dependentes, respeitando privacidade e autorização.
+
+## 6. Regras e invariantes
+- Nota baseada em dados válidos; denúncia não muda nota automaticamente; dados ausentes não são afirmação positiva/negativa; cálculo e alterações rastreáveis.
+- Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
+- Operações protegidas são validadas no backend.
+- Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
+- Alterações relevantes devem ser rastreáveis conforme RB/RNF aplicáveis.
+
+## 7. Modelo de domínio
+RF-13; RB-08, RB-19, RB-20, RB-25, RB-27, RB-37, RB-45; EMPRESA, INFRAESTRUTURA_EMPRESA, AVALIACAO_POS_ENTREVISTA, DENUNCIA_FALSA_INCLUSAO. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
+
+## 8. Impacto arquitetural
+A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
+
+## 9. Contratos necessários
+- **Consultar dados autorizados** necessários à operação.
+- **Validar pré-condições e regras** antes de alterar estado.
+- **Executar operação principal** somente se válida.
+- **Consultar resultado/estado atualizado**.
+- **Registrar alteração ou decisão** quando aplicável.
+
+Contratos conceituais; não definem endpoints HTTP.
+
+## 10. RNFs aplicáveis
+RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
+
+## 11. Critérios de aceitação
+- [ ] Acesso limitado ao ator autorizado.
+- [ ] Pré-condições e regras são validadas no backend.
+- [ ] Operações inválidas são recusadas sem alteração indevida.
+- [ ] Operação válida produz o estado esperado.
+- [ ] Dados pessoais e de acessibilidade respeitam autorização.
+- [ ] Alterações relevantes ficam rastreáveis.
+- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [ ] Lacunas permanecem explicitadas em OPEN.md.
+
+## 12. Casos de teste derivados
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-021-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
+| T-021-02 | Ator sem autorização tenta acessar dados | Acesso negado |
+| T-021-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
+| T-021-04 | Estado muda antes da operação | Regra/estado atual prevalece |
+| T-021-05 | Operação válida altera dados | Estado e histórico atualizados |
+| T-021-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+
+## 13. Questões em aberto
+Nota pública; explicação; estado sem dados suficientes. Questões estão centralizadas em docs/OPEN.md e não são consideradas decisões tomadas.
+
+## 14. Definition of Done
+- [ ] Texto revisado e aprovado.
+- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [ ] Questões decididas ou mantidas explicitamente em aberto.
+- [ ] Layout funcional anexado e aprovado quando aplicável.
+- [ ] Critérios de aceitação e testes revisados.
+- [ ] Nenhuma implementação antes das aprovações exigidas.
+
+---
+
+## Registro de revisão dos Blocos 4 a 6
+
+| Bloco | Specs | Estado do texto | Estado do layout |
+|---|---|---|---|
+| 4 — Candidaturas e processo seletivo | SPEC-011 a SPEC-013 | especificadas, aguardando revisão | pendentes |
+| 5 — Acomodações, acompanhamento e notificações | SPEC-014 a SPEC-017 | especificadas, aguardando revisão | pendentes conforme aplicabilidade |
+| 6 — Avaliações, denúncias e nota pública | SPEC-018 a SPEC-021 | especificadas, aguardando revisão | pendentes |
+
