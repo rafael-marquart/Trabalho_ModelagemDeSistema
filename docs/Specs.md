@@ -4,9 +4,9 @@ Documento de detalhamento das Specs do **Bloco 1 — Acesso e perfis**, baseado 
 
 ## Controle do documento
 
-- Escopo: SPEC-001, SPEC-002 e SPEC-003.
+- Escopo: SPEC-001 a SPEC-021, organizadas nos Blocos 1 a 6.
 - Estado dos textos: especificada, aguardando revisão e aprovação humana.
-- Estado dos layouts: pendente.
+- Estado dos layouts: pendente quando aplicável; não se aplica às capacidades sem interface própria.
 - **Layout significa evidência visual/protótipo, não código.** A identidade visual existente é uma referência inicial de estilo; ainda será necessário especificar e aprovar os layouts das telas aplicáveis.
 - Implementação: não autorizada. A aprovação do texto e a aprovação do layout são etapas separadas.
 - Lacunas e conflitos são registrados em `docs/OPEN.md`, com IDs OPEN associados às Specs; não são resolvidos silenciosamente.
