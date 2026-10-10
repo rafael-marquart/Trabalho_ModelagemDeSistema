@@ -607,4 +607,611 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato | especificada | pendente | aguardando |
 | SPEC-003 — Disponibilizar recursos de acessibilidade da interface | especificada | pendente | aguardando |
 
-**Próxima etapa:** revisão humana deste bloco. Corrigir o texto conforme o feedback e registrar a aprovação de cada Spec. O Bloco 2 será detalhado após a revisão do Bloco 1.
+**Próxima etapa:** detalhar o Bloco 2. A revisão coletiva das questões em aberto pode ocorrer depois que todas as Specs estiverem detalhadas.
+
+
+# Bloco 2 — Empresa, vagas próprias e ingestão externa
+
+Este bloco detalha SPEC-004, SPEC-005 e SPEC-006. As questões pendentes são referenciadas em `docs/OPEN.md`; nenhuma delas é considerada decidida por estar descrita aqui.
+
+---
+
+# SPEC-004 — Gerenciar infraestrutura de acessibilidade da empresa
+
+## 1. Identificação
+
+| Campo | Valor |
+|---|---|
+| ID | SPEC-004 |
+| Bloco | 2 — Empresa e vagas |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Registrar, consultar e atualizar informações de acessibilidade física, digital e atitudinal da Empresa |
+
+## 2. Rastreabilidade
+
+- **RF:** RF-17 — Cadastro de empresa; RF-18 — Gestão de vagas, no que depende das informações de acessibilidade; RF-38 — Auditoria de operações.
+- **RB:** RB-08 — Divergências recorrentes; RB-20 — Nota baseada em dados registrados; RB-27 — Histórico de alterações; RB-37 — Registro das decisões.
+- **RNF:** RNF-09 — Integridade; RNF-14 — Rastreabilidade e auditoria.
+- **Caso de uso:** UC-07 — Cadastrar Infraestrutura da Empresa.
+- **Modelo conceitual:** EMPRESA, INFRAESTRUTURA_EMPRESA e USUARIO/RECRUTADOR no contexto de autorização.
+- **Drivers:** DA-01, DA-04, DA-07.
+- **ADRs:** ADR-001, ADR-004.
+- **Dependência:** SPEC-001, para autenticação e autorização.
+- **Questões relacionadas:** OPEN-017 a OPEN-019.
+
+## 3. Escopo
+
+### Incluído
+- Permitir à Empresa autenticada acessar as configurações próprias.
+- Apresentar um mapeamento estruturado de informações de acessibilidade da empresa.
+- Permitir registrar e atualizar informações físicas, digitais e atitudinais previstas pelo questionário.
+- Validar os itens obrigatórios definidos na baseline.
+- Persistir as informações associadas à Empresa correta.
+- Disponibilizar os dados registrados para usos autorizados, incluindo exibição relacionada às vagas e análise de compatibilidade.
+- Registrar alterações relevantes para rastreabilidade.
+
+### Fora do escopo
+- Cadastro e vínculo organizacional de Recrutadores, detalhado na SPEC-001, embora UC-07 também mencione essa capacidade.
+- Cadastro, edição e publicação de vagas, detalhados na SPEC-005.
+- Cálculo da compatibilidade ou da nota pública de acessibilidade.
+- Inferir condições de acessibilidade que a Empresa não informou.
+- Definir campos, escalas, evidências ou classificações não estabelecidos na baseline.
+
+## 3.1. Telas e evidência de layout
+
+| Tela/área | Finalidade | Layout |
+|---|---|---|
+| Configurações da Empresa | Entrada para gerenciar informações organizacionais | Pendente |
+| Mapeamento de infraestrutura | Consultar e preencher questionário de acessibilidade | Pendente |
+| Validação do mapeamento | Apresentar itens obrigatórios pendentes ou inconsistências | Pendente |
+| Resumo de infraestrutura | Consultar informações registradas que possam ser usadas em vagas | Pendente |
+
+A lista é funcional, não determina quantidade final de telas ou composição visual. A identidade visual é referência de estilo; o protótipo funcional deve ser anexado em `docs/layout/` e aprovado separadamente.
+
+## 4. Dependências
+
+- **SPEC-001:** autenticação e autorização da Empresa.
+- **SPEC-005:** poderá utilizar informações de infraestrutura ao cadastrar/publicar vaga.
+- **SPEC-007/SPEC-008/SPEC-010:** capacidades posteriores poderão consumir ou exibir dados de acessibilidade conforme suas próprias regras.
+- A lista completa de campos e obrigatoriedades depende da confirmação da baseline (OPEN-017).
+
+## 5. Comportamento esperado
+
+### 5.1 Consultar infraestrutura
+1. A Empresa autenticada acessa as configurações.
+2. Seleciona o mapeamento de infraestrutura.
+3. O sistema recupera e apresenta os dados já registrados para aquela Empresa.
+4. O sistema não permite consultar ou alterar a infraestrutura de outra organização sem autorização explícita prevista na baseline.
+
+### 5.2 Registrar infraestrutura
+1. A Empresa abre o questionário estruturado.
+2. Informa as características de acessibilidade solicitadas pelo sistema, incluindo os itens descritos no UC-07, como rampas, elevadores, banheiros adaptados, leitores de tela, sinalização e políticas inclusivas.
+3. O sistema valida os itens obrigatórios definidos pela baseline.
+4. Se houver itens obrigatórios pendentes, o sistema impede o salvamento e identifica o que precisa ser completado.
+5. Se os dados forem válidos, o sistema persiste o mapeamento associado à Empresa.
+6. O sistema registra a alteração relevante.
+
+### 5.3 Atualizar infraestrutura
+1. A Empresa consulta os dados existentes e altera as informações desejadas.
+2. O sistema valida novamente os itens obrigatórios e a consistência dos dados.
+3. O sistema salva a versão atualizada sem associá-la a outra organização.
+4. A alteração fica rastreável conforme RB-27/RB-37 e RNF-14.
+
+### 5.4 Disponibilização dos dados
+1. Capacidades autorizadas solicitam informações de acessibilidade registradas.
+2. O sistema disponibiliza os dados conforme permissões e finalidade.
+3. Dados ausentes permanecem não informados; o sistema não deve inferir que uma característica existe ou inexiste.
+4. Esta Spec não calcula compatibilidade nem nota pública.
+
+## 6. Regras e invariantes
+
+1. A infraestrutura pertence à Empresa à qual está associada.
+2. Somente uma Empresa autenticada e autorizada pode alterar seu próprio mapeamento.
+3. Itens obrigatórios definidos na baseline bloqueiam o salvamento quando pendentes (UC-07).
+4. O sistema não deve converter informação ausente em afirmação de acessibilidade ou inacessibilidade.
+5. Alterações relevantes devem ser rastreáveis (RB-27, RB-37, RF-38, RNF-14).
+6. A persistência deve manter a integridade do vínculo Empresa–infraestrutura (RNF-09).
+7. Divergências recorrentes podem ter consequências conforme RB-08, mas qualquer processo de apuração/alteração deve respeitar a regra de negócio aplicável; esta Spec não cria uma decisão automática.
+8. A nota pública de acessibilidade não é calculada nesta capacidade (RB-20).
+9. Campos, escalas e itens obrigatórios não podem ser ampliados por suposição.
+
+## 7. Modelo de domínio envolvido
+
+| Elemento | Responsabilidade |
+|---|---|
+| EMPRESA | Conta organizacional proprietária dos dados |
+| INFRAESTRUTURA_EMPRESA | Informações estruturadas de acessibilidade associadas à Empresa |
+| USUARIO/RECRUTADOR | Identidade autorizada que atua em nome da Empresa, conforme regras de acesso |
+
+A baseline citada não especifica todos os atributos, tipos, escalas, cardinalidades ou versionamento de INFRAESTRUTURA_EMPRESA. Esses detalhes permanecem pendentes (OPEN-017 e OPEN-018).
+
+## 8. Impacto arquitetural
+
+- A aplicação deve verificar autorização antes de ler ou alterar os dados organizacionais.
+- A persistência deve manter associação consistente entre Empresa e infraestrutura.
+- O questionário precisa separar validação de obrigatoriedade de regras de compatibilidade.
+- A capacidade deve expor dados estruturados às capacidades consumidoras sem implementar seus algoritmos.
+- Alterações relevantes precisam produzir registros auditáveis.
+- Não há decisão de tecnologia, biblioteca de formulários ou mecanismo específico de armazenamento.
+
+## 9. Contratos necessários
+
+Contratos conceituais, sem definir endpoints HTTP:
+- **Consultar infraestrutura da própria Empresa:** retorna o mapeamento autorizado.
+- **Criar mapeamento:** valida dados e itens obrigatórios antes de persistir.
+- **Atualizar mapeamento:** valida alterações e preserva o vínculo organizacional.
+- **Validar questionário:** identifica campos obrigatórios pendentes e inconsistências definidas na baseline.
+- **Disponibilizar dados de infraestrutura:** fornece dados registrados a consumidores autorizados.
+- **Registrar alteração:** cria registro rastreável conforme regras aplicáveis.
+
+## 10. RNFs aplicáveis
+
+- **RNF-09:** integridade do mapeamento e de sua associação à Empresa.
+- **RNF-14:** rastreabilidade e auditoria das alterações.
+- **RNF-01 a RNF-04:** aplicam-se à interação do questionário conforme a capacidade transversal da SPEC-003.
+
+## 11. Critérios de aceitação
+
+- [ ] Empresa autenticada consulta seu próprio mapeamento.
+- [ ] Empresa registra informações estruturadas de acessibilidade.
+- [ ] Itens obrigatórios pendentes são identificados e impedem o salvamento.
+- [ ] Dados válidos são persistidos associados à Empresa correta.
+- [ ] Empresa não altera dados de infraestrutura de outra organização sem autorização prevista.
+- [ ] Dados ausentes não são interpretados automaticamente como compatibilidade.
+- [ ] Atualizações preservam a integridade do vínculo organizacional.
+- [ ] Alterações relevantes são rastreáveis.
+- [ ] Dados podem ser disponibilizados a consumidores autorizados.
+- [ ] A capacidade não calcula nota pública nem compatibilidade.
+
+## 12. Casos de teste derivados
+
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-004-01 | Empresa consulta mapeamento próprio existente | Dados apresentados |
+| T-004-02 | Empresa registra questionário completo | Dados persistidos |
+| T-004-03 | Item obrigatório permanece pendente | Salvamento bloqueado e item indicado |
+| T-004-04 | Empresa tenta alterar infraestrutura alheia | Acesso recusado |
+| T-004-05 | Atualizar dados existentes | Alterações persistidas e vínculo mantido |
+| T-004-06 | Campo opcional não informado | Sistema não inventa valor |
+| T-004-07 | Atualização concluída | Registro rastreável |
+| T-004-08 | Consumidor autorizado consulta dados | Apenas dados permitidos são disponibilizados |
+
+## 13. Questões em aberto
+
+As questões estão centralizadas em [OPEN.md](OPEN.md).
+
+- **OPEN-017:** lista definitiva de campos, categorias e itens obrigatórios do questionário.
+- **OPEN-018:** tipos, escalas, versionamento e estrutura de persistência do mapeamento.
+- **OPEN-019:** regras e evidências para tratar divergências recorrentes nas informações declaradas.
+
+## 14. Definition of Done
+
+- [ ] Texto revisado e aprovado.
+- [ ] Campos e obrigatoriedades conferidos com a baseline.
+- [ ] Questões em aberto decididas ou mantidas explicitamente.
+- [ ] Layout funcional anexado em `docs/layout/` e aprovado separadamente.
+- [ ] Critérios e testes revisados.
+- [ ] Integridade, autorização e rastreabilidade verificáveis.
+- [ ] Nenhuma implementação iniciada antes das aprovações exigidas.
+
+---
+
+# SPEC-005 — Cadastrar e gerenciar vagas próprias
+
+## 1. Identificação
+
+| Campo | Valor |
+|---|---|
+| ID | SPEC-005 |
+| Bloco | 2 — Empresa e vagas |
+| Estado do texto | especificada |
+| Estado do layout | pendente |
+| Capacidade | Criar, editar, publicar e gerenciar vagas cadastradas diretamente por uma Empresa |
+
+## 2. Rastreabilidade
+
+- **RF:** RF-18 — Gestão de vagas; RF-25 — Transparência da compatibilidade da vaga; RF-38 — Auditoria de operações.
+- **RB:** RB-01 — Elegibilidade para candidatura; RB-13 — Transparência; RB-16 — Dados de acessibilidade não informados; RB-27 — Histórico de alterações; RB-33 — Registro da origem da vaga.
+- **RNF:** RNF-07 — Segurança; RNF-09 — Integridade; RNF-14 — Rastreabilidade e auditoria.
+- **Caso de uso:** UC-08 — Publicar Vaga.
+- **Modelo conceitual:** EMPRESA, VAGA, TRAVA_CRITICA_VAGA e INFRAESTRUTURA_EMPRESA.
+- **Drivers:** DA-02, DA-03, DA-04.
+- **ADRs:** ADR-002, ADR-004.
+- **Dependências:** SPEC-001 e SPEC-004.
+- **Questões relacionadas:** OPEN-020 a OPEN-023.
+
+## 3. Escopo
+
+### Incluído
+- Permitir que Recrutador autenticado e autorizado acesse o painel de vagas da Empresa vinculada.
+- Criar uma vaga própria com os dados previstos em UC-08 e na baseline.
+- Validar campos obrigatórios e consistência antes da publicação.
+- Permitir salvar como rascunho ou publicar imediatamente, conforme UC-08.
+- Tornar uma vaga publicada visível no catálogo para candidatos elegíveis.
+- Permitir editar e gerenciar vagas próprias dentro das regras definidas.
+- Registrar publicação e alterações relevantes para rastreabilidade.
+- Manter informações de acessibilidade e origem conforme os requisitos aplicáveis.
+
+### Fora do escopo
+- Importar vagas de fontes externas, tratado na SPEC-006.
+- Calcular compatibilidade, tratado na SPEC-007.
+- Busca e filtros, tratados na SPEC-008.
+- Gerenciar o funil e as candidaturas recebidas, tratados em Specs posteriores.
+- Definir novos campos, etapas de status ou regras de encerramento não estabelecidos na baseline.
+
+## 3.1. Telas e evidência de layout
+
+| Tela/área | Finalidade | Layout |
+|---|---|---|
+| Painel de vagas da Empresa | Consultar e acessar vagas próprias | Pendente |
+| Cadastro/edição de vaga | Informar dados da oportunidade | Pendente |
+| Revisão de publicação | Conferir consistência antes de publicar | Pendente |
+| Rascunho/publicação | Informar resultado da ação e estado da vaga | Pendente |
+| Validação de dados | Destacar campos obrigatórios e inconsistências | Pendente |
+
+A divisão é funcional e não fixa o layout final. Protótipos devem considerar a identidade visual e acessibilidade transversal, ser guardados em `docs/layout/` e aprovados separadamente.
+
+## 4. Dependências
+
+- **SPEC-001:** autenticação, perfil Recrutador e vínculo à Empresa.
+- **SPEC-004:** dados de infraestrutura da Empresa disponíveis para uso quando aplicável.
+- **SPEC-007:** análise de compatibilidade posterior.
+- **SPEC-008:** busca de vagas publicadas.
+- **SPEC-009:** consulta de status e disponibilidade.
+- Campos completos e regras de edição/publicação precisam ser conferidos na baseline (OPEN-020/OPEN-021).
+
+## 5. Comportamento esperado
+
+### 5.1 Acessar painel de vagas
+1. Recrutador autentica-se.
+2. O sistema verifica se está vinculado à Empresa e autorizado a gerenciar suas vagas.
+3. O sistema apresenta as vagas da organização para a qual o Recrutador tem autorização.
+4. O sistema não permite gerenciar vagas de outra Empresa.
+
+### 5.2 Criar vaga
+1. Recrutador acessa o painel e inicia criação.
+2. O sistema apresenta campos previstos na baseline, incluindo cargo, descrição, requisitos, modalidade, localização, critérios de acessibilidade e prazo de inscrição conforme UC-08.
+3. Recrutador preenche os dados.
+4. O sistema valida campos obrigatórios e consistência.
+5. Se houver dados incompletos ou inconsistentes, o sistema indica os problemas e não permite publicar.
+6. Se válido, o Recrutador pode salvar como rascunho ou optar pela publicação imediata, conforme UC-08.
+
+### 5.3 Publicar vaga
+1. Recrutador solicita publicação.
+2. O sistema valida novamente os dados mínimos e a consistência das regras da vaga.
+3. O sistema rejeita publicação com prazo de encerramento inválido ou anterior à data atual, conforme EX03 de UC-08.
+4. Se válida, a vaga passa a ficar disponível no catálogo para candidatos elegíveis.
+5. O sistema registra a publicação e o responsável para auditoria.
+
+### 5.4 Editar e gerenciar vaga
+1. Recrutador seleciona uma vaga sob sua autorização.
+2. O sistema apresenta os dados atuais.
+3. Recrutador altera os campos permitidos.
+4. O sistema valida as alterações.
+5. Se válidas, salva a atualização e registra o evento relevante.
+6. Restrições específicas para edição após publicação, encerramento ou existência de candidaturas dependem da baseline e estão em aberto (OPEN-022).
+
+## 6. Regras e invariantes
+
+1. Somente Recrutador autenticado e autorizado pode gerenciar vagas da Empresa vinculada.
+2. A vaga própria deve permanecer associada à Empresa responsável.
+3. A publicação exige dados mínimos obrigatórios completos e consistentes (UC-08).
+4. Prazo de encerramento inválido ou anterior à data atual impede publicação (UC-08).
+5. A vaga deve conter informações relevantes de acessibilidade para transparência (RB-13/RF-25).
+6. Ausência de informação de acessibilidade não pode ser interpretada automaticamente como compatibilidade (RB-16).
+7. Vagas externas devem ser tratadas pela SPEC-006; esta Spec trata cadastro próprio.
+8. A elegibilidade para candidatura depende das regras aplicáveis de disponibilidade e compatibilidade (RB-01, RB-34), não apenas da publicação.
+9. Publicação e alterações relevantes devem ser rastreáveis (RB-27, RF-38).
+10. Campos, transições de status e permissões de edição não são ampliados por suposição.
+
+## 7. Modelo de domínio envolvido
+
+| Elemento | Responsabilidade |
+|---|---|
+| EMPRESA | Organização responsável pela vaga |
+| VAGA | Dados da oportunidade e estado de publicação |
+| TRAVA_CRITICA_VAGA | Representa barreiras relevantes para a análise de compatibilidade |
+| INFRAESTRUTURA_EMPRESA | Fonte de informações organizacionais de acessibilidade quando aplicável |
+
+A baseline não detalha aqui todos os atributos, tipos, cardinalidades ou restrições de edição. Esses pontos precisam ser conferidos nos requisitos e no modelo antes de implementação.
+
+## 8. Impacto arquitetural
+
+- A autorização por organização precisa ser verificada no backend.
+- A validação de publicação deve ocorrer no domínio/aplicação, não apenas na interface.
+- A vaga deve manter uma estrutura compatível com vagas externas normalizadas (DA-06), sem confundir os fluxos de criação.
+- Regras de barreira crítica e score pertencem à SPEC-007.
+- O registro de alterações precisa ser consistente e auditável.
+- Não é definida tecnologia específica de formulário, banco ou API.
+
+## 9. Contratos necessários
+
+- **Listar vagas da Empresa autorizada:** retorna vagas que o usuário pode gerenciar.
+- **Criar vaga própria:** valida e registra os dados da oportunidade.
+- **Atualizar vaga própria:** verifica autorização e valida campos alterados.
+- **Validar publicação:** verifica obrigatoriedade, consistência e prazo conforme baseline.
+- **Publicar vaga:** torna a vaga elegível para aparecer no catálogo conforme regras de visibilidade.
+- **Salvar rascunho:** persiste uma vaga ainda não publicada, conforme UC-08.
+- **Registrar alteração de vaga:** mantém rastreabilidade de publicação e mudanças relevantes.
+
+Contratos conceituais; não especificam endpoints HTTP.
+
+## 10. RNFs aplicáveis
+
+- **RNF-07:** proteção de operações de escrita.
+- **RNF-09:** integridade entre vaga e Empresa, e consistência dos dados.
+- **RNF-14:** rastreabilidade das publicações e alterações.
+- **RNF-01 a RNF-04:** acessibilidade dos formulários e mensagens conforme SPEC-003.
+
+## 11. Critérios de aceitação
+
+- [ ] Recrutador autorizado acessa painel da Empresa vinculada.
+- [ ] Usuário não autorizado não gerencia vagas de outra Empresa.
+- [ ] Vaga pode ser cadastrada com os campos previstos na baseline.
+- [ ] Dados incompletos ou inconsistentes impedem publicação e são apontados.
+- [ ] Vaga válida pode ser salva como rascunho.
+- [ ] Vaga válida pode ser publicada.
+- [ ] Prazo de encerramento inválido impede publicação.
+- [ ] Vaga publicada fica disponível para candidatos elegíveis no catálogo.
+- [ ] Informações de acessibilidade são mantidas sem presumir valores ausentes.
+- [ ] Publicação e alterações relevantes são rastreáveis.
+- [ ] Compatibilidade e funil não são implementados nesta capacidade.
+
+## 12. Casos de teste derivados
+
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-005-01 | Recrutador autorizado abre painel | Vagas autorizadas listadas |
+| T-005-02 | Recrutador tenta acessar vaga de outra Empresa | Acesso recusado |
+| T-005-03 | Criar vaga com dados completos | Vaga criada |
+| T-005-04 | Publicar vaga com campos obrigatórios ausentes | Publicação bloqueada e campos indicados |
+| T-005-05 | Publicar vaga inconsistente | Publicação bloqueada |
+| T-005-06 | Publicar com prazo anterior à data atual | Publicação recusada |
+| T-005-07 | Salvar vaga válida como rascunho | Rascunho persistido sem ficar publicado |
+| T-005-08 | Publicar vaga válida | Vaga visível para candidatos elegíveis |
+| T-005-09 | Alterar vaga própria | Dados atualizados e evento rastreável |
+| T-005-10 | Consultar vaga com acessibilidade não informada | Ausência permanece explicitamente não informada |
+
+## 13. Questões em aberto
+
+As questões estão centralizadas em [OPEN.md](OPEN.md).
+
+- **OPEN-020:** lista completa de campos e obrigatoriedade de vaga própria.
+- **OPEN-021:** definição de consistência e validações de cada campo da vaga.
+- **OPEN-022:** permissões e limites para edição/encerramento após publicação e após candidaturas.
+- **OPEN-023:** origem e representação dos critérios de acessibilidade e relação com INFRAESTRUTURA_EMPRESA e TRAVA_CRITICA_VAGA.
+
+## 14. Definition of Done
+
+- [ ] Texto revisado e aprovado.
+- [ ] Campos e regras conferidos com RF-18, RF-25, UC-08, RB e modelo.
+- [ ] Questões em aberto decididas ou mantidas explicitamente.
+- [ ] Layouts anexados em `docs/layout/` e aprovados separadamente.
+- [ ] Critérios e testes revisados.
+- [ ] Autorização organizacional, validação e auditoria verificáveis.
+- [ ] Nenhuma implementação iniciada antes das aprovações exigidas.
+
+---
+
+# SPEC-006 — Importar, ingerir e normalizar vagas externas
+
+## 1. Identificação
+
+| Campo | Valor |
+|---|---|
+| ID | SPEC-006 |
+| Bloco | 2 — Empresa e vagas |
+| Estado do texto | especificada |
+| Estado do layout | não se aplica ao núcleo de ingestão; eventual interface administrativa permanece pendente |
+| Capacidade | Receber dados externos estruturados, validar, normalizar, deduplicar e registrar o resultado da ingestão |
+
+## 2. Rastreabilidade
+
+- **RF:** RF-05 — Importação de vagas externas; RF-36 — Importação de dados estruturados; RF-37 — Normalização de dados externos; RF-38 — Auditoria de operações; RF-39 — Tratamento de erros e inconsistências; RF-40 — Controle de acesso às operações administrativas.
+- **RB:** RB-10 — Vagas externas; RB-11 — Validação da IA; RB-17 — Validação de vaga externa; RB-18 — Resultado da LLM não é fonte de verdade; RB-31 — Deduplicação de dados externos; RB-32 — Integridade da importação; RB-33 — Registro da origem da vaga; RB-37 — Registro das decisões; RB-41 — Auditoria das alterações.
+- **RNF:** RNF-05 — Desempenho; RNF-07 — Segurança; RNF-09 — Integridade; RNF-14 — Rastreabilidade e auditoria; RNF-16 — Compatibilidade/normalização de dados externos, conforme mapa.
+- **Caso de uso:** UC-14 — Ingerir Dados em JSON.
+- **Modelo conceitual:** VAGA.
+- **Drivers:** DA-02, DA-05, DA-06, DA-07, DA-08.
+- **ADRs:** ADR-002, ADR-003, ADR-004.
+- **Dependência:** SPEC-001 para autenticação/autorização da operação administrativa.
+- **Questões relacionadas:** OPEN-024 a OPEN-029.
+
+## 3. Escopo
+
+### Incluído
+- Permitir que ator administrativo autorizado inicie ingestão de dados estruturados de fontes autorizadas, conforme UC-14.
+- Receber e validar a estrutura JSON.
+- Identificar registros inválidos, incompletos ou duplicados.
+- Normalizar registros válidos para o modelo de vaga utilizado pela plataforma.
+- Validar informações extraídas por LLM antes de permitir seu uso.
+- Registrar origem e resultado da importação.
+- Persistir registros válidos sem comprometer registros válidos já existentes.
+- Tratar falhas e inconsistências com rastreabilidade.
+- Deduplicar somente registros de origem externa, conforme decisão consolidada em OPEN.md.
+
+### Fora do escopo
+- Cadastro de vagas próprias, tratado na SPEC-005.
+- Busca, filtros ou exibição detalhada de vagas, tratados em Specs posteriores.
+- Cálculo de compatibilidade.
+- Tornar a LLM fonte de verdade.
+- Escolher fornecedor específico de LLM, biblioteca JSON, fila ou mecanismo de execução.
+- Importar dados sem origem autorizada.
+- Deduplicar vagas próprias como se fossem registros externos, contrariando a decisão consolidada.
+
+## 3.1. Telas e evidência de layout
+
+| Área | Finalidade | Layout |
+|---|---|---|
+| Disparo da ingestão administrativa | Iniciar processo de importação autorizado | Pendente, se houver interface |
+| Resumo da execução | Exibir resultado agregado da ingestão | Pendente, se houver interface |
+| Detalhe de falhas/validação | Consultar registros rejeitados ou inconsistentes | Pendente, se houver interface |
+
+UC-14 descreve um fluxo administrativo, mas não determina se a operação será iniciada por tela, tarefa automatizada ou outro mecanismo. A interface não é presumida como obrigatória. Por isso, o layout do núcleo de ingestão é **não se aplica**; se houver interface administrativa, seu layout precisará ser especificado e aprovado.
+
+## 4. Dependências
+
+- **SPEC-001:** identidade, sessão e autorização para iniciar a operação administrativa.
+- **SPEC-005:** compartilha o modelo conceitual de VAGA, mas mantém o fluxo de cadastro próprio separado.
+- **SPEC-007/SPEC-008:** dependem de vagas externas validadas e normalizadas.
+- **ADR-003:** integração LLM no backend por adaptador, com validação antes do domínio.
+- Contrato de origem, esquema JSON suportado e campos obrigatórios precisam ser confirmados (OPEN-024/OPEN-025).
+
+## 5. Comportamento esperado
+
+### 5.1 Iniciar ingestão
+1. O ator administrativo autorizado inicia a ingestão de dados de uma fonte autorizada.
+2. O sistema identifica a origem e recebe o conteúdo estruturado.
+3. O sistema registra o início/execução de forma rastreável, conforme os contratos definidos.
+
+### 5.2 Validar estrutura e registros
+1. O sistema verifica se o conteúdo recebido é JSON válido e compatível com o formato suportado.
+2. Se a estrutura não puder ser processada, a execução registra a falha e não altera registros válidos existentes.
+3. Para cada registro, o sistema verifica os campos e a consistência exigidos pela baseline.
+4. Registros inválidos ou incompletos são identificados e não seguem para o domínio como vagas válidas.
+5. O resultado da validação é mantido para compor o resultado da execução.
+
+### 5.3 Extrair e validar dados com LLM
+1. Quando o fluxo utilizar LLM para extrair ou interpretar conteúdo externo, a chamada ocorre no backend por adaptador.
+2. A resposta é tratada como resultado não confiável.
+3. O sistema valida os campos extraídos e sua conformidade com o modelo suportado.
+4. Somente dados validados podem avançar para normalização e persistência.
+5. Se a LLM estiver indisponível ou retornar dados inválidos, o sistema não deve inserir a resposta inválida como vaga válida; o tratamento alternativo depende da política a definir (OPEN-026).
+
+### 5.4 Normalizar e deduplicar
+1. O sistema converte os dados válidos para a estrutura comum de VAGA.
+2. Mantém a identificação da fonte externa.
+3. Verifica duplicidade entre registros externos conforme critérios aprovados.
+4. Registros externos duplicados não criam múltiplas representações equivalentes.
+5. A deduplicação não deve eliminar ou alterar indevidamente registros válidos existentes.
+
+### 5.5 Persistir e registrar resultado
+1. O sistema persiste os registros validados e normalizados.
+2. Falhas parciais não comprometem registros válidos existentes nem devem produzir duplicação indevida.
+3. O sistema registra origem, resultado e erros relevantes da execução.
+4. O resultado permite distinguir registros processados, rejeitados e duplicados, conforme detalhamento pendente.
+5. Os registros válidos tornam-se disponíveis às capacidades consumidoras após o processamento bem-sucedido.
+
+## 6. Regras e invariantes
+
+1. Vagas externas devem ser identificadas e estruturadas antes do uso (RB-10).
+2. Dados extraídos por LLM precisam ser validados (RB-11).
+3. Vaga externa só participa da análise após estruturação e validação (RB-17).
+4. Resultado de LLM não é fonte de verdade (RB-18).
+5. Registros externos duplicados não devem gerar registros equivalentes múltiplos (RB-31).
+6. Falhas de importação não podem comprometer registros válidos existentes (RB-32).
+7. Vagas externas mantêm identificação da origem (RB-33).
+8. Operação administrativa exige autenticação e autorização (RF-40, RB-12, ADR-002).
+9. Operações relevantes devem ser rastreáveis (RF-38, RB-37, RB-41, RNF-14).
+10. A LLM permanece atrás de adaptador no backend e pode ser substituída (ADR-003).
+11. A deduplicação desta Spec se aplica somente a dados externos.
+12. O sistema não deve afirmar que uma vaga é válida se seus dados obrigatórios não passaram pelas validações estabelecidas.
+13. Estratégia de repetição, transação e recuperação não é inventada por esta Spec e deve ser definida onde a baseline não for suficiente.
+
+## 7. Modelo de domínio envolvido
+
+| Elemento | Responsabilidade |
+|---|---|
+| VAGA | Modelo comum de vaga após validação e normalização |
+| Origem externa | Identifica a fonte da qual o registro foi obtido; representação exata precisa ser confirmada |
+
+O modelo conceitual mapeado indica VAGA, mas a estrutura completa para fonte, identificador externo, estado de validação e histórico de ingestão não está detalhada nesta Spec. Não são criadas entidades de lote/importação por suposição; conferir OPEN-027.
+
+## 8. Impacto arquitetural
+
+- A ingestão e a integração LLM ficam no backend.
+- A integração LLM usa porta/adaptador independente do fornecedor (ADR-003).
+- Validação e normalização separam conteúdo externo do modelo de domínio.
+- O fluxo deve proteger dados válidos existentes diante de erros.
+- Operações potencialmente demoradas devem ser separadas do caminho interativo principal conforme DA-08; fila ou execução assíncrona não é presumida.
+- O mecanismo de transação, repetição e recuperação deve ser escolhido após esclarecer os cenários de falha.
+- Autorização administrativa é validada no backend.
+- O resultado precisa permitir auditoria e diagnóstico.
+
+## 9. Contratos necessários
+
+Contratos conceituais, sem definir endpoints HTTP:
+- **Iniciar ingestão autorizada:** recebe referência/conteúdo de origem conforme o contrato que vier a ser definido e registra a execução.
+- **Validar estrutura JSON:** verifica sintaxe e formato suportado.
+- **Validar registro de vaga:** verifica os campos e restrições obrigatórios.
+- **Extrair dados via adaptador LLM:** quando habilitado, retorna dados candidatos à validação, nunca diretamente confiáveis.
+- **Normalizar vaga externa:** transforma dados válidos para o modelo comum.
+- **Identificar duplicidade externa:** compara registros externos conforme critério aprovado.
+- **Persistir registros válidos:** grava os registros sem comprometer dados válidos existentes.
+- **Registrar resultado de ingestão:** registra origem, quantidades/estados e falhas conforme esquema aprovado.
+
+## 10. RNFs aplicáveis
+
+- **RNF-05:** desempenho da operação e tratamento de trabalho potencialmente demorado.
+- **RNF-07:** proteger o acesso e a integração externa.
+- **RNF-09:** manter integridade dos registros e da persistência.
+- **RNF-14:** manter rastreabilidade da execução e das alterações.
+- **RNF-16:** compatibilidade/normalização dos dados externos conforme descrição do mapa; confirmar formulação exata na baseline antes de fechar os testes.
+
+## 11. Critérios de aceitação
+
+- [ ] Somente ator administrativo autorizado inicia a operação protegida.
+- [ ] JSON válido no formato suportado é processado.
+- [ ] Estrutura inválida é rejeitada e registrada sem comprometer dados válidos existentes.
+- [ ] Registros inválidos/incompletos não são disponibilizados como vagas válidas.
+- [ ] Dados extraídos por LLM passam por validação antes de uso.
+- [ ] Indisponibilidade ou resposta inválida da LLM não resulta em vaga inválida persistida.
+- [ ] Vagas externas válidas são normalizadas para o modelo comum.
+- [ ] Origem externa é preservada.
+- [ ] Duplicados externos não geram registros equivalentes múltiplos.
+- [ ] Falhas não comprometem registros válidos existentes.
+- [ ] Origem, resultado e falhas relevantes ficam rastreáveis.
+- [ ] A operação não depende de um fornecedor LLM específico.
+- [ ] A deduplicação não é aplicada a vagas próprias por esta Spec.
+
+## 12. Casos de teste derivados
+
+| ID | Cenário | Resultado esperado |
+|---|---|---|
+| T-006-01 | Iniciar ingestão com autorização válida | Execução iniciada e registrada |
+| T-006-02 | Usuário não autorizado tenta iniciar ingestão | Operação recusada |
+| T-006-03 | JSON sintaticamente inválido | Falha registrada; dados existentes preservados |
+| T-006-04 | Registro sem campo obrigatório | Registro rejeitado ou isolado conforme política aprovada |
+| T-006-05 | LLM retorna campos inválidos | Dados não entram no domínio como vaga válida |
+| T-006-06 | LLM indisponível | Nenhum resultado não validado é persistido |
+| T-006-07 | Registro externo válido | Normalizado e persistido |
+| T-006-08 | Registro externo duplicado | Não cria registro equivalente adicional |
+| T-006-09 | Lote contém válidos e inválidos | Válidos são preservados/processados sem contaminação pelos inválidos |
+| T-006-10 | Reexecutar ingestão do mesmo registro externo | Deduplicação conforme critério aprovado |
+| T-006-11 | Finalizar execução com falhas | Origem, resultado e falhas ficam rastreáveis |
+| T-006-12 | Verificar registro de vaga própria | Deduplicação externa não o trata como duplicado automaticamente |
+
+## 13. Questões em aberto
+
+As questões estão centralizadas em [OPEN.md](OPEN.md).
+
+- **OPEN-024:** fontes autorizadas, forma de entrada e esquema JSON suportado.
+- **OPEN-025:** campos obrigatórios e validações para considerar um registro externo uma vaga válida.
+- **OPEN-026:** comportamento de contingência quando LLM estiver indisponível ou produzir dados inválidos.
+- **OPEN-027:** estrutura para rastrear execução/lote, estado por registro e resultado de ingestão.
+- **OPEN-028:** critério de equivalência para deduplicação de registros externos.
+- **OPEN-029:** política de transação, repetição, recuperação e tratamento de falhas parciais.
+- **OPEN-030:** confirmação da formulação e medida verificável de RNF-16 aplicada à ingestão.
+
+## 14. Definition of Done
+
+- [ ] Texto revisado e aprovado.
+- [ ] Requisitos, regras, UC-14, drivers e ADRs conferidos.
+- [ ] Questões em aberto decididas ou mantidas explicitamente.
+- [ ] Se existir interface administrativa, layout anexado em `docs/layout/` e aprovado; se não existir, registrar formalmente não se aplica.
+- [ ] Critérios e testes revisados.
+- [ ] Validação, normalização, deduplicação, integridade e rastreabilidade verificáveis.
+- [ ] Nenhuma implementação iniciada antes das aprovações exigidas.
+
+---
+
+## Registro de revisão do Bloco 2
+
+| Spec | Estado do texto | Estado do layout | Revisão humana |
+|---|---|---|---|
+| SPEC-004 — Gerenciar infraestrutura de acessibilidade da empresa | especificada | pendente | aguardando |
+| SPEC-005 — Cadastrar e gerenciar vagas próprias | especificada | pendente | aguardando |
+| SPEC-006 — Importar, ingerir e normalizar vagas externas | especificada | não se aplica ao núcleo; interface opcional pendente | aguardando |
+
+**Próxima etapa:** detalhar o Bloco 3 após registrar este bloco no documento. A revisão coletiva das questões em aberto pode ocorrer depois que todas as Specs estiverem detalhadas.
