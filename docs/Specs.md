@@ -2157,7 +2157,7 @@ Consultar OPEN-063 a OPEN-065 em `docs/OPEN.md`. As questões permanecem abertas
 ## 2. Rastreabilidade
 - **Baseline:** RF-12, RF-27; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-009, 011 a 016.
-- **Caso de uso:** Fluxos de notificação referenciados por UC-03, UC-04, UC-05 e UC-09; canais dependem de decisão em OPEN.
+- **Caso de uso:** Fluxos de notificação referenciados por UC-03, UC-05 e UC-09; canais dependem de decisão em OPEN.
 - **Questões abertas:** OPEN-066 a OPEN-069.
 
 ## 3. Escopo
