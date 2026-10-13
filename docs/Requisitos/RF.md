@@ -78,20 +78,11 @@ O sistema comunica alterações relevantes no status da candidatura.
 ### RF-28 Gestão da candidatura pelo candidato
 O sistema permite ao candidato consultar e gerenciar sua candidatura conforme as regras do processo.
 
-### RF-29 Solicitação de acomodação
-O sistema permite ao candidato solicitar acomodações para participação no processo seletivo.
-
 ### RF-30 Gestão de candidatos no processo seletivo
 O sistema permite ao recrutador consultar e gerenciar candidatos vinculados às suas vagas.
 
 ### RF-31 Acompanhamento do processo seletivo
 O sistema permite ao candidato acompanhar etapas e status de sua candidatura.
-
-### RF-32 Gestão das solicitações de acomodação
-O sistema permite ao recrutador consultar e tratar solicitações de acomodação.
-
-### RF-33 Histórico das acomodações
-O sistema mantém histórico das solicitações de acomodação e respectivos tratamentos.
 
 ### RF-34 Cancelamento de candidatura
 O sistema permite cancelar candidatura conforme as regras aplicáveis.
