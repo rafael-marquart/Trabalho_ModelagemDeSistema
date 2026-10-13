@@ -228,7 +228,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Objetivo** | Permitir ao recrutador autorizado consultar candidatos e administrar o andamento das candidaturas no funil, respeitando estados e transições válidas. |
 | **Valor** | Estrutura o processo seletivo da empresa e evita alterações de etapa inconsistentes. |
 | **RF** | RF-20, RF-30, RF-35 |
-| **RB** | RB-23, RB-27, RB-37, RB-38, RB-39, RB-40, RB-41, RB-42, RB-43 |
+| **RB** | RB-23, RB-27, RB-38, RB-39, RB-41, RB-42, RB-43 |
 | **RNF** | RNF-07, RNF-09, RNF-14, RNF-15 |
 | **UC / fluxo** | UC-09 — Gerenciar Funil; estados e transições definidos em docs/Fluxos e Estados/estados-trilha.md. |
 | **Entidades** | CANDIDATURA, VAGA, ENTREVISTA, USUARIO/RECRUTADOR vinculado à EMPRESA. |
@@ -352,8 +352,6 @@ A ordem proposta é:
 → **SPEC-010** (visualizar vaga e compatibilidade)
 → **SPEC-011** (registrar candidatura)
 → **SPEC-012**, **SPEC-013**
-→ **SPEC-014**
-→ **SPEC-015**
 → **SPEC-016**
 → **SPEC-017**
 → **SPEC-018**
