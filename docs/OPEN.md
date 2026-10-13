@@ -7,12 +7,12 @@ Este arquivo centraliza lacunas e decisões pendentes da baseline. Cada questão
 Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguintes pontos documentais. Eles são correções/checagens da consistência das Specs, não decisões de produto; não marcar OPEN como resolvida por causa deles.
 
 1. **Rastreabilidade dos requisitos — parcialmente corrigida:** RF-34 foi associado à SPEC-012 e RF-35 à SPEC-013. Conferir se os fluxos e critérios dessas Specs cobrem integralmente cancelamento e gestão do funil.
-2. **Fluxos específicos das Specs 011–021 — revisão ainda necessária:** os comportamentos principais foram explicitados, mas critérios de aceitação/testes e detalhes de exceções, pré/pós-condições e dados de entrada/saída ainda precisam de conferência e aprofundamento contra os casos de uso. Não considerar esse ponto encerrado.
+2. **Fluxos específicos das Specs 011–021 — revisão concluída:** o detalhamento aplicado aos fluxos, contratos conceituais, critérios de aceitação e testes foi aprovado pelo grupo (REV-002 encerrada). A aprovação formal individual das Specs e dos layouts aplicáveis continua sendo um controle separado.
 3. **Referências a casos de uso — validar contra os arquivos individuais:** UC-03, UC-05, UC-06, UC-09 e UC-11 foram associados às capacidades correspondentes. Verificar especialmente UC-14/ingestão e se cada referência descreve realmente o fluxo citado.
 4. **Seção de layout — conferir todas as Specs:** separar descrição das telas/áreas das questões OPEN. Layout é protótipo/evidência visual, não código; o estado de layout continua sendo uma aprovação separada.
 5. **Requisitos transversais — tornar verificáveis:** revisar critérios de aceitação de acessibilidade, segurança, privacidade, integridade e auditoria por operação, sem inventar métricas ausentes da baseline.
 6. **Permissões organizacionais — preservar o invariante:** Empresa gerencia seus Recrutadores; Administrador é exclusivo da plataforma. Confirmar que nenhum trecho sugere Administrador associado à Empresa.
-7. **Compatibilidade e nota pública — manter separação de responsabilidades:** a trava crítica precede o score; dados ausentes não significam compatibilidade; denúncia não altera nota nem bloqueia vaga sem decisão administrativa. Não inventar fórmula da nota pública.
+7. **Compatibilidade e nota pública — manter separação de responsabilidades:** a trava crítica precede o score; dados ausentes não significam compatibilidade; a administração da plataforma atua sobre denúncias e não altera diretamente avaliações nem a distribuição pública de estrelas. Não inventar fórmula da compatibilidade.
 8. **Mapa e detalhamento — fazer conferência final:** verificar IDs, títulos, dependências, requisitos, regras, RNFs, entidades e casos de uso em `mapa-specs.md` e `Specs.md`.
 
 ### Ordem de trabalho sugerida
@@ -28,7 +28,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 - **resolvida:** decisão registrada e refletida nos artefatos relacionados.
 - **fora de escopo:** foi explicitamente excluída do projeto.
 
-## Bloco 1 — Acesso e perfis
+## Acesso e perfis
 
 ### SPEC-001 — Acessar a plataforma e identificar perfil organizacional
 
@@ -62,7 +62,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 | OPEN-016 | aberta | Qual processo de verificação e quais evidências demonstrarão conformidade com WCAG 2.1 AA? | RNF-01 cita a referência, mas não define ferramentas, amostragem ou evidências. |
 
 
-## Bloco 2 — Empresa, vagas próprias e ingestão externa
+## Empresa, vagas próprias e ingestão externa
 
 ### SPEC-004 — Gerenciar infraestrutura de acessibilidade da empresa
 
@@ -94,7 +94,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 | OPEN-030 | aberta | Qual é a formulação exata de RNF-16 e como será verificada no contexto da ingestão/normalização? | O mapa associa RNF-16 à Spec, mas é necessário confirmar o texto e a medida na baseline antes de fechar os testes. |
 
 
-## Bloco 3 — Compatibilidade e descoberta de vagas
+## Compatibilidade e descoberta de vagas
 
 ### SPEC-007 — Calcular compatibilidade entre candidato e vaga
 
@@ -133,7 +133,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 | OPEN-046 | aberta | Como apresentar o resultado de compatibilidade quando o perfil do candidato estiver incompleto? | UC-13 prevê solicitar complementação, mas a apresentação do score parcial ou sua ausência precisa ser confirmada. |
 
 
-## Bloco 4 — Candidaturas e processo seletivo
+## Candidaturas e processo seletivo
 
 ### SPEC-011 — Registrar candidatura
 | ID | Estado | Questão em aberto | Contexto/impacto |
@@ -157,7 +157,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 | OPEN-055 | aberta | Quais dados do candidato são visíveis ao Recrutador em cada etapa? | RB-26 exige confidencialidade e necessidade de acesso. |
 | OPEN-056 | aberta | Quais dados de decisão/histórico são obrigatórios e é permitido reverter transições? | RB-27/RB-41 exigem rastreabilidade; regras de reversão precisam ser confirmadas. |
 
-## Bloco 5 — Acompanhamento e notificações
+## Acompanhamento e notificações
 
 ### SPEC-016 — Acompanhar candidatura e processo seletivo
 | ID | Estado | Questão em aberto | Contexto/impacto |
@@ -173,7 +173,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 | OPEN-068 | aberta | Quais prazos, retentativas e políticas de falha/reenvio serão aplicados? | Necessário para operacionalizar a entrega sem presumir infraestrutura. |
 | OPEN-069 | aberta | Haverá central/histórico interno de notificações e qual será sua retenção? | A baseline exige comunicação, mas não estabelece central nem política de retenção. |
 
-## Bloco 6 — Avaliações, denúncias e nota pública
+## Avaliações, denúncias e nota pública
 
 ### SPEC-018 — Avaliar processo seletivo
 | ID | Estado | Questão em aberto | Contexto/impacto |
@@ -195,7 +195,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 | ID | Estado | Questão em aberto | Contexto/impacto |
 |---|---|---|---|
 | OPEN-078 | aberta | Quais critérios e evidências o Administrador consulta para analisar uma denúncia? | RB-25 exige análise administrativa, mas não define o procedimento completo. |
-| OPEN-079 | aberta | Qual catálogo de decisões e quais efeitos cada decisão pode autorizar? | RB-45 prevê consequências conforme decisão registrada; efeitos precisam ser explícitos. |
+| OPEN-079 | aberta | Qual catálogo de decisões e quais efeitos cada decisão pode autorizar sobre a denúncia? | RB-45 prevê consequências conforme decisão registrada; definir os efeitos de moderação da denúncia sem alterar diretamente avaliações ou a distribuição pública de estrelas. |
 | OPEN-080 | aberta | Quais prazos e prioridades serão aplicados à fila de moderação? | A baseline não estabelece SLA ou priorização. |
 | OPEN-081 | aberta | Quais informações da decisão serão comunicadas às partes e quais permanecem confidenciais? | Impacta transparência, privacidade e segurança. |
 
@@ -205,7 +205,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 | OPEN-082 | parcialmente definida | Como apresentar a nota pública com base em estrelas? | Decisão do grupo: exibir a frequência de avaliações válidas em cada quantidade de estrelas, sem presumir média ou pesos adicionais. |
 | OPEN-083 | parcialmente definida | Qual quantidade mínima e quais critérios de validade tornam dados/avaliações suficientes para a nota? | Decisão do grupo: uma avaliação válida é suficiente para apresentar a distribuição; os critérios adicionais de validade permanecem conforme a baseline e as decisões ainda necessárias. |
 | OPEN-084 | parcialmente definida | Como a nota será apresentada quando os dados forem insuficientes ou conflitantes? | Decisão do grupo: sem avaliações válidas, não exibir nota e informar que os dados são insuficientes. O tratamento de dados conflitantes permanece a confirmar se aplicável. |
-| OPEN-085 | aberta | Quais efeitos uma decisão de moderação pode produzir na nota e nos dados publicados? | Decisão do grupo: nenhum efeito antes de decisão de moderação registrada. Ainda falta definir quais efeitos uma decisão confirmada pode autorizar. |
+| OPEN-085 | resolvida | A moderação pode alterar a nota pública ou a distribuição de estrelas? | Decisão do grupo: não. A administração atua sobre denúncias; a nota pública é formada pelas avaliações válidas e não pode ser editada ou recalculada diretamente por administradores. |
 
 ## Decisões consolidadas
 
@@ -215,7 +215,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 - **Não existe Administrador associado à Empresa.** O perfil **Administrador é exclusivo da plataforma**, para moderação e operações administrativas da própria plataforma.
 - Não existe o papel de **Gestor de Seleção** no modelo.
 - O sistema **não armazena laudos médicos**. As necessidades de acessibilidade podem ser informadas pelo candidato, inclusive por autodeclaração.
-- Uma denúncia **não bloqueia automaticamente** uma vaga nem altera automaticamente a nota de acessibilidade. A denúncia deve ser analisada por um Administrador antes de qualquer decisão.
+- Uma denúncia **não bloqueia automaticamente** uma vaga. A administração da plataforma atua sobre denúncias e não altera diretamente as avaliações nem a distribuição pública de estrelas; a nota é exibida conforme as avaliações válidas.
 - A deduplicação definida em **RB-31** aplica-se aos dados externos importados.
 - O funil de seleção utiliza os estados e transições formalizados em `docs/Fluxos e Estados/estados-trilha.md`.
 
