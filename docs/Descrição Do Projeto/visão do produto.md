@@ -15,8 +15,7 @@ instrutura, autonomia e real acessibilidade.
 
 4) Proposta do Projeto:
    -
-Eliminar a questão de "falsa inclusão" e desenvolver uma plataforma que ofereça funcionalidades importantes para assegurar a manutenção
-da acessibilidade ao longo do processo de recrutamento.
+Eliminar a questão de "falsa inclusão" e desenvolver uma plataforma que ofereça informações e verificações de acessibilidade para apoiar decisões durante o processo de recrutamento.
 
 5) O que a plataforma entrega na prática:
    -
