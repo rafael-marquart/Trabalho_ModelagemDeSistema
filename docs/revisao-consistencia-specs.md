@@ -37,7 +37,7 @@ RF-34 trata de cancelamento de candidatura e RF-35 de gestão do funil de seleç
 
 Essas Specs têm seções de comportamento, regras, contratos e testes, mas boa parte do comportamento esperado usa passos genéricos como “o ator autorizado acessa a capacidade” e “o sistema valida pré-condições”. Isso reduz a capacidade de derivar implementação e testes diretamente do texto.
 
-**Ajuste recomendado:** revisar cada uma para descrever fluxos próprios, exceções, pré/pós-condições, dados de entrada/saída e critérios verificáveis com referências explícitas à baseline. A revisão deve começar pelas SPEC-011 a SPEC-017, que definem o fluxo operacional de candidatura, funil e acomodação.
+**Ajuste recomendado:** revisar cada uma para descrever fluxos próprios, exceções, pré/pós-condições, dados de entrada/saída e critérios verificáveis com referências explícitas à baseline. A revisão deve começar pelas SPEC-011 a SPEC-013 e SPEC-016 a SPEC-017, que definem o fluxo operacional de candidatura, funil, acompanhamento e notificações.
 
 ### REV-003 — Rastreabilidade de casos de uso está incompleta ou imprecisa em algumas Specs
 
@@ -46,7 +46,6 @@ Essas Specs têm seções de comportamento, regras, contratos e testes, mas boa 
 
 A baseline lista os seguintes casos de uso:
 - UC-03 — Candidatar-se a Vaga;
-- UC-04 — Solicitar Acomodação no Processo Seletivo;
 - UC-05 — Acompanhar Funil de Candidaturas;
 - UC-06 — Avaliar Pós-Entrevista;
 - UC-09 — Gerenciar Funil de Seleção;
@@ -56,9 +55,9 @@ A baseline lista os seguintes casos de uso:
 - UC-13 — Calcular Match Determinístico;
 - UC-14 — Ingerir Dados em JSON.
 
-No detalhamento atual, SPEC-011 indica que o caso de uso específico precisa ser confirmado, embora UC-03 esteja listado na visão geral; SPEC-013 menciona a necessidade de confirmar o caso do Recrutador, embora UC-09 exista; SPEC-014 não explicita UC-04; SPEC-018 não explicita UC-06; SPEC-019 não explicita UC-11; SPEC-006 deve ser conferida com UC-14. Também é preciso distinguir UC-05 (acompanhamento pelo candidato) de UC-09 (gestão do funil pelo Recrutador).
+No detalhamento atual, SPEC-011 indica que o caso de uso específico precisa ser confirmado, embora UC-03 esteja listado na visão geral; SPEC-013 menciona a necessidade de confirmar o caso do Recrutador, embora UC-09 exista; SPEC-018 não explicita UC-06; SPEC-019 não explicita UC-11; SPEC-006 deve ser conferida com UC-14. Também é preciso distinguir UC-05 (acompanhamento pelo candidato) de UC-09 (gestão do funil pelo Recrutador).
 
-**Correção aplicada:** o detalhamento aponta UC-03 na SPEC-011, UC-05 na SPEC-012, UC-09 na SPEC-013, UC-04 na SPEC-014, UC-06 na SPEC-018, UC-11 na SPEC-019 e UC-14 na SPEC-006. A SPEC-020 distingue a análise administrativa como fluxo de moderação, sem criar ator de empresa-administradora.
+**Correção aplicada:** o detalhamento aponta UC-03 na SPEC-011, UC-05 na SPEC-012, UC-09 na SPEC-013, UC-06 na SPEC-018, UC-11 na SPEC-019 e UC-14 na SPEC-006. A SPEC-020 distingue a análise administrativa como fluxo de moderação, sem criar ator de empresa-administradora.
 
 **Pendente de validação:** confirmar esses vínculos contra os arquivos individuais e seus fluxos completos, sobretudo se cada caso de uso tiver detalhes além da visão geral. Não atribuir conteúdo a um UC apenas pelo título.
 
@@ -80,7 +79,7 @@ Em algumas Specs, a seção “Telas e evidência de layout” contém texto de 
 
 **Decisão aplicada:** SPEC-014 e SPEC-015 foram removidas do escopo. As questões OPEN-057 a OPEN-062 e o caso de uso dedicado UC-04 também foram retirados. As referências a solicitações e processamento de acomodação devem ser removidas dos artefatos relacionados, preservando as necessidades de acessibilidade do perfil do candidato e os recursos gerais de acessibilidade da plataforma.
 
-**Pendente de validação:** conferir referências residuais em arquivos de requisitos, diagramas e descrição do produto; IDs das Specs posteriores foram preservados.
+**Busca final:** referências funcionais remanescentes foram removidas dos requisitos EARS, das Specs de acompanhamento e notificação e dos casos de uso de acompanhamento/funil. O diagrama dedicado a UC-04 foi removido. Os IDs das Specs posteriores foram preservados. A busca por termos relacionados a acomodação ainda pode encontrar este registro histórico de decisão, mantido para documentar a alteração.
 
 ### REV-006 — Requisitos transversais precisam ser associados às operações pertinentes, não apenas listados
 
