@@ -8,13 +8,13 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 2. Resultado executivo
 
-**Atualização de status:** REV-001, REV-003, REV-004, REV-006, REV-007 e REV-010 foram corrigidas e encerradas após aprovação do grupo. REV-005 foi retirada dos achados ativos porque a remoção das capacidades de acomodação já foi aprovada e aplicada. Permanecem ativos os pontos que exigem detalhamento adicional ou decisões funcionais, especialmente REV-002, REV-008 e REV-009.
+**Status atual:** REV-001, REV-003, REV-004, REV-005, REV-006, REV-007 e REV-010 estão encerradas ou retiradas dos achados ativos conforme as correções aprovadas. REV-002 permanece em revisão até leitura e aprovação humana do detalhamento ampliado. REV-008 permanece aberta apenas para definir os efeitos que uma decisão de moderação pode produzir sobre a nota pública (OPEN-085). REV-009 permanece aberta por decisão do grupo, pois envolve regras centrais para o funcionamento do cálculo de compatibilidade.
 
-- O mapa e o documento de detalhamento contêm **21 Specs**, com IDs e títulos correspondentes.
+- O mapa e o documento de detalhamento preservam os IDs SPEC-001 a SPEC-021; SPEC-014 e SPEC-015 foram removidas do escopo, sem renumerar as posteriores.
 - O `OPEN.md` contém questões numeradas de OPEN-001 a OPEN-085 sem IDs duplicados detectados.
 - Todas as RBs identificadas na baseline aparecem referenciadas em algum ponto de `Specs.md`; isso não garante, por si só, que cada regra esteja associada à Spec correta.
-- **RF-34 e RF-35 não aparecem no detalhamento atual**, embora existam na baseline e sejam relevantes para SPEC-012 e SPEC-013.
-- As SPEC-011 a SPEC-021 foram montadas com um padrão de comportamento relativamente genérico. Têm estrutura de 14 seções, mas precisam de revisão de profundidade e rastreabilidade antes de serem consideradas equivalentes às Specs mais detalhadas dos blocos anteriores.
+- RF-34 e RF-35 estão associados, respectivamente, à SPEC-012 e à SPEC-013.
+- O detalhamento de contratos e testes das SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 foi ampliado; REV-002 aguarda revisão humana final dos fluxos, exceções, rastreabilidade e critérios.
 - Foram encontrados pontos em que uma dependência, referência de caso de uso ou conteúdo de seção precisa ser corrigido ou confirmado.
 
 ## 3. Achados prioritários
@@ -96,23 +96,36 @@ A decisão consolidada estabelece que Administrador é papel da plataforma, util
 
 **Status: encerrado.** A distinção entre Administrador da plataforma e Empresa foi explicitada nas Specs e aprovada pelo grupo. O achado não permanece aberto; qualquer ocorrência divergente encontrada em outro artefato pode ser registrada como novo achado específico.
 
-### REV-008 — Fórmula e semântica da nota pública continuam em aberto
+### REV-008 — Efeitos de moderação sobre a nota pública ainda precisam de definição
 
 **Prioridade:** alta para aprovação funcional, sem bloquear o restante da revisão  
 **Artefatos:** SPEC-018 a SPEC-021, RF-13, RB-19, RB-20, RB-25 e RB-45.
 
 Decisões recebidas do grupo: a apresentação pública usa estrelas e exibe a frequência de cada quantidade de estrelas; uma avaliação válida é suficiente para exibir a distribuição; sem avaliações válidas, não exibe nota e informa dados insuficientes; nenhuma alteração ocorre antes de decisão de moderação registrada.
 
-**Atualização aplicada:** SPEC-021 e OPEN-082 a OPEN-084 foram ajustadas para refletir as decisões de apresentação. OPEN-085 permanece aberta porque ainda falta definir quais efeitos uma decisão de moderação pode autorizar. Assim, REV-008 fica parcialmente resolvida e permanece aberta somente quanto aos efeitos da moderação e eventuais detalhes de validade ainda não definidos.
+**Atualização aplicada:** SPEC-021 e OPEN-082 a OPEN-084 foram ajustadas para refletir as decisões de apresentação. **Único ponto pendente:** OPEN-085 — definir quais efeitos uma decisão de moderação registrada pode autorizar sobre a nota e os dados publicados. Até essa decisão, não se deve presumir remoção de avaliações, recálculo, suspensão ou qualquer outra consequência.
 
-### REV-009 — Cálculo de compatibilidade: consistência entre score, trava e dados ausentes
+### REV-009 — Definir com precisão o cálculo de compatibilidade entre candidato e vaga
 
 **Prioridade:** alta  
 **Artefatos:** SPEC-007 a SPEC-010, RF-07 a RF-10, RF-24/RF-25, RB-02 a RB-07, RB-15/RB-16/RB-30.
 
-O princípio está consistente: a trava crítica precede o score; dados de acessibilidade ausentes não significam compatibilidade; a SPEC-008 consome a SPEC-007 e a SPEC-010 apresenta o resultado. Permanecem pendentes a fórmula detalhada, os dados mínimos e a apresentação de resultados com perfil incompleto.
+**Por que esta revisão é importante:** o resultado de compatibilidade influencia o que o candidato vê na busca, como interpreta uma vaga e se pode prosseguir para a candidatura. Uma regra ambígua pode apresentar um resultado enganoso ou permitir que uma incompatibilidade crítica seja escondida por uma pontuação alta. Por isso, essa decisão afeta diretamente o funcionamento central do site e não deve ser preenchida por suposição.
 
-**Status: mantido em aberto por decisão do grupo.** Não foram alteradas as regras de compatibilidade nem as OPEN-031 a OPEN-046. A próxima revisão deve decidir esses pontos sem duplicar o cálculo na busca ou na tela de detalhe.
+**Princípios já estabelecidos e que devem ser preservados:**
+- A trava crítica de acessibilidade prevalece sobre qualquer score numérico.
+- Dados de acessibilidade ausentes não significam compatibilidade; ausência de informação não pode ser tratada como confirmação positiva nem, sem evidência, como incompatibilidade comprovada.
+- O cálculo deve ter uma única fonte de verdade na SPEC-007. A SPEC-008 usa o resultado para busca/filtros e a SPEC-010 apresenta o resultado ao candidato; nenhuma delas deve criar uma fórmula paralela.
+
+**O que ainda falta decidir (OPEN-031 a OPEN-046):**
+1. **Como calcular o score:** subpontuações, normalização e arredondamento.
+2. **Quais dados são obrigatórios:** campos mínimos por dimensão e o que fazer quando faltarem localização, modalidade ou informações de acessibilidade.
+3. **Como representar resultados incompletos:** se o score final deve ser omitido ou se pode existir um resultado parcial claramente identificado; como explicar ao candidato o que falta.
+4. **Como explicar a compatibilidade:** quais critérios/fatores serão apresentados, sem expor dados privados.
+5. **Como tornar o resultado reproduzível:** quais parâmetros e versão da regra devem ser registrados, respeitando privacidade e retenção.
+6. **Questões associadas à experiência de descoberta:** OPEN-036 a OPEN-039 tratam de filtros, busca textual, paginação/ordenação e alertas/buscas salvas; OPEN-040 a OPEN-042 tratam de status/transições e comunicação de encerramento da vaga; OPEN-043 e OPEN-045 tratam dos campos do detalhe e da apresentação de dados ausentes.
+
+**Status: mantido em aberto por decisão do grupo.** Não foram alteradas as regras de compatibilidade nem as OPEN-031 a OPEN-046. Para fechar esta revisão, o grupo precisa aprovar as regras acima ou apontar decisões já existentes na baseline que respondam a cada questão. Até lá, manter os princípios estabelecidos, não inventar pesos, limiares ou políticas e não iniciar implementação de comportamentos ainda indefinidos.
 
 ### REV-010 — Cabeçalho e registro de revisão precisam refletir o documento completo
 
@@ -136,10 +149,10 @@ O cabeçalho ainda descreve o documento como detalhamento do “Bloco 1 — Aces
 
 ## 5. Plano recomendado de correção
 
-1. Revisar o detalhamento das SPEC-011 a SPEC-021 para eliminar comportamentos genéricos e garantir critérios específicos e testáveis (REV-002).
-2. Decidir a semântica da nota pública de acessibilidade e responder às OPEN-082 a OPEN-085 (REV-008).
-3. Decidir a fórmula, os dados mínimos e o tratamento de perfis incompletos no cálculo de compatibilidade, respondendo às OPEN-031 a OPEN-046 (REV-009).
-4. Revisar coletivamente as demais questões OPEN ainda pertinentes, sem marcá-las como resolvidas antes de uma decisão explícita.
+1. Concluir a leitura humana e a aprovação textual do detalhamento ampliado das Specs dos Blocos 4 a 6 (REV-002).
+2. Decidir os efeitos autorizados de uma decisão de moderação sobre a nota pública (OPEN-085 / REV-008).
+3. Decidir as questões funcionais de compatibilidade e descoberta listadas em OPEN-031 a OPEN-046 (REV-009).
+4. Manter as demais questões OPEN pertinentes explicitamente abertas até decisão do grupo.
 5. Manter a aprovação textual separada da aprovação dos layouts. Implementação somente após as aprovações aplicáveis.
 
 ## 6. Limite desta revisão
