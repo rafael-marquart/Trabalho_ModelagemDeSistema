@@ -17,7 +17,6 @@ Validar os requisitos exigidos para a etapa de seleção, garantindo que o recru
 ## Pontos de Inclusão e Extensão
 
 - Inclusão (<<include>>): UC-09 (Gerenciar Funil de Seleção).
-- Extensão (<<extend>>): UC-04 (Solicitar Acomodação no Processo Seletivo).
 
 ## Fluxo Principal
 
@@ -32,7 +31,6 @@ Validar os requisitos exigidos para a etapa de seleção, garantindo que o recru
 
 - EX01 (Requisitos incompletos): Se o candidato não atender aos requisitos necessários, o sistema solicita a complementação e mantém a etapa em pendência.
 - EX02 (Informação inválida): Se um item ou informação não atender ao padrão esperado, o sistema identifica o problema e informa a correção necessária.
-- EX03 (Solicitação de acomodação pendente): Se houver solicitação de acomodação em análise, a validação pode aguardar a decisão do recrutador antes de avançar a etapa.
 
 ## Pós-condições
 
@@ -46,7 +44,6 @@ Validar os requisitos exigidos para a etapa de seleção, garantindo que o recru
 - RB-23
 - RB-27
 - RB-39
-- RB-40
 - RB-41
 - RB-43
 
