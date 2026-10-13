@@ -8,7 +8,7 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 2. Resultado executivo
 
-**Status atual:** REV-001, REV-003, REV-004, REV-005, REV-006, REV-007 e REV-010 estão encerradas ou retiradas dos achados ativos conforme as correções aprovadas. REV-002 permanece em revisão até leitura e aprovação humana do detalhamento ampliado. REV-008 permanece aberta apenas para definir os efeitos que uma decisão de moderação pode produzir sobre a nota pública (OPEN-085). REV-009 permanece aberta por decisão do grupo, pois envolve regras centrais para o funcionamento do cálculo de compatibilidade.
+**Status atual:** permanecem neste relatório apenas os pontos que ainda exigem revisão ou decisão: REV-002, REV-008 e REV-009. Os achados encerrados foram removidos do corpo principal; suas decisões ficam registradas em nota de rodapé documental ao final do relatório.
 
 - O mapa e o documento de detalhamento preservam os IDs SPEC-001 a SPEC-021; SPEC-014 e SPEC-015 foram removidas do escopo, sem renumerar as posteriores.
 - O `OPEN.md` contém questões numeradas de OPEN-001 a OPEN-085 sem IDs duplicados detectados.
@@ -18,17 +18,6 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 - Foram encontrados pontos em que uma dependência, referência de caso de uso ou conteúdo de seção precisa ser corrigido ou confirmado.
 
 ## 3. Achados prioritários
-
-### REV-001 — RF-34 e RF-35 ausentes do detalhamento
-
-**Prioridade:** alta  
-**Artefatos:** `docs/Requisitos/RF.md`, `docs/Specs.md`, SPEC-012 e SPEC-013.
-
-RF-34 trata de cancelamento de candidatura e RF-35 de gestão do funil de seleção. Os dois requisitos não são citados no detalhamento atual.
-
-**Correção aplicada:** RF-34 está associado à SPEC-012 e RF-35 à SPEC-013. A referência indevida a RF-34 na SPEC-011 foi removida, mantendo nessa Spec o RF-26 de registro de candidatura.
-
-**Status: encerrado.** A rastreabilidade foi corrigida no detalhamento e a correção foi aprovada pelo grupo. Não é necessário criar Specs novas apenas por existirem esses RFs: as capacidades correspondentes já estão mapeadas.
 
 ### REV-002 — Detalhamento específico das Specs dos Blocos 4 a 6
 
@@ -40,61 +29,6 @@ Essas Specs têm seções de comportamento, regras, contratos e testes, mas boa 
 **Correção parcial aplicada:** foram detalhados contratos conceituais e casos de teste específicos nas SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021. Foram explicitados cenários de candidatura duplicada e inelegível, cancelamento, transições do funil, consulta de histórico, falhas de notificação, elegibilidade/anonimato de avaliações, registro e moderação de denúncias e distribuição pública de estrelas. A SPEC-014 e a SPEC-015 permanecem fora de escopo.
 
 **Status: em revisão.** A primeira rodada de detalhamento foi aplicada sem criar endpoints, fórmulas ou políticas não aprovadas. Para encerrar REV-002 ainda é necessária uma leitura humana dos fluxos, critérios, exceções e rastreabilidade em cada Spec do escopo, além da aprovação textual formal.
-
-### REV-003 — Rastreabilidade de casos de uso está incompleta ou imprecisa em algumas Specs
-
-**Prioridade:** alta  
-**Artefatos:** `docs/Specs.md`, `docs/Casos De Uso/UC-geral.md`.
-
-A baseline lista os seguintes casos de uso:
-- UC-03 — Candidatar-se a Vaga;
-- UC-05 — Acompanhar Funil de Candidaturas;
-- UC-06 — Avaliar Pós-Entrevista;
-- UC-09 — Gerenciar Funil de Seleção;
-- UC-10 — Validar Requisitos da Seleção;
-- UC-11 — Denunciar Vaga Incompatível;
-- UC-12 — Status da Vaga;
-- UC-13 — Calcular Match Determinístico;
-- UC-14 — Ingerir Dados em JSON.
-
-No detalhamento atual, SPEC-011 indica que o caso de uso específico precisa ser confirmado, embora UC-03 esteja listado na visão geral; SPEC-013 menciona a necessidade de confirmar o caso do Recrutador, embora UC-09 exista; SPEC-018 não explicita UC-06; SPEC-019 não explicita UC-11; SPEC-006 deve ser conferida com UC-14. Também é preciso distinguir UC-05 (acompanhamento pelo candidato) de UC-09 (gestão do funil pelo Recrutador).
-
-**Correção aplicada:** o detalhamento aponta UC-03 na SPEC-011, UC-05 na SPEC-012, UC-09 na SPEC-013, UC-06 na SPEC-018, UC-11 na SPEC-019 e UC-14 na SPEC-006. A SPEC-020 distingue a análise administrativa como fluxo de moderação, sem criar ator de empresa-administradora.
-
-**Status: encerrado.** Os vínculos de rastreabilidade foram corrigidos e aprovados pelo grupo. O encerramento se refere à correção documental registrada neste achado; novas divergências encontradas em revisões futuras podem ser registradas separadamente.
-
-### REV-004 — Seção 3.1 mistura finalidade de layout e questões em aberto
-
-**Prioridade:** média  
-**Artefato:** `docs/Specs.md`, especialmente SPEC-011 a SPEC-021.
-
-Em algumas Specs, a seção “Telas e evidência de layout” contém texto de questões em aberto em vez de listar áreas/telas ou declarar que layout não se aplica. Exemplo encontrado em SPEC-011: “Elegibilidade; duplicidade; estado inicial; caso de uso específico precisa ser confirmado.” Essa frase aparece com pontuação duplicada ao ser seguida pelo texto padrão de layout.
-
-**Correção aplicada:** as áreas/telas estão separadas em tabela com finalidade e estado de layout; as questões em aberto permanecem em seção própria, referenciadas por IDs OPEN. As finalidades das áreas das SPEC-011 a SPEC-021 foram ajustadas para indicar o papel da área no fluxo.
-
-**Status: encerrado.** A separação entre finalidade das áreas, questões em aberto e estado de layout foi aplicada e aprovada pelo grupo. A aprovação visual dos protótipos continua sendo um gate separado da aprovação textual das Specs.
-
-### REV-006 — Requisitos transversais precisam ser associados às operações pertinentes, não apenas listados
-
-**Prioridade:** média  
-**Artefatos:** SPEC-003, SPEC-008 a SPEC-021 e RNF.
-
-Os RNFs de acessibilidade, privacidade, segurança, integridade, desempenho e auditoria são transversais. A presença de uma referência geral em uma Spec não demonstra como ela será verificada no comportamento específico.
-
-**Correção aplicada:** foram acrescentadas verificações observáveis nos critérios de aceitação das Specs operacionais selecionadas, incluindo autorização por perfil, privacidade, integridade, rastreabilidade, navegação por teclado e tratamento de falhas, conforme aplicabilidade.
-
-**Status: encerrado.** Os critérios observáveis aplicáveis foram acrescentados e aprovados pelo grupo, sem inventar métricas numéricas. Procedimentos ou métricas que não existam na baseline continuam sujeitos a decisão própria, caso sejam necessários.
-
-### REV-007 — Separação entre Administrador da plataforma e Empresa
-
-**Prioridade:** alta, como invariante de domínio  
-**Artefatos:** SPEC-001, SPEC-020, `docs/OPEN.md`, modelo conceitual.
-
-A decisão consolidada estabelece que Administrador é papel da plataforma, utilizado para moderação; não existe Administrador associado à Empresa. A SPEC-020 já explicita isso. É necessário verificar que as demais Specs não usem “administrador da empresa” nem sugiram que a Empresa recebe o papel ADMINISTRADOR. A gestão dos próprios Recrutadores permanece com a conta Empresa conforme RF-17/RB-46/UC-07.
-
-**Correção aplicada:** a SPEC-001 explicita que Administrador é perfil da plataforma e que Empresa não pode administrar vínculos de outra organização; a SPEC-020 limita a moderação ao Administrador da plataforma. Uma busca no detalhamento atual não encontrou a expressão “administrador da empresa”.
-
-**Status: encerrado.** A distinção entre Administrador da plataforma e Empresa foi explicitada nas Specs e aprovada pelo grupo. O achado não permanece aberto; qualquer ocorrência divergente encontrada em outro artefato pode ser registrada como novo achado específico.
 
 ### REV-008 — Efeitos de moderação sobre a nota pública ainda precisam de definição
 
@@ -127,17 +61,6 @@ Decisões recebidas do grupo: a apresentação pública usa estrelas e exibe a f
 
 **Status: mantido em aberto por decisão do grupo.** Não foram alteradas as regras de compatibilidade nem as OPEN-031 a OPEN-046. Para fechar esta revisão, o grupo precisa aprovar as regras acima ou apontar decisões já existentes na baseline que respondam a cada questão. Até lá, manter os princípios estabelecidos, não inventar pesos, limiares ou políticas e não iniciar implementação de comportamentos ainda indefinidos.
 
-### REV-010 — Cabeçalho e registro de revisão precisam refletir o documento completo
-
-**Prioridade:** baixa  
-**Artefato:** `docs/Specs.md`.
-
-O cabeçalho ainda descreve o documento como detalhamento do “Bloco 1 — Acesso e perfis”, embora o escopo listado no controle já seja SPEC-001 a SPEC-021.
-
-**Correção aplicada:** o cabeçalho de Specs.md já descreve o documento como detalhamento dos Blocos 1 a 6 e o controle do documento inclui estado de texto e layout por bloco para SPEC-001 a SPEC-021.
-
-**Status: encerrado.** O cabeçalho e o controle do documento foram atualizados e aprovados pelo grupo.
-
 ## 4. Verificações que passaram
 
 - Os IDs SPEC-001 a SPEC-021 aparecem tanto no mapa quanto no documento de detalhamento.
@@ -158,3 +81,7 @@ O cabeçalho ainda descreve o documento como detalhamento do “Bloco 1 — Aces
 ## 6. Limite desta revisão
 
 Esta é uma auditoria de consistência documental. Ela identifica cobertura e problemas verificáveis por comparação dos artefatos, mas não substitui a leitura e validação funcional do grupo. Questões de produto que a baseline não resolve continuam abertas.
+
+---
+
+**Nota de rodapé — decisões já tomadas:** os achados REV-001, REV-003, REV-004, REV-006, REV-007 e REV-010 foram retirados do corpo principal por estarem encerrados. As correções e decisões correspondentes foram aplicadas aos artefatos do projeto e aprovadas pelo grupo; seus registros históricos podem ser recuperados no histórico do Git.
