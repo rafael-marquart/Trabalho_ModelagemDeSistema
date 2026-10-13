@@ -1,10 +1,10 @@
 # Specs — AcessaVagas
 
-Documento de detalhamento das Specs do AcessaVagas, organizado nos Blocos 1 a 6, baseado na baseline do projeto e na estrutura do documento de referência do processo SDD.
+Documento de detalhamento das Specs do AcessaVagas, baseado na baseline do projeto e na estrutura do documento de referência do processo SDD.
 
 ## Controle do documento
 
-- Escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021, organizadas nos Blocos 1 a 6.
+- Escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021.
 - Estado dos textos: especificada, aguardando revisão e aprovação humana.
 - Estado dos layouts: pendente quando aplicável; não se aplica às capacidades sem interface própria.
 - **Layout significa evidência visual/protótipo, não código.** A identidade visual existente é uma referência inicial de estilo; ainda será necessário especificar e aprovar os layouts das telas aplicáveis.
@@ -22,7 +22,7 @@ Estados possíveis: especificada, aprovada, em implementação, implementada ou 
 | Campo | Valor |
 |---|---|
 | ID | SPEC-001 |
-| Bloco | 1 — Acesso e perfis |
+|
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Cadastro de usuário/empresa, autenticação, recuperação de senha, autorização por perfil e vínculo organizacional de recrutador |
@@ -231,7 +231,6 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | Campo | Valor |
 |---|---|
 | ID | SPEC-002 |
-| Bloco | 1 — Acesso e perfis |
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Consultar, cadastrar e atualizar dados profissionais e necessidades funcionais de acessibilidade |
@@ -414,7 +413,6 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | Campo | Valor |
 |---|---|
 | ID | SPEC-003 |
-| Bloco | 1 — Acesso e perfis |
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Recursos funcionais de acessibilidade para interação com a plataforma |
@@ -627,7 +625,6 @@ Este bloco detalha SPEC-004, SPEC-005 e SPEC-006. As questões pendentes são re
 | Campo | Valor |
 |---|---|
 | ID | SPEC-004 |
-| Bloco | 2 — Empresa e vagas |
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Registrar, consultar e atualizar informações de acessibilidade física, digital e atitudinal da Empresa |
@@ -808,7 +805,6 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 | Campo | Valor |
 |---|---|
 | ID | SPEC-005 |
-| Bloco | 2 — Empresa e vagas |
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Criar, editar, publicar e gerenciar vagas cadastradas diretamente por uma Empresa |
@@ -1005,7 +1001,6 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 | Campo | Valor |
 |---|---|
 | ID | SPEC-006 |
-| Bloco | 2 — Empresa e vagas |
 | Estado do texto | especificada |
 | Estado do layout | não se aplica ao núcleo de ingestão; eventual interface administrativa permanece pendente |
 | Capacidade | Receber dados externos estruturados, validar, normalizar, deduplicar e registrar o resultado da ingestão |
@@ -1233,7 +1228,7 @@ Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN
 | Campo | Valor |
 |---|---|
 | ID | SPEC-007 |
-| Bloco | 3 — Compatibilidade e descoberta |
+|
 | Estado do texto | especificada |
 | Estado do layout | não se aplica ao cálculo; apresentação do resultado pertence à SPEC-010 |
 | Capacidade | Aplicar trava crítica e calcular score determinístico de compatibilidade |
@@ -1352,7 +1347,6 @@ Contratos conceituais, sem endpoints HTTP.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-008 |
-| Bloco | 3 — Compatibilidade e descoberta |
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Buscar e filtrar vagas elegíveis e ordená-las por compatibilidade |
@@ -1479,7 +1473,6 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 | Campo | Valor |
 |---|---|
 | ID | SPEC-009 |
-| Bloco | 3 — Compatibilidade e descoberta |
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Exibir o estado atual da vaga e impedir ações incompatíveis com sua disponibilidade |
@@ -1594,7 +1587,6 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 | Campo | Valor |
 |---|---|
 | ID | SPEC-010 |
-| Bloco | 3 — Compatibilidade e descoberta |
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Apresentar detalhes da vaga, acessibilidade, status e explicação de compatibilidade |
@@ -1734,7 +1726,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 | Campo | Valor |
 |---|---|
 | ID | SPEC-011 |
-| Bloco | 4 — Candidaturas e processo seletivo |
+|
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Registrar candidatura |
@@ -1839,7 +1831,6 @@ Consultar OPEN-047 a OPEN-049 em `docs/OPEN.md`. As questões permanecem abertas
 | Campo | Valor |
 |---|---|
 | ID | SPEC-012 |
-| Bloco | 4 — Candidaturas e processo seletivo |
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Gerenciar candidatura pelo candidato |
@@ -1944,7 +1935,6 @@ Consultar OPEN-050 a OPEN-052 em `docs/OPEN.md`. As questões permanecem abertas
 | Campo | Valor |
 |---|---|
 | ID | SPEC-013 |
-| Bloco | 4 — Candidaturas e processo seletivo |
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Gerenciar processo seletivo e funil |
@@ -2052,7 +2042,7 @@ Consultar OPEN-053 a OPEN-056 em `docs/OPEN.md`. As questões permanecem abertas
 | Campo | Valor |
 |---|---|
 | ID | SPEC-016 |
-| Bloco | 5 — Acompanhamento e notificações |
+|
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Acompanhar candidatura e processo seletivo |
@@ -2157,7 +2147,6 @@ Consultar OPEN-063 a OPEN-065 em `docs/OPEN.md`. As questões permanecem abertas
 | Campo | Valor |
 |---|---|
 | ID | SPEC-017 |
-| Bloco | 5 — Acompanhamento e notificações |
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Notificar alterações do processo seletivo |
@@ -2259,7 +2248,7 @@ Consultar OPEN-066 a OPEN-069 em `docs/OPEN.md`. As questões permanecem abertas
 | Campo | Valor |
 |---|---|
 | ID | SPEC-018 |
-| Bloco | 6 — Avaliações, denúncias e nota pública |
+|
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Avaliar processo seletivo |
@@ -2363,7 +2352,6 @@ Consultar OPEN-070 a OPEN-073 em `docs/OPEN.md`. As questões permanecem abertas
 | Campo | Valor |
 |---|---|
 | ID | SPEC-019 |
-| Bloco | 6 — Avaliações, denúncias e nota pública |
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Denunciar incompatibilidade ou falsa inclusão |
@@ -2467,7 +2455,6 @@ Consultar OPEN-074 a OPEN-077 em `docs/OPEN.md`. As questões permanecem abertas
 | Campo | Valor |
 |---|---|
 | ID | SPEC-020 |
-| Bloco | 6 — Avaliações, denúncias e nota pública |
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Moderar denúncias de incompatibilidade |
@@ -2573,7 +2560,6 @@ Consultar OPEN-078 a OPEN-081 em `docs/OPEN.md`. As questões permanecem abertas
 | Campo | Valor |
 |---|---|
 | ID | SPEC-021 |
-| Bloco | 6 — Avaliações, denúncias e nota pública |
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Gerenciar nota pública de acessibilidade |
@@ -2671,24 +2657,16 @@ Consultar OPEN-085 em `docs/OPEN.md`. As decisões de apresentação por estrela
 
 ---
 
-## Registro de revisão dos Blocos 4 a 6
-
-| Bloco | Specs | Estado do texto | Estado do layout |
-|---|---|---|---|
-| 4 — Candidaturas e processo seletivo | SPEC-011 a SPEC-013 | especificadas, aguardando revisão | pendentes |
-| 5 — Acompanhamento e notificações | SPEC-016 a SPEC-017 | especificadas, aguardando revisão | pendentes conforme aplicabilidade |
-| 6 — Avaliações, denúncias e nota pública | SPEC-018 a SPEC-021 | especificadas, aguardando revisão | pendentes |
-
 
 ## Registro consolidado de revisão
 
-| Bloco | Specs | Estado dos textos | Estado dos layouts |
-|---|---|---|---|
-| 1 — Acesso e perfis | SPEC-001 a SPEC-003 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
-| 2 — Empresa, vagas próprias e ingestão externa | SPEC-004 a SPEC-006 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
-| 3 — Compatibilidade e descoberta | SPEC-007 a SPEC-010 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
-| 4 — Candidaturas e processo seletivo | SPEC-011 a SPEC-013 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
-| 5 — Acompanhamento e notificações | SPEC-016 a SPEC-017 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
-| 6 — Avaliações, denúncias e nota pública | SPEC-018 a SPEC-021 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
+| Specs | Estado dos textos | Estado dos layouts |
+|---|---|---|
+| SPEC-001 a SPEC-003 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
+| SPEC-004 a SPEC-006 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
+| SPEC-007 a SPEC-010 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
+| SPEC-011 a SPEC-013 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
+| SPEC-016 a SPEC-017 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
+| SPEC-018 a SPEC-021 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
 
 A revisão cruzada dos artefatos está registrada em [revisao-consistencia-specs.md](revisao-consistencia-specs.md). A inclusão no registro não significa aprovação. Implementação permanece bloqueada até aprovação do texto e dos layouts aplicáveis.
