@@ -157,27 +157,12 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 | OPEN-055 | aberta | Quais dados do candidato são visíveis ao Recrutador em cada etapa? | RB-26 exige confidencialidade e necessidade de acesso. |
 | OPEN-056 | aberta | Quais dados de decisão/histórico são obrigatórios e é permitido reverter transições? | RB-27/RB-41 exigem rastreabilidade; regras de reversão precisam ser confirmadas. |
 
-## Bloco 5 — Acomodações, acompanhamento e notificações
-
-### SPEC-014 — Solicitar acomodação
-| ID | Estado | Questão em aberto | Contexto/impacto |
-|---|---|---|---|
-| OPEN-057 | aberta | Qual catálogo de recursos, campos e obrigatoriedades compõe a solicitação? | RF-29 descreve a capacidade sem detalhar o formulário integral. |
-| OPEN-058 | aberta | Qual é o estado inicial e quais estados/transições a solicitação pode assumir? | O modelo possui status_confirmacao, mas o ciclo de vida precisa ser confirmado. |
-| OPEN-059 | aberta | O candidato pode editar ou retirar uma solicitação? Em quais condições? | A baseline consultada não define os limites operacionais. |
-
-### SPEC-015 — Processar solicitação de acomodação
-| ID | Estado | Questão em aberto | Contexto/impacto |
-|---|---|---|---|
-| OPEN-060 | aberta | Quais campos, justificativas e dados são obrigatórios ao registrar decisão sobre acomodação? | RF-32 descreve gestão, mas não detalha todos os campos da decisão. |
-| OPEN-061 | aberta | Quais estados e transições de processamento são permitidos? | Evita inventar estados além dos artefatos de baseline. |
-| OPEN-062 | aberta | Uma decisão pode ser reconsiderada ou alterada? Em quais condições? | Necessário definir histórico e efeitos sem inferir política. |
+## Bloco 5 — Acompanhamento e notificações
 
 ### SPEC-016 — Acompanhar candidatura e processo seletivo
 | ID | Estado | Questão em aberto | Contexto/impacto |
 |---|---|---|---|
 | OPEN-063 | aberta | Quais eventos, datas e campos compõem a linha do tempo? | UC-05 pede histórico, mas a composição detalhada não está definida. |
-| OPEN-064 | aberta | Qual granularidade das informações de acomodação é apresentada ao candidato? | RB-40 exige visibilidade autorizada; os detalhes exibidos precisam ser delimitados. |
 | OPEN-065 | aberta | Por quanto tempo o histórico fica disponível após cancelamento ou encerramento? | A baseline exige rastreabilidade, mas não define retenção. |
 
 ### SPEC-017 — Notificar alterações do processo seletivo
