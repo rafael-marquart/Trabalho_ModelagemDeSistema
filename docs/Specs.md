@@ -2590,11 +2590,11 @@ SPEC-004, 018, 020. As dependências fornecem dados e capacidades; esta Spec nã
 2. Apresenta a frequência de avaliações válidas por quantidade de estrelas, sem calcular média ou pesos não aprovados.
 3. Sistema preserva anonimato público das avaliações.
 4. Uma avaliação válida é suficiente para apresentar a distribuição; sem avaliações válidas, não exibe nota e informa dados insuficientes.
-5. Denúncia sem decisão administrativa não altera a nota.
-6. Cálculos e alterações são rastreáveis.
+5. A administração da plataforma atua sobre denúncias; não edita avaliações nem altera diretamente a distribuição pública de estrelas.
+6. Cálculos e alterações de avaliações válidas são rastreáveis.
 
 ## 6. Regras e invariantes
-- Nota baseada em dados válidos; denúncia não muda nota automaticamente; dados ausentes não são afirmação positiva/negativa; cálculo e alterações rastreáveis.
+- A nota/distribuição é baseada nas avaliações válidas; administradores não editam avaliações nem alteram diretamente a distribuição; dados ausentes não são afirmação positiva/negativa; cálculo e alterações rastreáveis.
 - Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
 - Operações protegidas são validadas no backend.
 - Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
@@ -2610,7 +2610,7 @@ A capacidade mantém separação entre interface, regras de domínio e persistê
 - **Consultar avaliações válidas:** recupera avaliações registradas e elegíveis, sem expor autores.
 - **Construir distribuição de estrelas:** apresenta a frequência de avaliações válidas em cada quantidade de estrelas; não inventa média, pesos ou fórmula adicional.
 - **Verificar suficiência:** uma avaliação válida é suficiente para exibir a distribuição; quando não houver dados válidos, não exibe nota e informa que os dados são insuficientes.
-- **Aplicar decisão de moderação:** altera dados publicados somente após decisão administrativa registrada e conforme os efeitos que forem definidos pelo grupo.
+- **Encaminhar resultado da moderação:** mantém a decisão administrativa vinculada à denúncia; não edita avaliações nem altera diretamente a distribuição pública de estrelas.
 - **Registrar atualização:** mantém rastreabilidade da distribuição publicada e das alterações autorizadas.
 
 Contratos conceituais; não definem endpoints HTTP.
@@ -2640,12 +2640,12 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-021-02 | Existe uma avaliação válida | Exibe a frequência correspondente à quantidade de estrelas recebida |
 | T-021-03 | Existem avaliações válidas em diferentes quantidades de estrelas | Exibe a frequência de cada quantidade de estrelas sem revelar autores |
 | T-021-04 | Há avaliação inválida ou não elegível | Avaliação não integra a distribuição |
-| T-021-05 | Denúncia ainda não tem decisão registrada | Distribuição não é alterada automaticamente |
-| T-021-06 | Há decisão administrativa registrada que autoriza efeito | Alteração é aplicada somente dentro do efeito autorizado e fica rastreável |
+| T-021-05 | Denúncia ainda não tem decisão registrada | Distribuição permanece baseada nas avaliações válidas, sem efeito automático da denúncia |
+| T-021-06 | Administrador registra decisão sobre denúncia | Decisão fica vinculada à denúncia; avaliações e distribuição pública de estrelas não são editadas pelo administrador |
 | T-021-07 | Usuário tenta inferir identidade de avaliador pela tela pública | Tela não expõe identidade nem avaliação individual |
 
 ## 13. Questões em aberto
-Consultar OPEN-085 em `docs/OPEN.md`. As decisões de apresentação por estrelas, mínimo de uma avaliação válida e estado sem dados suficientes foram registradas. Os efeitos de moderação sobre a nota permanecem em aberto.
+As decisões de apresentação por estrelas, mínimo de uma avaliação válida e estado sem dados suficientes estão registradas. A OPEN-085 foi resolvida: administradores tratam denúncias, mas não alteram diretamente avaliações nem a distribuição pública de estrelas.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
