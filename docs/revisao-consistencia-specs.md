@@ -30,14 +30,16 @@ RF-34 trata de cancelamento de candidatura e RF-35 de gestão do funil de seleç
 
 **Status: encerrado.** A rastreabilidade foi corrigida no detalhamento e a correção foi aprovada pelo grupo. Não é necessário criar Specs novas apenas por existirem esses RFs: as capacidades correspondentes já estão mapeadas.
 
-### REV-002 — SPEC-011 a SPEC-021 precisam de detalhamento específico maior
+### REV-002 — Detalhamento específico das Specs dos Blocos 4 a 6
 
 **Prioridade:** alta  
 **Artefato:** `docs/Specs.md`.
 
 Essas Specs têm seções de comportamento, regras, contratos e testes, mas boa parte do comportamento esperado usa passos genéricos como “o ator autorizado acessa a capacidade” e “o sistema valida pré-condições”. Isso reduz a capacidade de derivar implementação e testes diretamente do texto.
 
-**Ajuste recomendado:** revisar cada uma para descrever fluxos próprios, exceções, pré/pós-condições, dados de entrada/saída e critérios verificáveis com referências explícitas à baseline. A revisão deve começar pelas SPEC-011 a SPEC-013 e SPEC-016 a SPEC-017, que definem o fluxo operacional de candidatura, funil, acompanhamento e notificações.
+**Correção parcial aplicada:** foram detalhados contratos conceituais e casos de teste específicos nas SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021. Foram explicitados cenários de candidatura duplicada e inelegível, cancelamento, transições do funil, consulta de histórico, falhas de notificação, elegibilidade/anonimato de avaliações, registro e moderação de denúncias e distribuição pública de estrelas. A SPEC-014 e a SPEC-015 permanecem fora de escopo.
+
+**Status: em revisão.** A primeira rodada de detalhamento foi aplicada sem criar endpoints, fórmulas ou políticas não aprovadas. Para encerrar REV-002 ainda é necessária uma leitura humana dos fluxos, critérios, exceções e rastreabilidade em cada Spec do escopo, além da aprovação textual formal.
 
 ### REV-003 — Rastreabilidade de casos de uso está incompleta ou imprecisa em algumas Specs
 
@@ -99,9 +101,9 @@ A decisão consolidada estabelece que Administrador é papel da plataforma, util
 **Prioridade:** alta para aprovação funcional, sem bloquear o restante da revisão  
 **Artefatos:** SPEC-018 a SPEC-021, RF-13, RB-19, RB-20, RB-25 e RB-45.
 
-A baseline sustenta que a nota deve usar dados válidos registrados, preservar anonimato público e não mudar automaticamente por uma denúncia não analisada. Ela não sustenta uma fórmula detalhada ou a quantidade mínima de avaliações.
+Decisões recebidas do grupo: a apresentação pública usa estrelas e exibe a frequência de cada quantidade de estrelas; uma avaliação válida é suficiente para exibir a distribuição; sem avaliações válidas, não exibe nota e informa dados insuficientes; nenhuma alteração ocorre antes de decisão de moderação registrada.
 
-**Ajuste recomendado:** manter OPEN-082 a OPEN-085 abertas até decisão do grupo; não definir pesos, limites ou efeitos por inferência.
+**Atualização aplicada:** SPEC-021 e OPEN-082 a OPEN-084 foram ajustadas para refletir as decisões de apresentação. OPEN-085 permanece aberta porque ainda falta definir quais efeitos uma decisão de moderação pode autorizar. Assim, REV-008 fica parcialmente resolvida e permanece aberta somente quanto aos efeitos da moderação e eventuais detalhes de validade ainda não definidos.
 
 ### REV-009 — Cálculo de compatibilidade: consistência entre score, trava e dados ausentes
 
@@ -110,7 +112,7 @@ A baseline sustenta que a nota deve usar dados válidos registrados, preservar a
 
 O princípio está consistente: a trava crítica precede o score; dados de acessibilidade ausentes não significam compatibilidade; a SPEC-008 consome a SPEC-007 e a SPEC-010 apresenta o resultado. Permanecem pendentes a fórmula detalhada, os dados mínimos e a apresentação de resultados com perfil incompleto.
 
-**Ajuste recomendado:** preservar essa separação de responsabilidades e resolver OPEN-031 a OPEN-046 com o grupo, sem duplicar o cálculo na busca ou na tela de detalhe.
+**Status: mantido em aberto por decisão do grupo.** Não foram alteradas as regras de compatibilidade nem as OPEN-031 a OPEN-046. A próxima revisão deve decidir esses pontos sem duplicar o cálculo na busca ou na tela de detalhe.
 
 ### REV-010 — Cabeçalho e registro de revisão precisam refletir o documento completo
 
