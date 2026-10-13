@@ -550,6 +550,11 @@ A referência a WCAG 2.1 AA não determina por si só ferramentas, combinações
 
 ## 11. Critérios de aceitação
 
+- [ ] Recursos e controles essenciais são operáveis por teclado, com foco perceptível e ordem coerente.
+- [ ] Nome, função e estado dos controles são identificáveis por tecnologia assistiva.
+- [ ] Contraste e redimensionamento são verificados conforme RNF-01 a RNF-04, usando o procedimento de validação ainda a definir em OPEN-016.
+
+
 - [ ] Fluxos essenciais do Bloco 1 podem ser operados sem mouse.
 - [ ] Ordem e indicador de foco são perceptíveis e coerentes.
 - [ ] Campos e controles são identificáveis por leitor de tela.
@@ -1428,6 +1433,10 @@ A busca coordena consulta ao catálogo, filtros e serviço de compatibilidade se
 RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabilidade); RNF-05 (desempenho); RNF-13 (compatibilidade). RNF-10/15 aplicam-se ao cálculo consumido na SPEC-007.
 
 ## 11. Critérios de aceitação
+
+- [ ] A consulta respeita autorização e não expõe dados pessoais ou necessidades de acessibilidade fora da finalidade autorizada (RNF-07/RNF-08).
+- [ ] Filtros combinados e resultados mantêm comportamento consistente após erro ou ausência de dados (RNF-09); limites de paginação permanecem conforme OPEN-038.
+
 - [ ] Candidato busca vagas com critérios suportados.
 - [ ] Filtros restringem resultados conforme solicitado.
 - [ ] Vagas com barreira crítica não aparecem como elegíveis.
@@ -1543,6 +1552,10 @@ A disponibilidade deve ser consultada por operações que dependem dela, especia
 RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (controle de acesso às operações protegidas).
 
 ## 11. Critérios de aceitação
+
+- [ ] Somente perfis autorizados consultam informações protegidas e a consulta não permite alteração de status (RNF-07/RNF-08).
+- [ ] Mudanças de status relevantes, quando originadas por operação autorizada, permanecem rastreáveis (RNF-14).
+
 - [ ] Candidato visualiza estado atual.
 - [ ] Vaga encerrada/indisponível bloqueia novas candidaturas.
 - [ ] Mudança após a busca é respeitada pela operação seguinte.
@@ -1662,6 +1675,10 @@ A apresentação compõe dados dos serviços de vaga, status e compatibilidade, 
 RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04 (usabilidade), RNF-13 (compatibilidade) e RNF-08 (privacidade).
 
 ## 11. Critérios de aceitação
+
+- [ ] A tela não expõe dados privados de outros candidatos e apresenta apenas fatores de compatibilidade autorizados (RNF-08).
+- [ ] A informação de compatibilidade distingue incompatibilidade crítica, dados ausentes e resultado calculado, sem inferir equivalência entre eles.
+
 - [ ] Detalhes disponíveis da vaga apresentados.
 - [ ] Informações de acessibilidade exibidas antes da candidatura.
 - [ ] Campos ausentes identificados como não informados.
@@ -1727,7 +1744,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 - **Baseline:** RF-26, RF-34; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 002, 007, 009, 010.
 - **Caso de uso:** UC-03 — Candidatar-se a Vaga.
-- **Questões abertas:** OPEN-082 a OPEN-085.
+- **Questões abertas:** OPEN-047 a OPEN-049.
 
 ## 3. Escopo
 Validar autenticação, status atual da vaga, compatibilidade/trava crítica e candidatura ativa existente; se válido, registrar candidato, vaga, data e estado inicial previsto na baseline. Não permitir candidatura duplicada ativa.
@@ -1735,9 +1752,9 @@ Validar autenticação, status atual da vaga, compatibilidade/trava crítica e c
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Confirmação de candidatura | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Resultado do registro | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Estado não elegível | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Confirmação de candidatura | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Resultado do registro | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Estado não elegível | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -1778,6 +1795,10 @@ Contratos conceituais; não definem endpoints HTTP.
 RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
 
 ## 11. Critérios de aceitação
+
+- [ ] Tentativa sem autenticação, com vaga não elegível ou com candidatura ativa duplicada é recusada sem criar registro parcial.
+- [ ] O registro confirmado mantém vínculo íntegro entre candidato e vaga e é rastreável conforme RNF-09/RNF-14.
+
 - [ ] Acesso limitado ao ator autorizado.
 - [ ] Pré-condições e regras são validadas no backend.
 - [ ] Operações inválidas são recusadas sem alteração indevida.
@@ -1798,7 +1819,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-011-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+Consultar OPEN-047 a OPEN-049 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -1826,7 +1847,7 @@ Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas
 - **Baseline:** RF-11, RF-28, RF-34; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 011, 013, 016, 017.
 - **Caso de uso:** UC-05 — Acompanhar Funil de Candidaturas; RF-34 — Cancelamento de candidatura.
-- **Questões abertas:** OPEN-082 a OPEN-085.
+- **Questões abertas:** OPEN-050 a OPEN-052.
 
 ## 3. Escopo
 Listar somente candidaturas próprias; consultar estado/histórico; permitir cancelamento apenas quando estado e regras permitirem; preservar histórico após cancelamento.
@@ -1834,9 +1855,9 @@ Listar somente candidaturas próprias; consultar estado/histórico; permitir can
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Minhas candidaturas | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Detalhe e histórico | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Confirmação de cancelamento | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Minhas candidaturas | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Detalhe e histórico | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Confirmação de cancelamento | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -1877,6 +1898,10 @@ Contratos conceituais; não definem endpoints HTTP.
 RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
 
 ## 11. Critérios de aceitação
+
+- [ ] Um candidato não consulta nem cancela candidaturas de outra pessoa (RNF-07/RNF-08).
+- [ ] Cancelamento permitido preserva o registro e seu histórico; tentativa recusada não altera o estado (RNF-09/RNF-14).
+
 - [ ] Acesso limitado ao ator autorizado.
 - [ ] Pré-condições e regras são validadas no backend.
 - [ ] Operações inválidas são recusadas sem alteração indevida.
@@ -1897,7 +1922,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-012-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+Consultar OPEN-050 a OPEN-052 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -1925,7 +1950,7 @@ Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas
 - **Baseline:** RF-20, RF-30, RF-35; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 005, 011.
 - **Caso de uso:** UC-09 — Gerenciar Funil de Seleção.
-- **Questões abertas:** OPEN-082 a OPEN-085.
+- **Questões abertas:** OPEN-053 a OPEN-056.
 
 ## 3. Escopo
 Recrutador autorizado consulta candidaturas das próprias vagas; solicita mudança de etapa; backend valida transição e condições de avanço; registra estado, decisão e histórico.
@@ -1933,10 +1958,10 @@ Recrutador autorizado consulta candidaturas das próprias vagas; solicita mudan�
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Painel de candidaturas | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Visão do funil | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Detalhe da candidatura | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Alteração de etapa | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Painel de candidaturas | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Visão do funil | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Detalhe da candidatura | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Alteração de etapa | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -1977,6 +2002,10 @@ Contratos conceituais; não definem endpoints HTTP.
 RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
 
 ## 11. Critérios de aceitação
+
+- [ ] Recrutador só consulta e altera candidaturas de vagas da Empresa à qual está vinculado e autorizado.
+- [ ] Transição recusada não altera etapa nem histórico; transição concluída registra mudança rastreável (RNF-07/RNF-09/RNF-14).
+
 - [ ] Acesso limitado ao ator autorizado.
 - [ ] Pré-condições e regras são validadas no backend.
 - [ ] Operações inválidas são recusadas sem alteração indevida.
@@ -1997,7 +2026,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-013-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+Consultar OPEN-053 a OPEN-056 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2025,7 +2054,7 @@ Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas
 - **Baseline:** RF-29; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 011, 012, 013.
 - **Caso de uso:** UC-04 — Solicitar Acomodação no Processo Seletivo.
-- **Questões abertas:** OPEN-082 a OPEN-085.
+- **Questões abertas:** OPEN-057 a OPEN-059.
 
 ## 3. Escopo
 Candidato autenticado solicita acomodação vinculada à própria candidatura; preenche campos previstos; sistema valida, registra estado inicial e permite consulta autorizada.
@@ -2033,9 +2062,9 @@ Candidato autenticado solicita acomodação vinculada à própria candidatura; p
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Formulário de solicitação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Confirmação de envio | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Consulta do estado da solicitação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Formulário de solicitação | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Confirmação de envio | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Consulta do estado da solicitação | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -2076,6 +2105,10 @@ Contratos conceituais; não definem endpoints HTTP.
 RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
 
 ## 11. Critérios de aceitação
+
+- [ ] Candidato só cria/consulta solicitação vinculada à própria candidatura; acesso indevido é recusado (RNF-07/RNF-08).
+- [ ] Falha de validação não cria solicitação parcial; registro válido mantém vínculo com candidatura (RNF-09).
+
 - [ ] Acesso limitado ao ator autorizado.
 - [ ] Pré-condições e regras são validadas no backend.
 - [ ] Operações inválidas são recusadas sem alteração indevida.
@@ -2096,7 +2129,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-014-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+Consultar OPEN-057 a OPEN-059 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2124,7 +2157,7 @@ Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas
 - **Baseline:** RF-32, RF-33; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 013, 014.
 - **Caso de uso:** UC-04 — Solicitar Acomodação no Processo Seletivo (tratamento pelo Recrutador); confirmar rastreabilidade do fluxo decisório.
-- **Questões abertas:** OPEN-082 a OPEN-085.
+- **Questões abertas:** OPEN-060 a OPEN-062.
 
 ## 3. Escopo
 Recrutador autorizado consulta solicitações das vagas sob sua responsabilidade, avalia e registra decisão válida; sistema atualiza estado e histórico, permitindo consulta ao candidato.
@@ -2132,9 +2165,9 @@ Recrutador autorizado consulta solicitações das vagas sob sua responsabilidade
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Solicitações recebidas | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Detalhe da solicitação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Registro de decisão | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Solicitações recebidas | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Detalhe da solicitação | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Registro de decisão | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -2175,6 +2208,10 @@ Contratos conceituais; não definem endpoints HTTP.
 RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
 
 ## 11. Critérios de aceitação
+
+- [ ] Apenas Recrutador autorizado da Empresa responsável pode consultar e tratar a solicitação.
+- [ ] Decisão concluída registra o resultado de forma rastreável; falha ou recusa não altera silenciosamente o estado (RNF-07/RNF-09/RNF-14).
+
 - [ ] Acesso limitado ao ator autorizado.
 - [ ] Pré-condições e regras são validadas no backend.
 - [ ] Operações inválidas são recusadas sem alteração indevida.
@@ -2195,7 +2232,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-015-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+Consultar OPEN-060 a OPEN-062 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2223,7 +2260,7 @@ Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas
 - **Baseline:** RF-11, RF-27, RF-31, RF-33; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-011 a 015.
 - **Caso de uso:** UC-05 — Acompanhar Funil de Candidaturas.
-- **Questões abertas:** OPEN-082 a OPEN-085.
+- **Questões abertas:** OPEN-063 a OPEN-065.
 
 ## 3. Escopo
 Listar candidaturas próprias; apresentar status/etapa atual, linha do tempo, decisões e acomodações autorizadas; refletir cancelamento e encerramento sem confundir eventos antigos com estado atual.
@@ -2231,10 +2268,10 @@ Listar candidaturas próprias; apresentar status/etapa atual, linha do tempo, de
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Painel de acompanhamento | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Linha do tempo | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Detalhes da etapa e acomodação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Estado encerrado/cancelado | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Painel de acompanhamento | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Linha do tempo | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Detalhes da etapa e acomodação | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Estado encerrado/cancelado | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -2275,6 +2312,10 @@ Contratos conceituais; não definem endpoints HTTP.
 RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
 
 ## 11. Critérios de aceitação
+
+- [ ] O candidato consulta apenas o próprio histórico e dados compatíveis com sua autorização (RNF-07/RNF-08).
+- [ ] Eventos apresentados correspondem aos registros persistidos e não são duplicados ou alterados silenciosamente (RNF-09/RNF-14).
+
 - [ ] Acesso limitado ao ator autorizado.
 - [ ] Pré-condições e regras são validadas no backend.
 - [ ] Operações inválidas são recusadas sem alteração indevida.
@@ -2295,7 +2336,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-016-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+Consultar OPEN-063 a OPEN-065 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2323,7 +2364,7 @@ Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas
 - **Baseline:** RF-12, RF-27; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-009, 011 a 016.
 - **Caso de uso:** Fluxos de notificação referenciados por UC-03, UC-04, UC-05 e UC-09; canais dependem de decisão em OPEN.
-- **Questões abertas:** OPEN-082 a OPEN-085.
+- **Questões abertas:** OPEN-066 a OPEN-069.
 
 ## 3. Escopo
 Diante de alteração relevante, identificar destinatários autorizados, preparar e enviar comunicação pelo canal aprovado, registrar resultado conforme política; falha no envio não reverte alteração de domínio.
@@ -2331,7 +2372,7 @@ Diante de alteração relevante, identificar destinatários autorizados, prepara
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Não se aplica ao envio em si; central de notificações somente se aprovada | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Não se aplica ao envio em si; central de notificações somente se aprovada | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -2372,6 +2413,10 @@ Contratos conceituais; não definem endpoints HTTP.
 RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
 
 ## 11. Critérios de aceitação
+
+- [ ] Notificação é disparada apenas para destinatário autorizado e não expõe dados de outro candidato (RNF-07/RNF-08).
+- [ ] Falhas de envio não apagam a alteração de origem nem geram falsa confirmação de entrega (RNF-09/RNF-14, quando aplicável).
+
 - [ ] Acesso limitado ao ator autorizado.
 - [ ] Pré-condições e regras são validadas no backend.
 - [ ] Operações inválidas são recusadas sem alteração indevida.
@@ -2392,7 +2437,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-017-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+Consultar OPEN-066 a OPEN-069 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2420,7 +2465,7 @@ Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas
 - **Baseline:** RF-21; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 011, 016.
 - **Caso de uso:** UC-06 — Avaliar Pós-Entrevista.
-- **Questões abertas:** OPEN-082 a OPEN-085.
+- **Questões abertas:** OPEN-070 a OPEN-073.
 
 ## 3. Escopo
 Candidato elegível registra avaliação com campos definidos na baseline; sistema valida associação e conteúdo, armazena e disponibiliza avaliações válidas para nota pública, preservando anonimato na apresentação pública.
@@ -2428,9 +2473,9 @@ Candidato elegível registra avaliação com campos definidos na baseline; siste
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Formulário de avaliação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Confirmação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Consulta de avaliação própria, se prevista | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Formulário de avaliação | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Confirmação | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Consulta de avaliação própria, se prevista | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -2471,6 +2516,10 @@ Contratos conceituais; não definem endpoints HTTP.
 RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
 
 ## 11. Critérios de aceitação
+
+- [ ] Apenas candidato elegível registra avaliação associada ao processo correspondente.
+- [ ] A apresentação pública não identifica o autor; avaliação inválida não alimenta a nota pública (RNF-08/RNF-09).
+
 - [ ] Acesso limitado ao ator autorizado.
 - [ ] Pré-condições e regras são validadas no backend.
 - [ ] Operações inválidas são recusadas sem alteração indevida.
@@ -2491,7 +2540,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-018-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+Consultar OPEN-070 a OPEN-073 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2519,7 +2568,7 @@ Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas
 - **Baseline:** RF-14; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 018, 020.
 - **Caso de uso:** UC-11 — Denunciar Vaga Incompatível.
-- **Questões abertas:** OPEN-082 a OPEN-085.
+- **Questões abertas:** OPEN-074 a OPEN-077.
 
 ## 3. Escopo
 Usuário elegível registra denúncia com descrição e referências previstas; sistema valida e encaminha para moderação, confirmando registro sem antecipar conclusão.
@@ -2527,9 +2576,9 @@ Usuário elegível registra denúncia com descrição e referências previstas; 
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Formulário de denúncia | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Confirmação de registro | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Consulta de andamento, se prevista | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Formulário de denúncia | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Confirmação de registro | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Consulta de andamento, se prevista | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -2570,6 +2619,10 @@ Contratos conceituais; não definem endpoints HTTP.
 RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
 
 ## 11. Critérios de aceitação
+
+- [ ] Denúncia é acessível apenas a atores autorizados e o registro não publica identidade ou conteúdo privado indevidamente (RNF-07/RNF-08).
+- [ ] Registrar denúncia não bloqueia automaticamente vaga nem altera a nota antes da análise administrativa.
+
 - [ ] Acesso limitado ao ator autorizado.
 - [ ] Pré-condições e regras são validadas no backend.
 - [ ] Operações inválidas são recusadas sem alteração indevida.
@@ -2590,7 +2643,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-019-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+Consultar OPEN-074 a OPEN-077 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2618,7 +2671,7 @@ Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas
 - **Baseline:** RF-22; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 019, 021.
 - **Caso de uso:** UC-11 — Denunciar Vaga Incompatível (fluxo de análise administrativa).
-- **Questões abertas:** OPEN-082 a OPEN-085.
+- **Questões abertas:** OPEN-078 a OPEN-081.
 
 ## 3. Escopo
 Administrador da plataforma consulta fila e contexto autorizado, analisa e registra decisão/fundamento; efeitos autorizados são encaminhados às capacidades correspondentes.
@@ -2626,10 +2679,10 @@ Administrador da plataforma consulta fila e contexto autorizado, analisa e regis
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Fila de moderação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Detalhe da denúncia | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Registro de decisão | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Histórico de moderação | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Fila de moderação | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Detalhe da denúncia | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Registro de decisão | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Histórico de moderação | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -2670,6 +2723,10 @@ Contratos conceituais; não definem endpoints HTTP.
 RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
 
 ## 11. Critérios de aceitação
+
+- [ ] Operações de moderação são recusadas para Recrutador ou Empresa sem papel de Administrador da plataforma.
+- [ ] Decisão e alterações decorrentes são rastreáveis; denúncia não analisada não provoca bloqueio nem alteração automática da nota (RNF-07/RNF-09/RNF-14).
+
 - [ ] Acesso limitado ao ator autorizado.
 - [ ] Pré-condições e regras são validadas no backend.
 - [ ] Operações inválidas são recusadas sem alteração indevida.
@@ -2690,7 +2747,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-020-06 | Usuário consulta dados fora da autorização | Dados não expostos |
 
 ## 13. Questões em aberto
-Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+Consultar OPEN-078 a OPEN-081 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2726,9 +2783,9 @@ Calcular/exibir nota a partir de informações e avaliações válidas; preserva
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Nota pública da Empresa | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Explicação/fatores da nota, se definidos | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
-| Estado sem dados suficientes | Apoiar o fluxo descrito nesta Spec | Pendente ou não se aplica conforme a área |
+| Nota pública da Empresa | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Explicação/fatores da nota, se definidos | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Estado sem dados suficientes | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -2769,6 +2826,10 @@ Contratos conceituais; não definem endpoints HTTP.
 RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integridade, acessibilidade e auditoria conforme a interface e a operação. Os critérios quantitativos não são inventados quando ausentes da baseline.
 
 ## 11. Critérios de aceitação
+
+- [ ] Nota pública usa apenas dados válidos e não revela identidade ou avaliação individual (RNF-08/RNF-09).
+- [ ] Denúncia pendente não altera automaticamente a nota; ausência de dados suficientes não é apresentada como nota calculada.
+
 - [ ] Acesso limitado ao ator autorizado.
 - [ ] Pré-condições e regras são validadas no backend.
 - [ ] Operações inválidas são recusadas sem alteração indevida.
