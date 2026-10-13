@@ -19,26 +19,6 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 3. Achados prioritários
 
-### REV-002 — Detalhamento específico das Specs de candidatura, acompanhamento e avaliações
-
-**Prioridade:** alta  
-**Artefato:** `docs/Specs.md`.
-
-Essas Specs têm seções de comportamento, regras, contratos e testes, mas boa parte do comportamento esperado usa passos genéricos como “o ator autorizado acessa a capacidade” e “o sistema valida pré-condições”. Isso reduz a capacidade de derivar implementação e testes diretamente do texto.
-
-**Correção parcial aplicada:** foram detalhados contratos conceituais e casos de teste específicos nas SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021. Foram explicitados cenários de candidatura duplicada e inelegível, cancelamento, transições do funil, consulta de histórico, falhas de notificação, elegibilidade/anonimato de avaliações, registro e moderação de denúncias e distribuição pública de estrelas. A SPEC-014 e a SPEC-015 permanecem fora de escopo.
-
-**Status: encerrado.** O grupo aprovou as alterações de detalhamento aplicadas aos fluxos, contratos conceituais, critérios de aceitação e testes. O encerramento se limita a este achado de revisão; a aprovação formal individual das Specs e a aprovação dos layouts continuam sendo controles próprios quando aplicáveis.
-
-### REV-008 — Separação entre moderação de denúncias e nota pública
-
-**Prioridade:** alta para aprovação funcional, sem bloquear o restante da revisão  
-**Artefatos:** SPEC-018 a SPEC-021, RF-13, RB-19, RB-20, RB-25 e RB-45.
-
-Decisões recebidas do grupo: a apresentação pública usa estrelas e exibe a frequência de cada quantidade de estrelas; uma avaliação válida é suficiente para exibir a distribuição; sem avaliações válidas, não exibe nota e informa dados insuficientes. A administração da plataforma atua sobre denúncias e **não altera diretamente as avaliações nem a distribuição pública de estrelas**.
-
-**Correção aplicada:** SPEC-020 e SPEC-021 e OPEN-079/OPEN-085 foram alinhadas à separação de responsabilidades. A nota pública depende das avaliações válidas; a moderação trata denúncias, sem editar ou recalcular a nota. **Status: encerrado** por decisão explícita do grupo.
-
 ### REV-009 — Definir com precisão o cálculo de compatibilidade entre candidato e vaga
 
 **Prioridade:** alta  
