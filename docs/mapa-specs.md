@@ -13,6 +13,8 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 
 ## 3. Mapa ordenado
 
+**Escopo atualizado:** SPEC-014 (Solicitar acomodação) e SPEC-015 (Processar solicitação de acomodação) foram removidas do escopo. Os IDs posteriores foram preservados para evitar quebrar rastreabilidade.
+
 ### SPEC-001 — Acessar a plataforma e identificar perfil organizacional
 
 | Campo | Conteúdo |
@@ -234,40 +236,6 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **ADRs** | ADR-002, ADR-004 |
 | **Dependências** | SPEC-001, SPEC-004, SPEC-011. |
 | **Justificativa da ordem** | A gestão do funil depende de recrutador autorizado, empresa/vaga e candidaturas já registradas. |
-
-### SPEC-014 — Solicitar acomodação
-
-| Campo | Conteúdo |
-|---|---|
-| **ID** | SPEC-014 |
-| **Objetivo** | Permitir ao candidato solicitar acomodações necessárias para participar do processo seletivo. |
-| **Valor** | Transforma necessidades declaradas em uma solicitação formal de apoio no processo. |
-| **RF** | RF-29 |
-| **RB** | RB-26, RB-27, RB-40 |
-| **RNF** | RNF-08, RNF-09 |
-| **UC / fluxo** | UC-04 — Acomodação |
-| **Entidades** | CANDIDATURA, SOLICITACAO_ACOMODACAO |
-| **Drivers** | DA-02 |
-| **ADRs** | ADR-002, ADR-004 |
-| **Dependências** | SPEC-011, SPEC-012. |
-| **Justificativa da ordem** | A solicitação depende de uma candidatura existente e de acesso autorizado às informações de acessibilidade. |
-
-### SPEC-015 — Processar solicitação de acomodação
-
-| Campo | Conteúdo |
-|---|---|
-| **ID** | SPEC-015 |
-| **Objetivo** | Permitir ao recrutador autorizado consultar, tratar e registrar decisões sobre solicitações de acomodação, mantendo histórico. |
-| **Valor** | Dá continuidade operacional às solicitações e preserva rastreabilidade das decisões. |
-| **RF** | RF-32, RF-33 |
-| **RB** | RB-23, RB-27, RB-37, RB-40, RB-41 |
-| **RNF** | RNF-08, RNF-09, RNF-14 |
-| **UC / fluxo** | UC-04 — Acomodação; UC-09 — Gerenciar Funil |
-| **Entidades** | SOLICITACAO_ACOMODACAO, CANDIDATURA, USUARIO/RECRUTADOR vinculado à EMPRESA. |
-| **Drivers** | DA-02, DA-07 |
-| **ADRs** | ADR-002, ADR-004 |
-| **Dependências** | SPEC-013, SPEC-014. |
-| **Justificativa da ordem** | O tratamento exige uma solicitação já registrada e um recrutador autorizado para decidir sobre ela. |
 
 ### SPEC-016 — Acompanhar candidatura e processo seletivo
 
