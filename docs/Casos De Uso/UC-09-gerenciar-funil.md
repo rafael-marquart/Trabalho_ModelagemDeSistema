@@ -17,21 +17,19 @@ Permitir que o recrutador acompanhe, avalie e gerencie candidaturas dentro do fu
 ## Pontos de Inclusão e Extensão
 
 - Inclusão (<<include>>): UC-05 (Acompanhar Funil de Candidaturas).
-- Extensão (<<extend>>): UC-04 (Solicitar Acomodação no Processo Seletivo).
 
 ## Fluxo Principal
 
 1. O recrutador acessa o painel do funil da vaga.
 2. O sistema exibe as candidaturas agrupadas por etapa (Inscrito, Triagem, Entrevista, Finalista, Contratado, Recusado).
 3. O recrutador seleciona uma candidatura para avaliar os dados do candidato e o histórico do processo.
-4. O sistema apresenta informações relevantes da candidatura, incluindo perfil, status e solicitações de acomodação.
+4. O sistema apresenta informações relevantes da candidatura, incluindo perfil e status.
 5. O recrutador decide a próxima etapa ou a decisão final e salva a alteração.
 6. O sistema atualiza o status da candidatura, registra o histórico da ação e notifica o candidato.
 
 ## Exceções e Fluxos Alternativos
 
 - EX01 (Candidatura com pendências): Se a candidatura não estiver apta para avanço, o recrutador pode solicitar complementação das informações necessárias antes de avançar o candidato.
-- EX02 (Candidato com acomodação pendente): Se o candidato tiver uma solicitação de acomodação em análise, o processo pode ser mantido em espera até a decisão do recrutador.
 - EX03 (Vaga encerrada): Se a vaga for encerrada ou desativada, o recrutador não consegue mover candidatos para etapas posteriores sem registrar a justificativa.
 
 ## Pós-condições
@@ -48,7 +46,6 @@ Permitir que o recrutador acompanhe, avalie e gerencie candidaturas dentro do fu
 - RB-37
 - RB-38
 - RB-39
-- RB-40
 - RB-41
 - RB-42
 - RB-43
@@ -57,7 +54,6 @@ Permitir que o recrutador acompanhe, avalie e gerencie candidaturas dentro do fu
 
 - RF-20
 - RF-30
-- RF-32
 - RF-35
 - RF-38
 - RF-40
@@ -67,4 +63,3 @@ Permitir que o recrutador acompanhe, avalie e gerencie candidaturas dentro do fu
 - O recrutador consegue visualizar todas as candidaturas vinculadas à vaga e movimentá-las entre etapas.
 - Alterações de status são registradas no histórico com data, responsável e justificativa.
 - Candidatos recebem notificações sobre mudanças de fase e decisões relevantes.
-- Solicitações de acomodação impactam o andamento do processo conforme a regra de decisão do recrutador.
