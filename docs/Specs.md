@@ -1782,11 +1782,11 @@ RF-26; RB-01, RB-14, RB-15, RB-34, RB-41, RB-42; RNF-07/08/09/14; CANDIDATO, VAG
 A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
 
 ## 9. Contratos necessários
-- **Consultar dados autorizados** necessários à operação.
-- **Validar pré-condições e regras** antes de alterar estado.
-- **Executar operação principal** somente se válida.
-- **Consultar resultado/estado atualizado**.
-- **Registrar alteração ou decisão** quando aplicável.
+- **Solicitar candidatura:** recebe a identificação da vaga e a identidade autenticada do candidato; não aceita identidade de candidato enviada como autoridade pelo cliente.
+- **Consultar elegibilidade da vaga:** obtém status atual, bloqueio e resultado de compatibilidade/trava nas Specs responsáveis.
+- **Verificar candidatura ativa:** consulta duplicidade para o mesmo candidato e vaga.
+- **Registrar candidatura:** cria o vínculo candidato-vaga somente após todas as validações; retorna confirmação ou motivo de recusa.
+- **Publicar evento de candidatura:** disponibiliza a mudança para acompanhamento/notificação, sem acoplar o registro à entrega da notificação.
 
 Contratos conceituais; não definem endpoints HTTP.
 
@@ -1808,14 +1808,16 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 - [ ] Lacunas permanecem explicitadas em OPEN.md.
 
 ## 12. Casos de teste derivados
+
 | ID | Cenário | Resultado esperado |
 |---|---|---|
-| T-011-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
-| T-011-02 | Ator sem autorização tenta acessar dados | Acesso negado |
-| T-011-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
-| T-011-04 | Estado muda antes da operação | Regra/estado atual prevalece |
-| T-011-05 | Operação válida altera dados | Estado e histórico atualizados |
-| T-011-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+| T-011-01 | Candidato autenticado envia candidatura a vaga disponível, sem duplicidade e sem trava crítica | Candidatura única é registrada e confirmação é apresentada |
+| T-011-02 | Visitante ou usuário não candidato tenta candidatar-se | Operação recusada sem registro |
+| T-011-03 | Vaga encerrada, indisponível ou bloqueada | Operação recusada sem registro parcial |
+| T-011-04 | Existe candidatura ativa para o mesmo candidato e vaga | Nova candidatura é recusada |
+| T-011-05 | Compatibilidade indica trava crítica | Candidatura é recusada independentemente do score |
+| T-011-06 | Falha ocorre antes da persistência | Nenhuma candidatura parcial permanece |
+| T-011-07 | Candidatura é registrada com sucesso | Vínculo candidato-vaga e evento são rastreáveis |
 
 ## 13. Questões em aberto
 Consultar OPEN-047 a OPEN-049 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
@@ -1885,11 +1887,11 @@ RF-11, RF-28; RB-14, RB-23, RB-27, RB-36, RB-38, RB-39, RB-41, RB-42; CANDIDATO,
 A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
 
 ## 9. Contratos necessários
-- **Consultar dados autorizados** necessários à operação.
-- **Validar pré-condições e regras** antes de alterar estado.
-- **Executar operação principal** somente se válida.
-- **Consultar resultado/estado atualizado**.
-- **Registrar alteração ou decisão** quando aplicável.
+- **Listar candidaturas próprias:** identifica o candidato pela sessão autenticada e retorna somente seus registros.
+- **Consultar detalhe e histórico:** retorna vaga, estado atual e eventos disponíveis da candidatura selecionada.
+- **Solicitar cancelamento:** recebe a candidatura selecionada e verifica se o estado permite cancelamento conforme RB-36 e regras de estado.
+- **Confirmar cancelamento:** quando permitido, registra o cancelamento e preserva o histórico; caso contrário, retorna recusa sem alterar o estado.
+- **Publicar mudança de estado:** disponibiliza o cancelamento confirmado para acompanhamento e notificações.
 
 Contratos conceituais; não definem endpoints HTTP.
 
@@ -1911,14 +1913,16 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 - [ ] Lacunas permanecem explicitadas em OPEN.md.
 
 ## 12. Casos de teste derivados
+
 | ID | Cenário | Resultado esperado |
 |---|---|---|
-| T-012-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
-| T-012-02 | Ator sem autorização tenta acessar dados | Acesso negado |
-| T-012-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
-| T-012-04 | Estado muda antes da operação | Regra/estado atual prevalece |
-| T-012-05 | Operação válida altera dados | Estado e histórico atualizados |
-| T-012-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+| T-012-01 | Candidato consulta suas candidaturas | Somente registros próprios são apresentados |
+| T-012-02 | Candidato tenta consultar candidatura de outra pessoa | Acesso negado sem revelar os dados |
+| T-012-03 | Candidatura está em estado que permite cancelamento | Cancelamento é registrado e histórico preservado |
+| T-012-04 | Estado não permite cancelamento | Operação recusada e estado mantido |
+| T-012-05 | Duas solicitações de cancelamento concorrentes | Não ocorre duplicação nem corrupção do estado |
+| T-012-06 | Cancelamento concluído | Estado atualizado fica disponível para acompanhamento/notificação |
+| T-012-07 | Histórico é consultado após cancelamento | Eventos anteriores continuam disponíveis conforme retenção aprovada |
 
 ## 13. Questões em aberto
 Consultar OPEN-050 a OPEN-052 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
@@ -1989,11 +1993,11 @@ RF-20, RF-30; RB-12, RB-27, RB-38, RB-39, RB-41, RB-43; CANDIDATURA, CANDIDATO, 
 A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
 
 ## 9. Contratos necessários
-- **Consultar dados autorizados** necessários à operação.
-- **Validar pré-condições e regras** antes de alterar estado.
-- **Executar operação principal** somente se válida.
-- **Consultar resultado/estado atualizado**.
-- **Registrar alteração ou decisão** quando aplicável.
+- **Listar candidaturas da organização:** retorna somente candidaturas das vagas da Empresa vinculada ao Recrutador autenticado e autorizado.
+- **Consultar funil e candidatura:** apresenta etapa atual e dados permitidos ao perfil, conforme RB-26.
+- **Solicitar transição:** recebe candidatura e etapa de destino; não confia em autorização ou estado enviados pelo cliente.
+- **Validar transição:** verifica a transição padronizada e as condições de avanço aplicáveis.
+- **Persistir transição:** atualiza etapa e histórico apenas se válida; retorna recusa sem alteração em caso inválido.
 
 Contratos conceituais; não definem endpoints HTTP.
 
@@ -2015,14 +2019,16 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 - [ ] Lacunas permanecem explicitadas em OPEN.md.
 
 ## 12. Casos de teste derivados
+
 | ID | Cenário | Resultado esperado |
 |---|---|---|
-| T-013-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
-| T-013-02 | Ator sem autorização tenta acessar dados | Acesso negado |
-| T-013-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
-| T-013-04 | Estado muda antes da operação | Regra/estado atual prevalece |
-| T-013-05 | Operação válida altera dados | Estado e histórico atualizados |
-| T-013-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+| T-013-01 | Recrutador autorizado consulta funil da própria Empresa | São exibidas apenas candidaturas de vagas autorizadas |
+| T-013-02 | Recrutador tenta consultar vaga de outra Empresa | Acesso negado |
+| T-013-03 | Transição Inscrito→Triagem solicitada | Transição aceita se a autorização e as pré-condições forem válidas |
+| T-013-04 | Transição fora do fluxo padronizado solicitada | Transição recusada sem alterar estado ou histórico |
+| T-013-05 | Transição válida é persistida | Etapa e evento de histórico são atualizados de forma íntegra |
+| T-013-06 | Dados de candidato não necessários à etapa são solicitados | Dados protegidos não são expostos |
+| T-013-07 | Falha ocorre durante a alteração | Estado anterior é preservado; não há transição parcial |
 
 ## 13. Questões em aberto
 Consultar OPEN-053 a OPEN-056 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
@@ -2053,7 +2059,7 @@ Consultar OPEN-053 a OPEN-056 em `docs/OPEN.md`. As questões permanecem abertas
 
 ## 2. Rastreabilidade
 - **Baseline:** RF-11, RF-27, RF-31; requisitos e regras correlatos conforme mapa de Specs.
-- **Dependências:** SPEC-011 a 015.
+- **Dependências:** SPEC-011 a SPEC-013.
 - **Caso de uso:** UC-05 — Acompanhar Funil de Candidaturas.
 - **Questões abertas:** OPEN-063 a OPEN-065.
 
@@ -2075,9 +2081,10 @@ SPEC-011 a 015. As dependências fornecem dados e capacidades; esta Spec não du
 
 ## 5. Comportamento esperado
 1. Candidato autenticado consulta somente candidaturas próprias.
-2. Sistema apresenta etapa/status atual e vaga correspondente.
-3. Sistema apresenta eventos históricos com datas disponíveis, distinguindo histórico de estado atual.
-5. Cancelamento ou encerramento da vaga é refletido no acompanhamento.
+2. Sistema apresenta etapa/status atual e a vaga correspondente.
+3. Sistema apresenta eventos históricos e datas disponíveis, distinguindo histórico de estado atual.
+4. Se não houver evento histórico disponível, o sistema informa a ausência de histórico sem inventar eventos.
+5. Cancelamento ou encerramento da vaga é refletido no acompanhamento conforme registro oficial.
 6. O fluxo é somente de consulta; não altera etapa ou decisão do processo.
 
 ## 6. Regras e invariantes
@@ -2094,11 +2101,11 @@ RF-11, RF-27, RF-31; RB-23, RB-27, RB-36, RB-38, RB-39, RB-41, RB-42; CANDIDATUR
 A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
 
 ## 9. Contratos necessários
-- **Consultar dados autorizados** necessários à operação.
-- **Validar pré-condições e regras** antes de alterar estado.
-- **Executar operação principal** somente se válida.
-- **Consultar resultado/estado atualizado**.
-- **Registrar alteração ou decisão** quando aplicável.
+- **Listar acompanhamento próprio:** retorna candidaturas vinculadas ao candidato autenticado.
+- **Consultar estado atual:** obtém etapa/status oficial da candidatura na capacidade responsável pelo processo.
+- **Consultar linha do tempo:** retorna eventos persistidos e datas disponíveis, distinguindo eventos históricos do estado vigente.
+- **Consultar encerramento/cancelamento:** apresenta a mudança registrada sem reescrever eventos anteriores.
+- **Não alterar processo:** esta Spec é de consulta; mudanças de candidatura ou etapa são realizadas pelas Specs responsáveis.
 
 Contratos conceituais; não definem endpoints HTTP.
 
@@ -2120,14 +2127,15 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 - [ ] Lacunas permanecem explicitadas em OPEN.md.
 
 ## 12. Casos de teste derivados
+
 | ID | Cenário | Resultado esperado |
 |---|---|---|
-| T-016-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
-| T-016-02 | Ator sem autorização tenta acessar dados | Acesso negado |
-| T-016-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
-| T-016-04 | Estado muda antes da operação | Regra/estado atual prevalece |
-| T-016-05 | Operação válida altera dados | Estado e histórico atualizados |
-| T-016-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+| T-016-01 | Candidato abre acompanhamento | Lista somente candidaturas próprias |
+| T-016-02 | Candidato seleciona candidatura | Estado atual e vaga correspondente são apresentados |
+| T-016-03 | Há eventos históricos registrados | Linha do tempo apresenta os eventos disponíveis sem alterar sua ordem factual |
+| T-016-04 | Candidatura foi cancelada ou vaga encerrada | Estado atual reflete o registro correspondente e o histórico anterior permanece |
+| T-016-05 | Candidato tenta acessar acompanhamento alheio | Acesso negado |
+| T-016-06 | Usuário tenta alterar etapa pelo acompanhamento | Nenhuma alteração é realizada por esta capacidade |
 
 ## 13. Questões em aberto
 Consultar OPEN-063 a OPEN-065 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
@@ -2195,11 +2203,11 @@ RF-12, RF-27; RB-23, RB-27, RB-37, RB-41, RB-42; CANDIDATURA, VAGA. A estrutura 
 A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
 
 ## 9. Contratos necessários
-- **Consultar dados autorizados** necessários à operação.
-- **Validar pré-condições e regras** antes de alterar estado.
-- **Executar operação principal** somente se válida.
-- **Consultar resultado/estado atualizado**.
-- **Registrar alteração ou decisão** quando aplicável.
+- **Receber evento de origem:** consome alteração relevante registrada por uma capacidade de domínio, sem ser a fonte oficial do estado.
+- **Determinar destinatários:** resolve somente pessoas autorizadas relacionadas ao evento e à candidatura.
+- **Preparar mensagem:** usa conteúdo mínimo necessário e não inclui dados privados de terceiros.
+- **Solicitar envio:** utiliza o canal definido pelo projeto quando essa decisão for tomada; o canal permanece em OPEN-067.
+- **Registrar resultado:** registra o resultado de envio conforme política aprovada; falha de entrega não desfaz a alteração original.
 
 Contratos conceituais; não definem endpoints HTTP.
 
@@ -2221,14 +2229,15 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 - [ ] Lacunas permanecem explicitadas em OPEN.md.
 
 ## 12. Casos de teste derivados
+
 | ID | Cenário | Resultado esperado |
 |---|---|---|
-| T-017-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
-| T-017-02 | Ator sem autorização tenta acessar dados | Acesso negado |
-| T-017-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
-| T-017-04 | Estado muda antes da operação | Regra/estado atual prevalece |
-| T-017-05 | Operação válida altera dados | Estado e histórico atualizados |
-| T-017-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+| T-017-01 | Evento relevante ocorre e há destinatário autorizado | É preparada notificação relacionada ao evento |
+| T-017-02 | Usuário não relacionado tenta receber dados do evento | Notificação não é enviada a destinatário não autorizado |
+| T-017-03 | Canal ainda não definido/configurado | Falha ou impossibilidade é tratada sem inventar canal nem desfazer a alteração original |
+| T-017-04 | Envio falha | Falha não é apresentada como entrega confirmada e o estado de origem permanece |
+| T-017-05 | Vaga é encerrada com candidatos ativos | A obrigação de informar candidatos ativos é acionada, respeitando canal/prazo ainda a definir |
+| T-017-06 | Notificação é recebida | Usuário é orientado a consultar o estado oficial na área de acompanhamento |
 
 ## 13. Questões em aberto
 Consultar OPEN-066 a OPEN-069 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
@@ -2298,11 +2307,11 @@ RF-21; RB-19, RB-20, RB-27, RB-37, RB-41; ENTREVISTA, AVALIACAO_POS_ENTREVISTA, 
 A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
 
 ## 9. Contratos necessários
-- **Consultar dados autorizados** necessários à operação.
-- **Validar pré-condições e regras** antes de alterar estado.
-- **Executar operação principal** somente se válida.
-- **Consultar resultado/estado atualizado**.
-- **Registrar alteração ou decisão** quando aplicável.
+- **Consultar elegibilidade:** verifica se o candidato autenticado pode avaliar o processo conforme RF-21 e a janela de elegibilidade que o grupo definir.
+- **Apresentar formulário:** disponibiliza critérios, escala e campos aprovados; não cria perguntas ou escalas não definidas.
+- **Validar submissão:** verifica campos obrigatórios e vínculo com a candidatura/entrevista correspondente.
+- **Registrar avaliação:** persiste avaliação válida com controles de integridade e confidencialidade.
+- **Disponibilizar dados válidos:** entrega os dados necessários à SPEC-021 sem publicar identidade ou avaliação individual.
 
 Contratos conceituais; não definem endpoints HTTP.
 
@@ -2324,14 +2333,15 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 - [ ] Lacunas permanecem explicitadas em OPEN.md.
 
 ## 12. Casos de teste derivados
+
 | ID | Cenário | Resultado esperado |
 |---|---|---|
-| T-018-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
-| T-018-02 | Ator sem autorização tenta acessar dados | Acesso negado |
-| T-018-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
-| T-018-04 | Estado muda antes da operação | Regra/estado atual prevalece |
-| T-018-05 | Operação válida altera dados | Estado e histórico atualizados |
-| T-018-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+| T-018-01 | Candidato elegível envia avaliação completa | Avaliação é registrada e disponibilizada para agregação |
+| T-018-02 | Candidato não elegível tenta avaliar | Submissão é recusada |
+| T-018-03 | Avaliação não está vinculada ao processo correspondente | Submissão é recusada |
+| T-018-04 | Campos obrigatórios definidos estão ausentes | Sistema indica validação e não registra avaliação inválida |
+| T-018-05 | Avaliação é consultada em contexto público | Identidade do autor e conteúdo individual não são expostos |
+| T-018-06 | Avaliação é editada ou submetida novamente | Sistema aplica a política aprovada; enquanto não definida, não se presume edição ou duplicação |
 
 ## 13. Questões em aberto
 Consultar OPEN-070 a OPEN-073 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
@@ -2401,11 +2411,11 @@ RF-14; RB-24, RB-25, RB-27, RB-37, RB-44, RB-45; DENUNCIA_FALSA_INCLUSAO, AVALIA
 A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
 
 ## 9. Contratos necessários
-- **Consultar dados autorizados** necessários à operação.
-- **Validar pré-condições e regras** antes de alterar estado.
-- **Executar operação principal** somente se válida.
-- **Consultar resultado/estado atualizado**.
-- **Registrar alteração ou decisão** quando aplicável.
+- **Registrar denúncia:** recebe vaga referenciada, motivo e descrição permitidos pela baseline.
+- **Validar solicitação:** verifica autenticação, vínculo/referência válida e controles de abuso definidos, sem inventar limites numéricos.
+- **Persistir e encaminhar:** registra a denúncia e disponibiliza-a à fila de moderação.
+- **Confirmar recebimento:** informa que a denúncia foi registrada, sem antecipar o resultado da análise.
+- **Restringir consulta:** expõe andamento e conteúdo somente conforme a política de confidencialidade que o grupo aprovar.
 
 Contratos conceituais; não definem endpoints HTTP.
 
@@ -2427,14 +2437,15 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 - [ ] Lacunas permanecem explicitadas em OPEN.md.
 
 ## 12. Casos de teste derivados
+
 | ID | Cenário | Resultado esperado |
 |---|---|---|
-| T-019-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
-| T-019-02 | Ator sem autorização tenta acessar dados | Acesso negado |
-| T-019-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
-| T-019-04 | Estado muda antes da operação | Regra/estado atual prevalece |
-| T-019-05 | Operação válida altera dados | Estado e histórico atualizados |
-| T-019-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+| T-019-01 | Candidato autenticado envia denúncia válida | Denúncia é registrada e encaminhada à moderação |
+| T-019-02 | Usuário não autenticado tenta denunciar | Operação recusada |
+| T-019-03 | Referência à vaga é inválida ou não acessível | Denúncia não é associada incorretamente |
+| T-019-04 | Denúncia é registrada | Confirmação não promete decisão nem sanção |
+| T-019-05 | Denúncia está pendente | Vaga e nota não são alteradas automaticamente |
+| T-019-06 | Usuário sem permissão consulta conteúdo restrito | Conteúdo e identidade protegidos não são expostos |
 
 ## 13. Questões em aberto
 Consultar OPEN-074 a OPEN-077 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
@@ -2505,11 +2516,11 @@ RF-22; RB-24, RB-25, RB-27, RB-37, RB-41, RB-44, RB-45; ADMINISTRADOR, DENUNCIA_
 A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
 
 ## 9. Contratos necessários
-- **Consultar dados autorizados** necessários à operação.
-- **Validar pré-condições e regras** antes de alterar estado.
-- **Executar operação principal** somente se válida.
-- **Consultar resultado/estado atualizado**.
-- **Registrar alteração ou decisão** quando aplicável.
+- **Listar fila de moderação:** permite consulta somente ao Administrador autenticado da plataforma.
+- **Consultar denúncia e contexto:** retorna somente dados pertinentes e autorizados para análise.
+- **Registrar decisão:** guarda decisão e fundamento nos limites do catálogo que o grupo aprovar; o catálogo continua em OPEN-079.
+- **Aplicar efeito autorizado:** encaminha alterações somente quando a decisão registrada e as regras aplicáveis permitirem.
+- **Consultar histórico de moderação:** permite auditoria das decisões e efeitos, com acesso controlado.
 
 Contratos conceituais; não definem endpoints HTTP.
 
@@ -2531,14 +2542,16 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 - [ ] Lacunas permanecem explicitadas em OPEN.md.
 
 ## 12. Casos de teste derivados
+
 | ID | Cenário | Resultado esperado |
 |---|---|---|
-| T-020-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
-| T-020-02 | Ator sem autorização tenta acessar dados | Acesso negado |
-| T-020-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
-| T-020-04 | Estado muda antes da operação | Regra/estado atual prevalece |
-| T-020-05 | Operação válida altera dados | Estado e histórico atualizados |
-| T-020-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+| T-020-01 | Administrador da plataforma consulta fila | Fila disponível conforme autorização |
+| T-020-02 | Recrutador ou Empresa tenta moderar | Operação recusada |
+| T-020-03 | Administrador analisa denúncia e registra decisão | Decisão, responsável e histórico são persistidos |
+| T-020-04 | Denúncia não possui decisão registrada | Não há bloqueio nem alteração automática da nota |
+| T-020-05 | Decisão não autoriza determinado efeito | Efeito não é aplicado |
+| T-020-06 | Efeito autorizado é aplicado | Alteração e relação com a decisão são rastreáveis |
+| T-020-07 | Usuário sem permissão consulta dados da moderação | Acesso negado ou conteúdo restrito conforme política aprovada |
 
 ## 13. Questões em aberto
 Consultar OPEN-078 a OPEN-081 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
@@ -2572,7 +2585,7 @@ Consultar OPEN-078 a OPEN-081 em `docs/OPEN.md`. As questões permanecem abertas
 - **Questões abertas:** OPEN-082 a OPEN-085.
 
 ## 3. Escopo
-Calcular/exibir nota a partir de informações e avaliações válidas; preservar anonimato; tratar ausência de dados sem inventar valor; refletir decisão de moderação somente quando autorizar efeito.
+Exibir a distribuição da frequência das avaliações válidas em estrelas; preservar anonimato; quando não houver avaliações válidas, não exibir nota e informar dados insuficientes; refletir decisão de moderação somente após decisão registrada e conforme efeito autorizado.
 
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
@@ -2588,9 +2601,9 @@ SPEC-004, 018, 020. As dependências fornecem dados e capacidades; esta Spec nã
 
 ## 5. Comportamento esperado
 1. Sistema recupera somente dados registrados e válidos para cálculo.
-2. Aplica a fórmula aprovada; enquanto não definida, fórmula e pesos permanecem em OPEN-082.
+2. Apresenta a frequência de avaliações válidas por quantidade de estrelas, sem calcular média ou pesos não aprovados.
 3. Sistema preserva anonimato público das avaliações.
-4. Sem dados suficientes, apresenta estado conforme regra aprovada, sem inventar nota.
+4. Uma avaliação válida é suficiente para apresentar a distribuição; sem avaliações válidas, não exibe nota e informa dados insuficientes.
 5. Denúncia sem decisão administrativa não altera a nota.
 6. Cálculos e alterações são rastreáveis.
 
@@ -2608,11 +2621,11 @@ RF-13; RB-08, RB-19, RB-20, RB-25, RB-27, RB-37, RB-45; EMPRESA, INFRAESTRUTURA_
 A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
 
 ## 9. Contratos necessários
-- **Consultar dados autorizados** necessários à operação.
-- **Validar pré-condições e regras** antes de alterar estado.
-- **Executar operação principal** somente se válida.
-- **Consultar resultado/estado atualizado**.
-- **Registrar alteração ou decisão** quando aplicável.
+- **Consultar avaliações válidas:** recupera avaliações registradas e elegíveis, sem expor autores.
+- **Construir distribuição de estrelas:** apresenta a frequência de avaliações válidas em cada quantidade de estrelas; não inventa média, pesos ou fórmula adicional.
+- **Verificar suficiência:** uma avaliação válida é suficiente para exibir a distribuição; quando não houver dados válidos, não exibe nota e informa que os dados são insuficientes.
+- **Aplicar decisão de moderação:** altera dados publicados somente após decisão administrativa registrada e conforme os efeitos que forem definidos pelo grupo.
+- **Registrar atualização:** mantém rastreabilidade da distribuição publicada e das alterações autorizadas.
 
 Contratos conceituais; não definem endpoints HTTP.
 
@@ -2634,17 +2647,19 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 - [ ] Lacunas permanecem explicitadas em OPEN.md.
 
 ## 12. Casos de teste derivados
+
 | ID | Cenário | Resultado esperado |
 |---|---|---|
-| T-021-01 | Ator autorizado executa fluxo válido | Operação concluída conforme regra |
-| T-021-02 | Ator sem autorização tenta acessar dados | Acesso negado |
-| T-021-03 | Pré-condição não satisfeita | Operação recusada sem alteração inválida |
-| T-021-04 | Estado muda antes da operação | Regra/estado atual prevalece |
-| T-021-05 | Operação válida altera dados | Estado e histórico atualizados |
-| T-021-06 | Usuário consulta dados fora da autorização | Dados não expostos |
+| T-021-01 | Não há avaliações válidas | Não exibe nota/distribuição e informa dados insuficientes |
+| T-021-02 | Existe uma avaliação válida | Exibe a frequência correspondente à quantidade de estrelas recebida |
+| T-021-03 | Existem avaliações válidas em diferentes quantidades de estrelas | Exibe a frequência de cada quantidade de estrelas sem revelar autores |
+| T-021-04 | Há avaliação inválida ou não elegível | Avaliação não integra a distribuição |
+| T-021-05 | Denúncia ainda não tem decisão registrada | Distribuição não é alterada automaticamente |
+| T-021-06 | Há decisão administrativa registrada que autoriza efeito | Alteração é aplicada somente dentro do efeito autorizado e fica rastreável |
+| T-021-07 | Usuário tenta inferir identidade de avaliador pela tela pública | Tela não expõe identidade nem avaliação individual |
 
 ## 13. Questões em aberto
-Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+Consultar OPEN-085 em `docs/OPEN.md`. As decisões de apresentação por estrelas, mínimo de uma avaliação válida e estado sem dados suficientes foram registradas. Os efeitos de moderação sobre a nota permanecem em aberto.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
