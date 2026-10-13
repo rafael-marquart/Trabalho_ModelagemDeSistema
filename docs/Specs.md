@@ -1741,7 +1741,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 | Capacidade | Registrar candidatura |
 
 ## 2. Rastreabilidade
-- **Baseline:** RF-26, RF-34; requisitos e regras correlatos conforme mapa de Specs.
+- **RF:** RF-26 — Registro de candidatura.
 - **Dependências:** SPEC-001, 002, 007, 009, 010.
 - **Caso de uso:** UC-03 — Candidatar-se a Vaga.
 - **Questões abertas:** OPEN-047 a OPEN-049.
