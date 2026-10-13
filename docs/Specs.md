@@ -1872,7 +1872,7 @@ SPEC-001, 011, 013, 016, 017. As dependências fornecem dados e capacidades; est
 6. Sistema disponibiliza o estado atualizado para acompanhamento e notificação.
 
 ## 6. Regras e invariantes
-- Candidato só acessa seus processos; cancelamento respeita RB-36; estados/transições válidos; histórico preservado; dados de acomodação restritos.
+- Candidato só acessa seus processos; cancelamento respeita RB-36; estados/transições válidos; histórico preservado.
 - Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
 - Operações protegidas são validadas no backend.
 - Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
@@ -2046,26 +2046,26 @@ Consultar OPEN-053 a OPEN-056 em `docs/OPEN.md`. As questões permanecem abertas
 | Campo | Valor |
 |---|---|
 | ID | SPEC-016 |
-| Bloco | 5 — Acomodações, acompanhamento e notificações |
+| Bloco | 5 — Acompanhamento e notificações |
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Acompanhar candidatura e processo seletivo |
 
 ## 2. Rastreabilidade
-- **Baseline:** RF-11, RF-27, RF-31, RF-33; requisitos e regras correlatos conforme mapa de Specs.
+- **Baseline:** RF-11, RF-27, RF-31; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-011 a 015.
 - **Caso de uso:** UC-05 — Acompanhar Funil de Candidaturas.
 - **Questões abertas:** OPEN-063 a OPEN-065.
 
 ## 3. Escopo
-Listar candidaturas próprias; apresentar status/etapa atual, linha do tempo, decisões e acomodações autorizadas; refletir cancelamento e encerramento sem confundir eventos antigos com estado atual.
+Listar candidaturas próprias; apresentar status/etapa atual e linha do tempo; refletir cancelamento e encerramento sem confundir eventos antigos com estado atual.
 
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
 | Painel de acompanhamento | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
 | Linha do tempo | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
-| Detalhes da etapa e acomodação | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Detalhes da etapa | Apoiar a consulta de status e histórico da candidatura | Pendente |
 | Estado encerrado/cancelado | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
@@ -2077,19 +2077,18 @@ SPEC-011 a 015. As dependências fornecem dados e capacidades; esta Spec não du
 1. Candidato autenticado consulta somente candidaturas próprias.
 2. Sistema apresenta etapa/status atual e vaga correspondente.
 3. Sistema apresenta eventos históricos com datas disponíveis, distinguindo histórico de estado atual.
-4. Informações de acomodação são exibidas somente conforme autorização.
 5. Cancelamento ou encerramento da vaga é refletido no acompanhamento.
 6. O fluxo é somente de consulta; não altera etapa ou decisão do processo.
 
 ## 6. Regras e invariantes
-- Apenas processos próprios; privacidade de acomodações; histórico preservado; não altera etapas nem decisões.
+- Apenas processos próprios; histórico preservado; não altera etapas nem decisões.
 - Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
 - Operações protegidas são validadas no backend.
 - Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
 - Alterações relevantes devem ser rastreáveis conforme RB/RNF aplicáveis.
 
 ## 7. Modelo de domínio
-RF-11, RF-27, RF-31, RF-33; RB-23, RB-27, RB-36, RB-38, RB-39, RB-40, RB-41, RB-42; CANDIDATURA, VAGA, SOLICITACAO_ACOMODACAO, ENTREVISTA. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
+RF-11, RF-27, RF-31; RB-23, RB-27, RB-36, RB-38, RB-39, RB-41, RB-42; CANDIDATURA, VAGA, ENTREVISTA. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
 
 ## 8. Impacto arquitetural
 A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
@@ -2662,7 +2661,7 @@ Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas
 | Bloco | Specs | Estado do texto | Estado do layout |
 |---|---|---|---|
 | 4 — Candidaturas e processo seletivo | SPEC-011 a SPEC-013 | especificadas, aguardando revisão | pendentes |
-| 5 — Acomodações, acompanhamento e notificações | SPEC-014 a SPEC-017 | especificadas, aguardando revisão | pendentes conforme aplicabilidade |
+| 5 — Acompanhamento e notificações | SPEC-016 a SPEC-017 | especificadas, aguardando revisão | pendentes conforme aplicabilidade |
 | 6 — Avaliações, denúncias e nota pública | SPEC-018 a SPEC-021 | especificadas, aguardando revisão | pendentes |
 
 
@@ -2674,7 +2673,7 @@ Consultar OPEN-082 a OPEN-085 em `docs/OPEN.md`. As questões permanecem abertas
 | 2 — Empresa, vagas próprias e ingestão externa | SPEC-004 a SPEC-006 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
 | 3 — Compatibilidade e descoberta | SPEC-007 a SPEC-010 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
 | 4 — Candidaturas e processo seletivo | SPEC-011 a SPEC-013 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
-| 5 — Acomodações, acompanhamento e notificações | SPEC-014 a SPEC-017 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
+| 5 — Acompanhamento e notificações | SPEC-016 a SPEC-017 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
 | 6 — Avaliações, denúncias e nota pública | SPEC-018 a SPEC-021 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
 
 A revisão cruzada dos artefatos está registrada em [revisao-consistencia-specs.md](revisao-consistencia-specs.md). A inclusão no registro não significa aprovação. Implementação permanece bloqueada até aprovação do texto e dos layouts aplicáveis.
