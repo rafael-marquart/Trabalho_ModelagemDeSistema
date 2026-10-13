@@ -55,16 +55,10 @@ WHEN o candidato solicitar candidatura, THE SYSTEM SHALL registrar a candidatura
 WHEN houver alteração relevante no status da candidatura, THE SYSTEM SHALL comunicar o candidato.
 ### RF-28 Gestão da candidatura pelo candidato
 WHEN o candidato consultar sua candidatura, THE SYSTEM SHALL permitir as ações disponíveis conforme as regras do processo.
-### RF-29 Solicitação de acomodação
-WHEN o candidato necessitar de acomodação, THE SYSTEM SHALL permitir registrar a solicitação vinculada à candidatura.
 ### RF-30 Gestão de candidatos no processo seletivo
 WHEN um recrutador autorizado gerenciar candidatos, THE SYSTEM SHALL permitir consultar e atualizar candidatos vinculados às suas vagas.
 ### RF-31 Acompanhamento do processo seletivo
 WHEN o candidato consultar uma candidatura, THE SYSTEM SHALL apresentar suas etapas e status.
-### RF-32 Gestão das solicitações de acomodação
-WHEN houver uma solicitação de acomodação, THE SYSTEM SHALL permitir ao recrutador autorizado consultar e tratar a solicitação.
-### RF-33 Histórico das acomodações
-WHEN uma solicitação de acomodação for criada ou tratada, THE SYSTEM SHALL manter o histórico correspondente.
 ### RF-34 Cancelamento de candidatura
 WHEN o candidato solicitar cancelamento, THE SYSTEM SHALL cancelar a candidatura somente quando as regras permitirem.
 ### RF-35 Gestão do funil de seleção
