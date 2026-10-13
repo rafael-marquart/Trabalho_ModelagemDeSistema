@@ -73,14 +73,14 @@ Em algumas Specs, a seção “Telas e evidência de layout” contém texto de 
 
 **Pendente de validação:** revisar se cada finalidade é suficientemente específica ao protótipo que será produzido e manter o estado de layout separado da aprovação do texto.
 
-### REV-005 — Dependências e rastreabilidade das capacidades de acomodação
+### REV-005 — Remoção das capacidades de solicitação e processamento de acomodação
 
 **Prioridade:** média  
-**Artefatos:** SPEC-014, SPEC-015 e SPEC-016.
+**Artefatos:** `docs/Specs.md`, `docs/mapa-specs.md`, `docs/OPEN.md`, RF/RB, UC-04 e modelo conceitual.
 
-SPEC-014 descreve solicitação de acomodação; SPEC-015 descreve análise/decisão; SPEC-016 acompanha o resultado. O encadeamento geral faz sentido, mas é necessário verificar cada UC individual e os atributos do modelo conceitual para confirmar estados, dados obrigatórios, edição e histórico. Não tratar “estado inicial”, “justificativa” ou transições como definidos se só estiverem descritos genericamente.
+**Decisão aplicada:** SPEC-014 e SPEC-015 foram removidas do escopo. As questões OPEN-057 a OPEN-062 e o caso de uso dedicado UC-04 também foram retirados. As referências a solicitações e processamento de acomodação devem ser removidas dos artefatos relacionados, preservando as necessidades de acessibilidade do perfil do candidato e os recursos gerais de acessibilidade da plataforma.
 
-**Ajuste recomendado:** validar UC-04, UC-05, RF-29, RF-32, RF-33 e as entidades SOLICITACAO_ACOMODACAO/CANDIDATURA. Manter os detalhes não definidos como OPEN.
+**Pendente de validação:** conferir referências residuais em arquivos de requisitos, diagramas e descrição do produto; IDs das Specs posteriores foram preservados.
 
 ### REV-006 — Requisitos transversais precisam ser associados às operações pertinentes, não apenas listados
 
