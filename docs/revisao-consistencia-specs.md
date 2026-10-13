@@ -144,7 +144,7 @@ O cabeçalho ainda descreve o documento como detalhamento do “Bloco 1 — Aces
 ## 5. Plano recomendado de correção
 
 1. Conferir a rastreabilidade de RF-34/RF-35 e a descrição inicial, agora corrigidas no detalhamento.
-2. Conferir os casos de uso UC-03, UC-04, UC-05, UC-06, UC-09, UC-11 e UC-14 diretamente nos arquivos individuais.
+2. Conferir os casos de uso UC-03, UC-05, UC-06, UC-09, UC-11 e UC-14 diretamente nos arquivos individuais.
 3. Tornar as SPEC-011 a SPEC-021 específicas e testáveis, eliminando texto genérico e corrigindo as seções de layout.
 4. Conferir cada regra de negócio e RNF por operação, incluindo permissões, privacidade, falhas e auditoria.
 5. Revisar dependências cruzadas e estados após as correções.
