@@ -111,9 +111,6 @@ O sistema padroniza os estados do funil definidos pelo processo.
 ### RB-39 Transições válidas do funil
 O sistema impede transições inválidas entre estados.
 
-### RB-40 Visibilidade das acomodações
-Solicitações e decisões de acomodação são visíveis aos usuários autorizados envolvidos.
-
 ### RB-41 Auditoria das alterações
 Alterações de status, decisões, cancelamentos e demais operações relevantes são registradas para auditoria.
 
