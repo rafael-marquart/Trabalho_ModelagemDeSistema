@@ -8,7 +8,7 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 2. Resultado executivo
 
-**Atualização de correções:** em 2026-10-13 foram aplicados ajustes documentais relacionados a REV-001, REV-003, REV-004, REV-006, REV-007 e REV-010. O registro abaixo distingue correções aplicadas de validações que ainda dependem de revisão humana ou de decisão do grupo.
+**Atualização de status:** REV-001, REV-003, REV-004, REV-006, REV-007 e REV-010 foram corrigidas e encerradas após aprovação do grupo. REV-005 foi retirada dos achados ativos porque a remoção das capacidades de acomodação já foi aprovada e aplicada. Permanecem ativos os pontos que exigem detalhamento adicional ou decisões funcionais, especialmente REV-002, REV-008 e REV-009.
 
 - O mapa e o documento de detalhamento contêm **21 Specs**, com IDs e títulos correspondentes.
 - O `OPEN.md` contém questões numeradas de OPEN-001 a OPEN-085 sem IDs duplicados detectados.
@@ -28,7 +28,7 @@ RF-34 trata de cancelamento de candidatura e RF-35 de gestão do funil de seleç
 
 **Correção aplicada:** RF-34 está associado à SPEC-012 e RF-35 à SPEC-013. A referência indevida a RF-34 na SPEC-011 foi removida, mantendo nessa Spec o RF-26 de registro de candidatura.
 
-**Pendente de validação:** conferir se os critérios e fluxos de cancelamento e gestão do funil cobrem integralmente os requisitos e suas exceções. Não é necessário criar Specs novas apenas por existirem esses RFs: as capacidades correspondentes já estão mapeadas.
+**Status: encerrado.** A rastreabilidade foi corrigida no detalhamento e a correção foi aprovada pelo grupo. Não é necessário criar Specs novas apenas por existirem esses RFs: as capacidades correspondentes já estão mapeadas.
 
 ### REV-002 — SPEC-011 a SPEC-021 precisam de detalhamento específico maior
 
@@ -59,7 +59,7 @@ No detalhamento atual, SPEC-011 indica que o caso de uso específico precisa ser
 
 **Correção aplicada:** o detalhamento aponta UC-03 na SPEC-011, UC-05 na SPEC-012, UC-09 na SPEC-013, UC-06 na SPEC-018, UC-11 na SPEC-019 e UC-14 na SPEC-006. A SPEC-020 distingue a análise administrativa como fluxo de moderação, sem criar ator de empresa-administradora.
 
-**Pendente de validação:** confirmar esses vínculos contra os arquivos individuais e seus fluxos completos, sobretudo se cada caso de uso tiver detalhes além da visão geral. Não atribuir conteúdo a um UC apenas pelo título.
+**Status: encerrado.** Os vínculos de rastreabilidade foram corrigidos e aprovados pelo grupo. O encerramento se refere à correção documental registrada neste achado; novas divergências encontradas em revisões futuras podem ser registradas separadamente.
 
 ### REV-004 — Seção 3.1 mistura finalidade de layout e questões em aberto
 
@@ -70,16 +70,7 @@ Em algumas Specs, a seção “Telas e evidência de layout” contém texto de 
 
 **Correção aplicada:** as áreas/telas estão separadas em tabela com finalidade e estado de layout; as questões em aberto permanecem em seção própria, referenciadas por IDs OPEN. As finalidades das áreas das SPEC-011 a SPEC-021 foram ajustadas para indicar o papel da área no fluxo.
 
-**Pendente de validação:** revisar se cada finalidade é suficientemente específica ao protótipo que será produzido e manter o estado de layout separado da aprovação do texto.
-
-### REV-005 — Remoção das capacidades de solicitação e processamento de acomodação
-
-**Prioridade:** média  
-**Artefatos:** `docs/Specs.md`, `docs/mapa-specs.md`, `docs/OPEN.md`, RF/RB, UC-04 e modelo conceitual.
-
-**Decisão aplicada:** SPEC-014 e SPEC-015 foram removidas do escopo. As questões OPEN-057 a OPEN-062 e o caso de uso dedicado UC-04 também foram retirados. As referências a solicitações e processamento de acomodação devem ser removidas dos artefatos relacionados, preservando as necessidades de acessibilidade do perfil do candidato e os recursos gerais de acessibilidade da plataforma.
-
-**Busca final:** referências funcionais remanescentes foram removidas dos requisitos EARS, das Specs de acompanhamento e notificação e dos casos de uso de acompanhamento/funil. O diagrama dedicado a UC-04 foi removido. Os IDs das Specs posteriores foram preservados. A busca por termos relacionados a acomodação ainda pode encontrar este registro histórico de decisão, mantido para documentar a alteração.
+**Status: encerrado.** A separação entre finalidade das áreas, questões em aberto e estado de layout foi aplicada e aprovada pelo grupo. A aprovação visual dos protótipos continua sendo um gate separado da aprovação textual das Specs.
 
 ### REV-006 — Requisitos transversais precisam ser associados às operações pertinentes, não apenas listados
 
@@ -90,7 +81,7 @@ Os RNFs de acessibilidade, privacidade, segurança, integridade, desempenho e au
 
 **Correção aplicada:** foram acrescentadas verificações observáveis nos critérios de aceitação das Specs operacionais selecionadas, incluindo autorização por perfil, privacidade, integridade, rastreabilidade, navegação por teclado e tratamento de falhas, conforme aplicabilidade.
 
-**Pendente de validação:** conferir a cobertura dos RNFs em todas as operações e confirmar os procedimentos de teste ainda não definidos na baseline. Não foram inventadas métricas numéricas.
+**Status: encerrado.** Os critérios observáveis aplicáveis foram acrescentados e aprovados pelo grupo, sem inventar métricas numéricas. Procedimentos ou métricas que não existam na baseline continuam sujeitos a decisão própria, caso sejam necessários.
 
 ### REV-007 — Separação entre Administrador da plataforma e Empresa
 
@@ -101,7 +92,7 @@ A decisão consolidada estabelece que Administrador é papel da plataforma, util
 
 **Correção aplicada:** a SPEC-001 explicita que Administrador é perfil da plataforma e que Empresa não pode administrar vínculos de outra organização; a SPEC-020 limita a moderação ao Administrador da plataforma. Uma busca no detalhamento atual não encontrou a expressão “administrador da empresa”.
 
-**Pendente de validação:** repetir a conferência em todos os artefatos da baseline, não apenas em Specs.md, antes da aprovação.
+**Status: encerrado.** A distinção entre Administrador da plataforma e Empresa foi explicitada nas Specs e aprovada pelo grupo. O achado não permanece aberto; qualquer ocorrência divergente encontrada em outro artefato pode ser registrada como novo achado específico.
 
 ### REV-008 — Fórmula e semântica da nota pública continuam em aberto
 
@@ -130,7 +121,7 @@ O cabeçalho ainda descreve o documento como detalhamento do “Bloco 1 — Aces
 
 **Correção aplicada:** o cabeçalho de Specs.md já descreve o documento como detalhamento dos Blocos 1 a 6 e o controle do documento inclui estado de texto e layout por bloco para SPEC-001 a SPEC-021.
 
-**Pendente de validação:** conferir se o registro consolidado por bloco é suficiente para a rotina de revisão ou se o grupo deseja uma linha individual por Spec.
+**Status: encerrado.** O cabeçalho e o controle do documento foram atualizados e aprovados pelo grupo.
 
 ## 4. Verificações que passaram
 
@@ -143,13 +134,11 @@ O cabeçalho ainda descreve o documento como detalhamento do “Bloco 1 — Aces
 
 ## 5. Plano recomendado de correção
 
-1. Conferir a rastreabilidade de RF-34/RF-35 e a descrição inicial, agora corrigidas no detalhamento.
-2. Conferir os casos de uso UC-03, UC-05, UC-06, UC-09, UC-11 e UC-14 diretamente nos arquivos individuais.
-3. Tornar as SPEC-011 a SPEC-021 específicas e testáveis, eliminando texto genérico e corrigindo as seções de layout.
-4. Conferir cada regra de negócio e RNF por operação, incluindo permissões, privacidade, falhas e auditoria.
-5. Revisar dependências cruzadas e estados após as correções.
-6. Levar OPENs à revisão coletiva, sem marcar como resolvidas antes de uma decisão explícita.
-7. Solicitar aprovação humana do texto; depois tratar os layouts como gate separado. Implementação somente após as aprovações aplicáveis.
+1. Revisar o detalhamento das SPEC-011 a SPEC-021 para eliminar comportamentos genéricos e garantir critérios específicos e testáveis (REV-002).
+2. Decidir a semântica da nota pública de acessibilidade e responder às OPEN-082 a OPEN-085 (REV-008).
+3. Decidir a fórmula, os dados mínimos e o tratamento de perfis incompletos no cálculo de compatibilidade, respondendo às OPEN-031 a OPEN-046 (REV-009).
+4. Revisar coletivamente as demais questões OPEN ainda pertinentes, sem marcá-las como resolvidas antes de uma decisão explícita.
+5. Manter a aprovação textual separada da aprovação dos layouts. Implementação somente após as aprovações aplicáveis.
 
 ## 6. Limite desta revisão
 
