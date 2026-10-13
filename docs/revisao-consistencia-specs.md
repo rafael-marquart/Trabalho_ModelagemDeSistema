@@ -8,18 +8,18 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 2. Resultado executivo
 
-**Status atual:** permanecem neste relatório apenas os pontos que ainda exigem revisão ou decisão: REV-002, REV-008 e REV-009. Os achados encerrados foram removidos do corpo principal; suas decisões ficam registradas em nota de rodapé documental ao final do relatório.
+**Status atual:** somente REV-009 permanece aberta neste relatório, por envolver regras centrais de compatibilidade e descoberta de vagas. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
 
 - O mapa e o documento de detalhamento preservam os IDs SPEC-001 a SPEC-021; SPEC-014 e SPEC-015 foram removidas do escopo, sem renumerar as posteriores.
 - O `OPEN.md` contém questões numeradas de OPEN-001 a OPEN-085 sem IDs duplicados detectados.
 - Todas as RBs identificadas na baseline aparecem referenciadas em algum ponto de `Specs.md`; isso não garante, por si só, que cada regra esteja associada à Spec correta.
 - RF-34 e RF-35 estão associados, respectivamente, à SPEC-012 e à SPEC-013.
-- O detalhamento de contratos e testes das SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 foi ampliado; REV-002 aguarda revisão humana final dos fluxos, exceções, rastreabilidade e critérios.
+- O detalhamento de contratos e testes das SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 foi ampliado e aprovado pelo grupo (REV-002 encerrada).
 - Foram encontrados pontos em que uma dependência, referência de caso de uso ou conteúdo de seção precisa ser corrigido ou confirmado.
 
 ## 3. Achados prioritários
 
-### REV-002 — Detalhamento específico das Specs dos Blocos 4 a 6
+### REV-002 — Detalhamento específico das Specs de candidatura, acompanhamento e avaliações
 
 **Prioridade:** alta  
 **Artefato:** `docs/Specs.md`.
@@ -28,16 +28,16 @@ Essas Specs têm seções de comportamento, regras, contratos e testes, mas boa 
 
 **Correção parcial aplicada:** foram detalhados contratos conceituais e casos de teste específicos nas SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021. Foram explicitados cenários de candidatura duplicada e inelegível, cancelamento, transições do funil, consulta de histórico, falhas de notificação, elegibilidade/anonimato de avaliações, registro e moderação de denúncias e distribuição pública de estrelas. A SPEC-014 e a SPEC-015 permanecem fora de escopo.
 
-**Status: em revisão.** A primeira rodada de detalhamento foi aplicada sem criar endpoints, fórmulas ou políticas não aprovadas. Para encerrar REV-002 ainda é necessária uma leitura humana dos fluxos, critérios, exceções e rastreabilidade em cada Spec do escopo, além da aprovação textual formal.
+**Status: encerrado.** O grupo aprovou as alterações de detalhamento aplicadas aos fluxos, contratos conceituais, critérios de aceitação e testes. O encerramento se limita a este achado de revisão; a aprovação formal individual das Specs e a aprovação dos layouts continuam sendo controles próprios quando aplicáveis.
 
-### REV-008 — Efeitos de moderação sobre a nota pública ainda precisam de definição
+### REV-008 — Separação entre moderação de denúncias e nota pública
 
 **Prioridade:** alta para aprovação funcional, sem bloquear o restante da revisão  
 **Artefatos:** SPEC-018 a SPEC-021, RF-13, RB-19, RB-20, RB-25 e RB-45.
 
-Decisões recebidas do grupo: a apresentação pública usa estrelas e exibe a frequência de cada quantidade de estrelas; uma avaliação válida é suficiente para exibir a distribuição; sem avaliações válidas, não exibe nota e informa dados insuficientes; nenhuma alteração ocorre antes de decisão de moderação registrada.
+Decisões recebidas do grupo: a apresentação pública usa estrelas e exibe a frequência de cada quantidade de estrelas; uma avaliação válida é suficiente para exibir a distribuição; sem avaliações válidas, não exibe nota e informa dados insuficientes. A administração da plataforma atua sobre denúncias e **não altera diretamente as avaliações nem a distribuição pública de estrelas**.
 
-**Atualização aplicada:** SPEC-021 e OPEN-082 a OPEN-084 foram ajustadas para refletir as decisões de apresentação. **Único ponto pendente:** OPEN-085 — definir quais efeitos uma decisão de moderação registrada pode autorizar sobre a nota e os dados publicados. Até essa decisão, não se deve presumir remoção de avaliações, recálculo, suspensão ou qualquer outra consequência.
+**Correção aplicada:** SPEC-020 e SPEC-021 e OPEN-079/OPEN-085 foram alinhadas à separação de responsabilidades. A nota pública depende das avaliações válidas; a moderação trata denúncias, sem editar ou recalcular a nota. **Status: encerrado** por decisão explícita do grupo.
 
 ### REV-009 — Definir com precisão o cálculo de compatibilidade entre candidato e vaga
 
@@ -66,17 +66,15 @@ Decisões recebidas do grupo: a apresentação pública usa estrelas e exibe a f
 - Os IDs SPEC-001 a SPEC-021 aparecem tanto no mapa quanto no documento de detalhamento.
 - Os títulos das Specs no mapa correspondem aos títulos do documento de detalhamento.
 - Os IDs OPEN-001 a OPEN-085 não apresentam duplicidade detectada.
-- O `OPEN.md` contém seções para os seis blocos.
+- O `OPEN.md` contém seções organizadas por área funcional.
 - As decisões consolidadas sobre conta Empresa, perfil Recrutador, Administrador da plataforma, não armazenamento de laudos, análise de denúncia e deduplicação de vagas externas estão registradas no `OPEN.md`.
 - O fluxo consolidado de estados do funil está documentado em `docs/Fluxos e Estados/estados-trilha.md`.
 
 ## 5. Plano recomendado de correção
 
-1. Concluir a leitura humana e a aprovação textual do detalhamento ampliado das Specs dos Blocos 4 a 6 (REV-002).
-2. Decidir os efeitos autorizados de uma decisão de moderação sobre a nota pública (OPEN-085 / REV-008).
-3. Decidir as questões funcionais de compatibilidade e descoberta listadas em OPEN-031 a OPEN-046 (REV-009).
-4. Manter as demais questões OPEN pertinentes explicitamente abertas até decisão do grupo.
-5. Manter a aprovação textual separada da aprovação dos layouts. Implementação somente após as aprovações aplicáveis.
+1. Decidir as questões funcionais de compatibilidade e descoberta listadas em OPEN-031 a OPEN-046 (REV-009).
+2. Manter as demais questões OPEN pertinentes explicitamente abertas até decisão do grupo.
+3. Manter a aprovação textual separada da aprovação dos layouts. Implementação somente após as aprovações aplicáveis.
 
 ## 6. Limite desta revisão
 
@@ -84,4 +82,4 @@ Esta é uma auditoria de consistência documental. Ela identifica cobertura e pr
 
 ---
 
-**Nota de rodapé — decisões já tomadas:** os achados REV-001, REV-003, REV-004, REV-006, REV-007 e REV-010 foram retirados do corpo principal por estarem encerrados. As correções e decisões correspondentes foram aplicadas aos artefatos do projeto e aprovadas pelo grupo; seus registros históricos podem ser recuperados no histórico do Git.
+**Nota de rodapé — decisões já tomadas:** os achados REV-001, REV-002, REV-003, REV-004, REV-006, REV-007, REV-008 e REV-010 foram encerrados após correções ou decisões aprovadas pelo grupo. REV-001, REV-003, REV-004, REV-006, REV-007 e REV-010 foram removidos do corpo principal; REV-002 e REV-008 permanecem descritos acima apenas como registro de encerramento. Os registros históricos também podem ser consultados no histórico do Git.
