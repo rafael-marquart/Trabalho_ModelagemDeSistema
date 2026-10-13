@@ -2149,7 +2149,7 @@ Consultar OPEN-063 a OPEN-065 em `docs/OPEN.md`. As questões permanecem abertas
 | Campo | Valor |
 |---|---|
 | ID | SPEC-017 |
-| Bloco | 5 — Acomodações, acompanhamento e notificações |
+| Bloco | 5 — Acompanhamento e notificações |
 | Estado do texto | especificada |
 | Estado do layout | pendente |
 | Capacidade | Notificar alterações do processo seletivo |
@@ -2189,7 +2189,7 @@ SPEC-009, 011 a 016. As dependências fornecem dados e capacidades; esta Spec n�
 - Alterações relevantes devem ser rastreáveis conforme RB/RNF aplicáveis.
 
 ## 7. Modelo de domínio
-RF-12, RF-27; RB-23, RB-27, RB-37, RB-41, RB-42; CANDIDATURA, VAGA, SOLICITACAO_ACOMODACAO. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
+RF-12, RF-27; RB-23, RB-27, RB-37, RB-41, RB-42; CANDIDATURA, VAGA. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
 
 ## 8. Impacto arquitetural
 A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
