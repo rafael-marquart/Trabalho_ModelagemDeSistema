@@ -8,6 +8,8 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 2. Resultado executivo
 
+**Atualização de correções:** em 2026-10-13 foram aplicados ajustes documentais relacionados a REV-001, REV-003, REV-004, REV-006, REV-007 e REV-010. O registro abaixo distingue correções aplicadas de validações que ainda dependem de revisão humana ou de decisão do grupo.
+
 - O mapa e o documento de detalhamento contêm **21 Specs**, com IDs e títulos correspondentes.
 - O `OPEN.md` contém questões numeradas de OPEN-001 a OPEN-085 sem IDs duplicados detectados.
 - Todas as RBs identificadas na baseline aparecem referenciadas em algum ponto de `Specs.md`; isso não garante, por si só, que cada regra esteja associada à Spec correta.
@@ -24,12 +26,9 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 RF-34 trata de cancelamento de candidatura e RF-35 de gestão do funil de seleção. Os dois requisitos não são citados no detalhamento atual.
 
-**Ajuste recomendado:**
-- incluir RF-34 na rastreabilidade da SPEC-012;
-- incluir RF-35 na rastreabilidade da SPEC-013;
-- confirmar se seus critérios e fluxos estão completamente representados nessas Specs.
+**Correção aplicada:** RF-34 está associado à SPEC-012 e RF-35 à SPEC-013. A referência indevida a RF-34 na SPEC-011 foi removida, mantendo nessa Spec o RF-26 de registro de candidatura.
 
-Não é necessário criar Specs novas apenas por existirem esses RFs: as capacidades correspondentes já estão mapeadas.
+**Pendente de validação:** conferir se os critérios e fluxos de cancelamento e gestão do funil cobrem integralmente os requisitos e suas exceções. Não é necessário criar Specs novas apenas por existirem esses RFs: as capacidades correspondentes já estão mapeadas.
 
 ### REV-002 — SPEC-011 a SPEC-021 precisam de detalhamento específico maior
 
@@ -59,7 +58,9 @@ A baseline lista os seguintes casos de uso:
 
 No detalhamento atual, SPEC-011 indica que o caso de uso específico precisa ser confirmado, embora UC-03 esteja listado na visão geral; SPEC-013 menciona a necessidade de confirmar o caso do Recrutador, embora UC-09 exista; SPEC-014 não explicita UC-04; SPEC-018 não explicita UC-06; SPEC-019 não explicita UC-11; SPEC-006 deve ser conferida com UC-14. Também é preciso distinguir UC-05 (acompanhamento pelo candidato) de UC-09 (gestão do funil pelo Recrutador).
 
-**Ajuste recomendado:** substituir referências provisórias pelas referências exatas após ler cada arquivo individual de caso de uso e verificar seus fluxos e exceções. Não atribuir conteúdo a um UC apenas pelo título.
+**Correção aplicada:** o detalhamento aponta UC-03 na SPEC-011, UC-05 na SPEC-012, UC-09 na SPEC-013, UC-04 na SPEC-014, UC-06 na SPEC-018, UC-11 na SPEC-019 e UC-14 na SPEC-006. A SPEC-020 distingue a análise administrativa como fluxo de moderação, sem criar ator de empresa-administradora.
+
+**Pendente de validação:** confirmar esses vínculos contra os arquivos individuais e seus fluxos completos, sobretudo se cada caso de uso tiver detalhes além da visão geral. Não atribuir conteúdo a um UC apenas pelo título.
 
 ### REV-004 — Seção 3.1 mistura finalidade de layout e questões em aberto
 
@@ -68,10 +69,9 @@ No detalhamento atual, SPEC-011 indica que o caso de uso específico precisa ser
 
 Em algumas Specs, a seção “Telas e evidência de layout” contém texto de questões em aberto em vez de listar áreas/telas ou declarar que layout não se aplica. Exemplo encontrado em SPEC-011: “Elegibilidade; duplicidade; estado inicial; caso de uso específico precisa ser confirmado.” Essa frase aparece com pontuação duplicada ao ser seguida pelo texto padrão de layout.
 
-**Ajuste recomendado:** separar claramente:
-- as telas/áreas e o que cada uma precisa demonstrar;
-- o estado do layout (pendente/aprovado/não se aplica);
-- as questões, referenciadas apenas pelos IDs OPEN.
+**Correção aplicada:** as áreas/telas estão separadas em tabela com finalidade e estado de layout; as questões em aberto permanecem em seção própria, referenciadas por IDs OPEN. As finalidades das áreas das SPEC-011 a SPEC-021 foram ajustadas para indicar o papel da área no fluxo.
+
+**Pendente de validação:** revisar se cada finalidade é suficientemente específica ao protótipo que será produzido e manter o estado de layout separado da aprovação do texto.
 
 ### REV-005 — Dependências e rastreabilidade das capacidades de acomodação
 
@@ -89,7 +89,9 @@ SPEC-014 descreve solicitação de acomodação; SPEC-015 descreve análise/deci
 
 Os RNFs de acessibilidade, privacidade, segurança, integridade, desempenho e auditoria são transversais. A presença de uma referência geral em uma Spec não demonstra como ela será verificada no comportamento específico.
 
-**Ajuste recomendado:** nos critérios de aceitação, associar os RNFs relevantes a verificações observáveis — por exemplo, navegação por teclado nas telas, autorização no acesso a dados, integridade após falha e rastreabilidade de mudança. Não inventar métricas numéricas onde a baseline não define limites.
+**Correção aplicada:** foram acrescentadas verificações observáveis nos critérios de aceitação das Specs operacionais selecionadas, incluindo autorização por perfil, privacidade, integridade, rastreabilidade, navegação por teclado e tratamento de falhas, conforme aplicabilidade.
+
+**Pendente de validação:** conferir a cobertura dos RNFs em todas as operações e confirmar os procedimentos de teste ainda não definidos na baseline. Não foram inventadas métricas numéricas.
 
 ### REV-007 — Separação entre Administrador da plataforma e Empresa
 
@@ -98,7 +100,9 @@ Os RNFs de acessibilidade, privacidade, segurança, integridade, desempenho e au
 
 A decisão consolidada estabelece que Administrador é papel da plataforma, utilizado para moderação; não existe Administrador associado à Empresa. A SPEC-020 já explicita isso. É necessário verificar que as demais Specs não usem “administrador da empresa” nem sugiram que a Empresa recebe o papel ADMINISTRADOR. A gestão dos próprios Recrutadores permanece com a conta Empresa conforme RF-17/RB-46/UC-07.
 
-**Ajuste recomendado:** manter essa regra como invariante e procurar ocorrências em todos os artefatos antes da aprovação.
+**Correção aplicada:** a SPEC-001 explicita que Administrador é perfil da plataforma e que Empresa não pode administrar vínculos de outra organização; a SPEC-020 limita a moderação ao Administrador da plataforma. Uma busca no detalhamento atual não encontrou a expressão “administrador da empresa”.
+
+**Pendente de validação:** repetir a conferência em todos os artefatos da baseline, não apenas em Specs.md, antes da aprovação.
 
 ### REV-008 — Fórmula e semântica da nota pública continuam em aberto
 
@@ -125,7 +129,9 @@ O princípio está consistente: a trava crítica precede o score; dados de acess
 
 O cabeçalho ainda descreve o documento como detalhamento do “Bloco 1 — Acesso e perfis”, embora o escopo listado no controle já seja SPEC-001 a SPEC-021.
 
-**Ajuste recomendado:** atualizar a descrição inicial para “documento de detalhamento das Specs do AcessaVagas, organizado nos Blocos 1 a 6” e incluir uma tabela consolidada com estado de texto e layout para todas as 21 Specs.
+**Correção aplicada:** o cabeçalho de Specs.md já descreve o documento como detalhamento dos Blocos 1 a 6 e o controle do documento inclui estado de texto e layout por bloco para SPEC-001 a SPEC-021.
+
+**Pendente de validação:** conferir se o registro consolidado por bloco é suficiente para a rotina de revisão ou se o grupo deseja uma linha individual por Spec.
 
 ## 4. Verificações que passaram
 
@@ -138,7 +144,7 @@ O cabeçalho ainda descreve o documento como detalhamento do “Bloco 1 — Aces
 
 ## 5. Plano recomendado de correção
 
-1. Corrigir a rastreabilidade de RF-34/RF-35 e a descrição inicial do documento.
+1. Conferir a rastreabilidade de RF-34/RF-35 e a descrição inicial, agora corrigidas no detalhamento.
 2. Conferir os casos de uso UC-03, UC-04, UC-05, UC-06, UC-09, UC-11 e UC-14 diretamente nos arquivos individuais.
 3. Tornar as SPEC-011 a SPEC-021 específicas e testáveis, eliminando texto genérico e corrigindo as seções de layout.
 4. Conferir cada regra de negócio e RNF por operação, incluindo permissões, privacidade, falhas e auditoria.
