@@ -75,14 +75,6 @@
 - `etapa_funil`
 - `score_match_deterministico`
 
-### SOLICITACAO_ACOMODACAO
-
-- `id_solicitacao` (PK)
-- `id_candidatura` (FK)
-- `recursos_solicitados`
-- `detalhes_tecnicos`
-- `status_confirmacao`
-
 ### ENTREVISTA
 
 - `id_entrevista` (PK)
@@ -124,7 +116,6 @@
 | VAGA | define | TRAVA_CRITICA_VAGA |
 | ADMINISTRADOR | gerencia status | VAGA |
 | ADMINISTRADOR | modera | DENUNCIA_FALSA_INCLUSAO |
-| CANDIDATURA | requer | SOLICITACAO_ACOMODACAO |
 | CANDIDATURA | agenda | ENTREVISTA |
 | ENTREVISTA | gera | AVALIACAO_POS_ENTREVISTA |
 | AVALIACAO_POS_ENTREVISTA | pode originar | DENUNCIA_FALSA_INCLUSAO |
