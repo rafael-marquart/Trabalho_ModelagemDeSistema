@@ -202,10 +202,10 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 ### SPEC-021 — Gerenciar nota pública de acessibilidade
 | ID | Estado | Questão em aberto | Contexto/impacto |
 |---|---|---|---|
-| OPEN-082 | aberta | Qual fórmula, pesos e método de agregação definem a nota pública? | RF-13/RB-20 definem a fonte geral, mas não a fórmula detalhada. |
-| OPEN-083 | aberta | Qual quantidade mínima e quais critérios de validade tornam dados/avaliações suficientes para a nota? | Necessário evitar nota baseada em dados insuficientes ou inválidos. |
-| OPEN-084 | aberta | Como a nota será apresentada quando os dados forem insuficientes ou conflitantes? | O sistema não deve inventar valor nem presumir acessibilidade. |
-| OPEN-085 | aberta | Quais efeitos uma decisão de moderação pode produzir na nota e nos dados publicados? | A alteração só pode ocorrer após decisão registrada, mas os efeitos autorizados precisam ser definidos. |
+| OPEN-082 | parcialmente definida | Como apresentar a nota pública com base em estrelas? | Decisão do grupo: exibir a frequência de avaliações válidas em cada quantidade de estrelas, sem presumir média ou pesos adicionais. |
+| OPEN-083 | parcialmente definida | Qual quantidade mínima e quais critérios de validade tornam dados/avaliações suficientes para a nota? | Decisão do grupo: uma avaliação válida é suficiente para apresentar a distribuição; os critérios adicionais de validade permanecem conforme a baseline e as decisões ainda necessárias. |
+| OPEN-084 | parcialmente definida | Como a nota será apresentada quando os dados forem insuficientes ou conflitantes? | Decisão do grupo: sem avaliações válidas, não exibir nota e informar que os dados são insuficientes. O tratamento de dados conflitantes permanece a confirmar se aplicável. |
+| OPEN-085 | aberta | Quais efeitos uma decisão de moderação pode produzir na nota e nos dados publicados? | Decisão do grupo: nenhum efeito antes de decisão de moderação registrada. Ainda falta definir quais efeitos uma decisão confirmada pode autorizar. |
 
 ## Decisões consolidadas
 
