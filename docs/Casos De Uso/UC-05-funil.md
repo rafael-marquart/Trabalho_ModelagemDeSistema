@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Permitir ao candidato acompanhar suas candidaturas, etapas, status e decisões relacionadas às acomodações.
+Permitir ao candidato acompanhar suas candidaturas, etapas, status e decisões do processo seletivo.
 
 ## Ator principal
 
@@ -18,7 +18,7 @@ Permitir ao candidato acompanhar suas candidaturas, etapas, status e decisões r
 1. O candidato acessa “Minhas Candidaturas”.
 2. O sistema apresenta as candidaturas e o estado atual de cada processo.
 3. O candidato seleciona uma candidatura para consultar sua linha do tempo.
-4. O sistema apresenta alterações de status, decisões e informações de acomodação autorizadas.
+4. O sistema apresenta alterações de status e decisões registradas.
 5. O sistema permite cancelar a candidatura quando as regras do processo permitirem.
 
 ## Exceções
@@ -38,7 +38,6 @@ Permitir ao candidato acompanhar suas candidaturas, etapas, status e decisões r
 - RB-36 — Cancelamento de candidatura.
 - RB-38 — Estados do funil.
 - RB-39 — Transições válidas do funil.
-- RB-40 — Visibilidade das acomodações.
 - RB-41 — Auditoria das alterações.
 - RB-42 — Vaga encerrada.
 
@@ -47,7 +46,6 @@ Permitir ao candidato acompanhar suas candidaturas, etapas, status e decisões r
 - RF-11 — Minhas candidaturas.
 - RF-27 — Notificações do processo seletivo.
 - RF-31 — Acompanhamento do processo seletivo.
-- RF-33 — Histórico das acomodações.
 - RF-34 — Cancelamento de candidatura.
 
 ## Critérios de aceitação
