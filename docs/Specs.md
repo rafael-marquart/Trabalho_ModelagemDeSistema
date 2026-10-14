@@ -307,10 +307,12 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 ### 5.2 Cadastrar/atualizar dados profissionais
 1. Candidato abre a edição.
 2. Informa ou atualiza os dados previstos em RF-04/RF-19.
-3. Sistema valida os campos mínimos de identificação/cadastro explicitamente definidos e aprovados; a lista exata permanece pendente na OPEN-007.1.
-4. Dados válidos são persistidos, permitindo o preenchimento progressivo das demais categorias.
-5. Erros são indicados para correção, sem descarte silencioso das informações preenchidas.
-6. A ausência de dados necessários à análise de uma vaga é indicada como insuficiência de informação, sem presumir compatibilidade (RB-16); isso não torna automaticamente o campo obrigatório para salvar o perfil.
+3. O formulário reutiliza nome e e-mail mantidos na conta, sem exigir preenchimento duplicado; o cadastro da conta segue as regras próprias da SPEC-001. CPF não é obrigatório para salvar o perfil, pois a baseline não apresenta justificativa funcional aprovada para exigi-lo.
+4. Formação/escolaridade, competências e idiomas podem ser preenchidos progressivamente e não bloqueiam o salvamento. Experiências profissionais, cursos, certificações e links profissionais também não são obrigatórios por categoria, sem antecipar a decisão de escopo das categorias ainda tratada na OPEN-007.
+5. Necessidades funcionais de acessibilidade e recursos indispensáveis não exigem declaração universal. Quando declarados, podem ser informados por autodeclaração, sem exigir ou armazenar laudo; a interface distingue “não informado” de “declarado que não possui necessidade”.
+6. Dados válidos são persistidos, permitindo o preenchimento progressivo das categorias.
+7. Erros de validação definidos são indicados para correção, sem descarte silencioso das informações preenchidas.
+8. A ausência de dados necessários à análise de uma vaga é indicada como insuficiência de informação, sem presumir compatibilidade (RB-16); isso não torna automaticamente o campo obrigatório para salvar o perfil.
 
 ### 5.3 Declarar necessidades de acessibilidade
 1. Candidato acessa a área de necessidades.
@@ -331,12 +333,14 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 2. Necessidades de acessibilidade são informações protegidas (RB-26, RNF-08).
 3. Dados profissionais e vetor devem permanecer associados ao candidato correto (RNF-09).
 4. O candidato só pode consultar/alterar o próprio perfil, salvo permissões explicitamente previstas pela baseline.
-5. O salvamento respeita informações mínimas de RB-29 e o cadastro progressivo aprovado na OPEN-007.1; somente campos mínimos de identificação/cadastro explicitamente definidos e aprovados podem bloquear o salvamento. A lista exata permanece pendente; campos obrigatórios não são inventados.
-6. A ausência de dados necessários à análise de uma vaga deve ser indicada sem presumir compatibilidade, conforme RB-16, e não torna automaticamente esses dados obrigatórios para salvar o perfil.
-7. A distinção de necessidades obrigatórias deve ser preservada quando suportada pela baseline, pois RB-06 determina que sejam consideradas na compatibilidade.
-8. Alterações relevantes são rastreáveis conforme RB-27 e RNF-14.
-9. O sistema registra necessidades funcionais declaradas; não infere diagnóstico nem exige documento não previsto.
-10. Persistir o perfil não substitui as regras de compatibilidade da SPEC-007.
+5. O salvamento respeita RB-29 e o cadastro progressivo aprovado na OPEN-007.1. Nome e e-mail são reutilizados da conta, sem preenchimento duplicado no perfil; o cadastro da conta segue a SPEC-001. CPF não é obrigatório para salvar o perfil, pois não há justificativa funcional aprovada na baseline para exigi-lo.
+6. Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria. A decisão sobre quais categorias compõem o perfil permanece na OPEN-007.
+7. Necessidades funcionais e recursos indispensáveis não exigem declaração universal. A interface deve distinguir ausência de informação (“não informado”) de declaração de inexistência de necessidade; necessidades declaradas podem ser autodeclaradas sem exigir ou armazenar laudo.
+8. A ausência de dados necessários à análise de uma vaga deve ser indicada sem presumir compatibilidade, conforme RB-16, e não torna automaticamente esses dados obrigatórios para salvar o perfil.
+9. A distinção de necessidades obrigatórias deve ser preservada quando suportada pela baseline, pois RB-06 determina que sejam consideradas na compatibilidade.
+10. Alterações relevantes são rastreáveis conforme RB-27 e RNF-14.
+11. O sistema registra necessidades funcionais declaradas; não infere diagnóstico nem exige documento não previsto.
+12. Persistir o perfil não substitui as regras de compatibilidade da SPEC-007.
 
 ## 7. Modelo de domínio envolvido
 
@@ -380,7 +384,9 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 - [ ] Candidato cadastra e atualiza dados profissionais previstos na baseline.
 - [ ] Candidato declara necessidades por autodeclaração.
 - [ ] Necessidades são organizadas nas categorias conceituais do vetor.
-- [ ] Somente campos mínimos de identificação/cadastro explicitamente definidos e aprovados bloqueiam o salvamento; a lista exata permanece pendente na OPEN-007.1.
+- [ ] Nome e e-mail da conta são reutilizados sem exigir preenchimento duplicado no perfil; CPF não bloqueia o salvamento.
+- [ ] Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria.
+- [ ] Necessidades funcionais e recursos indispensáveis não exigem declaração universal; “não informado” é distinguido de “declarado que não possui necessidade”, e a autodeclaração não exige nem armazena laudo.
 - [ ] A ausência de dados necessários à análise de uma vaga é indicada sem presumir compatibilidade, conforme RB-16, sem tornar automaticamente esses dados obrigatórios para salvar o perfil.
 - [ ] Um candidato não consulta nem altera perfil privado de outro.
 - [ ] Dados de acessibilidade não são expostos sem autorização.
@@ -409,7 +415,7 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decisões tomadas nesta Spec.
 
 - **OPEN-007:** categorias de dados do perfil profissional.
-- **OPEN-007.1 (decisão parcial aprovada; questão permanece aberta):** cadastro progressivo; somente campos mínimos de identificação/cadastro explicitamente definidos e aprovados podem bloquear o salvamento. A lista exata permanece pendente. Formação/escolaridade, competências e idiomas podem ser preenchidos progressivamente; experiências, cursos, certificações e links profissionais não são obrigatórios por categoria. A falta de dados necessários à análise deve ser indicada conforme RB-16, sem presumir compatibilidade. Necessidades podem ser autodeclaradas, sem exigir/armazenar laudo; ausência de informação deve ser distinta de declaração de inexistência de necessidade.
+- **OPEN-007.1 (decisão aprovada; resolvida):** nome e e-mail são reutilizados da conta, sem preenchimento duplicado no perfil; o cadastro da conta segue as regras da SPEC-001. CPF não é obrigatório para salvar o perfil. Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria, sem antecipar o escopo de categorias da OPEN-007. Necessidades funcionais e recursos indispensáveis não exigem declaração universal; necessidades podem ser autodeclaradas sem exigir/armazenar laudo, e “não informado” deve ser distinto de “declarado que não possui necessidade”. Dados necessários à análise de uma vaga que estejam ausentes são indicados como insuficiência sem presumir compatibilidade (RB-16).
 - **OPEN-007.2 (decisão aprovada):** validação básica por categoria, respeitando o cadastro progressivo; formatos, limites e critérios específicos permanecem pendentes.
 - **OPEN-008 (decisão aprovada):** catálogo estruturado e extensível nas categorias arquitetônicas, de comunicação e tecnológicas, com distinção entre necessidades obrigatórias e não obrigatórias; lista inicial, significados operacionais e detalhes de representação permanecem pendentes.
 - **OPEN-009 (decisão aprovada):** histórico de alterações relevantes, sem exigir versionamento completo do perfil a cada modificação; retenção de um ano da OPEN-006 serve como referência para auditoria, enquanto campos definitivos, casos de preservação de valores anteriores/versões completas e aplicação exata ao histórico funcional permanecem pendentes.
