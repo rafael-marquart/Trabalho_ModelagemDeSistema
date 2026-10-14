@@ -407,7 +407,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 - **OPEN-007:** categorias de dados do perfil profissional.
 - **OPEN-007.1 (decisão aprovada):** cadastro progressivo com mínimo obrigatório; a lista concreta de campos mínimos continua pendente.
-- **OPEN-007.2:** regras de validação dos campos e registros por categoria.
+- **OPEN-007.2 (decisão aprovada):** validação básica por categoria, respeitando o cadastro progressivo; formatos, limites e critérios específicos permanecem pendentes.
 - **OPEN-008:** catálogo de necessidades por categoria e representação de necessidades obrigatórias.
 - **OPEN-009:** dados/versionamento do histórico e prazo de retenção.
 - **OPEN-010:** associação entre USUARIO e CANDIDATO no modelo.
