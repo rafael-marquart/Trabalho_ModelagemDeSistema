@@ -411,7 +411,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 - **OPEN-008 (decisão aprovada):** catálogo estruturado e extensível nas categorias arquitetônicas, de comunicação e tecnológicas, com distinção entre necessidades obrigatórias e não obrigatórias; lista inicial, significados operacionais e detalhes de representação permanecem pendentes.
 - **OPEN-009 (decisão aprovada):** histórico de alterações relevantes, sem exigir versionamento completo do perfil a cada modificação; retenção de um ano da OPEN-006 serve como referência para auditoria, enquanto campos definitivos, casos de preservação de valores anteriores/versões completas e aplicação exata ao histórico funcional permanecem pendentes.
 - **OPEN-010 (decisão aprovada):** associação 1:1 opcional para USUARIO e obrigatória para CANDIDATO; cada CANDIDATO pertence a exatamente um USUARIO, e cada USUARIO pode ter zero ou um CANDIDATO. O modelo conceitual deverá explicitar a cardinalidade. Momento de criação do perfil, desativação/exclusão, conversão entre perfis e definição técnica de chave/restrições permanecem pendentes.
-- **OPEN-011:** matriz de visibilidade de perfil e necessidades para Recrutadores.
+- **OPEN-011 (decisão aprovada):** após candidatura, Recrutador autenticado e autorizado da Empresa responsável pode consultar perfil profissional e necessidades de acessibilidade no contexto daquela candidatura, respeitando RB-26, RB-28, RF-30 e RB-46. A candidatura não concede acesso a perfis sem relação com a vaga ou de outras Empresas, nem implica exposição indiscriminada de todos os campos. Matriz definitiva de campos, distinções por categoria/etapa, restrições adicionais e eventual auditoria específica de acessos permanecem pendentes.
 
 ## 14. Definition of Done
 
