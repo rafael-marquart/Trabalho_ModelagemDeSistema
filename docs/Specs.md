@@ -48,7 +48,7 @@ Estados possíveis: especificada, aprovada, em implementação, implementada ou 
 - Permitir que Empresa autenticada cadastre ou associe usuários com perfil de Recrutador nas configurações.
 - Manter o vínculo do Recrutador com a Empresa responsável.
 - Proteger operações no backend e manter o comportamento de sessão previsto em RB-22.
-- Registrar alterações relevantes conforme RB-27 e RNF-14.
+- Registrar eventos relevantes de negócio e segurança conforme RB-27, RB-41, RNF-14 e decisão da OPEN-006; manter os registros por 1 ano, com acesso restrito e proteção contra alteração ou exclusão indevida.
 
 ### Fora do escopo
 - Gestão de dados profissionais e necessidades de acessibilidade do candidato, tratada na SPEC-002.
@@ -133,7 +133,7 @@ O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou t
 8. Quando o e-mail informado já pertencer a uma conta, a Empresa autenticada e autorizada pode solicitar o vínculo por convite enviado ao e-mail da conta; o titular deve dar aceite explícito antes da efetivação.
 9. Enquanto o convite estiver pendente, não conceder permissões de Recrutador para a Empresa solicitante; informar à Empresa apenas o estado pendente, sem dados adicionais da conta existente.
 10. Antes de efetivar o vínculo após o aceite, validar novamente a autorização da Empresa e respeitar RB-46; o aceite não autoriza automaticamente transferência ou administração de vínculo pertencente a outra Empresa.
-11. Eventos de envio e resposta ao convite e de efetivação do vínculo são relevantes para rastreabilidade conforme RB-27 e RNF-14; catálogo e retenção são tratados na OPEN-006.
+11. Eventos de envio e resposta ao convite e de efetivação do vínculo são relevantes para rastreabilidade conforme RB-27 e RNF-14. Conforme decisão registrada na OPEN-006, os eventos relevantes de negócio e segurança devem ser auditados e os registros mantidos por 1 ano, com acesso restrito, proteção contra alteração/exclusão indevida e minimização dos dados registrados. Não se exige auditoria indiscriminada de consultas e visualizações; detalhes técnicos exaustivos e descarte permanecem para definição na implementação, respeitando a política aprovada e obrigações aplicáveis.
 12. Operações protegidas devem verificar perfil e permissão no backend (RB-12, RF-40, DA-02).
 13. Sessão expirada ou invalidada não pode autorizar operação protegida (RB-22).
 14. Candidato, Recrutador e Administrador possuem permissões compatíveis com seus papéis (RF-03).
