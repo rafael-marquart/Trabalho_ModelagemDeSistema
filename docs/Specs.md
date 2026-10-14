@@ -922,7 +922,7 @@ A divisão é funcional e não fixa o layout final. Protótipos devem considerar
 6. Se houver pendências ou inconsistências, o sistema indica os campos/problemas e não permite publicar.
 
 ### 5.2.1 Matriz de campos da vaga própria — decisão OPEN-020
-Os campos abaixo definem o mínimo funcional para cadastro e publicação, sem fixar tipos de dados, limites, catálogos ou validações detalhadas por campo.
+Os campos abaixo definem o mínimo funcional para cadastro e publicação. As validações decididas na OPEN-021 complementam a matriz sem criar atributos, limites, formatos técnicos, moeda ou catálogos não definidos na baseline.
 
 | Campo/grupo | Obrigatoriedade para publicação | Tratamento |
 |---|---|---|
@@ -930,16 +930,35 @@ Os campos abaixo definem o mínimo funcional para cadastro e publicação, sem f
 | Descrição (descricao) | Obrigatório | Apresenta o trabalho e suas condições. |
 | Requisitos | Obrigatório | Informa os requisitos da oportunidade; a decomposição detalhada permanece para especificação posterior quando necessária. |
 | Modalidade (modalidade) | Obrigatório | Informa a modalidade de trabalho. |
-| Localização | Obrigatório, com preenchimento compatível com a modalidade | Não pressupõe endereço físico quando não for pertinente; a regra de consistência detalhada pertence à OPEN-021. |
+| Localização | Obrigatório, com preenchimento compatível com a modalidade | Não pressupõe endereço físico quando não for pertinente; deve ser compatível com a modalidade quando as regras definidas permitirem determinar a inconsistência. |
 | Critérios de acessibilidade | Obrigatório declarar o estado das informações relevantes | Não exige que todos os critérios indiquem atendimento; informação ausente não significa compatibilidade. Os critérios específicos por vaga permanecem na OPEN-023. |
-| Prazo de inscrição | Obrigatório | Deve ser válido para a publicação conforme a regra de prazo descrita na UC-08. |
+| Prazo de inscrição | Obrigatório | Deve ser uma data válida e não anterior à data atual no momento da publicação, conforme UC-08/EX03. |
 | Faixa salarial (faixa_salarial) | Opcional | Pode ser omitida. |
 | Identificador da vaga (id_vaga) | Não é campo de formulário | Controlado pelo sistema. |
 | Empresa responsável (id_empresa) | Não é campo de formulário | Derivada do vínculo e da autorização do Recrutador autenticado. |
 | Estado da vaga (status_vaga) | Não é campo livre | Controlado pelo fluxo de rascunho, publicação e gerenciamento. |
 | Origem da vaga (origem_ingestao) | Não é campo livre | Registrada pelo sistema conforme a origem; não se impõem aqui valores técnicos. |
 
-A obrigatoriedade da matriz é condição para publicar, não para iniciar ou salvar um rascunho. Os atributos conceituais existentes são preservados; esta decisão não cria atributos, entidades ou cardinalidades. Validações e consistência por campo ficam na OPEN-021; restrições de edição e encerramento ficam na OPEN-022.
+A obrigatoriedade da matriz é condição para publicar, não para iniciar ou salvar um rascunho. Os atributos conceituais existentes são preservados; esta decisão não cria atributos, entidades ou cardinalidades. As regras de validação por campo e de consistência estão detalhadas abaixo; restrições de edição e encerramento ficam na OPEN-022.
+
+
+### 5.2.2 Validações por campo e consistência — decisão OPEN-021
+
+Antes de publicar, o sistema aplica as validações no domínio/aplicação, independentemente da interface utilizada:
+
+| Campo/regra | Validação para publicação |
+|---|---|
+| Cargo/título (`titulo`) | Deve conter conteúdo efetivo; vazio ou composto apenas por espaços é inválido. |
+| Descrição (`descricao`) | Deve conter conteúdo efetivo; vazio ou composto apenas por espaços é inválido. |
+| Requisitos | Deve haver informação efetiva de requisitos; ausência ou conteúdo composto apenas por espaços não satisfaz a obrigatoriedade. Não se cria uma decomposição adicional dos requisitos. |
+| Modalidade (`modalidade`) | Deve estar preenchida com um valor reconhecido entre os valores definidos pela baseline/sistema. Campo vazio ou valor não reconhecido bloqueia a publicação; esta decisão não cria um novo catálogo. |
+| Localização | Deve estar preenchida de forma compatível com a modalidade. Bloquear quando a incompatibilidade puder ser determinada por regras definidas; não exigir endereço físico quando não for pertinente. |
+| Critérios de acessibilidade | Deve estar declarado o estado das informações relevantes. Informação ausente não significa ausência de barreiras nem compatibilidade presumida; critérios específicos por vaga permanecem na OPEN-023. |
+| Prazo de inscrição | Deve ser uma data válida e não anterior à data atual no momento da publicação. |
+| Faixa salarial (`faixa_salarial`) | É opcional. Se informada como intervalo, o limite inferior não pode ser maior que o limite superior. Não se fixam moeda, formato ou limites adicionais. |
+| Consistência entre campos | Bloquear conflitos identificáveis pelas regras definidas na baseline e nesta Spec. Não inventar combinações, limites ou catálogos. |
+
+Se a publicação for bloqueada, o sistema preserva os dados informados e identifica os campos e problemas que precisam de correção, com mensagens compreensíveis e acessíveis. Rascunhos incompletos ou inconsistentes podem ser salvos; as validações de publicação são executadas novamente quando o usuário solicitar publicar. A validação crítica não pode existir apenas na interface.
 
 ### 5.3 Publicar vaga
 1. Recrutador solicita publicação.
@@ -1016,8 +1035,16 @@ Contratos conceituais; não especificam endpoints HTTP.
 - [ ] Faixa salarial é opcional.
 - [ ] Identificador, empresa responsável, estado e origem não são campos de preenchimento livre do recrutador.
 - [ ] Rascunho pode ser salvo com campos obrigatórios pendentes.
-- [ ] Publicação exige o preenchimento dos campos obrigatórios da matriz e bloqueia a ação quando houver pendências, indicando-as.
-- [ ] Dados inconsistentes impedem publicação e são apontados.
+- [ ] Publicação exige o preenchimento dos campos obrigatórios da matriz; campos obrigatórios de texto vazios ou compostos apenas por espaços bloqueiam a ação.
+- [ ] Modalidade vazia ou não reconhecida bloqueia publicação.
+- [ ] Localização incompatível com a modalidade bloqueia publicação quando a inconsistência puder ser determinada por regras definidas.
+- [ ] Informação de acessibilidade ausente não é interpretada como compatibilidade.
+- [ ] Prazo de inscrição inválido ou anterior à data atual bloqueia publicação.
+- [ ] Ausência de faixa salarial não bloqueia publicação.
+- [ ] Intervalo salarial informado com limite inferior maior que o superior bloqueia publicação.
+- [ ] Dados inconsistentes impedem publicação e são apontados por campo/problema, preservando os dados informados.
+- [ ] Rascunhos incompletos ou inconsistentes podem ser salvos.
+- [ ] Validações são aplicadas no domínio/aplicação independentemente da interface.
 - [ ] Vaga válida pode ser salva como rascunho.
 - [ ] Vaga válida pode ser publicada.
 - [ ] Prazo de encerramento inválido impede publicação.
@@ -1036,6 +1063,14 @@ Contratos conceituais; não especificam endpoints HTTP.
 | T-005-04 | Publicar vaga com campos obrigatórios ausentes | Publicação bloqueada e campos indicados |
 | T-005-05 | Publicar vaga inconsistente | Publicação bloqueada |
 | T-005-06 | Publicar com prazo anterior à data atual | Publicação recusada |
+| T-005-11 | Publicar com campo obrigatório de texto vazio ou só com espaços | Publicação bloqueada e campos identificados |
+| T-005-12 | Publicar com modalidade vazia ou não reconhecida | Publicação bloqueada |
+| T-005-13 | Publicar com localização incompatível conforme regra definida | Publicação bloqueada e inconsistência indicada |
+| T-005-14 | Critérios de acessibilidade sem estado declarado | Publicação bloqueada; compatibilidade não presumida |
+| T-005-15 | Publicar sem faixa salarial | Publicação permitida se os demais dados forem válidos |
+| T-005-16 | Informar intervalo salarial invertido | Publicação bloqueada |
+| T-005-17 | Salvar rascunho incompleto ou inconsistente | Rascunho salvo sem publicação |
+| T-005-18 | Tentar contornar validação por outra interface | As mesmas regras são aplicadas no domínio/aplicação |
 | T-005-07 | Salvar vaga válida como rascunho | Rascunho persistido sem ficar publicado |
 | T-005-08 | Publicar vaga válida | Vaga visível para candidatos elegíveis |
 | T-005-09 | Alterar vaga própria | Dados atualizados e evento rastreável |
@@ -1046,7 +1081,7 @@ Contratos conceituais; não especificam endpoints HTTP.
 As questões estão centralizadas em [OPEN.md](OPEN.md).
 
 - **OPEN-020:** lista completa de campos e obrigatoriedade de vaga própria.
-- **OPEN-021:** definição de consistência e validações de cada campo da vaga.
+- **OPEN-021:** resolvida; validações por campo e consistência pré-publicação definidas nesta Spec.
 - **OPEN-022:** permissões e limites para edição/encerramento após publicação e após candidaturas.
 - **OPEN-023:** origem e representação dos critérios de acessibilidade e relação com INFRAESTRUTURA_EMPRESA e TRAVA_CRITICA_VAGA.
 
