@@ -90,8 +90,13 @@ A lista identifica áreas funcionais, não define quantidade final de páginas o
 8. A sessão é mantida, expirada ou invalidada conforme RB-22 e a política de segurança aplicável.
 
 ### 5.2 Recuperação de senha
-1. O usuário seleciona recuperação de senha.
-2. O sistema conduz o fluxo previsto em RF-02.
+1. O usuário informa o e-mail na tela de recuperação.
+2. O sistema informa quando o e-mail não estiver cadastrado; para uma conta existente, envia um link de recuperação por e-mail.
+3. O link tem validade de 30 minutos e só pode ser utilizado uma vez.
+4. A emissão de uma nova solicitação invalida o link emitido anteriormente.
+5. Após a conclusão da redefinição, o link utilizado é invalidado.
+6. O sistema aplica limitação de frequência às solicitações de recuperação; os limites numéricos permanecem pendentes de definição.
+7. A política de encerramento ou manutenção das sessões existentes após a redefinição será definida na OPEN-002.
 3. O sistema valida a solicitação e permite redefinição quando válida.
 4. As novas credenciais podem ser usadas no acesso.
 
@@ -205,7 +210,7 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decisões tomadas nesta Spec.
 
-- **OPEN-001:** recuperação de senha — verificação, validade e canal de envio.
+- **OPEN-001:** resolvida; recuperação por link de e-mail, validade de 30 minutos, uso único, invalidação do link anterior em nova solicitação, informação quando o e-mail não está cadastrado e limitação de frequência sem limites numéricos definidos. A política de sessões permanece na OPEN-002.
 - **OPEN-002:** política de sessão — expiração e eventos de invalidação.
 - **OPEN-003:** política de senha e bloqueio.
 - **OPEN-004:** campos obrigatórios e validação do cadastro de Empresa.
