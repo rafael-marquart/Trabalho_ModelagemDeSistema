@@ -121,6 +121,17 @@ A decisão aprovada define o envio por link de e-mail, validade de 30 minutos, u
 
 O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou tratar um e-mail que já pertença a uma conta precisa ser decidida antes da implementação. O perfil Administrador é exclusivo da plataforma e não participa da administração da conta Empresa.
 
+
+
+### 5.5 Encerrar vaga — decisão OPEN-022
+1. Recrutador autenticado e autorizado solicita o encerramento da vaga.
+2. O sistema confirma a autorização e registra a mudança para o estado de encerramento previsto na baseline, sem criar um novo estado.
+3. O sistema impede novas candidaturas após o encerramento.
+4. Candidaturas existentes e o histórico do processo são preservados.
+5. O sistema identifica candidatos ativos para comunicação, conforme RB-42 e SPEC-009/SPEC-017.
+6. O encerramento não movimenta automaticamente candidatos entre etapas nem elimina candidaturas.
+7. A mudança de estado e o responsável ficam registrados para auditoria.
+
 ## 6. Regras e invariantes
 
 1. Credenciais devem ser validadas antes de conceder acesso (RB-21).
@@ -967,13 +978,15 @@ Se a publicação for bloqueada, o sistema preserva os dados informados e identi
 4. Se válida, a vaga passa a ficar disponível no catálogo para candidatos elegíveis.
 5. O sistema registra a publicação e o responsável para auditoria.
 
-### 5.4 Editar e gerenciar vaga
-1. Recrutador seleciona uma vaga sob sua autorização.
-2. O sistema apresenta os dados atuais.
-3. Recrutador altera os campos permitidos.
-4. O sistema valida as alterações.
-5. Se válidas, salva a atualização e registra o evento relevante.
-6. Restrições específicas para edição após publicação, encerramento ou existência de candidaturas dependem da baseline e estão em aberto (OPEN-022).
+### 5.4 Editar e gerenciar vaga — decisão OPEN-022
+1. Recrutador autenticado e autorizado seleciona uma vaga da Empresa vinculada.
+2. O sistema verifica o estado atual da vaga e se existem candidaturas associadas.
+3. Rascunhos podem ser editados e salvos mesmo incompletos.
+4. Vagas publicadas sem candidaturas podem ser editadas; o sistema valida as alterações antes de gravá-las.
+5. Depois que houver candidaturas, o sistema bloqueia a alteração dos campos que definem as condições da oportunidade: cargo/título, descrição, requisitos, modalidade, localização, critérios de acessibilidade, prazo de inscrição e faixa salarial.
+6. Se uma alteração permitida for inválida, o sistema a recusa sem substituir os dados válidos existentes.
+7. Alterações relevantes aceitas são registradas para auditoria, conforme RB-27/RF-38.
+8. O sistema não permite edição nem encerramento por usuário sem autorização para gerenciar vagas da Empresa responsável.
 
 ## 6. Regras e invariantes
 
@@ -1051,7 +1064,14 @@ Contratos conceituais; não especificam endpoints HTTP.
 - [ ] Vaga publicada fica disponível para candidatos elegíveis no catálogo.
 - [ ] Informações de acessibilidade são mantidas sem presumir valores ausentes.
 - [ ] Publicação e alterações relevantes são rastreáveis.
-- [ ] Compatibilidade e funil não são implementados nesta capacidade.
+- [ ] Rascunhos podem ser editados e salvos incompletos.
+- [ ] Vagas publicadas sem candidaturas podem ser editadas se as validações forem satisfeitas.
+- [ ] Após existir candidatura, alterações dos campos que definem as condições da oportunidade são bloqueadas.
+- [ ] Alteração inválida não substitui os dados válidos existentes.
+- [ ] Usuários sem autorização não conseguem editar nem encerrar vagas.
+- [ ] Encerrar a vaga bloqueia novas candidaturas e preserva candidaturas e histórico.
+- [ ] Encerramento identifica candidatos ativos para comunicação e não os movimenta automaticamente no funil.
+- [ ] Compatibilidade e gestão do funil não são implementadas nesta capacidade.
 
 ## 12. Casos de teste derivados
 
@@ -1075,6 +1095,13 @@ Contratos conceituais; não especificam endpoints HTTP.
 | T-005-08 | Publicar vaga válida | Vaga visível para candidatos elegíveis |
 | T-005-09 | Alterar vaga própria | Dados atualizados e evento rastreável |
 | T-005-10 | Consultar vaga com acessibilidade não informada | Ausência permanece explicitamente não informada |
+| T-005-19 | Editar rascunho incompleto | Alteração salva mesmo incompleta |
+| T-005-20 | Editar vaga publicada sem candidaturas com dados válidos | Alteração salva e registrada |
+| T-005-21 | Tentar alterar campo que define as condições após existir candidatura | Alteração bloqueada; dados originais preservados |
+| T-005-22 | Tentar salvar alteração inválida em vaga publicada | Alteração recusada sem substituir dados válidos |
+| T-005-23 | Usuário não autorizado tenta editar ou encerrar vaga | Operação recusada |
+| T-005-24 | Encerrar vaga com candidaturas existentes | Novas candidaturas bloqueadas; candidaturas e histórico preservados; candidatos ativos identificados para comunicação |
+| T-005-25 | Encerrar vaga com candidatos ativos no funil | Nenhuma movimentação automática de etapa ocorre |
 
 ## 13. Questões em aberto
 
@@ -1082,7 +1109,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 
 - **OPEN-020:** lista completa de campos e obrigatoriedade de vaga própria.
 - **OPEN-021:** resolvida; validações por campo e consistência pré-publicação definidas nesta Spec.
-- **OPEN-022:** permissões e limites para edição/encerramento após publicação e após candidaturas.
+- **OPEN-022:** resolvida; limites de edição por estado e encerramento definidos nesta Spec.
 - **OPEN-023:** origem e representação dos critérios de acessibilidade e relação com INFRAESTRUTURA_EMPRESA e TRAVA_CRITICA_VAGA.
 
 ## 14. Definition of Done
