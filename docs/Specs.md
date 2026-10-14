@@ -87,7 +87,9 @@ A lista identifica áreas funcionais, não define quantidade final de páginas o
 5. O sistema valida as credenciais.
 6. Se válidas, autentica o usuário e encaminha para a área compatível com seu perfil.
 7. Se inválidas, informa falha e não concede acesso.
-8. A sessão é mantida, expirada ou invalidada conforme RB-22 e a política de segurança aplicável.
+8. A sessão comum expira após 60 minutos sem atividade. Não há limite máximo absoluto de duração enquanto houver atividade.
+9. Logout explícito, troca ou redefinição de senha e bloqueio ou desativação da conta invalidam as sessões existentes.
+10. A opção “manter conectado” permite permanência por 30 dias, com renovação conforme uso; ela não impede a invalidação por nenhum dos eventos acima.
 
 ### 5.2 Recuperação de senha
 1. O usuário informa o e-mail na tela de recuperação.
@@ -96,11 +98,11 @@ A lista identifica áreas funcionais, não define quantidade final de páginas o
 4. A emissão de uma nova solicitação invalida o link emitido anteriormente.
 5. Após a conclusão da redefinição, o link utilizado é invalidado.
 6. O sistema aplica limitação de frequência às solicitações de recuperação; os limites numéricos permanecem pendentes de definição.
-7. A política de encerramento ou manutenção das sessões existentes após a redefinição será definida na OPEN-002.
+7. A redefinição de senha invalida as sessões existentes, conforme decisão registrada na OPEN-002.
 3. O sistema valida a solicitação e permite redefinição quando válida.
 4. As novas credenciais podem ser usadas no acesso.
 
-A baseline não determina canal de entrega, formato de token, validade do link ou texto exato das mensagens; esses detalhes permanecem em aberto.
+A decisão aprovada define o envio por link de e-mail, validade de 30 minutos, uso único e invalidação do link anterior em nova solicitação. O formato técnico do token e o texto exato das mensagens permanecem por definir.
 
 ### 5.3 Cadastro e autorização por perfil
 1. O sistema permite iniciar cadastro como Usuário ou Empresa.
@@ -210,8 +212,8 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decisões tomadas nesta Spec.
 
-- **OPEN-001:** resolvida; recuperação por link de e-mail, validade de 30 minutos, uso único, invalidação do link anterior em nova solicitação, informação quando o e-mail não está cadastrado e limitação de frequência sem limites numéricos definidos. A política de sessões permanece na OPEN-002.
-- **OPEN-002:** política de sessão — expiração e eventos de invalidação.
+- **OPEN-001:** resolvida; recuperação por link de e-mail, validade de 30 minutos, uso único, invalidação do link anterior em nova solicitação, informação quando o e-mail não está cadastrado e limitação de frequência sem limites numéricos definidos.
+- **OPEN-002:** resolvida; sessão comum expira após 60 minutos sem atividade; sem limite máximo absoluto enquanto houver atividade; logout, troca/redefinição de senha e bloqueio/desativação invalidam as sessões; opção “manter conectado” por 30 dias, com renovação conforme uso.
 - **OPEN-003:** política de senha e bloqueio.
 - **OPEN-004:** campos obrigatórios e validação do cadastro de Empresa.
 - **OPEN-005:** associação de Recrutador cujo e-mail já pertence a uma conta e consentimento.
