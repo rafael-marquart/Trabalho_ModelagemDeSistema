@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Cadastrar e atualizar dados pessoais e necessidades funcionais de acessibilidade que alimentam a análise de compatibilidade.
+Cadastrar e atualizar as categorias aprovadas do perfil do candidato — dados pessoais básicos da conta, formação/escolaridade, competências, idiomas, necessidades funcionais de acessibilidade, recursos indispensáveis, experiências profissionais, cursos, certificações e links profissionais — que alimentam a análise de compatibilidade.
 
 ## Ator principal
 
@@ -14,7 +14,7 @@ Cadastrar e atualizar dados pessoais e necessidades funcionais de acessibilidade
 2. O candidato informa necessidades funcionais e recursos indispensáveis.
 3. O candidato pode registrar necessidades por autodeclaração.
 4. O sistema reutiliza nome e e-mail mantidos na conta, sem exigir preenchimento duplicado no perfil; o cadastro da conta segue as regras da SPEC-001. CPF não é obrigatório para salvar o perfil.
-5. Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais podem ser preenchidos progressivamente e não bloqueiam o salvamento por categoria.
+5. O candidato pode cadastrar e atualizar formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais, todas categorias incluídas no escopo pela OPEN-007; podem ser preenchidas progressivamente e não bloqueiam o salvamento por categoria.
 6. O sistema permite declarar necessidades funcionais e recursos indispensáveis sem obrigação universal de declaração. As necessidades podem ser autodeclaradas, sem exigir ou armazenar laudo, e a interface distingue “não informado” de “declarado que não possui necessidade”.
 7. O sistema indica dados insuficientes quando faltarem informações necessárias à análise de uma vaga, sem presumir compatibilidade conforme RB-16.
 8. O sistema atualiza o perfil.
@@ -53,6 +53,6 @@ Cadastrar e atualizar dados pessoais e necessidades funcionais de acessibilidade
 - Alterações relevantes ficam registradas.
 - O perfil atualizado participa das análises posteriores.
 - Nome e e-mail são reutilizados da conta, sem preenchimento duplicado no perfil; CPF não é obrigatório para salvar.
-- Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria.
+- Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais integram o escopo aprovado pela OPEN-007 e não bloqueiam o salvamento por categoria.
 - Necessidades funcionais e recursos indispensáveis não exigem declaração universal; “não informado” é distinguido de “declarado que não possui necessidade”, e a autodeclaração não exige nem armazena laudo.
 - O salvamento não exige categorias inteiras apenas por existirem no modelo; a ausência de dados necessários à compatibilidade é indicada sem presumir compatibilidade, conforme RB-16.
