@@ -670,7 +670,7 @@ Este bloco detalha SPEC-004, SPEC-005 e SPEC-006. As questões pendentes são re
 - **Drivers:** DA-01, DA-04, DA-07.
 - **ADRs:** ADR-001, ADR-004.
 - **Dependência:** SPEC-001, para autenticação e autorização.
-- **Questões relacionadas:** OPEN-017 a OPEN-019.
+- **Questões relacionadas:** OPEN-017 a OPEN-019, com OPEN-018 resolvida; OPEN-019 permanece aberta.
 
 ## 3. Escopo
 
@@ -706,7 +706,7 @@ A lista é funcional, não determina quantidade final de telas ou composição v
 - **SPEC-001:** autenticação e autorização da Empresa.
 - **SPEC-005:** poderá utilizar informações de infraestrutura ao cadastrar/publicar vaga.
 - **SPEC-007/SPEC-008/SPEC-010:** capacidades posteriores poderão consumir ou exibir dados de acessibilidade conforme suas próprias regras.
-- A estrutura categorizada do questionário e os itens citados no UC-07 estão definidos pela decisão da OPEN-017. Sugestões adicionais só integram o escopo após aprovação explícita; a lista individual de campos obrigatórios e os detalhes de resposta/validação permanecem pendentes.
+- A estrutura categorizada do questionário e os itens citados no UC-07 estão definidos pela decisão da OPEN-017. Sugestões adicionais só integram o escopo após aprovação explícita. Conforme OPEN-018, o mapeamento usa dados estruturados e extensíveis, com respostas adequadas a cada item e distinção, quando aplicável, entre presença declarada, ausência declarada e informação não informada; não há escala universal de acessibilidade. O estado atual e o histórico de alterações relevantes são mantidos sem exigir cópia integral a cada modificação. A lista individual de campos obrigatórios, os valores/significados exatos, os campos internos e limites e os casos que exigem valores anteriores ou versões completas permanecem pendentes.
 
 ## 5. Comportamento esperado
 
@@ -738,11 +738,11 @@ A lista é funcional, não determina quantidade final de telas ou composição v
 
 ## 6. Regras e invariantes
 
-1. A infraestrutura pertence à Empresa à qual está associada.
+1. A infraestrutura pertence à Empresa à qual está associada. Os dados são estruturados por itens extensíveis, sem impor uma escala universal; quando aplicável, presença declarada, ausência declarada e informação não informada devem permanecer distintas.
 2. Somente uma Empresa autenticada e autorizada pode alterar seu próprio mapeamento.
 3. Itens obrigatórios definidos na baseline bloqueiam o salvamento quando pendentes (UC-07).
 4. O sistema não deve converter informação ausente em afirmação de acessibilidade ou inacessibilidade.
-5. Alterações relevantes devem ser rastreáveis (RB-27, RB-37, RF-38, RNF-14).
+5. Alterações relevantes devem ser rastreáveis (RB-27, RB-37, RF-38, RNF-14), registrando quando ocorreram, o ator responsável, a categoria/informação afetada e o tipo de alteração. Não é exigida cópia integral do mapeamento a cada modificação; a preservação de valores anteriores ou versões completas depende de decisão específica.
 6. A persistência deve manter a integridade do vínculo Empresa–infraestrutura (RNF-09).
 7. Divergências recorrentes podem ter consequências conforme RB-08, mas qualquer processo de apuração/alteração deve respeitar a regra de negócio aplicável; esta Spec não cria uma decisão automática.
 8. A nota pública de acessibilidade não é calculada nesta capacidade (RB-20).
@@ -756,7 +756,7 @@ A lista é funcional, não determina quantidade final de telas ou composição v
 | INFRAESTRUTURA_EMPRESA | Informações estruturadas de acessibilidade associadas à Empresa |
 | USUARIO/RECRUTADOR | Identidade autorizada que atua em nome da Empresa, conforme regras de acesso |
 
-A baseline citada não especifica todos os atributos, tipos, escalas, cardinalidades ou versionamento de INFRAESTRUTURA_EMPRESA. Esses detalhes permanecem pendentes (OPEN-017 e OPEN-018).
+A baseline citada não especifica todos os atributos, cardinalidades ou detalhes físicos de INFRAESTRUTURA_EMPRESA. Conforme OPEN-018, o mapeamento é organizado por itens estruturados e extensíveis, com tipos de resposta adequados a cada item, sem escala universal; mantém-se o estado atual e o histórico de alterações relevantes, sem cópia integral obrigatória a cada modificação. A tecnologia, o esquema físico, a lista individual de itens obrigatórios, os valores exatos e os casos de preservação de versões completas ou valores anteriores não foram definidos. A relação entre infraestrutura geral e critérios específicos por vaga permanece na OPEN-023.
 
 ## 8. Impacto arquitetural
 
@@ -814,7 +814,7 @@ Contratos conceituais, sem definir endpoints HTTP:
 As questões estão centralizadas em [OPEN.md](OPEN.md).
 
 - **OPEN-017 (decisão aprovada):** estruturar o questionário da Empresa preservando os itens do UC-07 — rampas, elevadores, banheiros adaptados, leitores de tela, sinalização e políticas inclusivas — nas categorias propostas: acesso físico e circulação; instalações; comunicação e orientação; recursos tecnológicos; políticas e práticas inclusivas. Sugestões adicionais (rotas acessíveis, circulação interna, estacionamento acessível, sinalização tátil/Braille, alternativas de comunicação, compatibilidade com tecnologias assistivas e práticas de acolhimento) dependem de aprovação explícita antes de integrar o escopo. Impedir salvamento se itens definidos como obrigatórios estiverem pendentes, sem tornar todos os campos obrigatórios automaticamente; a lista individual de obrigatórios permanece pendente. Dados associados à Empresa seguem os usos da baseline e devem ser distinguidos de barreiras/critérios específicos da vaga. Tipos de resposta, escalas, validações, persistência, versionamento e conversão em barreiras impeditivas permanecem pendentes, relacionados às OPEN-018/023.
-- **OPEN-018:** tipos, escalas, versionamento e estrutura de persistência do mapeamento.
+- **OPEN-018 (resolvida):** tipos de resposta adequados a cada item, ausência de escala universal, histórico de alterações relevantes e organização estruturada/extensível do mapeamento. Permanecem pendentes os valores exatos, a lista individual de itens obrigatórios, campos internos/limites e casos de preservação de valores anteriores ou versões completas.
 - **OPEN-019:** regras e evidências para tratar divergências recorrentes nas informações declaradas.
 
 ## 14. Definition of Done
