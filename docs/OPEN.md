@@ -57,7 +57,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 
 | ID | Estado | Questão em aberto | Contexto/impacto |
 |---|---|---|---|
-| OPEN-012 | aberta | Alto contraste será um modo controlado pela aplicação ou dependerá das configurações do sistema operacional/navegador? | RF-16 cita o recurso, mas não determina o mecanismo. |
+| OPEN-012 | resolvida | Alto contraste será um modo controlado pela aplicação ou dependerá das configurações do sistema operacional/navegador? | Decisão aprovada: adotar abordagem combinada, respeitando as preferências de contraste do sistema operacional/navegador e oferecendo controle próprio na plataforma para ativar/desativar o alto contraste. O modo deve preservar distinção visual e operabilidade de conteúdo, controles e mensagens conforme os requisitos de acessibilidade aplicáveis. A decisão não define persistência entre telas, sessões ou dispositivos (OPEN-013). Permanecem em aberto o comportamento quando preferências externa e interna divergirem, estratégia técnica de aplicação, persistência (OPEN-013) e procedimento/evidências de validação (OPEN-016). |
 | OPEN-013 | aberta | Preferências de acessibilidade persistirão entre sessões ou somente durante a sessão atual? | Afeta experiência e eventual armazenamento de preferências; a baseline não define isso. |
 | OPEN-014 | aberta | Quais comandos, fluxos, idiomas e tecnologia serão suportados pela interação por voz? | RF-16 não apresenta catálogo de comandos nem comportamento detalhado. |
 | OPEN-015 | aberta | Quais combinações de navegador, leitor de tela e dispositivo serão usadas como ambientes de referência para validação? | Necessário para delimitar evidências de compatibilidade, sem inventar uma matriz de suporte. |
