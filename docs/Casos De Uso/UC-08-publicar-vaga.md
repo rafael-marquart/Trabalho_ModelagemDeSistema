@@ -47,7 +47,7 @@ Permitir que a empresa ou recrutador cadastre e publique uma vaga em um catálog
 | Estado da vaga | Não é campo livre | Controlado pelo fluxo de rascunho/publicação/gerenciamento. |
 | Origem da vaga | Não é campo livre | Registrada pelo sistema conforme a origem. |
 
-A obrigatoriedade indicada aplica-se à publicação, não ao salvamento de rascunho. As validações decididas para a OPEN-021 estão descritas na seção seguinte. Permanecem separadas as restrições de edição/encerramento (OPEN-022) e a relação detalhada dos critérios de acessibilidade por vaga (OPEN-023).
+A obrigatoriedade indicada aplica-se à publicação, não ao salvamento de rascunho. As validações decididas para a OPEN-021 estão descritas na seção seguinte. Permanecem separadas as restrições de edição/encerramento definidas na seção própria (OPEN-022) e a relação detalhada dos critérios de acessibilidade por vaga (OPEN-023).
 
 
 ## Validações por campo e consistência
@@ -74,6 +74,27 @@ Se houver pendências ou inconsistências, a publicação é bloqueada e o siste
 - EX02 (Inconsistência de dados): Se os dados da vaga apresentarem inconsistências, o sistema bloqueia a publicação até a correção.
 - EX03 (Publicação fora do prazo): Se a vaga for publicada com data de encerramento inválida ou anterior à data atual, o sistema rejeita a ação.
 
+
+## Edição de vaga após publicação — decisão OPEN-022
+
+1. O Recrutador autenticado e autorizado seleciona uma vaga da Empresa vinculada.
+2. O sistema verifica o estado da vaga e a existência de candidaturas.
+3. Rascunhos podem ser editados e salvos mesmo incompletos.
+4. Vagas publicadas sem candidaturas podem ser editadas, desde que as alterações passem pelas validações aplicáveis.
+5. Depois que houver candidaturas, o sistema bloqueia alterações nos campos que definem as condições da oportunidade: cargo/título, descrição, requisitos, modalidade, localização, critérios de acessibilidade, prazo de inscrição e faixa salarial.
+6. Se uma alteração permitida for inválida, o sistema recusa a gravação sem substituir os dados válidos existentes.
+7. Alterações relevantes aceitas ficam registradas para auditoria.
+8. Usuários sem autorização para gerenciar vagas da Empresa responsável não podem editar a vaga.
+
+## Encerramento de vaga — decisão OPEN-022
+
+1. Recrutador autenticado e autorizado solicita o encerramento da vaga.
+2. O sistema aplica o estado de encerramento já previsto na baseline, sem criar novo estado.
+3. O sistema bloqueia novas candidaturas e preserva candidaturas e histórico existentes.
+4. O sistema identifica candidatos ativos para comunicação, conforme RB-42 e SPEC-009/SPEC-017.
+5. O encerramento não movimenta automaticamente candidatos no funil nem elimina candidaturas.
+6. O sistema registra a mudança e o responsável para auditoria.
+
 ## Pós-condições
 
 - A vaga fica disponível para busca e candidatura.
@@ -98,6 +119,14 @@ Se houver pendências ou inconsistências, a publicação é bloqueada e o siste
 
 ## Critérios de aceitação
 
+- Rascunhos podem ser editados e salvos mesmo incompletos.
+- Vagas publicadas sem candidaturas podem ser editadas se as validações forem satisfeitas.
+- Após existir candidatura, alterações dos campos que definem as condições da oportunidade são bloqueadas.
+- Alteração inválida não substitui os dados válidos existentes.
+- Usuários sem autorização não conseguem editar nem encerrar vagas.
+- Encerrar a vaga bloqueia novas candidaturas e preserva candidaturas e histórico.
+- Candidatos ativos são identificados para comunicação, sem movimentação automática no funil.
+- Alterações relevantes e encerramento são registrados com responsável para auditoria.
 - O recrutador consegue criar uma vaga com dados completos e publicar em catálogo.
 - Campos obrigatórios de texto vazios ou compostos apenas por espaços bloqueiam publicação.
 - Modalidade vazia ou não reconhecida bloqueia publicação.
