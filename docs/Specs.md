@@ -601,7 +601,7 @@ A referência a WCAG 2.1 AA não determina por si só ferramentas, combinações
 
 As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decisões tomadas nesta Spec.
 
-- **OPEN-012:** mecanismo de alto contraste — controle da aplicação ou configuração do sistema/navegador.
+- **OPEN-012 (decisão aprovada):** abordagem combinada para alto contraste: respeitar preferências de contraste do sistema operacional/navegador e oferecer controle próprio para ativar/desativar na plataforma. A persistência fica para OPEN-013; divergência entre preferências, estratégia técnica e validação permanecem pendentes.
 - **OPEN-013:** persistência das preferências de acessibilidade entre sessões.
 - **OPEN-014:** comandos, fluxos, idiomas e tecnologia para interação por voz.
 - **OPEN-015:** ambientes de referência para validação (navegadores, leitores de tela e dispositivos).
