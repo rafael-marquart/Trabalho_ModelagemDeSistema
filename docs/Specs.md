@@ -267,8 +267,8 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 ### Incluído
 - Permitir que candidato autenticado consulte seu perfil.
-- Cadastrar e atualizar dados profissionais contemplados em RF-04/RF-19.
-- Permitir autodeclaração e atualização de necessidades funcionais de acessibilidade.
+- Cadastrar e atualizar as categorias aprovadas na OPEN-007: dados pessoais básicos (nome/e-mail reutilizados da conta), formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais.
+- Permitir autodeclaração e atualização de necessidades funcionais de acessibilidade e recursos indispensáveis para acessibilidade.
 - Organizar necessidades nas categorias do vetor conceitual.
 - Validar campos obrigatórios e informações mínimas definidas na baseline.
 - Proteger as informações de acessibilidade e registrar alterações relevantes.
@@ -278,7 +278,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 - Cálculo de compatibilidade, pertencente à SPEC-007.
 - Busca e filtros de vagas.
 - Armazenamento de laudos médicos: o sistema não armazena laudos; necessidades podem ser autodeclaradas.
-- - Campos adicionais não respaldados por RF-04, RF-19 ou pelo modelo conceitual.
+- Definição de campos internos, formatos, limites, cardinalidades e validações específicas ainda não aprovados; essas lacunas permanecem nas OPEN-007.1/007.2.
 
 ## 3.1. Telas e evidência de layout
 
@@ -308,7 +308,7 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 1. Candidato abre a edição.
 2. Informa ou atualiza os dados previstos em RF-04/RF-19.
 3. O formulário reutiliza nome e e-mail mantidos na conta, sem exigir preenchimento duplicado; o cadastro da conta segue as regras próprias da SPEC-001. CPF não é obrigatório para salvar o perfil, pois a baseline não apresenta justificativa funcional aprovada para exigi-lo.
-4. Formação/escolaridade, competências e idiomas podem ser preenchidos progressivamente e não bloqueiam o salvamento. Experiências profissionais, cursos, certificações e links profissionais também não são obrigatórios por categoria, sem antecipar a decisão de escopo das categorias ainda tratada na OPEN-007.
+4. Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais fazem parte do escopo aprovado na OPEN-007, podem ser preenchidos progressivamente e não bloqueiam o salvamento por categoria.
 5. Necessidades funcionais de acessibilidade e recursos indispensáveis não exigem declaração universal. Quando declarados, podem ser informados por autodeclaração, sem exigir ou armazenar laudo; a interface distingue “não informado” de “declarado que não possui necessidade”.
 6. Dados válidos são persistidos, permitindo o preenchimento progressivo das categorias.
 7. Erros de validação definidos são indicados para correção, sem descarte silencioso das informações preenchidas.
@@ -334,7 +334,7 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 3. Dados profissionais e vetor devem permanecer associados ao candidato correto (RNF-09).
 4. O candidato só pode consultar/alterar o próprio perfil, salvo permissões explicitamente previstas pela baseline.
 5. O salvamento respeita RB-29 e o cadastro progressivo aprovado na OPEN-007.1. Nome e e-mail são reutilizados da conta, sem preenchimento duplicado no perfil; o cadastro da conta segue a SPEC-001. CPF não é obrigatório para salvar o perfil, pois não há justificativa funcional aprovada na baseline para exigi-lo.
-6. Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria. A decisão sobre quais categorias compõem o perfil permanece na OPEN-007.
+6. As categorias aprovadas na OPEN-007 — formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais — não bloqueiam o salvamento por categoria.
 7. Necessidades funcionais e recursos indispensáveis não exigem declaração universal. A interface deve distinguir ausência de informação (“não informado”) de declaração de inexistência de necessidade; necessidades declaradas podem ser autodeclaradas sem exigir ou armazenar laudo.
 8. A ausência de dados necessários à análise de uma vaga deve ser indicada sem presumir compatibilidade, conforme RB-16, e não torna automaticamente esses dados obrigatórios para salvar o perfil.
 9. A distinção de necessidades obrigatórias deve ser preservada quando suportada pela baseline, pois RB-06 determina que sejam consideradas na compatibilidade.
@@ -381,7 +381,7 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 ## 11. Critérios de aceitação
 
 - [ ] Candidato autenticado consulta seu perfil.
-- [ ] Candidato cadastra e atualiza dados profissionais previstos na baseline.
+- [ ] Candidato cadastra e atualiza todas as categorias aprovadas na OPEN-007: dados pessoais básicos da conta, formação/escolaridade, competências, idiomas, necessidades funcionais, recursos indispensáveis, experiências profissionais, cursos, certificações e links profissionais.
 - [ ] Candidato declara necessidades por autodeclaração.
 - [ ] Necessidades são organizadas nas categorias conceituais do vetor.
 - [ ] Nome e e-mail da conta são reutilizados sem exigir preenchimento duplicado no perfil; CPF não bloqueia o salvamento.
@@ -409,12 +409,15 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 | T-002-08 | Atualização concluída | Alteração rastreável conforme política |
 | T-002-09 | Autodeclarar necessidades sem laudo | Fluxo não exige laudo |
 | T-002-10 | Usar formulário com leitor de tela/teclado | Campos e erros identificáveis e operáveis |
+| T-002-11 | Consultar perfil com as categorias aprovadas | Categorias do perfil e dados de acessibilidade apresentados ao próprio candidato conforme autorização |
+| T-002-12 | Salvar perfil sem experiências, cursos, certificações ou links profissionais | Salvamento permitido, desde que as demais validações aplicáveis sejam satisfeitas |
+| T-002-13 | Categoria profissional ainda não preenchida é relevante para uma vaga | Insuficiência indicada sem presumir compatibilidade conforme RB-16 |
 
 ## 13. Questões em aberto
 
 As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decisões tomadas nesta Spec.
 
-- **OPEN-007:** categorias de dados do perfil profissional.
+- **OPEN-007 (decisão aprovada; resolvida):** o perfil inclui dados pessoais básicos (nome/e-mail reutilizados da conta), formação/escolaridade, competências, idiomas, necessidades funcionais de acessibilidade, recursos indispensáveis para acessibilidade, experiências profissionais, cursos, certificações e links profissionais. As categorias profissionais são preenchidas progressivamente; os detalhes internos e regras específicas permanecem sujeitos à baseline e às OPEN-007.1/007.2.
 - **OPEN-007.1 (decisão aprovada; resolvida):** nome e e-mail são reutilizados da conta, sem preenchimento duplicado no perfil; o cadastro da conta segue as regras da SPEC-001. CPF não é obrigatório para salvar o perfil. Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria, sem antecipar o escopo de categorias da OPEN-007. Necessidades funcionais e recursos indispensáveis não exigem declaração universal; necessidades podem ser autodeclaradas sem exigir/armazenar laudo, e “não informado” deve ser distinto de “declarado que não possui necessidade”. Dados necessários à análise de uma vaga que estejam ausentes são indicados como insuficiência sem presumir compatibilidade (RB-16).
 - **OPEN-007.2 (decisão aprovada):** validação básica por categoria, respeitando o cadastro progressivo; formatos, limites e critérios específicos permanecem pendentes.
 - **OPEN-008 (decisão aprovada):** catálogo estruturado e extensível nas categorias arquitetônicas, de comunicação e tecnológicas, com distinção entre necessidades obrigatórias e não obrigatórias; lista inicial, significados operacionais e detalhes de representação permanecem pendentes.
