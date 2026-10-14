@@ -34,7 +34,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 
 | ID | Estado | Questão em aberto | Contexto/impacto |
 |---|---|---|---|
-| OPEN-001 | aberta | Como deve funcionar a verificação da recuperação de senha, qual a validade da solicitação e qual canal será usado para envio? | RF-02 não define o mecanismo completo. Impacta segurança e fluxo de recuperação. |
+| OPEN-001 | resolvida | Como deve funcionar a verificação da recuperação de senha, qual a validade da solicitação e qual canal será usado para envio? | Decisão aprovada: link enviado por e-mail, validade de 30 minutos, uso único e invalidação do link anterior quando uma nova solicitação for emitida. O sistema informa quando o e-mail não está cadastrado. Aplicar limitação de frequência, com limites numéricos a definir. A política para sessões existentes após a redefinição fica para OPEN-002. A decisão de informar e-mails não cadastrados permite identificar contas existentes e esse risco foi aceito pelo grupo. |
 | OPEN-002 | aberta | Quais são os tempos de expiração da sessão e os eventos que a invalidam? | RB-22 estabelece o princípio de sessão, mas não todos os parâmetros. |
 | OPEN-003 | aberta | Quais critérios de senha e bloqueio devem ser aplicados? | UC-00 menciona usuário bloqueado, mas os critérios específicos precisam ser confirmados na baseline. |
 | OPEN-004 | aberta | Quais campos são obrigatórios no cadastro de Empresa e como será validada sua identidade organizacional? | Conferir RF-17 e o caso de uso correspondente antes de fixar campos ou validações. |
