@@ -123,15 +123,6 @@ O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou t
 
 
 
-### 5.5 Encerrar vaga — decisão OPEN-022
-1. Recrutador autenticado e autorizado solicita o encerramento da vaga.
-2. O sistema confirma a autorização e registra a mudança para o estado de encerramento previsto na baseline, sem criar um novo estado.
-3. O sistema impede novas candidaturas após o encerramento.
-4. Candidaturas existentes e o histórico do processo são preservados.
-5. O sistema identifica candidatos ativos para comunicação, conforme RB-42 e SPEC-009/SPEC-017.
-6. O encerramento não movimenta automaticamente candidatos entre etapas nem elimina candidaturas.
-7. A mudança de estado e o responsável ficam registrados para auditoria.
-
 ## 6. Regras e invariantes
 
 1. Credenciais devem ser validadas antes de conceder acesso (RB-21).
@@ -987,6 +978,17 @@ Se a publicação for bloqueada, o sistema preserva os dados informados e identi
 6. Se uma alteração permitida for inválida, o sistema a recusa sem substituir os dados válidos existentes.
 7. Alterações relevantes aceitas são registradas para auditoria, conforme RB-27/RF-38.
 8. O sistema não permite edição nem encerramento por usuário sem autorização para gerenciar vagas da Empresa responsável.
+
+
+
+### 5.5 Encerrar vaga — decisão OPEN-022
+1. Recrutador autenticado e autorizado solicita o encerramento da vaga.
+2. O sistema confirma a autorização e registra a mudança para o estado de encerramento previsto na baseline, sem criar um novo estado.
+3. O sistema impede novas candidaturas após o encerramento.
+4. Candidaturas existentes e o histórico do processo são preservados.
+5. O sistema identifica candidatos ativos para comunicação, conforme RB-42 e SPEC-009/SPEC-017.
+6. O encerramento não movimenta automaticamente candidatos entre etapas nem elimina candidaturas.
+7. A mudança de estado e o responsável ficam registrados para auditoria.
 
 ## 6. Regras e invariantes
 
