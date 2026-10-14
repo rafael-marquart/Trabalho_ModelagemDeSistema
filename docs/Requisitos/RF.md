@@ -10,7 +10,7 @@ O sistema permite recuperação e redefinição de senha por e-mail.
 O sistema aplica permissões distintas para candidato, recrutador e administrador.
 
 ### RF-04 Cadastro de candidato
-O sistema permite cadastrar dados pessoais, formação, competências, idiomas e necessidades funcionais de acessibilidade.
+O sistema permite cadastrar e atualizar o perfil do candidato com dados pessoais básicos, formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações, links profissionais e necessidades funcionais de acessibilidade, incluindo recursos indispensáveis para acessibilidade. As categorias profissionais podem ser preenchidas progressivamente; a ausência de dados necessários à análise de uma vaga não presume compatibilidade (RB-16).
 
 ### RF-05 Importação de vagas externas
 O sistema permite entrada e visualização de vagas provenientes de fontes externas.
@@ -52,7 +52,7 @@ O sistema permite cadastrar uma empresa como conta organizacional e, dentro das 
 O sistema permite que recrutadores vinculados à empresa cadastrem, editem, publiquem e gerenciem vagas.
 
 ### RF-19 Gestão do perfil e necessidades de acessibilidade
-O sistema permite ao candidato consultar e atualizar seus dados e necessidades funcionais de acessibilidade.
+O sistema permite ao candidato consultar e atualizar as categorias aprovadas para seu perfil: dados pessoais básicos reutilizados da conta, formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações, links profissionais, necessidades funcionais de acessibilidade e recursos indispensáveis. Necessidades podem ser autodeclaradas sem exigir ou armazenar laudo; a interface distingue “não informado” de declaração de inexistência de necessidade. O preenchimento é progressivo e a ausência de dados necessários à análise não presume compatibilidade (RB-16).
 
 ### RF-20 Gestão de candidaturas pela empresa
 O sistema permite que recrutadores autorizados visualizem e gerenciem candidaturas recebidas para suas vagas.
