@@ -332,11 +332,11 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 3. Dados profissionais e vetor devem permanecer associados ao candidato correto (RNF-09).
 4. O candidato só pode consultar/alterar o próprio perfil, salvo permissões explicitamente previstas pela baseline.
 5. O salvamento respeita informações mínimas de RB-29 e o cadastro progressivo aprovado na OPEN-007.1; somente campos mínimos de identificação/cadastro explicitamente definidos e aprovados podem bloquear o salvamento. A lista exata permanece pendente; campos obrigatórios não são inventados.
-10. A ausência de dados necessários à análise de uma vaga deve ser indicada sem presumir compatibilidade, conforme RB-16, e não torna automaticamente esses dados obrigatórios para salvar o perfil.
-6. A distinção de necessidades obrigatórias deve ser preservada quando suportada pela baseline, pois RB-06 determina que sejam consideradas na compatibilidade.
-7. Alterações relevantes são rastreáveis conforme RB-27 e RNF-14.
-8. O sistema registra necessidades funcionais declaradas; não infere diagnóstico nem exige documento não previsto.
-9. Persistir o perfil não substitui as regras de compatibilidade da SPEC-007.
+6. A ausência de dados necessários à análise de uma vaga deve ser indicada sem presumir compatibilidade, conforme RB-16, e não torna automaticamente esses dados obrigatórios para salvar o perfil.
+7. A distinção de necessidades obrigatórias deve ser preservada quando suportada pela baseline, pois RB-06 determina que sejam consideradas na compatibilidade.
+8. Alterações relevantes são rastreáveis conforme RB-27 e RNF-14.
+9. O sistema registra necessidades funcionais declaradas; não infere diagnóstico nem exige documento não previsto.
+10. Persistir o perfil não substitui as regras de compatibilidade da SPEC-007.
 
 ## 7. Modelo de domínio envolvido
 
