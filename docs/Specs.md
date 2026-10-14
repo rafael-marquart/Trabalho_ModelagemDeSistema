@@ -130,16 +130,20 @@ O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou t
 5. A liberação das funcionalidades organizacionais depende da validação do identificador oficial e da confirmação do e-mail corporativo.
 6. Não permitir novo cadastro de Empresa com identificador oficial já associado a outra Empresa; orientar recuperação ou associação à conta existente.
 7. A Empresa cadastra e vincula Recrutadores nas próprias configurações, conforme RF-17 e RB-46.
-8. Operações protegidas devem verificar perfil e permissão no backend (RB-12, RF-40, DA-02).
-9. Sessão expirada ou invalidada não pode autorizar operação protegida (RB-22).
-10. Candidato, Recrutador e Administrador possuem permissões compatíveis com seus papéis (RF-03).
-11. O cadastro inicial oferece Usuário ou Empresa; Recrutador é cadastrado/associado pela Empresa.
-12. O Recrutador permanece vinculado à Empresa responsável (RB-46).
-13. Uma Empresa só pode administrar vínculos sob sua própria responsabilidade.
-14. Não se introduz o papel de Gestor de Seleção.
-15. Cadastro, perfil e vínculo organizacional devem permanecer íntegros (RNF-09).
-16. Alterações relevantes devem ser rastreáveis conforme RB-27 e RNF-14, respeitando RNF-08.
-17. ADR-002 centraliza a autorização no backend, mas não determina JWT, sessão/cookie ou mecanismo específico.
+8. Quando o e-mail informado já pertencer a uma conta, a Empresa autenticada e autorizada pode solicitar o vínculo por convite enviado ao e-mail da conta; o titular deve dar aceite explícito antes da efetivação.
+9. Enquanto o convite estiver pendente, não conceder permissões de Recrutador para a Empresa solicitante; informar à Empresa apenas o estado pendente, sem dados adicionais da conta existente.
+10. Antes de efetivar o vínculo após o aceite, validar novamente a autorização da Empresa e respeitar RB-46; o aceite não autoriza automaticamente transferência ou administração de vínculo pertencente a outra Empresa.
+11. Eventos de envio e resposta ao convite e de efetivação do vínculo são relevantes para rastreabilidade conforme RB-27 e RNF-14; catálogo e retenção são tratados na OPEN-006.
+12. Operações protegidas devem verificar perfil e permissão no backend (RB-12, RF-40, DA-02).
+13. Sessão expirada ou invalidada não pode autorizar operação protegida (RB-22).
+14. Candidato, Recrutador e Administrador possuem permissões compatíveis com seus papéis (RF-03).
+15. O cadastro inicial oferece Usuário ou Empresa; Recrutador é cadastrado/associado pela Empresa.
+16. O Recrutador permanece vinculado à Empresa responsável (RB-46).
+17. Uma Empresa só pode administrar vínculos sob sua própria responsabilidade.
+18. Não se introduz o papel de Gestor de Seleção.
+19. Cadastro, perfil e vínculo organizacional devem permanecer íntegros (RNF-09).
+20. Alterações relevantes devem ser rastreáveis conforme RB-27 e RNF-14, respeitando RNF-08.
+21. ADR-002 centraliza a autorização no backend, mas não determina JWT, sessão/cookie ou mecanismo específico.
 
 ## 7. Modelo de domínio envolvido
 
@@ -222,7 +226,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 - **OPEN-002:** resolvida; sessão comum expira após 60 minutos sem atividade; sem limite máximo absoluto enquanto houver atividade; logout, troca/redefinição de senha e bloqueio/desativação invalidam as sessões; opção “manter conectado” por 30 dias, com renovação conforme uso.
 - **OPEN-003:** resolvida; senha com mínimo de 10 caracteres, pelo menos uma letra maiúscula, uma minúscula e um número, sem símbolo obrigatório; bloqueio temporário após 10 tentativas consecutivas incorretas por 15 minutos, com desbloqueio automático ao fim do prazo ou por recuperação de senha válida.
 - **OPEN-004:** resolvida; razão social, identificador oficial e e-mail corporativo de contato obrigatórios; nome fantasia opcional. Validar o identificador oficial e confirmar separadamente o e-mail corporativo; liberar funcionalidades organizacionais somente após ambas as verificações. Impedir cadastro duplicado pelo identificador oficial e orientar recuperação/associação à conta existente. A Empresa cadastra/vincula Recrutadores conforme RF-17/RB-46. Permanecem a especificação dos procedimentos de validação, o tratamento de empresas sem o identificador adotado e os detalhes de associação tratados na OPEN-005.
-- **OPEN-005:** associação de Recrutador cujo e-mail já pertence a uma conta e consentimento.
+- **OPEN-005:** resolvida; se o e-mail já pertencer a uma conta, a Empresa autenticada e autorizada pode solicitar vínculo por convite enviado ao e-mail da conta, exigindo aceite explícito do titular. O vínculo só se efetiva após o aceite e nova validação da autorização da Empresa. Até lá, o convite permanece pendente; a Empresa não recebe dados adicionais da conta. O aceite não autoriza automaticamente transferir ou administrar vínculos de outra Empresa. Prazo, cancelamento/reenvio, recusa/expiração e regras para múltiplos vínculos permanecem sem decisão. Eventos de convite e vínculo são relevantes para auditoria; lista e retenção ficam na OPEN-006.
 - **OPEN-006:** eventos de auditoria e prazo de retenção.
 
 ## 14. Definition of Done
