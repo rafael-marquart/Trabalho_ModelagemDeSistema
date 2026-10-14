@@ -602,7 +602,7 @@ A referência a WCAG 2.1 AA não determina por si só ferramentas, combinações
 As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decisões tomadas nesta Spec.
 
 - **OPEN-012 (decisão aprovada):** abordagem combinada para alto contraste: respeitar preferências de contraste do sistema operacional/navegador e oferecer controle próprio para ativar/desativar na plataforma. A persistência fica para OPEN-013; divergência entre preferências, estratégia técnica e validação permanecem pendentes.
-- **OPEN-013:** persistência das preferências de acessibilidade entre sessões.
+- **OPEN-013 (decisão aprovada):** salvar as preferências de acessibilidade definidas pela plataforma na conta do usuário e reaplicá-las em sessões futuras, inclusive em outro dispositivo. O alto contraste mantém o controle próprio da OPEN-012 e considera preferências externas suportadas. Permanecem pendentes o catálogo de preferências persistidas, divergências entre configurações internas/externas, usuários não autenticados e estratégia técnica de armazenamento/recuperação.
 - **OPEN-014:** comandos, fluxos, idiomas e tecnologia para interação por voz.
 - **OPEN-015:** ambientes de referência para validação (navegadores, leitores de tela e dispositivos).
 - **OPEN-016:** processo e evidências para avaliar conformidade com WCAG 2.1 AA.
