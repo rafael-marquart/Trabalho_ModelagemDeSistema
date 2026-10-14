@@ -915,11 +915,31 @@ A divisão é funcional e não fixa o layout final. Protótipos devem considerar
 
 ### 5.2 Criar vaga
 1. Recrutador acessa o painel e inicia criação.
-2. O sistema apresenta campos previstos na baseline, incluindo cargo, descrição, requisitos, modalidade, localização, critérios de acessibilidade e prazo de inscrição conforme UC-08.
-3. Recrutador preenche os dados.
-4. O sistema valida campos obrigatórios e consistência.
-5. Se houver dados incompletos ou inconsistentes, o sistema indica os problemas e não permite publicar.
-6. Se válido, o Recrutador pode salvar como rascunho ou optar pela publicação imediata, conforme UC-08.
+2. O sistema apresenta os campos definidos na matriz de campos desta Spec.
+3. Recrutador preenche os dados disponíveis.
+4. O sistema permite salvar como rascunho mesmo que haja campos obrigatórios pendentes.
+5. Para publicação imediata, o sistema verifica o preenchimento dos campos obrigatórios e a consistência dos dados.
+6. Se houver pendências ou inconsistências, o sistema indica os campos/problemas e não permite publicar.
+
+### 5.2.1 Matriz de campos da vaga própria — decisão OPEN-020
+Os campos abaixo definem o mínimo funcional para cadastro e publicação, sem fixar tipos de dados, limites, catálogos ou validações detalhadas por campo.
+
+| Campo/grupo | Obrigatoriedade para publicação | Tratamento |
+|---|---|---|
+| Cargo/título (titulo) | Obrigatório | Identifica a oportunidade. |
+| Descrição (descricao) | Obrigatório | Apresenta o trabalho e suas condições. |
+| Requisitos | Obrigatório | Informa os requisitos da oportunidade; a decomposição detalhada permanece para especificação posterior quando necessária. |
+| Modalidade (modalidade) | Obrigatório | Informa a modalidade de trabalho. |
+| Localização | Obrigatório, com preenchimento compatível com a modalidade | Não pressupõe endereço físico quando não for pertinente; a regra de consistência detalhada pertence à OPEN-021. |
+| Critérios de acessibilidade | Obrigatório declarar o estado das informações relevantes | Não exige que todos os critérios indiquem atendimento; informação ausente não significa compatibilidade. Os critérios específicos por vaga permanecem na OPEN-023. |
+| Prazo de inscrição | Obrigatório | Deve ser válido para a publicação conforme a regra de prazo descrita na UC-08. |
+| Faixa salarial (faixa_salarial) | Opcional | Pode ser omitida. |
+| Identificador da vaga (id_vaga) | Não é campo de formulário | Controlado pelo sistema. |
+| Empresa responsável (id_empresa) | Não é campo de formulário | Derivada do vínculo e da autorização do Recrutador autenticado. |
+| Estado da vaga (status_vaga) | Não é campo livre | Controlado pelo fluxo de rascunho, publicação e gerenciamento. |
+| Origem da vaga (origem_ingestao) | Não é campo livre | Registrada pelo sistema conforme a origem; não se impõem aqui valores técnicos. |
+
+A obrigatoriedade da matriz é condição para publicar, não para iniciar ou salvar um rascunho. Os atributos conceituais existentes são preservados; esta decisão não cria atributos, entidades ou cardinalidades. Validações e consistência por campo ficam na OPEN-021; restrições de edição e encerramento ficam na OPEN-022.
 
 ### 5.3 Publicar vaga
 1. Recrutador solicita publicação.
@@ -992,8 +1012,12 @@ Contratos conceituais; não especificam endpoints HTTP.
 
 - [ ] Recrutador autorizado acessa painel da Empresa vinculada.
 - [ ] Usuário não autorizado não gerencia vagas de outra Empresa.
-- [ ] Vaga pode ser cadastrada com os campos previstos na baseline.
-- [ ] Dados incompletos ou inconsistentes impedem publicação e são apontados.
+- [ ] Vaga apresenta cargo/título, descrição, requisitos, modalidade, localização, critérios de acessibilidade e prazo de inscrição.
+- [ ] Faixa salarial é opcional.
+- [ ] Identificador, empresa responsável, estado e origem não são campos de preenchimento livre do recrutador.
+- [ ] Rascunho pode ser salvo com campos obrigatórios pendentes.
+- [ ] Publicação exige o preenchimento dos campos obrigatórios da matriz e bloqueia a ação quando houver pendências, indicando-as.
+- [ ] Dados inconsistentes impedem publicação e são apontados.
 - [ ] Vaga válida pode ser salva como rascunho.
 - [ ] Vaga válida pode ser publicada.
 - [ ] Prazo de encerramento inválido impede publicação.
