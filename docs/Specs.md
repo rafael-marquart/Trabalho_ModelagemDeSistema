@@ -694,7 +694,7 @@ A lista é funcional, não determina quantidade final de telas ou composição v
 - **SPEC-001:** autenticação e autorização da Empresa.
 - **SPEC-005:** poderá utilizar informações de infraestrutura ao cadastrar/publicar vaga.
 - **SPEC-007/SPEC-008/SPEC-010:** capacidades posteriores poderão consumir ou exibir dados de acessibilidade conforme suas próprias regras.
-- A lista completa de campos e obrigatoriedades depende da confirmação da baseline (OPEN-017).
+- A estrutura categorizada do questionário e os itens citados no UC-07 estão definidos pela decisão da OPEN-017. Sugestões adicionais só integram o escopo após aprovação explícita; a lista individual de campos obrigatórios e os detalhes de resposta/validação permanecem pendentes.
 
 ## 5. Comportamento esperado
 
@@ -801,7 +801,7 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 As questões estão centralizadas em [OPEN.md](OPEN.md).
 
-- **OPEN-017:** lista definitiva de campos, categorias e itens obrigatórios do questionário.
+- **OPEN-017 (decisão aprovada):** estruturar o questionário da Empresa preservando os itens do UC-07 — rampas, elevadores, banheiros adaptados, leitores de tela, sinalização e políticas inclusivas — nas categorias propostas: acesso físico e circulação; instalações; comunicação e orientação; recursos tecnológicos; políticas e práticas inclusivas. Sugestões adicionais (rotas acessíveis, circulação interna, estacionamento acessível, sinalização tátil/Braille, alternativas de comunicação, compatibilidade com tecnologias assistivas e práticas de acolhimento) dependem de aprovação explícita antes de integrar o escopo. Impedir salvamento se itens definidos como obrigatórios estiverem pendentes, sem tornar todos os campos obrigatórios automaticamente; a lista individual de obrigatórios permanece pendente. Dados associados à Empresa seguem os usos da baseline e devem ser distinguidos de barreiras/critérios específicos da vaga. Tipos de resposta, escalas, validações, persistência, versionamento e conversão em barreiras impeditivas permanecem pendentes, relacionados às OPEN-018/023.
 - **OPEN-018:** tipos, escalas, versionamento e estrutura de persistência do mapeamento.
 - **OPEN-019:** regras e evidências para tratar divergências recorrentes nas informações declaradas.
 
