@@ -736,6 +736,15 @@ A lista é funcional, não determina quantidade final de telas ou composição v
 3. Dados ausentes permanecem não informados; o sistema não deve inferir que uma característica existe ou inexiste.
 4. Esta Spec não calcula compatibilidade nem nota pública.
 
+### 5.5 Tratar divergências recorrentes
+1. Registrar a divergência relacionada às informações de acessibilidade declaradas pela Empresa, identificando sua origem ou referência, a data do registro e os elementos disponíveis para análise.
+2. Encaminhar o registro para análise administrativa, sem considerar a divergência ou a recorrência de relatos como prova suficiente, por si só, de declaração incorreta.
+3. Analisar as informações e evidências disponíveis antes de decidir sobre eventual alteração.
+4. Registrar a decisão, sua justificativa e o responsável, mantendo a rastreabilidade conforme as regras aplicáveis.
+5. Executar somente as alterações autorizadas pela decisão registrada e pelas regras de negócio aplicáveis.
+
+O procedimento não define sanções automáticas, limiares numéricos de recorrência, evidências mínimas obrigatórias, prazos ou catálogo de decisões. Esses elementos permanecem sujeitos a decisões específicas.
+
 ## 6. Regras e invariantes
 
 1. A infraestrutura pertence à Empresa à qual está associada. Os dados são estruturados por itens extensíveis, sem impor uma escala universal; quando aplicável, presença declarada, ausência declarada e informação não informada devem permanecer distintas.
@@ -744,7 +753,7 @@ A lista é funcional, não determina quantidade final de telas ou composição v
 4. O sistema não deve converter informação ausente em afirmação de acessibilidade ou inacessibilidade.
 5. Alterações relevantes devem ser rastreáveis (RB-27, RB-37, RF-38, RNF-14), registrando quando ocorreram, o ator responsável, a categoria/informação afetada e o tipo de alteração. Não é exigida cópia integral do mapeamento a cada modificação; a preservação de valores anteriores ou versões completas depende de decisão específica.
 6. A persistência deve manter a integridade do vínculo Empresa–infraestrutura (RNF-09).
-7. Divergências recorrentes podem ter consequências conforme RB-08, mas qualquer processo de apuração/alteração deve respeitar a regra de negócio aplicável; esta Spec não cria uma decisão automática.
+7. Divergências recorrentes podem resultar em alteração após análise administrativa (RB-08). O registro da divergência não comprova, por si só, declaração incorreta. A decisão, sua justificativa, o responsável e as alterações autorizadas devem ser rastreáveis. Não se aplicam alterações ou sanções automaticamente pela recorrência de relatos.
 8. A nota pública de acessibilidade não é calculada nesta capacidade (RB-20).
 9. Campos, escalas e itens obrigatórios não podem ser ampliados por suposição.
 
@@ -795,6 +804,10 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [ ] Alterações relevantes são rastreáveis.
 - [ ] Dados podem ser disponibilizados a consumidores autorizados.
 - [ ] A capacidade não calcula nota pública nem compatibilidade.
+- [ ] Uma divergência registrada não provoca alteração automática das informações declaradas.
+- [ ] A decisão administrativa e sua justificativa ficam rastreáveis, com identificação do responsável.
+- [ ] Alterações decorrentes só são realizadas quando autorizadas pela decisão registrada e pelas regras aplicáveis.
+- [ ] A recorrência de relatos, isoladamente, não é tratada como comprovação de declaração incorreta.
 
 ## 12. Casos de teste derivados
 
@@ -815,7 +828,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 
 - **OPEN-017 (decisão aprovada):** estruturar o questionário da Empresa preservando os itens do UC-07 — rampas, elevadores, banheiros adaptados, leitores de tela, sinalização e políticas inclusivas — nas categorias propostas: acesso físico e circulação; instalações; comunicação e orientação; recursos tecnológicos; políticas e práticas inclusivas. Sugestões adicionais (rotas acessíveis, circulação interna, estacionamento acessível, sinalização tátil/Braille, alternativas de comunicação, compatibilidade com tecnologias assistivas e práticas de acolhimento) dependem de aprovação explícita antes de integrar o escopo. Impedir salvamento se itens definidos como obrigatórios estiverem pendentes, sem tornar todos os campos obrigatórios automaticamente; a lista individual de obrigatórios permanece pendente. Dados associados à Empresa seguem os usos da baseline e devem ser distinguidos de barreiras/critérios específicos da vaga. Tipos de resposta, escalas, validações, persistência, versionamento e conversão em barreiras impeditivas permanecem pendentes, relacionados às OPEN-018/023.
 - **OPEN-018 (resolvida):** tipos de resposta adequados a cada item, ausência de escala universal, histórico de alterações relevantes e organização estruturada/extensível do mapeamento. Permanecem pendentes os valores exatos, a lista individual de itens obrigatórios, campos internos/limites e casos de preservação de valores anteriores ou versões completas.
-- **OPEN-019:** regras e evidências para tratar divergências recorrentes nas informações declaradas.
+- **OPEN-019 (resolvida):** adotar registro, análise administrativa e decisão fundamentada, com rastreabilidade; relato ou recorrência isoladamente não comprova declaração incorreta nem gera alteração automática. Evidências mínimas, limiar de recorrência, prazos, contestação, catálogo de decisões e sanções possíveis permanecem em aberto.
 
 ## 14. Definition of Done
 
