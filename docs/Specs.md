@@ -409,7 +409,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 - **OPEN-007.1 (decisão aprovada):** cadastro progressivo com mínimo obrigatório; a lista concreta de campos mínimos continua pendente.
 - **OPEN-007.2 (decisão aprovada):** validação básica por categoria, respeitando o cadastro progressivo; formatos, limites e critérios específicos permanecem pendentes.
 - **OPEN-008 (decisão aprovada):** catálogo estruturado e extensível nas categorias arquitetônicas, de comunicação e tecnológicas, com distinção entre necessidades obrigatórias e não obrigatórias; lista inicial, significados operacionais e detalhes de representação permanecem pendentes.
-- **OPEN-009:** dados/versionamento do histórico e prazo de retenção.
+- **OPEN-009 (decisão aprovada):** histórico de alterações relevantes, sem exigir versionamento completo do perfil a cada modificação; retenção de um ano da OPEN-006 serve como referência para auditoria, enquanto campos definitivos, casos de preservação de valores anteriores/versões completas e aplicação exata ao histórico funcional permanecem pendentes.
 - **OPEN-010:** associação entre USUARIO e CANDIDATO no modelo.
 - **OPEN-011:** matriz de visibilidade de perfil e necessidades para Recrutadores.
 
