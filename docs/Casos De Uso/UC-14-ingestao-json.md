@@ -23,10 +23,12 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 3. O sistema valida a estrutura das respostas e registra a fonte, a frase consultada e o resultado da consulta.
 4. O sistema identifica registros inválidos, incompletos ou potencialmente duplicados.
 5. Para dados incompletos ou que precisem de extração/normalização, o sistema tenta complementar os dados do anúncio com LLM.
-6. O sistema valida os dados extraídos antes de utilizá-los e distingue dados originais, dados extraídos e informações não informadas.
-7. O sistema normaliza os registros que cumprirem os critérios definidos e aplica a deduplicação conforme a política aprovada.
-8. O sistema registra a origem e o resultado do processamento.
-9. O sistema persiste e disponibiliza apenas vagas que cumpram os critérios de validação e exibição, sem comprometer registros válidos existentes.
+6. O sistema valida os dados extraídos antes de utilizá-los e distingue dados originais, dados extraídos e informações não informadas; a LLM não pode inventar empresa ou localidade nem converter suposições em fatos.
+7. O sistema verifica se cada registro possui título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, além dos demais dados obrigatórios aplicáveis da baseline. Campos presentes, mas vazios, genéricos sem utilidade ou inconsistentes não satisfazem a validação.
+8. Se qualquer dado mínimo continuar ausente ou inválido após eventual complementação validada, o registro não é disponibilizado como vaga válida.
+9. O sistema normaliza os registros que cumprirem os critérios definidos e aplica a deduplicação conforme a política aprovada.
+10. O sistema registra a origem e o resultado do processamento.
+11. O sistema persiste e disponibiliza apenas vagas que cumpram os critérios de validação e exibição, sem comprometer registros válidos existentes.
 
 
 ## Regras de negócio relacionadas
@@ -52,6 +54,9 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 - As consultas diárias são executadas automaticamente, sem início manual por Administrador, depois de confirmadas a autorização da fonte (OPEN-086) e a viabilidade operacional da coleta (OPEN-087).
 - Cada frase configurada gera uma consulta rastreável por meio de `what_phrase`.
 - As respostas da API são validadas conforme o formato suportado.
+- Toda vaga disponibilizada possui título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, além dos demais dados obrigatórios aplicáveis da baseline.
+- Campo vazio, genérico sem utilidade ou inconsistente não satisfaz a obrigatoriedade.
+- Se a LLM não conseguir complementar um dado mínimo obrigatório com informação validada, o registro não é disponibilizado como vaga válida.
 - Registros inválidos não comprometem registros válidos.
 - Duplicados não geram duplicidade.
 - Dados de LLM somente são usados após validação.
