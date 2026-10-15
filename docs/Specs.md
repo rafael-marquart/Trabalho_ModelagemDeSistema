@@ -1175,7 +1175,7 @@ dos em `docs/layout/` e aprovados separadamente.
 - **Drivers:** DA-02, DA-05, DA-06, DA-07, DA-08.
 - **ADRs:** ADR-002, ADR-003, ADR-004.
 - **Dependências:** SPEC-005 para o modelo comum de VAGA; SPEC-007/SPEC-008 para consumo das vagas normalizadas; ADR-003 para integração com LLM por adaptador. A execução automatizada deve usar configuração/credenciais de integração protegidas; eventual interface administrativa continua sujeita à autorização aplicável.
-- **Questões relacionadas:** OPEN-025 a OPEN-030. OPEN-024 foi resolvida e registrada em OPEN.md.
+- **Questões relacionadas:** OPEN-025 a OPEN-030 e OPEN-086 a OPEN-087. OPEN-024 foi resolvida e registrada em OPEN.md; a viabilidade da fonte e a capacidade operacional permanecem condicionadas às OPEN-086 e OPEN-087.
 
 ## 3. Escopo
 
@@ -1216,7 +1216,7 @@ A execução principal é automatizada e diária; não exige que um administrado
 - **SPEC-005:** compartilha o modelo conceitual de VAGA, mas mantém o fluxo de cadastro próprio separado.
 - **SPEC-007/SPEC-008:** dependem de vagas externas validadas e normalizadas.
 - **ADR-003:** integração LLM no backend por adaptador, com validação antes do domínio.
-- O uso do Adzuna depende de confirmação de acesso, cobertura e condições de uso; as frases iniciais ainda precisam ser definidas. Campos obrigatórios e validações de registros são tratados em OPEN-025.
+- O uso do Adzuna depende de confirmação de acesso, cobertura, autorização e viabilidade operacional (OPEN-086 e OPEN-087); as frases iniciais ainda precisam ser definidas. Campos obrigatórios e validações de registros são tratados em OPEN-025.
 
 ## 5. Comportamento esperado
 
@@ -1353,6 +1353,8 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 - **OPEN-028:** critério de equivalência para deduplicação de registros externos.
 - **OPEN-029:** política de transação, repetição, recuperação e tratamento de falhas parciais.
 - **OPEN-030:** confirmação da formulação e medida verificável de RNF-16 aplicada à ingestão.
+- **OPEN-086:** confirmar acesso, cobertura, autorização e condições de uso da fonte externa, incluindo atribuição, links e uso de conteúdo com LLM.
+- **OPEN-087:** verificar se as cotas e os limites da API comportam a coleta diária e definir a abordagem para limites excedidos.
 
 ## 14. Definition of Done
 
