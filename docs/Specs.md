@@ -1256,11 +1256,16 @@ A faixa salarial e outros dados complementares não se tornam obrigatórios por 
 6. Se a LLM estiver indisponível, apresentar falha recuperável ou retornar dados inválidos, o sistema poderá realizar tentativas adicionais limitadas, conforme a política operacional definida. Cada resposta deverá passar por validação antes de ser utilizada. Esgotadas as tentativas, dados inválidos não serão persistidos como fatos. Se os dados originais atenderem a todos os requisitos aplicáveis, o processamento poderá continuar sem a LLM; caso contrário, se algum dado mínimo obrigatório continuar ausente ou inválido, o registro não será disponibilizado como vaga válida. A falha deverá ser registrada, e uma execução futura poderá reavaliar o anúncio. Os detalhes operacionais de repetição e recuperação devem respeitar a OPEN-029.
 
 ### 5.4 Normalizar e deduplicar
-1. O sistema converte os dados válidos para a estrutura comum de VAGA.
-2. Mantém a identificação da fonte externa.
-3. Verifica duplicidade entre registros externos conforme critérios aprovados.
-4. Registros externos duplicados não criam múltiplas representações equivalentes.
-5. A deduplicação não deve eliminar ou alterar indevidamente registros válidos existentes.
+1. O sistema converte os dados válidos para a estrutura comum de VAGA e mantém a identificação da fonte externa.
+2. A deduplicação aplica-se somente a registros externos; esta regra não classifica vagas próprias como duplicadas automaticamente.
+3. Aplicar os critérios de equivalência em camadas e nesta ordem:
+   - **Identificador externo:** considerar duplicados registros com o mesmo identificador externo dentro da mesma fonte.
+   - **URL original normalizada:** se a primeira regra não estabelecer equivalência, considerar duplicados registros cuja URL original seja equivalente após normalização.
+   - **Atributos normalizados:** quando os identificadores não forem suficientes, comparar conservadoramente atributos confiáveis, especialmente empresa contratante, título e localidade. Outros atributos só podem ser considerados quando forem confiáveis e úteis para distinguir ou confirmar a oportunidade.
+4. A comparação por atributos só classifica automaticamente dois registros como duplicados quando houver evidências suficientes de que representam a mesma oportunidade; semelhança superficial de título ou descrição, isoladamente, não basta.
+5. Quando a evidência for insuficiente ou houver dúvida, manter os registros separados, em vez de fundir oportunidades possivelmente distintas.
+6. Ao identificar duplicidade, não criar uma representação equivalente adicional; registrar o resultado individual como duplicado e o motivo relevante disponível, associado à execução de ingestão conforme a OPEN-027.
+7. A deduplicação não deve excluir, fundir ou sobrescrever indevidamente uma vaga válida existente. Semelhança incerta não autoriza alteração destrutiva.
 
 ### 5.5 Persistir e registrar resultado
 1. Cada execução de ingestão recebe uma identificação que permite distingui-la de outras execuções.
@@ -1283,7 +1288,7 @@ A faixa salarial e outros dados complementares não se tornam obrigatórios por 
 8. Operação administrativa exige autenticação e autorização (RF-40, RB-12, ADR-002).
 9. Operações relevantes devem ser rastreáveis (RF-38, RB-37, RB-41, RNF-14).
 10. A LLM permanece atrás de adaptador no backend e pode ser substituída (ADR-003).
-11. A deduplicação desta Spec se aplica somente a dados externos.
+11. A deduplicação desta Spec se aplica somente a dados externos e usa os critérios conservadores em camadas definidos na seção 5.4; em caso de dúvida, mantém registros separados e não altera vagas válidas existentes por mera semelhança.
 12. O sistema não deve afirmar que uma vaga é válida se seus dados obrigatórios não passaram pelas validações estabelecidas: título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, além dos demais requisitos aplicáveis da baseline.
 13. Estratégia de repetição, transação e recuperação não é inventada por esta Spec e deve ser definida onde a baseline não for suficiente.
 
@@ -1345,7 +1350,12 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [ ] Falhas da LLM não comprometem registros válidos existentes, e uma execução futura pode reavaliar o anúncio.
 - [ ] Vagas externas válidas são normalizadas para o modelo comum.
 - [ ] Origem externa é preservada.
-- [ ] Duplicados externos não geram registros equivalentes múltiplos.
+- [ ] Registros com o mesmo identificador externo na mesma fonte são reconhecidos como duplicados.
+- [ ] URLs originais equivalentes após normalização são reconhecidas como duplicadas quando o identificador não estabelece a equivalência.
+- [ ] Na ausência de identificadores suficientes, atributos normalizados confiáveis permitem classificar duplicidade somente quando há evidências suficientes; semelhança superficial não basta.
+- [ ] Registros com equivalência incerta permanecem separados.
+- [ ] Registros externos duplicados não geram representações equivalentes múltiplas, e o resultado individual registra duplicidade e motivo relevante disponível.
+- [ ] A deduplicação não é aplicada automaticamente a vagas próprias nem exclui, funde ou sobrescreve vagas válidas por semelhança incerta.
 - [ ] Falhas não comprometem registros válidos existentes.
 - [ ] Cada execução de ingestão possui identificação própria e resultado agregado rastreável.
 - [ ] O resultado agregado registra origem, consultas realizadas, quantitativos e falhas relevantes.
@@ -1385,6 +1395,12 @@ Contratos conceituais, sem definir endpoints HTTP:
 | T-006-23 | Rejeitar registro ou falhar seu processamento | Resultado individual distingue rejeição de falha e registra o motivo relevante disponível |
 | T-006-24 | Consolidar resultados individuais da execução | Quantitativos agregados são coerentes com os resultados individuais |
 | T-006-25 | Investigar um registro após a execução | Origem, execução e resultado individual podem ser rastreados sem histórico detalhado de cada etapa interna |
+| T-006-26 | Dois registros da mesma fonte possuem o mesmo identificador externo | São reconhecidos como duplicados e não criam representações equivalentes múltiplas |
+| T-006-27 | Registros possuem URLs originais equivalentes após normalização, sem correspondência decisiva por identificador | São reconhecidos como duplicados |
+| T-006-28 | Identificadores não bastam, mas empresa, título e localidade normalizados sustentam equivalência | Registros são classificados como duplicados somente se houver evidência suficiente; decisão e motivo relevante ficam rastreáveis |
+| T-006-29 | Títulos ou descrições são semelhantes, mas os demais dados não comprovam equivalência | Registros permanecem separados |
+| T-006-30 | Há dúvida ou dados insuficientes para determinar equivalência | Registros permanecem separados e nenhuma vaga válida existente é excluída, fundida ou sobrescrita |
+| T-006-31 | Um registro de vaga própria se assemelha a um registro externo | A deduplicação externa não classifica automaticamente a vaga própria como duplicada |
 
 ## 13. Questões em aberto
 
@@ -1393,7 +1409,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 - **OPEN-025:** campos obrigatórios e validações para considerar um registro externo uma vaga válida.
 - **OPEN-026:** comportamento de contingência quando LLM estiver indisponível ou produzir dados inválidos.
 - **OPEN-027 (resolvida):** cada execução possui identificação e resultado agregado rastreável; cada registro recebido está associado à execução e possui resultado individual, com quantitativos consolidados coerentes. A estrutura persistente será detalhada no modelo de dados, sem imposição de entidades/tabelas nesta decisão.
-- **OPEN-028:** critério de equivalência para deduplicação de registros externos.
+- **OPEN-028 (resolvida):** deduplicação externa conservadora em camadas por identificador na mesma fonte, URL original normalizada e, quando necessário, atributos normalizados confiáveis; casos incertos permanecem separados e não alteram vagas válidas existentes.
 - **OPEN-029:** política de transação, repetição, recuperação e tratamento de falhas parciais.
 - **OPEN-030:** confirmação da formulação e medida verificável de RNF-16 aplicada à ingestão.
 - **OPEN-086:** confirmar acesso, cobertura, autorização e condições de uso da fonte externa, incluindo atribuição, links e uso de conteúdo com LLM.
