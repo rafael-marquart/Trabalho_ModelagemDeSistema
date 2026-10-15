@@ -18,9 +18,9 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 - O uso da fonte respeita os limites e as condições de uso aplicáveis.
 
 ## Fluxo Principal
-1. A tarefa agendada inicia a coleta diária automaticamente.
+1. A tarefa agendada inicia a coleta diária automaticamente e identifica a execução de ingestão.
 2. O sistema consulta individualmente a API para cada frase configurada, usando `what_phrase`.
-3. O sistema valida a estrutura das respostas e registra a fonte, a frase consultada e o resultado da consulta.
+3. O sistema valida a estrutura das respostas e registra, associados à execução, a fonte, a frase consultada e o resultado de cada consulta.
 4. O sistema identifica registros inválidos, incompletos ou potencialmente duplicados.
 5. Para dados incompletos ou que precisem de extração/normalização, o sistema tenta complementar os dados do anúncio com LLM.
 6. Se houver falha recuperável ou resposta inválida, o sistema poderá realizar tentativas adicionais limitadas, conforme a política operacional definida; cada resposta é validada antes do uso.
@@ -28,8 +28,9 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 8. Se os dados originais já atenderem aos requisitos aplicáveis, o processamento poderá continuar sem depender da LLM. Se as tentativas se esgotarem e algum dado mínimo obrigatório continuar ausente ou inválido, o registro não será disponibilizado como vaga válida e a falha será registrada.
 9. O sistema verifica se cada registro possui título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, além dos demais dados obrigatórios aplicáveis da baseline. Campos presentes, mas vazios, genéricos sem utilidade ou inconsistentes não satisfazem a validação.
 10. O sistema normaliza os registros que cumprirem os critérios definidos e aplica a deduplicação conforme a política aprovada.
-11. O sistema registra a origem e o resultado do processamento, incluindo falhas relevantes.
-12. O sistema persiste e disponibiliza apenas vagas que cumpram os critérios de validação e exibição, sem comprometer registros válidos existentes. Uma execução futura poderá reavaliar o anúncio, sem garantia de recuperação.
+11. O sistema associa cada registro recebido à execução correspondente e registra o resultado individual: processado, rejeitado, duplicado ou falha de processamento. Para rejeições e falhas, registra os motivos relevantes disponíveis.
+12. O sistema consolida o resultado da execução, incluindo origem, consultas realizadas, quantitativos coerentes com os resultados individuais e falhas relevantes. A rastreabilidade permite investigar cada registro sem exigir o histórico detalhado de toda etapa interna.
+13. O sistema persiste e disponibiliza apenas vagas que cumpram os critérios de validação e exibição, sem comprometer registros válidos existentes. Uma execução futura poderá reavaliar o anúncio, sem garantia de recuperação.
 
 
 ## Regras de negócio relacionadas
@@ -64,5 +65,9 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 - Registros inválidos não comprometem registros válidos.
 - Duplicados não geram duplicidade.
 - Dados de LLM somente são usados após validação.
-- A origem, a frase de busca e o resultado ficam registrados.
+- Cada execução possui identificação própria e resultado agregado rastreável.
+- A origem, as frases de busca, os resultados das consultas e as falhas relevantes ficam registrados na execução correspondente.
+- Cada registro recebido fica associado à execução e possui resultado individual distinguível entre processado, rejeitado, duplicado e falha de processamento.
+- Motivos relevantes de rejeição/falha ficam registrados; os quantitativos consolidados são coerentes com os resultados individuais.
+- A rastreabilidade permite investigar o resultado de cada registro sem exigir o registro detalhado de todas as etapas internas.
 - Dados extraídos por LLM só são usados após validação; ausência de informação sobre acessibilidade permanece como “não informado” quando aplicável.
