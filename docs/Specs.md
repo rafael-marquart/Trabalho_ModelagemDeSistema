@@ -2214,7 +2214,7 @@ Consultar OPEN-053 a OPEN-056 em `docs/OPEN.md`. As questões permanecem abertas
 - **Baseline:** RF-11, RF-27, RF-31; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-011 a SPEC-013.
 - **Caso de uso:** UC-05 — Acompanhar Funil de Candidaturas.
-- **Questões abertas:** OPEN-063 a OPEN-065.
+- **Questões abertas:** OPEN-065.
 
 ## 3. Escopo
 Listar candidaturas próprias; apresentar status/etapa atual e linha do tempo; refletir cancelamento e encerramento sem confundir eventos antigos com estado atual.
@@ -2235,8 +2235,11 @@ SPEC-011 a 015. As dependências fornecem dados e capacidades; esta Spec não du
 ## 5. Comportamento esperado
 1. Candidato autenticado consulta somente candidaturas próprias.
 2. Sistema apresenta etapa/status atual e a vaga correspondente.
-3. Sistema apresenta eventos históricos e datas disponíveis, distinguindo histórico de estado atual.
-4. Se não houver evento histórico disponível, o sistema informa a ausência de histórico sem inventar eventos.
+3. Sistema apresenta a linha do tempo com os eventos históricos e suas datas, distinguindo histórico de estado atual.
+4. Os tipos de evento exibidos são “Candidatura realizada”, “Status” e “Candidatura cancelada”, quando aplicáveis.
+5. O tipo “Status” pode representar estados gerais do processo, como “Em andamento”, “Entrevista” e “Aprovado”.
+6. Cada evento apresenta data (sem exigir horário na interface), tipo de evento, descrição breve e compreensível e status ou etapa resultante, quando aplicável. Os eventos são ordenados do mais recente para o mais antigo.
+7. Se não houver evento histórico disponível, o sistema informa a ausência de histórico sem inventar eventos.
 5. Cancelamento ou encerramento da vaga é refletido no acompanhamento conforme registro oficial.
 6. O fluxo é somente de consulta; não altera etapa ou decisão do processo.
 
