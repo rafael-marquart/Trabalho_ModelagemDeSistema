@@ -2344,7 +2344,7 @@ SPEC-009, 011 a 016. As dependências fornecem dados e capacidades; esta Spec n�
 4. Sistema identifica apenas destinatários autorizados e relacionados ao evento.
 5. Sistema prepara comunicação com o mínimo de dados necessário, sem expor dados privados de terceiros.
 6. Sistema envia as notificações obrigatórias por e-mail. O usuário não pode desativar essas comunicações.
-7. Resultado, falha e eventual reenvio seguem a política a definir na OPEN-068; a existência de uma central/histórico depende da OPEN-069.
+7. O envio é solicitado assim que o evento de origem é confirmado. Em caso de falha temporária, o sistema tenta novamente automaticamente, com intervalos crescentes. Se todas as tentativas falharem, registra a falha para identificação e acompanhamento. A quantidade exata de tentativas, os intervalos e os critérios técnicos para classificar falhas serão detalhados na implementação, conforme OPEN-068; a existência de uma central/histórico depende da OPEN-069.
 8. Falha no envio não desfaz a alteração de domínio, e o usuário pode consultar o estado oficial na capacidade de origem/acompanhamento.
 
 ## 6. Regras e invariantes
@@ -2365,7 +2365,7 @@ A capacidade mantém separação entre interface, regras de domínio e persistê
 - **Determinar destinatários:** resolve somente pessoas autorizadas relacionadas ao evento e à candidatura.
 - **Preparar mensagem:** usa conteúdo mínimo necessário e não inclui dados privados de terceiros.
 - **Solicitar envio:** envia a notificação obrigatória por e-mail, conforme a decisão registrada na OPEN-067.
-- **Registrar resultado:** registra o resultado de envio conforme política aprovada; falha de entrega não desfaz a alteração original.
+- **Registrar resultado:** registra o resultado do envio e, se todas as tentativas falharem, a falha para identificação e acompanhamento; falha de entrega não desfaz a alteração original.
 
 Contratos conceituais; não definem endpoints HTTP.
 
@@ -2393,8 +2393,8 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 |---|---|---|
 | T-017-01 | Evento relevante ocorre e há destinatário autorizado | É preparada notificação relacionada ao evento |
 | T-017-02 | Usuário não relacionado tenta receber dados do evento | Notificação não é enviada a destinatário não autorizado |
-| T-017-03 | Serviço de e-mail indisponível ou não configurado | A falha é tratada sem desfazer a alteração original nem informar falsamente que a notificação foi entregue |
-| T-017-04 | Envio falha | Falha não é apresentada como entrega confirmada e o estado de origem permanece |
+| T-017-03 | Serviço de e-mail indisponível ou não configurado | O sistema trata a falha sem desfazer a alteração original nem informar falsamente que a notificação foi entregue; se a falha for temporária, solicita novas tentativas automáticas |
+| T-017-04 | Todas as tentativas de envio falham | A falha final fica registrada para identificação e acompanhamento; não é apresentada como entrega confirmada e o estado de origem permanece |
 | T-017-05 | Vaga é encerrada com candidatos ativos | A obrigação de informar candidatos ativos é acionada, respeitando canal/prazo ainda a definir |
 | T-017-06 | Notificação é recebida | Usuário é orientado a consultar o estado oficial na área de acompanhamento |
 | T-017-07 | Candidatura é registrada ou muda de etapa/status | Candidato recebe a notificação correspondente |
