@@ -75,6 +75,10 @@ Se houver pendências ou inconsistências, a publicação é bloqueada e o siste
 - EX03 (Publicação fora do prazo): Se a vaga for publicada com data de encerramento inválida ou anterior à data atual, o sistema rejeita a ação.
 
 
+## Critérios de acessibilidade específicos da vaga — decisão OPEN-023
+
+A vaga deve declarar o estado das informações de acessibilidade relevantes para a oportunidade. Informações gerais de infraestrutura da Empresa podem contextualizar a vaga, mas não garantem que um recurso seja aplicável ou esteja disponível naquela oportunidade. Quando aplicável, presença declarada, ausência declarada e informação não informada permanecem distintas. Dados ausentes não presumem compatibilidade nem criam, isoladamente, uma barreira impeditiva. Quando faltarem dados necessários à análise, deve ser indicada insuficiência de informação, sem inferir compatibilidade. Não são criados campos ou catálogos novos por esta decisão.
+
 ## Edição de vaga após publicação — decisão OPEN-022
 
 1. O Recrutador autenticado e autorizado seleciona uma vaga da Empresa vinculada.
