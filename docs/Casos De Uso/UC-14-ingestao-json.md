@@ -31,6 +31,11 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 11. O sistema associa cada registro recebido à execução correspondente e registra o resultado individual: processado, rejeitado, duplicado ou falha de processamento. Para rejeições e falhas, registra os motivos relevantes disponíveis.
 12. O sistema consolida o resultado da execução, incluindo origem, consultas realizadas, quantitativos coerentes com os resultados individuais e falhas relevantes. A rastreabilidade permite investigar cada registro sem exigir o histórico detalhado de toda etapa interna.
 13. O sistema persiste e disponibiliza apenas vagas que cumpram os critérios de validação e exibição, sem comprometer registros válidos existentes. Uma execução futura poderá reavaliar o anúncio, sem garantia de recuperação.
+14. O sistema persiste cada registro de forma consistente; se a persistência falhar, não deixa alterações parciais ou estado inválido e não registra a operação como processada com sucesso.
+15. O processamento de um registro com falha não interrompe o tratamento dos demais registros independentes quando for seguro continuar. Uma falha geral que impeça a continuação segura pode interromper a execução.
+16. Somente falhas recuperáveis provocam tentativas adicionais, limitadas e sujeitas às validações aplicáveis. Erros permanentes, dados inválidos e violações de regra não são repetidos indefinidamente; limites e intervalos são definidos no detalhamento operacional.
+17. Se uma execução for interrompida ou parcialmente malsucedida, uma nova execução verifica o estado existente e aplica a deduplicação aprovada, sem criar representações equivalentes adicionais. A mera existência de uma vaga não comprova que a operação anterior terminou com sucesso.
+18. Se a recuperação não for possível, o sistema registra falha e motivos relevantes. O resultado agregado distingue sucesso integral, sucesso parcial e execução malsucedida conforme os resultados individuais; novas execuções não apagam a rastreabilidade anterior nem autorizam excluir, fundir ou sobrescrever vagas válidas sem fundamento suficiente.
 
 
 ## Regras de negócio relacionadas
@@ -68,9 +73,9 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 - Registros classificados como duplicados não criam representações equivalentes múltiplas; o resultado individual e o motivo relevante disponível são rastreáveis.
 - A deduplicação não classifica automaticamente vagas próprias como duplicadas nem exclui, funde ou sobrescreve vagas válidas por semelhança incerta.
 - Dados de LLM somente são usados após validação.
-- Cada execução possui identificação própria e resultado agregado rastreável.
+- Cada execução possui identificação própria e resultado agregado rastreável, distinguindo sucesso integral, sucesso parcial e execução malsucedida.
 - A origem, as frases de busca, os resultados das consultas e as falhas relevantes ficam registrados na execução correspondente.
 - Cada registro recebido fica associado à execução e possui resultado individual distinguível entre processado, rejeitado, duplicado e falha de processamento.
 - Motivos relevantes de rejeição/falha ficam registrados; os quantitativos consolidados são coerentes com os resultados individuais.
-- A rastreabilidade permite investigar o resultado de cada registro sem exigir o registro detalhado de todas as etapas internas.
+- A rastreabilidade permite investigar o resultado de cada registro sem exigir o registro detalhado de todas as etapas internas.\n- A persistência de cada registro é consistente e não deixa alterações parciais ou estado inválido quando ocorre falha.\n- Falhas individuais não interrompem outros registros independentes quando for seguro continuar.\n- Somente falhas recuperáveis provocam tentativas adicionais limitadas; erros permanentes e dados inválidos não são repetidos indefinidamente.\n- Reexecução após interrupção ou sucesso parcial verifica o estado existente e não cria representações equivalentes adicionais.\n- Uma nova execução não apaga a rastreabilidade anterior, e vagas válidas existentes são preservadas.
 - Dados extraídos por LLM só são usados após validação; ausência de informação sobre acessibilidade permanece como “não informado” quando aplicável.
