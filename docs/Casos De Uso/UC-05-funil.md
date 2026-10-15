@@ -24,7 +24,8 @@ Permitir ao candidato acompanhar suas candidaturas, etapas, status e decisões d
 ## Exceções
 
 - EX01: vaga encerrada é apresentada com o novo status e impede novas ações incompatíveis.
-- EX02: candidatura cancelada permanece no histórico conforme as regras aplicáveis.
+- EX02: candidatura cancelada permanece disponível no histórico por 60 dias após o cancelamento; depois desse prazo, deixa de ser exibida no acompanhamento do candidato.
+- EX03: após o encerramento da vaga, o histórico permanece disponível ao candidato por 60 dias a partir do encerramento; depois desse prazo, deixa de ser exibido no acompanhamento. A retenção dos registros técnicos de auditoria é independente.
 
 ## Pós-condições
 
