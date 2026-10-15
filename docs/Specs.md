@@ -2321,7 +2321,7 @@ Consultar OPEN-063 a OPEN-065 em `docs/OPEN.md`. As questões permanecem abertas
 ## 2. Rastreabilidade
 - **Baseline:** RF-12, RF-27; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-009, 011 a 016.
-- **Caso de uso:** Fluxos de notificação referenciados por UC-03, UC-05 e UC-09; canais dependem de decisão em OPEN.
+- **Caso de uso:** Fluxos de notificação referenciados por UC-03, UC-05 e UC-09; canal de envio definido na OPEN-067.
 - **Questões abertas:** OPEN-067 a OPEN-069.
 
 ## 3. Escopo
@@ -2343,7 +2343,7 @@ SPEC-009, 011 a 016. As dependências fornecem dados e capacidades; esta Spec n�
 3. A regra geral é notificar quando um evento confirmado alterar a participação do candidato no processo ou exigir ciência do responsável pela vaga.
 4. Sistema identifica apenas destinatários autorizados e relacionados ao evento.
 5. Sistema prepara comunicação com o mínimo de dados necessário, sem expor dados privados de terceiros.
-6. Sistema envia pelo canal aprovado; a definição de canais permanece na OPEN-067.
+6. Sistema envia as notificações obrigatórias por e-mail. O usuário não pode desativar essas comunicações.
 7. Resultado, falha e eventual reenvio seguem a política a definir na OPEN-068; a existência de uma central/histórico depende da OPEN-069.
 8. Falha no envio não desfaz a alteração de domínio, e o usuário pode consultar o estado oficial na capacidade de origem/acompanhamento.
 
@@ -2364,7 +2364,7 @@ A capacidade mantém separação entre interface, regras de domínio e persistê
 - **Receber evento de origem:** consome alteração relevante registrada por uma capacidade de domínio, sem ser a fonte oficial do estado.
 - **Determinar destinatários:** resolve somente pessoas autorizadas relacionadas ao evento e à candidatura.
 - **Preparar mensagem:** usa conteúdo mínimo necessário e não inclui dados privados de terceiros.
-- **Solicitar envio:** utiliza o canal definido pelo projeto quando essa decisão for tomada; o canal permanece em OPEN-067.
+- **Solicitar envio:** envia a notificação obrigatória por e-mail, conforme a decisão registrada na OPEN-067.
 - **Registrar resultado:** registra o resultado de envio conforme política aprovada; falha de entrega não desfaz a alteração original.
 
 Contratos conceituais; não definem endpoints HTTP.
@@ -2393,7 +2393,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 |---|---|---|
 | T-017-01 | Evento relevante ocorre e há destinatário autorizado | É preparada notificação relacionada ao evento |
 | T-017-02 | Usuário não relacionado tenta receber dados do evento | Notificação não é enviada a destinatário não autorizado |
-| T-017-03 | Canal ainda não definido/configurado | Falha ou impossibilidade é tratada sem inventar canal nem desfazer a alteração original |
+| T-017-03 | Serviço de e-mail indisponível ou não configurado | A falha é tratada sem desfazer a alteração original nem informar falsamente que a notificação foi entregue |
 | T-017-04 | Envio falha | Falha não é apresentada como entrega confirmada e o estado de origem permanece |
 | T-017-05 | Vaga é encerrada com candidatos ativos | A obrigação de informar candidatos ativos é acionada, respeitando canal/prazo ainda a definir |
 | T-017-06 | Notificação é recebida | Usuário é orientado a consultar o estado oficial na área de acompanhamento |
@@ -2403,7 +2403,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-017-10 | Vaga é encerrada com candidatos ativos | Candidatos ativos são identificados para comunicação conforme RB-42 |
 
 ## 13. Questões em aberto
-Consultar OPEN-067 a OPEN-069 em `docs/OPEN.md`. Os eventos obrigatórios estão definidos pela decisão OPEN-066; as questões restantes permanecem abertas até decisão explícita do grupo.
+Consultar OPEN-068 e OPEN-069 em `docs/OPEN.md`. Os eventos obrigatórios e o envio por e-mail estão definidos pelas decisões OPEN-066 e OPEN-067; as questões restantes permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
