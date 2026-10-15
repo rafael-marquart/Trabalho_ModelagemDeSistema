@@ -1253,7 +1253,7 @@ A faixa salarial e outros dados complementares não se tornam obrigatórios por 
 3. O sistema valida os campos extraídos e sua conformidade com o modelo suportado antes de decidir se a vaga pode ser exibida, incluindo título, descrição útil, empresa contratante e localidade quando forem necessários para completar os dados mínimos.
 4. A LLM não pode inventar empresa ou localidade ausente do anúncio nem tratar uma suposição como fato confirmado. Dados extraídos só satisfazem a obrigatoriedade após validação.
 5. O sistema distingue dados fornecidos pela fonte, dados extraídos pela LLM e informações não informadas. Não presume acessibilidade nem transforma ausência de menção em declaração positiva ou negativa.
-6. Se a LLM estiver indisponível ou retornar dados inválidos, não se persiste a resposta inválida como fato. Se qualquer dado mínimo continuar ausente ou inválido, o registro não será disponibilizado como vaga válida; a política de contingência fica em OPEN-026.
+6. Se a LLM estiver indisponível, apresentar falha recuperável ou retornar dados inválidos, o sistema poderá realizar tentativas adicionais limitadas, conforme a política operacional definida. Cada resposta deverá passar por validação antes de ser utilizada. Esgotadas as tentativas, dados inválidos não serão persistidos como fatos. Se os dados originais atenderem a todos os requisitos aplicáveis, o processamento poderá continuar sem a LLM; caso contrário, se algum dado mínimo obrigatório continuar ausente ou inválido, o registro não será disponibilizado como vaga válida. A falha deverá ser registrada, e uma execução futura poderá reavaliar o anúncio. Os detalhes operacionais de repetição e recuperação devem respeitar a OPEN-029.
 
 ### 5.4 Normalizar e deduplicar
 1. O sistema converte os dados válidos para a estrutura comum de VAGA.
@@ -1334,7 +1334,10 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [ ] Cada vaga externa disponibilizada possui título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, além dos demais dados obrigatórios aplicáveis da baseline.
 - [ ] Campos presentes, mas vazios, genéricos sem utilidade ou inconsistentes, não satisfazem a obrigatoriedade.
 - [ ] Dados extraídos por LLM passam por validação antes de uso; a LLM não inventa empresa ou localidade nem converte suposições em fatos.
-- [ ] Indisponibilidade ou resposta inválida da LLM não resulta em vaga inválida persistida.
+- [ ] Falha recuperável ou resposta inválida da LLM provoca somente tentativas adicionais limitadas, e cada resposta é validada antes do uso.
+- [ ] Quando os dados originais já atendem aos requisitos aplicáveis, a vaga pode ser processada sem depender da LLM.
+- [ ] Esgotadas as tentativas, dados inválidos não são persistidos como fatos; se faltarem dados mínimos obrigatórios, a vaga não é disponibilizada como válida e a falha é registrada.
+- [ ] Falhas da LLM não comprometem registros válidos existentes, e uma execução futura pode reavaliar o anúncio.
 - [ ] Vagas externas válidas são normalizadas para o modelo comum.
 - [ ] Origem externa é preservada.
 - [ ] Duplicados externos não geram registros equivalentes múltiplos.
@@ -1356,8 +1359,10 @@ Contratos conceituais, sem definir endpoints HTTP:
 | T-006-07 | Localidade ausente ou inutilizável | Registro não é disponibilizado como vaga válida |
 | T-006-08 | Origem ou referência rastreável ausente | Registro não é disponibilizado como vaga válida |
 | T-006-09 | LLM retorna campos inválidos ou não comprovados | Dados não entram no domínio como vaga válida |
-| T-006-10 | LLM indisponível e falta dado mínimo obrigatório | Registro não é disponibilizado como vaga válida |
-| T-006-11 | LLM indisponível | Nenhum resultado não validado é persistido |
+| T-006-10 | LLM indisponível e falta dado mínimo obrigatório após tentativas limitadas | Registro não é disponibilizado como vaga válida e falha é registrada |
+| T-006-11 | LLM indisponível, mas dados originais são suficientes | Processamento prossegue sem depender da LLM |
+| T-006-17 | Falha recuperável da LLM é superada em nova tentativa | Resposta é validada antes de uso e fluxo prossegue se os dados forem suficientes |
+| T-006-18 | Tentativas limitadas se esgotam com resposta inválida | Dados inválidos não são aceitos como fatos; falha é registrada |
 | T-006-12 | Registro externo válido | Normalizado e persistido |
 | T-006-13 | Registro externo duplicado | Não cria registro equivalente adicional |
 | T-006-14 | Lote contém válidos e inválidos | Válidos são preservados/processados sem contaminação pelos inválidos |
