@@ -1274,7 +1274,14 @@ A faixa salarial e outros dados complementares não se tornam obrigatórios por 
 4. Rejeições e falhas individuais registram os motivos relevantes disponíveis para investigação; os resultados de consultas também permanecem rastreáveis.
 5. Os quantitativos consolidados devem ser coerentes com os resultados individuais. A rastreabilidade permite investigar o resultado de um registro sem exigir o registro detalhado de cada etapa interna.
 6. O sistema persiste os registros validados e normalizados. Falhas parciais não comprometem registros válidos existentes nem devem produzir duplicação indevida.
-7. Os registros válidos tornam-se disponíveis às capacidades consumidoras após o processamento bem-sucedido. A estratégia de transação, repetição e recuperação permanece na OPEN-029.
+7. Os registros válidos tornam-se disponíveis às capacidades consumidoras após o processamento bem-sucedido.
+8. O processamento é independente por registro: falha individual não impede o tratamento dos demais registros independentes quando for seguro continuar. Falha geral que comprometa a capacidade de processar com segurança pode interromper a execução.
+9. A persistência de cada registro deve ser consistente: uma falha não pode deixar alterações parciais ou estado inválido. Uma operação malsucedida não pode ser registrada como processada com sucesso.
+10. Somente falhas recuperáveis provocam tentativas adicionais, sempre limitadas. Erros permanentes, dados inválidos e violações de regra não são repetidos indefinidamente. Cada resposta ou resultado de nova tentativa passa pelas validações aplicáveis. Limites e intervalos operacionais serão definidos no detalhamento, alinhados à OPEN-026.
+11. Uma execução interrompida ou parcialmente malsucedida pode ser reexecutada. A reexecução verifica o estado existente e reaplica a deduplicação externa conforme a seção 5.4, sem criar representações equivalentes adicionais. A mera existência de uma vaga não comprova, por si só, que uma operação anterior foi concluída com sucesso.
+12. Quando não for possível recuperar um registro, o sistema registra o resultado de falha e os motivos relevantes disponíveis para investigação.
+13. O resultado agregado distingue execução integralmente bem-sucedida, parcialmente bem-sucedida e malsucedida, de acordo com os resultados individuais reais. Uma nova execução não apaga a rastreabilidade das anteriores.
+14. A recuperação não autoriza excluir, fundir ou sobrescrever vagas válidas sem fundamento suficiente nas regras aprovadas.
 
 ## 6. Regras e invariantes
 
@@ -1290,7 +1297,7 @@ A faixa salarial e outros dados complementares não se tornam obrigatórios por 
 10. A LLM permanece atrás de adaptador no backend e pode ser substituída (ADR-003).
 11. A deduplicação desta Spec se aplica somente a dados externos e usa os critérios conservadores em camadas definidos na seção 5.4; em caso de dúvida, mantém registros separados e não altera vagas válidas existentes por mera semelhança.
 12. O sistema não deve afirmar que uma vaga é válida se seus dados obrigatórios não passaram pelas validações estabelecidas: título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, além dos demais requisitos aplicáveis da baseline.
-13. Estratégia de repetição, transação e recuperação não é inventada por esta Spec e deve ser definida onde a baseline não for suficiente.
+13. Cada registro é processado de forma independente e sua persistência deve ser consistente; falhas individuais não comprometem registros válidos existentes nem impedem outros registros independentes quando for seguro continuar.\n14. Repetições são limitadas e reservadas a falhas recuperáveis; erros permanentes, dados inválidos e violações de regra não são repetidos indefinidamente. Limites e intervalos são detalhamento operacional.\n15. Reexecuções verificam o estado existente e aplicam a deduplicação aprovada, sem criar representações equivalentes adicionais nem presumir sucesso apenas pela existência de uma vaga.\n16. Resultados individuais e agregados refletem o ocorrido; execuções anteriores e sua rastreabilidade são preservadas. A recuperação não autoriza alteração destrutiva de vaga válida sem fundamento suficiente.
 
 ## 7. Modelo de domínio envolvido
 
@@ -1322,7 +1329,7 @@ Contratos conceituais, sem definir endpoints HTTP:
 - **Extrair dados via adaptador LLM:** quando habilitado, retorna dados candidatos à validação, nunca diretamente confiáveis.
 - **Normalizar vaga externa:** transforma dados válidos para o modelo comum.
 - **Identificar duplicidade externa:** compara registros externos conforme critério aprovado.
-- **Persistir registros válidos:** grava os registros sem comprometer dados válidos existentes.
+- **Persistir registros válidos:** grava cada registro de forma consistente, sem deixar estado parcial/inválido e sem comprometer dados válidos existentes.\n- **Repetir falha recuperável:** realiza tentativas adicionais limitadas apenas para falhas recuperáveis, validando cada novo resultado.\n- **Reexecutar ingestão:** verifica o estado existente e aplica a deduplicação aprovada para evitar representações equivalentes adicionais.\n- **Consolidar resultado da execução:** distingue sucesso integral, sucesso parcial e execução malsucedida conforme os resultados individuais reais, preservando o histórico de execuções anteriores.
 - **Registrar resultado agregado da ingestão:** registra a identificação da execução, origem, consultas realizadas, resultado geral, quantitativos e falhas relevantes.
 - **Registrar resultado individual do registro:** associa cada registro recebido à execução correspondente e registra seu resultado (processado, rejeitado, duplicado ou falha de processamento), com motivos relevantes de rejeição/falha.
 - **Consultar rastreabilidade da ingestão:** permite investigar o resultado agregado da execução e o resultado de cada registro sem exigir o histórico detalhado de todas as etapas internas.
@@ -1366,6 +1373,15 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [ ] Falhas parciais não comprometem registros válidos existentes.
 - [ ] A operação não depende de um fornecedor LLM específico.
 - [ ] A deduplicação não é aplicada a vagas próprias por esta Spec.
+- [ ] Falha em um registro não impede o processamento de outros registros independentes quando for seguro continuar.
+- [ ] Falha durante a persistência de um registro não deixa alterações parciais ou estado inválido.
+- [ ] Somente falhas recuperáveis provocam tentativas adicionais, e o limite operacional é respeitado.
+- [ ] Erros permanentes, dados inválidos e violações de regra não são repetidos indefinidamente.
+- [ ] Reexecução de execução interrompida ou parcialmente malsucedida verifica o estado existente e não cria representações equivalentes adicionais.
+- [ ] Falha em um registro não exclui, funde ou sobrescreve indevidamente uma vaga válida existente.
+- [ ] Falhas não recuperáveis ficam registradas com os motivos relevantes disponíveis.
+- [ ] O resultado agregado distingue sucesso integral, sucesso parcial e execução malsucedida, com quantitativos coerentes com os resultados individuais.
+- [ ] Uma nova execução preserva a rastreabilidade das execuções anteriores.
 
 ## 12. Casos de teste derivados
 
@@ -1401,6 +1417,15 @@ Contratos conceituais, sem definir endpoints HTTP:
 | T-006-29 | Títulos ou descrições são semelhantes, mas os demais dados não comprovam equivalência | Registros permanecem separados |
 | T-006-30 | Há dúvida ou dados insuficientes para determinar equivalência | Registros permanecem separados e nenhuma vaga válida existente é excluída, fundida ou sobrescrita |
 | T-006-31 | Um registro de vaga própria se assemelha a um registro externo | A deduplicação externa não classifica automaticamente a vaga própria como duplicada |
+| T-006-32 | Um registro falha durante o processamento, mas há outros registros independentes válidos | Os demais registros são processados quando for seguro continuar; a falha individual é registrada |
+| T-006-33 | Ocorre falha durante a persistência de um registro | Não permanece alteração parcial ou estado inválido; a operação não é registrada como sucesso |
+| T-006-34 | Uma falha recuperável ocorre durante a ingestão | Nova tentativa ocorre dentro do limite operacional e seu resultado passa pelas validações aplicáveis |
+| T-006-35 | Ocorre erro permanente ou os dados são inválidos | Não há repetição indefinida; a falha ou rejeição é registrada com motivo relevante |
+| T-006-36 | Reexecutar uma execução parcialmente concluída | Estado existente é verificado e não são criadas representações equivalentes adicionais |
+| T-006-37 | Um registro falha quando já existe uma vaga válida | A vaga válida existente é preservada |
+| T-006-38 | Não é possível recuperar um registro após tentativas permitidas | Resultado de falha e motivo relevante ficam rastreáveis |
+| T-006-39 | Uma execução termina com resultados individuais mistos | Resultado agregado e quantitativos refletem os resultados individuais reais |
+| T-006-40 | Executar nova ingestão após execução malsucedida | Rastreabilidade da execução anterior é preservada e a nova execução possui resultado próprio |
 
 ## 13. Questões em aberto
 
@@ -1410,7 +1435,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 - **OPEN-026:** comportamento de contingência quando LLM estiver indisponível ou produzir dados inválidos.
 - **OPEN-027 (resolvida):** cada execução possui identificação e resultado agregado rastreável; cada registro recebido está associado à execução e possui resultado individual, com quantitativos consolidados coerentes. A estrutura persistente será detalhada no modelo de dados, sem imposição de entidades/tabelas nesta decisão.
 - **OPEN-028 (resolvida):** deduplicação externa conservadora em camadas por identificador na mesma fonte, URL original normalizada e, quando necessário, atributos normalizados confiáveis; casos incertos permanecem separados e não alteram vagas válidas existentes.
-- **OPEN-029:** política de transação, repetição, recuperação e tratamento de falhas parciais.
+- **OPEN-029 (resolvida):** processamento independente por registro, persistência consistente, repetição limitada apenas para falhas recuperáveis, reexecução segura com deduplicação aprovada, preservação de vagas válidas e rastreabilidade dos resultados individuais/agregados e das execuções anteriores. Limites e intervalos operacionais ficam para detalhamento, alinhados à OPEN-026; não se impõem tecnologias ou estruturas físicas.
 - **OPEN-030:** confirmação da formulação e medida verificável de RNF-16 aplicada à ingestão.
 - **OPEN-086:** confirmar acesso, cobertura, autorização e condições de uso da fonte externa, incluindo atribuição, links e uso de conteúdo com LLM.
 - **OPEN-087:** verificar se as cotas e os limites da API comportam a coleta diária e definir a abordagem para limites excedidos.
