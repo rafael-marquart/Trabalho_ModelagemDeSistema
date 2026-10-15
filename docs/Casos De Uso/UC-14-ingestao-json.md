@@ -23,12 +23,13 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 3. O sistema valida a estrutura das respostas e registra a fonte, a frase consultada e o resultado da consulta.
 4. O sistema identifica registros inválidos, incompletos ou potencialmente duplicados.
 5. Para dados incompletos ou que precisem de extração/normalização, o sistema tenta complementar os dados do anúncio com LLM.
-6. O sistema valida os dados extraídos antes de utilizá-los e distingue dados originais, dados extraídos e informações não informadas; a LLM não pode inventar empresa ou localidade nem converter suposições em fatos.
-7. O sistema verifica se cada registro possui título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, além dos demais dados obrigatórios aplicáveis da baseline. Campos presentes, mas vazios, genéricos sem utilidade ou inconsistentes não satisfazem a validação.
-8. Se qualquer dado mínimo continuar ausente ou inválido após eventual complementação validada, o registro não é disponibilizado como vaga válida.
-9. O sistema normaliza os registros que cumprirem os critérios definidos e aplica a deduplicação conforme a política aprovada.
-10. O sistema registra a origem e o resultado do processamento.
-11. O sistema persiste e disponibiliza apenas vagas que cumpram os critérios de validação e exibição, sem comprometer registros válidos existentes.
+6. Se houver falha recuperável ou resposta inválida, o sistema poderá realizar tentativas adicionais limitadas, conforme a política operacional definida; cada resposta é validada antes do uso.
+7. O sistema distingue dados originais, dados extraídos e informações não informadas; a LLM não pode inventar empresa ou localidade nem converter suposições em fatos.
+8. Se os dados originais já atenderem aos requisitos aplicáveis, o processamento poderá continuar sem depender da LLM. Se as tentativas se esgotarem e algum dado mínimo obrigatório continuar ausente ou inválido, o registro não será disponibilizado como vaga válida e a falha será registrada.
+9. O sistema verifica se cada registro possui título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, além dos demais dados obrigatórios aplicáveis da baseline. Campos presentes, mas vazios, genéricos sem utilidade ou inconsistentes não satisfazem a validação.
+10. O sistema normaliza os registros que cumprirem os critérios definidos e aplica a deduplicação conforme a política aprovada.
+11. O sistema registra a origem e o resultado do processamento, incluindo falhas relevantes.
+12. O sistema persiste e disponibiliza apenas vagas que cumpram os critérios de validação e exibição, sem comprometer registros válidos existentes. Uma execução futura poderá reavaliar o anúncio, sem garantia de recuperação.
 
 
 ## Regras de negócio relacionadas
@@ -56,7 +57,10 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 - As respostas da API são validadas conforme o formato suportado.
 - Toda vaga disponibilizada possui título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, além dos demais dados obrigatórios aplicáveis da baseline.
 - Campo vazio, genérico sem utilidade ou inconsistente não satisfaz a obrigatoriedade.
-- Se a LLM não conseguir complementar um dado mínimo obrigatório com informação validada, o registro não é disponibilizado como vaga válida.
+- A complementação por LLM usa tentativas adicionais limitadas quando aplicável, e cada resposta passa por validação antes do uso.
+- Quando os dados originais já são suficientes, o processamento pode continuar sem LLM.
+- Se as tentativas se esgotarem e faltar dado mínimo obrigatório, o registro não é disponibilizado como vaga válida e a falha é registrada; dados inválidos não são aceitos como fatos.
+- Uma execução futura pode reavaliar o anúncio, e falhas em um registro não comprometem os demais registros válidos.
 - Registros inválidos não comprometem registros válidos.
 - Duplicados não geram duplicidade.
 - Dados de LLM somente são usados após validação.
