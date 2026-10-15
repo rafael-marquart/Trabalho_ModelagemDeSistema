@@ -1229,16 +1229,31 @@ A execução principal é automatizada e diária; não exige que um administrado
 ### 5.2 Validar estrutura e registros
 1. O sistema verifica se cada resposta recebida é JSON válido e compatível com o formato esperado da API.
 2. Se a estrutura não puder ser processada, a execução registra a falha e não altera registros válidos existentes.
-3. Para cada registro, o sistema verifica os campos e a consistência exigidos pela baseline.
-4. Registros inválidos ou incompletos são identificados e não seguem para o domínio como vagas válidas.
-5. O resultado da validação é mantido para compor o resultado da execução.
+3. Para cada registro, o sistema valida os dados mínimos de vaga externa definidos nesta Spec, além dos demais requisitos da baseline aplicáveis ao modelo comum de VAGA.
+4. Os dados mínimos são: título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, incluindo referência ao anúncio original quando disponibilizada pela fonte.
+5. A validação considera conteúdo efetivo e consistência, não apenas a presença do campo. Valores vazios, compostos apenas por espaços, genéricos sem utilidade ou incompatíveis com o significado esperado não satisfazem a obrigatoriedade.
+6. Registros inválidos ou incompletos são identificados e não seguem para o domínio como vagas válidas.
+7. O resultado da validação é mantido para compor o resultado da execução.
+
+**Matriz de dados mínimos para vaga externa**
+
+| Campo/informação | Obrigatoriedade | Regra de validação |
+|---|---|---|
+| Título | Obrigatório | Deve conter conteúdo significativo que identifique a oportunidade. |
+| Descrição | Obrigatório | Deve conter conteúdo útil sobre a oportunidade, não apenas texto vazio, fragmentos irrelevantes ou mensagem genérica sem detalhes. |
+| Empresa contratante | Obrigatório | A empresa que oferece a oportunidade deve ser identificável a partir de informação da fonte ou de extração validada; o portal de origem não substitui a identificação da contratante. |
+| Localidade | Obrigatório | Deve existir informação de localização utilizável e suficientemente identificável para apresentação da vaga. |
+| Origem e referência rastreável | Obrigatório | Registrar a fonte externa e preservar uma referência rastreável ao anúncio original, como link ou identificador, conforme disponível nos dados da fonte. |
+
+A faixa salarial e outros dados complementares não se tornam obrigatórios por esta decisão, salvo quando exigidos por outra regra aplicável da baseline. A ausência de informação de acessibilidade continua representada como “não informado”; não é requisito declarar positivamente a existência de recursos de acessibilidade para que o registro passe por esta matriz.
 
 ### 5.3 Extrair e validar dados com LLM
 1. Para vagas com dados incompletos ou que precisem de extração/normalização, o sistema tenta complementar os dados a partir do conteúdo do anúncio usando LLM no backend, por adaptador.
 2. A resposta da LLM é tratada como não confiável e não substitui os dados originais da fonte.
-3. O sistema valida os campos extraídos e sua conformidade com o modelo suportado antes de decidir se a vaga pode ser exibida.
-4. O sistema distingue dados fornecidos pela fonte, dados extraídos pela LLM e informações não informadas. Não presume acessibilidade nem transforma ausência de menção em declaração positiva ou negativa.
-5. Se a LLM estiver indisponível ou retornar dados inválidos, não se persiste a resposta inválida como fato; a política de contingência fica em OPEN-026.
+3. O sistema valida os campos extraídos e sua conformidade com o modelo suportado antes de decidir se a vaga pode ser exibida, incluindo título, descrição útil, empresa contratante e localidade quando forem necessários para completar os dados mínimos.
+4. A LLM não pode inventar empresa ou localidade ausente do anúncio nem tratar uma suposição como fato confirmado. Dados extraídos só satisfazem a obrigatoriedade após validação.
+5. O sistema distingue dados fornecidos pela fonte, dados extraídos pela LLM e informações não informadas. Não presume acessibilidade nem transforma ausência de menção em declaração positiva ou negativa.
+6. Se a LLM estiver indisponível ou retornar dados inválidos, não se persiste a resposta inválida como fato. Se qualquer dado mínimo continuar ausente ou inválido, o registro não será disponibilizado como vaga válida; a política de contingência fica em OPEN-026.
 
 ### 5.4 Normalizar e deduplicar
 1. O sistema converte os dados válidos para a estrutura comum de VAGA.
@@ -1267,7 +1282,7 @@ A execução principal é automatizada e diária; não exige que um administrado
 9. Operações relevantes devem ser rastreáveis (RF-38, RB-37, RB-41, RNF-14).
 10. A LLM permanece atrás de adaptador no backend e pode ser substituída (ADR-003).
 11. A deduplicação desta Spec se aplica somente a dados externos.
-12. O sistema não deve afirmar que uma vaga é válida se seus dados obrigatórios não passaram pelas validações estabelecidas.
+12. O sistema não deve afirmar que uma vaga é válida se seus dados obrigatórios não passaram pelas validações estabelecidas: título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, além dos demais requisitos aplicáveis da baseline.
 13. Estratégia de repetição, transação e recuperação não é inventada por esta Spec e deve ser definida onde a baseline não for suficiente.
 
 ## 7. Modelo de domínio envolvido
@@ -1316,7 +1331,9 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [ ] Respostas válidas da API são processadas conforme o formato suportado.
 - [ ] Estrutura inválida é rejeitada e registrada sem comprometer dados válidos existentes.
 - [ ] Registros inválidos/incompletos não são disponibilizados como vagas válidas.
-- [ ] Dados extraídos por LLM passam por validação antes de uso.
+- [ ] Cada vaga externa disponibilizada possui título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, além dos demais dados obrigatórios aplicáveis da baseline.
+- [ ] Campos presentes, mas vazios, genéricos sem utilidade ou inconsistentes, não satisfazem a obrigatoriedade.
+- [ ] Dados extraídos por LLM passam por validação antes de uso; a LLM não inventa empresa ou localidade nem converte suposições em fatos.
 - [ ] Indisponibilidade ou resposta inválida da LLM não resulta em vaga inválida persistida.
 - [ ] Vagas externas válidas são normalizadas para o modelo comum.
 - [ ] Origem externa é preservada.
@@ -1333,12 +1350,17 @@ Contratos conceituais, sem definir endpoints HTTP:
 | T-006-01 | Chega o horário diário de coleta | A tarefa automatizada inicia e registra a execução |
 | T-006-02 | Configuração/credenciais são acessadas por usuário não autorizado | Acesso recusado |
 | T-006-03 | JSON sintaticamente inválido | Falha registrada; dados existentes preservados |
-| T-006-04 | Registro sem campo obrigatório | Registro rejeitado ou isolado conforme política aprovada |
-| T-006-05 | LLM retorna campos inválidos | Dados não entram no domínio como vaga válida |
-| T-006-06 | LLM indisponível | Nenhum resultado não validado é persistido |
-| T-006-07 | Registro externo válido | Normalizado e persistido |
-| T-006-08 | Registro externo duplicado | Não cria registro equivalente adicional |
-| T-006-09 | Lote contém válidos e inválidos | Válidos são preservados/processados sem contaminação pelos inválidos |
+| T-006-04 | Registro sem título significativo | Registro não é disponibilizado como vaga válida |
+| T-006-05 | Registro sem descrição útil | Registro não é disponibilizado como vaga válida |
+| T-006-06 | Empresa contratante não identificável | Registro não é disponibilizado como vaga válida |
+| T-006-07 | Localidade ausente ou inutilizável | Registro não é disponibilizado como vaga válida |
+| T-006-08 | Origem ou referência rastreável ausente | Registro não é disponibilizado como vaga válida |
+| T-006-09 | LLM retorna campos inválidos ou não comprovados | Dados não entram no domínio como vaga válida |
+| T-006-10 | LLM indisponível e falta dado mínimo obrigatório | Registro não é disponibilizado como vaga válida |
+| T-006-11 | LLM indisponível | Nenhum resultado não validado é persistido |
+| T-006-12 | Registro externo válido | Normalizado e persistido |
+| T-006-13 | Registro externo duplicado | Não cria registro equivalente adicional |
+| T-006-14 | Lote contém válidos e inválidos | Válidos são preservados/processados sem contaminação pelos inválidos |
 | T-006-10 | Reexecutar ingestão do mesmo registro externo | Deduplicação conforme critério aprovado |
 | T-006-11 | Finalizar execução com falhas | Origem, resultado e falhas ficam rastreáveis |
 | T-006-12 | Verificar registro de vaga própria | Deduplicação externa não o trata como duplicado automaticamente |
