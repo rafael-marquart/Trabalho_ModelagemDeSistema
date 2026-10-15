@@ -1174,14 +1174,15 @@ dos em `docs/layout/` e aprovados separadamente.
 - **Modelo conceitual:** VAGA.
 - **Drivers:** DA-02, DA-05, DA-06, DA-07, DA-08.
 - **ADRs:** ADR-002, ADR-003, ADR-004.
-- **Dependência:** SPEC-001 para autenticação/autorização da operação administrativa.
-- **Questões relacionadas:** OPEN-024 a OPEN-029.
+- **Dependências:** SPEC-005 para o modelo comum de VAGA; SPEC-007/SPEC-008 para consumo das vagas normalizadas; ADR-003 para integração com LLM por adaptador. A execução automatizada deve usar configuração/credenciais de integração protegidas; eventual interface administrativa continua sujeita à autorização aplicável.
+- **Questões relacionadas:** OPEN-025 a OPEN-030. OPEN-024 foi resolvida e registrada em OPEN.md.
 
 ## 3. Escopo
 
 ### Incluído
-- Permitir que ator administrativo autorizado inicie ingestão de dados estruturados de fontes autorizadas, conforme UC-14.
-- Receber e validar a estrutura JSON.
+- Executar coleta automatizada diária de vagas a partir de uma fonte externa autorizada, começando pelo Adzuna após confirmação de acesso, cobertura e condições de uso.
+- Consultar individualmente uma lista configurável de frases de busca por meio de `what_phrase`, consolidando os resultados.
+- Receber e validar a resposta estruturada da API, incluindo sua estrutura JSON.
 - Identificar registros inválidos, incompletos ou duplicados.
 - Normalizar registros válidos para o modelo de vaga utilizado pela plataforma.
 - Validar informações extraídas por LLM antes de permitir seu uso.
@@ -1203,40 +1204,41 @@ dos em `docs/layout/` e aprovados separadamente.
 
 | Área | Finalidade | Layout |
 |---|---|---|
-| Disparo da ingestão administrativa | Iniciar processo de importação autorizado | Pendente, se houver interface |
+| Configuração da coleta | Gerenciar fonte/frases de busca, caso essa interface seja adotada | Pendente, se houver interface |
 | Resumo da execução | Exibir resultado agregado da ingestão | Pendente, se houver interface |
 | Detalhe de falhas/validação | Consultar registros rejeitados ou inconsistentes | Pendente, se houver interface |
 
-UC-14 descreve um fluxo administrativo, mas não determina se a operação será iniciada por tela, tarefa automatizada ou outro mecanismo. A interface não é presumida como obrigatória. Por isso, o layout do núcleo de ingestão é **não se aplica**; se houver interface administrativa, seu layout precisará ser especificado e aprovado.
+A execução principal é automatizada e diária; não exige que um administrador inicie cada coleta. Uma eventual interface de configuração ou acompanhamento não é presumida como obrigatória e, se adotada, terá layout especificado e aprovado separadamente. A configuração de fonte e frases deve ser protegida.
 
 ## 4. Dependências
 
-- **SPEC-001:** identidade, sessão e autorização para iniciar a operação administrativa.
+- **Configuração protegida:** credenciais da API e alterações nas fontes/frases devem ser protegidas; isso não transforma a execução diária em uma ação manual do Administrador.
 - **SPEC-005:** compartilha o modelo conceitual de VAGA, mas mantém o fluxo de cadastro próprio separado.
 - **SPEC-007/SPEC-008:** dependem de vagas externas validadas e normalizadas.
 - **ADR-003:** integração LLM no backend por adaptador, com validação antes do domínio.
-- Contrato de origem, esquema JSON suportado e campos obrigatórios precisam ser confirmados (OPEN-024/OPEN-025).
+- O uso do Adzuna depende de confirmação de acesso, cobertura e condições de uso; as frases iniciais ainda precisam ser definidas. Campos obrigatórios e validações de registros são tratados em OPEN-025.
 
 ## 5. Comportamento esperado
 
-### 5.1 Iniciar ingestão
-1. O ator administrativo autorizado inicia a ingestão de dados de uma fonte autorizada.
-2. O sistema identifica a origem e recebe o conteúdo estruturado.
-3. O sistema registra o início/execução de forma rastreável, conforme os contratos definidos.
+### 5.1 Executar coleta automatizada
+1. Uma tarefa agendada inicia a coleta diária, sem exigir ação manual de Administrador para cada execução.
+2. O sistema lê a lista configurável de frases e realiza consultas individuais à API da fonte autorizada, inicialmente o Adzuna, usando `what_phrase`.
+3. O sistema respeita os limites e as condições de uso da fonte, consolida as respostas e registra a origem, a frase consultada e o resultado de cada consulta.
+4. Falhas de uma consulta devem ser registradas; a política detalhada de repetição e recuperação permanece em OPEN-029.
 
 ### 5.2 Validar estrutura e registros
-1. O sistema verifica se o conteúdo recebido é JSON válido e compatível com o formato suportado.
+1. O sistema verifica se cada resposta recebida é JSON válido e compatível com o formato esperado da API.
 2. Se a estrutura não puder ser processada, a execução registra a falha e não altera registros válidos existentes.
 3. Para cada registro, o sistema verifica os campos e a consistência exigidos pela baseline.
 4. Registros inválidos ou incompletos são identificados e não seguem para o domínio como vagas válidas.
 5. O resultado da validação é mantido para compor o resultado da execução.
 
 ### 5.3 Extrair e validar dados com LLM
-1. Quando o fluxo utilizar LLM para extrair ou interpretar conteúdo externo, a chamada ocorre no backend por adaptador.
-2. A resposta é tratada como resultado não confiável.
-3. O sistema valida os campos extraídos e sua conformidade com o modelo suportado.
-4. Somente dados validados podem avançar para normalização e persistência.
-5. Se a LLM estiver indisponível ou retornar dados inválidos, o sistema não deve inserir a resposta inválida como vaga válida; o tratamento alternativo depende da política a definir (OPEN-026).
+1. Para vagas com dados incompletos ou que precisem de extração/normalização, o sistema tenta complementar os dados a partir do conteúdo do anúncio usando LLM no backend, por adaptador.
+2. A resposta da LLM é tratada como não confiável e não substitui os dados originais da fonte.
+3. O sistema valida os campos extraídos e sua conformidade com o modelo suportado antes de decidir se a vaga pode ser exibida.
+4. O sistema distingue dados fornecidos pela fonte, dados extraídos pela LLM e informações não informadas. Não presume acessibilidade nem transforma ausência de menção em declaração positiva ou negativa.
+5. Se a LLM estiver indisponível ou retornar dados inválidos, não se persiste a resposta inválida como fato; a política de contingência fica em OPEN-026.
 
 ### 5.4 Normalizar e deduplicar
 1. O sistema converte os dados válidos para a estrutura comum de VAGA.
@@ -1291,7 +1293,7 @@ O modelo conceitual mapeado indica VAGA, mas a estrutura completa para fonte, id
 ## 9. Contratos necessários
 
 Contratos conceituais, sem definir endpoints HTTP:
-- **Iniciar ingestão autorizada:** recebe referência/conteúdo de origem conforme o contrato que vier a ser definido e registra a execução.
+- **Executar coleta diária:** consulta a fonte autorizada usando a lista configurável de frases e registra a execução.
 - **Validar estrutura JSON:** verifica sintaxe e formato suportado.
 - **Validar registro de vaga:** verifica os campos e restrições obrigatórios.
 - **Extrair dados via adaptador LLM:** quando habilitado, retorna dados candidatos à validação, nunca diretamente confiáveis.
@@ -1310,8 +1312,8 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 ## 11. Critérios de aceitação
 
-- [ ] Somente ator administrativo autorizado inicia a operação protegida.
-- [ ] JSON válido no formato suportado é processado.
+- [ ] A coleta diária ocorre automaticamente, sem exigir início manual por Administrador; configuração e credenciais, quando existentes, são protegidas.
+- [ ] Respostas válidas da API são processadas conforme o formato suportado.
 - [ ] Estrutura inválida é rejeitada e registrada sem comprometer dados válidos existentes.
 - [ ] Registros inválidos/incompletos não são disponibilizados como vagas válidas.
 - [ ] Dados extraídos por LLM passam por validação antes de uso.
@@ -1328,8 +1330,8 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 | ID | Cenário | Resultado esperado |
 |---|---|---|
-| T-006-01 | Iniciar ingestão com autorização válida | Execução iniciada e registrada |
-| T-006-02 | Usuário não autorizado tenta iniciar ingestão | Operação recusada |
+| T-006-01 | Chega o horário diário de coleta | A tarefa automatizada inicia e registra a execução |
+| T-006-02 | Configuração/credenciais são acessadas por usuário não autorizado | Acesso recusado |
 | T-006-03 | JSON sintaticamente inválido | Falha registrada; dados existentes preservados |
 | T-006-04 | Registro sem campo obrigatório | Registro rejeitado ou isolado conforme política aprovada |
 | T-006-05 | LLM retorna campos inválidos | Dados não entram no domínio como vaga válida |
@@ -1345,7 +1347,12 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 As questões estão centralizadas em [OPEN.md](OPEN.md).
 
-- **OPEN-024:** fontes autorizadas, forma de entrada e esquema JSON suportado.
+- **OPEN-025:** campos obrigatórios e validações para considerar um registro externo uma vaga válida.
+- **OPEN-026:** comportamento de contingência quando LLM estiver indisponível ou produzir dados inválidos.
+- **OPEN-027:** estrutura para rastrear execução/lote, estado por registro e resultado de ingestão.
+- **OPEN-028:** critério de equivalência para deduplicação de registros externos.
+- **OPEN-029:** política de transação, repetição, recuperação e tratamento de falhas parciais.
+- **OPEN-030:** formulação exata de RNF-16 e critérios de verificação.
 - **OPEN-025:** campos obrigatórios e validações para considerar um registro externo uma vaga válida.
 - **OPEN-026:** comportamento de contingência quando LLM estiver indisponível ou produzir dados inválidos.
 - **OPEN-027:** estrutura para rastrear execução/lote, estado por registro e resultado de ingestão.
