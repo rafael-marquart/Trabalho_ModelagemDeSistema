@@ -124,15 +124,6 @@ O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou t
 
 
 
-### 5.6 Relação com os critérios específicos de cada vaga — decisão OPEN-023
-
-1. INFRAESTRUTURA_EMPRESA registra informações gerais de acessibilidade declaradas pela Empresa e não garante, por si só, que todos os recursos estejam disponíveis ou sejam aplicáveis a toda vaga.
-2. Quando um recurso ou condição geral for pertinente a uma oportunidade, sua aplicabilidade deve estar explícita na declaração específica da vaga quando depender das condições daquela oportunidade.
-3. A disponibilização dos dados gerais a consumidores autorizados não substitui a declaração do estado das informações relevantes da vaga.
-4. Presença declarada, ausência declarada e informação não informada permanecem distintas quando aplicáveis. A ausência de dado não permite inferir existência ou inexistência de recurso ou barreira.
-5. Esta capacidade mantém a responsabilidade de registrar e disponibilizar infraestrutura geral; não cria nem preenche automaticamente TRAVA_CRITICA_VAGA e não calcula compatibilidade.
-6. Alterações relevantes na infraestrutura continuam rastreáveis conforme RB-27/RB-37 e RNF-14.
-
 ## 6. Regras e invariantes
 
 1. Credenciais devem ser validadas antes de conceder acesso (RB-21).
@@ -756,6 +747,15 @@ A lista é funcional, não determina quantidade final de telas ou composição v
 5. Executar somente as alterações autorizadas pela decisão registrada e pelas regras de negócio aplicáveis.
 
 O procedimento não define sanções automáticas, limiares numéricos de recorrência, evidências mínimas obrigatórias, prazos ou catálogo de decisões. Esses elementos permanecem sujeitos a decisões específicas.
+
+### 5.6 Relação com os critérios específicos de cada vaga — decisão OPEN-023
+
+1. INFRAESTRUTURA_EMPRESA registra informações gerais de acessibilidade declaradas pela Empresa e não garante, por si só, que todos os recursos estejam disponíveis ou sejam aplicáveis a toda vaga.
+2. Quando um recurso ou condição geral for pertinente a uma oportunidade, sua aplicabilidade deve estar explícita na declaração específica da vaga quando depender das condições daquela oportunidade.
+3. A disponibilização dos dados gerais a consumidores autorizados não substitui a declaração do estado das informações relevantes da vaga.
+4. Presença declarada, ausência declarada e informação não informada permanecem distintas quando aplicáveis. A ausência de dado não permite inferir existência ou inexistência de recurso ou barreira.
+5. Esta capacidade mantém a responsabilidade de registrar e disponibilizar infraestrutura geral; não cria nem preenche automaticamente TRAVA_CRITICA_VAGA e não calcula compatibilidade.
+6. Alterações relevantes na infraestrutura continuam rastreáveis conforme RB-27/RB-37 e RNF-14.
 
 ## 6. Regras e invariantes
 
