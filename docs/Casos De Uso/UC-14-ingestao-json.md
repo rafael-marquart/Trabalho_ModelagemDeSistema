@@ -27,7 +27,7 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 7. O sistema distingue dados originais, dados extraídos e informações não informadas; a LLM não pode inventar empresa ou localidade nem converter suposições em fatos.
 8. Se os dados originais já atenderem aos requisitos aplicáveis, o processamento poderá continuar sem depender da LLM. Se as tentativas se esgotarem e algum dado mínimo obrigatório continuar ausente ou inválido, o registro não será disponibilizado como vaga válida e a falha será registrada.
 9. O sistema verifica se cada registro possui título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, além dos demais dados obrigatórios aplicáveis da baseline. Campos presentes, mas vazios, genéricos sem utilidade ou inconsistentes não satisfazem a validação.
-10. O sistema normaliza os registros que cumprirem os critérios definidos e aplica a deduplicação conforme a política aprovada.
+10. O sistema normaliza os registros válidos e aplica a deduplicação externa em camadas: identificador igual na mesma fonte; URL original equivalente após normalização; e, se necessário, comparação conservadora de empresa contratante, título e localidade normalizados, usando outros atributos apenas quando confiáveis e úteis. Só classifica como duplicado quando houver evidência suficiente; em caso de dúvida, mantém os registros separados e não exclui, funde ou sobrescreve vaga válida existente.
 11. O sistema associa cada registro recebido à execução correspondente e registra o resultado individual: processado, rejeitado, duplicado ou falha de processamento. Para rejeições e falhas, registra os motivos relevantes disponíveis.
 12. O sistema consolida o resultado da execução, incluindo origem, consultas realizadas, quantitativos coerentes com os resultados individuais e falhas relevantes. A rastreabilidade permite investigar cada registro sem exigir o histórico detalhado de toda etapa interna.
 13. O sistema persiste e disponibiliza apenas vagas que cumpram os critérios de validação e exibição, sem comprometer registros válidos existentes. Uma execução futura poderá reavaliar o anúncio, sem garantia de recuperação.
@@ -63,7 +63,10 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 - Se as tentativas se esgotarem e faltar dado mínimo obrigatório, o registro não é disponibilizado como vaga válida e a falha é registrada; dados inválidos não são aceitos como fatos.
 - Uma execução futura pode reavaliar o anúncio, e falhas em um registro não comprometem os demais registros válidos.
 - Registros inválidos não comprometem registros válidos.
-- Duplicados não geram duplicidade.
+- A deduplicação aplica-se somente a vagas externas e verifica, nesta ordem, identificador igual na mesma fonte, URL original equivalente após normalização e comparação conservadora de atributos normalizados quando os identificadores não forem suficientes.
+- A comparação por atributos exige evidência suficiente de equivalência; semelhança superficial não basta e, em caso de dúvida, os registros permanecem separados.
+- Registros classificados como duplicados não criam representações equivalentes múltiplas; o resultado individual e o motivo relevante disponível são rastreáveis.
+- A deduplicação não classifica automaticamente vagas próprias como duplicadas nem exclui, funde ou sobrescreve vagas válidas por semelhança incerta.
 - Dados de LLM somente são usados após validação.
 - Cada execução possui identificação própria e resultado agregado rastreável.
 - A origem, as frases de busca, os resultados das consultas e as falhas relevantes ficam registrados na execução correspondente.
