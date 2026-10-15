@@ -1170,7 +1170,7 @@ dos em `docs/layout/` e aprovados separadamente.
 - **RF:** RF-05 — Importação de vagas externas; RF-36 — Importação de dados estruturados; RF-37 — Normalização de dados externos; RF-38 — Auditoria de operações; RF-39 — Tratamento de erros e inconsistências; RF-40 — Controle de acesso às operações administrativas.
 - **RB:** RB-10 — Vagas externas; RB-11 — Validação da IA; RB-17 — Validação de vaga externa; RB-18 — Resultado da LLM não é fonte de verdade; RB-31 — Deduplicação de dados externos; RB-32 — Integridade da importação; RB-33 — Registro da origem da vaga; RB-37 — Registro das decisões; RB-41 — Auditoria das alterações.
 - **RNF:** RNF-05 — Desempenho; RNF-07 — Segurança; RNF-09 — Integridade; RNF-14 — Rastreabilidade e auditoria; RNF-16 — Compatibilidade/normalização de dados externos, conforme mapa.
-- **Caso de uso:** UC-14 — Ingerir Dados em JSON.
+- **Caso de uso:** UC-14 — Coletar e Ingerir Vagas Externas.
 - **Modelo conceitual:** VAGA.
 - **Drivers:** DA-02, DA-05, DA-06, DA-07, DA-08.
 - **ADRs:** ADR-002, ADR-003, ADR-004.
@@ -1347,12 +1347,6 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 As questões estão centralizadas em [OPEN.md](OPEN.md).
 
-- **OPEN-025:** campos obrigatórios e validações para considerar um registro externo uma vaga válida.
-- **OPEN-026:** comportamento de contingência quando LLM estiver indisponível ou produzir dados inválidos.
-- **OPEN-027:** estrutura para rastrear execução/lote, estado por registro e resultado de ingestão.
-- **OPEN-028:** critério de equivalência para deduplicação de registros externos.
-- **OPEN-029:** política de transação, repetição, recuperação e tratamento de falhas parciais.
-- **OPEN-030:** formulação exata de RNF-16 e critérios de verificação.
 - **OPEN-025:** campos obrigatórios e validações para considerar um registro externo uma vaga válida.
 - **OPEN-026:** comportamento de contingência quando LLM estiver indisponível ou produzir dados inválidos.
 - **OPEN-027:** estrutura para rastrear execução/lote, estado por registro e resultado de ingestão.
