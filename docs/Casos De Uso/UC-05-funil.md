@@ -18,7 +18,7 @@ Permitir ao candidato acompanhar suas candidaturas, etapas, status e decisões d
 1. O candidato acessa “Minhas Candidaturas”.
 2. O sistema apresenta as candidaturas e o estado atual de cada processo.
 3. O candidato seleciona uma candidatura para consultar sua linha do tempo.
-4. O sistema apresenta alterações de status e decisões registradas.
+4. O sistema apresenta a linha do tempo com os tipos de evento “Candidatura realizada”, “Status” e “Candidatura cancelada”, quando aplicáveis. O tipo “Status” pode representar estados gerais como “Em andamento”, “Entrevista” e “Aprovado”. Cada evento apresenta a data, sem exigir horário, uma descrição breve e compreensível e o status ou etapa resultante, quando aplicável. Os eventos são exibidos do mais recente para o mais antigo.
 5. O sistema permite cancelar a candidatura quando as regras do processo permitirem.
 
 ## Exceções
