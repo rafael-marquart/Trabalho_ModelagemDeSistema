@@ -1361,8 +1361,8 @@ Contratos conceituais, sem definir endpoints HTTP:
 | T-006-09 | LLM retorna campos inválidos ou não comprovados | Dados não entram no domínio como vaga válida |
 | T-006-10 | LLM indisponível e falta dado mínimo obrigatório após tentativas limitadas | Registro não é disponibilizado como vaga válida e falha é registrada |
 | T-006-11 | LLM indisponível, mas dados originais são suficientes | Processamento prossegue sem depender da LLM |
-| T-006-17 | Falha recuperável da LLM é superada em nova tentativa | Resposta é validada antes de uso e fluxo prossegue se os dados forem suficientes |
-| T-006-18 | Tentativas limitadas se esgotam com resposta inválida | Dados inválidos não são aceitos como fatos; falha é registrada |
+| T-006-19 | Falha recuperável da LLM é superada em nova tentativa | Resposta é validada antes de uso e fluxo prossegue se os dados forem suficientes |
+| T-006-20 | Tentativas limitadas se esgotam com resposta inválida | Dados inválidos não são aceitos como fatos; falha é registrada |
 | T-006-12 | Registro externo válido | Normalizado e persistido |
 | T-006-13 | Registro externo duplicado | Não cria registro equivalente adicional |
 | T-006-14 | Lote contém válidos e inválidos | Válidos são preservados/processados sem contaminação pelos inválidos |
