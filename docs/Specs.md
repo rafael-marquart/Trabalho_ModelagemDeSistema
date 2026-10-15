@@ -1361,9 +1361,9 @@ Contratos conceituais, sem definir endpoints HTTP:
 | T-006-12 | Registro externo válido | Normalizado e persistido |
 | T-006-13 | Registro externo duplicado | Não cria registro equivalente adicional |
 | T-006-14 | Lote contém válidos e inválidos | Válidos são preservados/processados sem contaminação pelos inválidos |
-| T-006-10 | Reexecutar ingestão do mesmo registro externo | Deduplicação conforme critério aprovado |
-| T-006-11 | Finalizar execução com falhas | Origem, resultado e falhas ficam rastreáveis |
-| T-006-12 | Verificar registro de vaga própria | Deduplicação externa não o trata como duplicado automaticamente |
+| T-006-15 | Reexecutar ingestão do mesmo registro externo | Deduplicação conforme critério aprovado |
+| T-006-16 | Finalizar execução com falhas | Origem, resultado e falhas ficam rastreáveis |
+| T-006-17 | Verificar registro de vaga própria | Deduplicação externa não o trata como duplicado automaticamente |
 
 ## 13. Questões em aberto
 
