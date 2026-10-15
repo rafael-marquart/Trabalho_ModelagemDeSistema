@@ -1263,11 +1263,13 @@ A faixa salarial e outros dados complementares não se tornam obrigatórios por 
 5. A deduplicação não deve eliminar ou alterar indevidamente registros válidos existentes.
 
 ### 5.5 Persistir e registrar resultado
-1. O sistema persiste os registros validados e normalizados.
-2. Falhas parciais não comprometem registros válidos existentes nem devem produzir duplicação indevida.
-3. O sistema registra origem, resultado e erros relevantes da execução.
-4. O resultado permite distinguir registros processados, rejeitados e duplicados, conforme detalhamento pendente.
-5. Os registros válidos tornam-se disponíveis às capacidades consumidoras após o processamento bem-sucedido.
+1. Cada execução de ingestão recebe uma identificação que permite distingui-la de outras execuções.
+2. O resultado agregado da execução registra a origem, as consultas realizadas — incluindo as frases de busca quando aplicável —, o resultado geral, os quantitativos e as falhas relevantes.
+3. Cada registro recebido fica associado à execução correspondente e possui resultado individual que distingue, no mínimo, processado, rejeitado, duplicado e falha de processamento.
+4. Rejeições e falhas individuais registram os motivos relevantes disponíveis para investigação; os resultados de consultas também permanecem rastreáveis.
+5. Os quantitativos consolidados devem ser coerentes com os resultados individuais. A rastreabilidade permite investigar o resultado de um registro sem exigir o registro detalhado de cada etapa interna.
+6. O sistema persiste os registros validados e normalizados. Falhas parciais não comprometem registros válidos existentes nem devem produzir duplicação indevida.
+7. Os registros válidos tornam-se disponíveis às capacidades consumidoras após o processamento bem-sucedido. A estratégia de transação, repetição e recuperação permanece na OPEN-029.
 
 ## 6. Regras e invariantes
 
@@ -1291,8 +1293,9 @@ A faixa salarial e outros dados complementares não se tornam obrigatórios por 
 |---|---|
 | VAGA | Modelo comum de vaga após validação e normalização |
 | Origem externa | Identifica a fonte da qual o registro foi obtido; representação exata precisa ser confirmada |
+| Execução de ingestão | Referência conceitual para agrupar consultas, resultado agregado e resultados individuais dos registros recebidos, sem impor uma entidade física ou tabela específica |
 
-O modelo conceitual mapeado indica VAGA, mas a estrutura completa para fonte, identificador externo, estado de validação e histórico de ingestão não está detalhada nesta Spec. Não são criadas entidades de lote/importação por suposição; conferir OPEN-027.
+A rastreabilidade deve relacionar cada registro recebido à execução correspondente e permitir consultar os resultados agregado e individual. A OPEN-027 define esse requisito lógico, mas não determina entidade, tabela, chave, campos físicos ou tecnologia de persistência. A estrutura definitiva será detalhada no modelo de dados; permanecem válidas as decisões de equivalência da OPEN-028 e de transação/recuperação da OPEN-029.
 
 ## 8. Impacto arquitetural
 
@@ -1315,7 +1318,9 @@ Contratos conceituais, sem definir endpoints HTTP:
 - **Normalizar vaga externa:** transforma dados válidos para o modelo comum.
 - **Identificar duplicidade externa:** compara registros externos conforme critério aprovado.
 - **Persistir registros válidos:** grava os registros sem comprometer dados válidos existentes.
-- **Registrar resultado de ingestão:** registra origem, quantidades/estados e falhas conforme esquema aprovado.
+- **Registrar resultado agregado da ingestão:** registra a identificação da execução, origem, consultas realizadas, resultado geral, quantitativos e falhas relevantes.
+- **Registrar resultado individual do registro:** associa cada registro recebido à execução correspondente e registra seu resultado (processado, rejeitado, duplicado ou falha de processamento), com motivos relevantes de rejeição/falha.
+- **Consultar rastreabilidade da ingestão:** permite investigar o resultado agregado da execução e o resultado de cada registro sem exigir o histórico detalhado de todas as etapas internas.
 
 ## 10. RNFs aplicáveis
 
@@ -1342,7 +1347,13 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [ ] Origem externa é preservada.
 - [ ] Duplicados externos não geram registros equivalentes múltiplos.
 - [ ] Falhas não comprometem registros válidos existentes.
-- [ ] Origem, resultado e falhas relevantes ficam rastreáveis.
+- [ ] Cada execução de ingestão possui identificação própria e resultado agregado rastreável.
+- [ ] O resultado agregado registra origem, consultas realizadas, quantitativos e falhas relevantes.
+- [ ] Cada registro recebido está associado à execução correspondente e possui resultado individual distinguível entre processado, rejeitado, duplicado e falha de processamento.
+- [ ] Motivos relevantes de rejeição/falha e resultados das consultas podem ser investigados.
+- [ ] Os quantitativos consolidados são coerentes com os resultados individuais.
+- [ ] A rastreabilidade não exige o registro detalhado de cada etapa interna.
+- [ ] Falhas parciais não comprometem registros válidos existentes.
 - [ ] A operação não depende de um fornecedor LLM específico.
 - [ ] A deduplicação não é aplicada a vagas próprias por esta Spec.
 
@@ -1369,6 +1380,11 @@ Contratos conceituais, sem definir endpoints HTTP:
 | T-006-15 | Reexecutar ingestão do mesmo registro externo | Deduplicação conforme critério aprovado |
 | T-006-16 | Finalizar execução com falhas | Origem, resultado e falhas ficam rastreáveis |
 | T-006-17 | Verificar registro de vaga própria | Deduplicação externa não o trata como duplicado automaticamente |
+| T-006-21 | Executar ingestão em mais de uma ocasião | Cada execução possui identificação própria e resultado agregado consultável |
+| T-006-22 | Processar vários registros na mesma execução | Cada registro fica associado à execução correta e possui resultado individual |
+| T-006-23 | Rejeitar registro ou falhar seu processamento | Resultado individual distingue rejeição de falha e registra o motivo relevante disponível |
+| T-006-24 | Consolidar resultados individuais da execução | Quantitativos agregados são coerentes com os resultados individuais |
+| T-006-25 | Investigar um registro após a execução | Origem, execução e resultado individual podem ser rastreados sem histórico detalhado de cada etapa interna |
 
 ## 13. Questões em aberto
 
@@ -1376,7 +1392,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 
 - **OPEN-025:** campos obrigatórios e validações para considerar um registro externo uma vaga válida.
 - **OPEN-026:** comportamento de contingência quando LLM estiver indisponível ou produzir dados inválidos.
-- **OPEN-027:** estrutura para rastrear execução/lote, estado por registro e resultado de ingestão.
+- **OPEN-027 (resolvida):** cada execução possui identificação e resultado agregado rastreável; cada registro recebido está associado à execução e possui resultado individual, com quantitativos consolidados coerentes. A estrutura persistente será detalhada no modelo de dados, sem imposição de entidades/tabelas nesta decisão.
 - **OPEN-028:** critério de equivalência para deduplicação de registros externos.
 - **OPEN-029:** política de transação, repetição, recuperação e tratamento de falhas parciais.
 - **OPEN-030:** confirmação da formulação e medida verificável de RNF-16 aplicada à ingestão.
