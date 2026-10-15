@@ -2322,7 +2322,7 @@ Consultar OPEN-063 a OPEN-065 em `docs/OPEN.md`. As questões permanecem abertas
 - **Baseline:** RF-12, RF-27; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-009, 011 a 016.
 - **Caso de uso:** Fluxos de notificação referenciados por UC-03, UC-05 e UC-09; canal de envio definido na OPEN-067.
-- **Questões abertas:** OPEN-067 a OPEN-069.
+- **Decisões relacionadas:** OPEN-067 a OPEN-069, com decisões registradas.
 
 ## 3. Escopo
 Diante de alteração relevante, identificar destinatários autorizados, preparar e enviar comunicação pelo canal aprovado, registrar resultado conforme política; falha no envio não reverte alteração de domínio.
@@ -2330,7 +2330,7 @@ Diante de alteração relevante, identificar destinatários autorizados, prepara
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Não haverá central dedicada no escopo atual; o acompanhamento ocorre na área de candidaturas. Eventual histórico funcional visível ao usuário permanece pendente (OPEN-069) | Consultar o estado oficial da candidatura; não substitui o e-mail obrigatório | Não se aplica ao escopo atual; eventual tela depende de decisão futura |
+| Não haverá central nem histórico separado de notificações enviadas. O candidato acompanha os acontecimentos do processo na linha do tempo da candidatura, conforme SPEC-016/OPEN-065 | Consultar os eventos e o status oficial da candidatura; a linha do tempo não representa uma lista de e-mails enviados | Não se aplica ao escopo atual |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -2344,7 +2344,7 @@ SPEC-009, 011 a 016. As dependências fornecem dados e capacidades; esta Spec n�
 4. Sistema identifica apenas destinatários autorizados e relacionados ao evento.
 5. Sistema prepara comunicação com o mínimo de dados necessário, sem expor dados privados de terceiros.
 6. Sistema envia as notificações obrigatórias por e-mail. O usuário não pode desativar essas comunicações.
-7. O envio é solicitado assim que o evento de origem é confirmado. Em caso de falha temporária, o sistema tenta novamente automaticamente, com intervalos crescentes. Se todas as tentativas falharem, registra a falha para identificação e acompanhamento. A quantidade exata de tentativas, os intervalos e os critérios técnicos para classificar falhas serão detalhados na implementação, conforme OPEN-068. No escopo atual, não há central dedicada de notificações; o usuário consulta o estado oficial na área de acompanhamento. Os registros técnicos de envio e falhas seguem a auditoria da OPEN-006, com retenção de 1 ano. A possibilidade de um histórico funcional de notificações permanece pendente conforme OPEN-069.
+7. O envio é solicitado assim que o evento de origem é confirmado. Em caso de falha temporária, o sistema tenta novamente automaticamente, com intervalos crescentes. Se todas as tentativas falharem, registra a falha para identificação e acompanhamento. A quantidade exata de tentativas, os intervalos e os critérios técnicos para classificar falhas serão detalhados na implementação, conforme OPEN-068. Não haverá central nem histórico separado de notificações enviadas no escopo atual. O candidato consulta os acontecimentos da candidatura na linha do tempo funcional, conforme SPEC-016/OPEN-065, disponível por 60 dias após o cancelamento da candidatura ou o encerramento da vaga, conforme o evento ocorrido. Essa linha do tempo não é uma lista de e-mails enviados. Os registros técnicos de envio e falhas seguem a auditoria da OPEN-006, com retenção de 1 ano.
 8. Falha no envio não desfaz a alteração de domínio, e o usuário pode consultar o estado oficial na capacidade de origem/acompanhamento.
 
 ## 6. Regras e invariantes
@@ -2353,7 +2353,7 @@ SPEC-009, 011 a 016. As dependências fornecem dados e capacidades; esta Spec n�
 - Operações protegidas são validadas no backend.
 - Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
 - Alterações relevantes devem ser rastreáveis conforme RB/RNF aplicáveis.
-- No escopo atual, não há central dedicada nem histórico funcional de notificações para consulta pelo usuário. Registros técnicos de envio e falhas seguem a política de auditoria da OPEN-006, com retenção de 1 ano; a adoção futura de histórico funcional e sua retenção permanecem pendentes (OPEN-069).
+- Não haverá central nem histórico separado de notificações enviadas no escopo atual. A linha do tempo funcional da candidatura segue a SPEC-016/OPEN-065 e fica disponível por 60 dias após o cancelamento da candidatura ou o encerramento da vaga, conforme o evento ocorrido; ela não é uma lista de e-mails enviados. Os registros técnicos de envio e falhas seguem a auditoria da OPEN-006, com retenção de 1 ano.
 
 ## 7. Modelo de domínio
 RF-12, RF-27; RB-23, RB-27, RB-37, RB-41, RB-42; CANDIDATURA, VAGA. A estrutura e atributos não explicitamente descritos no modelo conceitual não são criados por suposição.
