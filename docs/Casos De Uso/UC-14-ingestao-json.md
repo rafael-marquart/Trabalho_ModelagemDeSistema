@@ -1,19 +1,31 @@
-# UC-14 — Ingerir Dados em JSON
+# UC-14 — Coletar e Ingerir Vagas Externas
 
 ## Objetivo
-Importar dados estruturados de fontes autorizadas, especialmente vagas externas, com validação, normalização, deduplicação e rastreabilidade.
+Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela API do Adzuna, e processá-las com validação, eventual enriquecimento por LLM, normalização, deduplicação e rastreabilidade.
 
 ## Ator principal
-- Administrador do sistema.
+- Sistema (processo automatizado agendado).
+
+## Atores secundários
+- Provedor externo de vagas (inicialmente Adzuna).
+- Provedor de LLM, quando necessário e disponível.
+- Administrador da plataforma, somente para configuração ou acompanhamento caso exista interface para essas operações; não inicia cada execução diária.
+
+## Pré-condições
+- A fonte está autorizada e sua configuração de acesso está disponível de forma protegida.
+- Existe uma lista configurável de frases de busca.
+- O uso da fonte respeita os limites e as condições de uso aplicáveis.
 
 ## Fluxo Principal
-1. Administrador inicia a importação.
-2. Sistema recebe e valida o JSON.
-3. Sistema identifica registros inválidos, incompletos ou duplicados.
-4. Sistema normaliza registros válidos.
-5. Dados extraídos por LLM passam pela validação antes do uso.
-6. Sistema registra origem e resultado da importação.
-7. Sistema persiste registros válidos sem comprometer dados válidos existentes.
+1. A tarefa agendada inicia a coleta diária automaticamente.
+2. O sistema consulta individualmente a API para cada frase configurada, usando `what_phrase`.
+3. O sistema valida a estrutura das respostas e registra a fonte, a frase consultada e o resultado da consulta.
+4. O sistema identifica registros inválidos, incompletos ou potencialmente duplicados.
+5. Para dados incompletos ou que precisem de extração/normalização, o sistema tenta complementar os dados do anúncio com LLM.
+6. O sistema valida os dados extraídos antes de utilizá-los e distingue dados originais, dados extraídos e informações não informadas.
+7. O sistema normaliza os registros que cumprirem os critérios definidos e aplica a deduplicação conforme a política aprovada.
+8. O sistema registra a origem e o resultado do processamento.
+9. O sistema persiste e disponibiliza apenas vagas que cumpram os critérios de validação e exibição, sem comprometer registros válidos existentes.
 
 
 ## Regras de negócio relacionadas
@@ -36,8 +48,11 @@ Importar dados estruturados de fontes autorizadas, especialmente vagas externas,
 - RF-40
 
 ## Critérios de aceitação
-- JSON válido é processado conforme modelo suportado.
+- As consultas diárias são executadas automaticamente, sem início manual por Administrador.
+- Cada frase configurada gera uma consulta rastreável por meio de `what_phrase`.
+- As respostas da API são validadas conforme o formato suportado.
 - Registros inválidos não comprometem registros válidos.
 - Duplicados não geram duplicidade.
 - Dados de LLM somente são usados após validação.
-- Origem e resultado ficam registrados.
+- A origem, a frase de busca e o resultado ficam registrados.
+- Dados extraídos por LLM só são usados após validação; ausência de informação sobre acessibilidade permanece como “não informado” quando aplicável.
