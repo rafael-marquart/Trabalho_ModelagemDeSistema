@@ -2322,7 +2322,7 @@ Consultar OPEN-063 a OPEN-065 em `docs/OPEN.md`. As questões permanecem abertas
 - **Baseline:** RF-12, RF-27; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-009, 011 a 016.
 - **Caso de uso:** Fluxos de notificação referenciados por UC-03, UC-05 e UC-09; canais dependem de decisão em OPEN.
-- **Questões abertas:** OPEN-066 a OPEN-069.
+- **Questões abertas:** OPEN-067 a OPEN-069.
 
 ## 3. Escopo
 Diante de alteração relevante, identificar destinatários autorizados, preparar e enviar comunicação pelo canal aprovado, registrar resultado conforme política; falha no envio não reverte alteração de domínio.
@@ -2338,12 +2338,14 @@ O layout funcional é uma evidência visual/protótipo, não código. Deve ser a
 SPEC-009, 011 a 016. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
-1. Uma capacidade de origem persiste uma alteração relevante.
-2. Sistema identifica evento e destinatários autorizados.
-3. Sistema prepara comunicação com o mínimo de dados necessário.
-4. Sistema envia pelo canal definido após decisão do projeto.
-5. Resultado de envio é registrado conforme política aprovada; falha de envio não desfaz a alteração de domínio.
-6. Usuário consulta o estado oficial na capacidade de origem/acompanhamento.
+1. Uma capacidade de origem persiste um evento confirmado relevante.
+2. Geram notificação obrigatória: registro de candidatura, para confirmar ao candidato; mudança relevante de etapa/status, incluindo avanço, reprovação ou outra atualização pertinente, para o candidato; agendamento, alteração ou cancelamento de entrevista, quando a operação ocorrer pela plataforma, para o candidato; cancelamento da candidatura pelo candidato, para o Recrutador responsável; e encerramento da vaga, para os candidatos ainda ativos conforme RB-42.
+3. A regra geral é notificar quando um evento confirmado alterar a participação do candidato no processo ou exigir ciência do responsável pela vaga.
+4. Sistema identifica apenas destinatários autorizados e relacionados ao evento.
+5. Sistema prepara comunicação com o mínimo de dados necessário, sem expor dados privados de terceiros.
+6. Sistema envia pelo canal aprovado; a definição de canais permanece na OPEN-067.
+7. Resultado, falha e eventual reenvio seguem a política a definir na OPEN-068; a existência de uma central/histórico depende da OPEN-069.
+8. Falha no envio não desfaz a alteração de domínio, e o usuário pode consultar o estado oficial na capacidade de origem/acompanhamento.
 
 ## 6. Regras e invariantes
 - Destinatário autorizado; conteúdo mínimo; encerramento informa candidatos ativos; notificação não substitui estado atual nem altera estado por si só.
@@ -2372,6 +2374,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
+- [ ] Cada um dos cinco tipos de evento aprovados em OPEN-066 gera comunicação ao destinatário definido para esse evento.
 - [ ] Notificação é disparada apenas para destinatário autorizado e não expõe dados de outro candidato (RNF-07/RNF-08).
 - [ ] Falhas de envio não apagam a alteração de origem nem geram falsa confirmação de entrega (RNF-09/RNF-14, quando aplicável).
 
@@ -2394,9 +2397,13 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-017-04 | Envio falha | Falha não é apresentada como entrega confirmada e o estado de origem permanece |
 | T-017-05 | Vaga é encerrada com candidatos ativos | A obrigação de informar candidatos ativos é acionada, respeitando canal/prazo ainda a definir |
 | T-017-06 | Notificação é recebida | Usuário é orientado a consultar o estado oficial na área de acompanhamento |
+| T-017-07 | Candidatura é registrada ou muda de etapa/status | Candidato recebe a notificação correspondente |
+| T-017-08 | Entrevista é agendada, alterada ou cancelada por operação da plataforma | Candidato recebe a notificação correspondente |
+| T-017-09 | Candidato cancela a candidatura | Recrutador responsável recebe a notificação |
+| T-017-10 | Vaga é encerrada com candidatos ativos | Candidatos ativos são identificados para comunicação conforme RB-42 |
 
 ## 13. Questões em aberto
-Consultar OPEN-066 a OPEN-069 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+Consultar OPEN-067 a OPEN-069 em `docs/OPEN.md`. Os eventos obrigatórios estão definidos pela decisão OPEN-066; as questões restantes permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
