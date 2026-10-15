@@ -12,7 +12,8 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 - Administrador da plataforma, somente para configuração ou acompanhamento caso exista interface para essas operações; não inicia cada execução diária.
 
 ## Pré-condições
-- A fonte está autorizada e sua configuração de acesso está disponível de forma protegida.
+- A fonte está autorizada e sua configuração de acesso está disponível de forma protegida; para o Adzuna, o acesso, a cobertura e as condições de uso devem ser confirmados conforme OPEN-086.
+- A capacidade operacional da coleta diária, considerando frases configuradas, paginação, volume e cotas efetivas da API, deve ser verificada conforme OPEN-087.
 - Existe uma lista configurável de frases de busca.
 - O uso da fonte respeita os limites e as condições de uso aplicáveis.
 
@@ -48,7 +49,7 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 - RF-40
 
 ## Critérios de aceitação
-- As consultas diárias são executadas automaticamente, sem início manual por Administrador.
+- As consultas diárias são executadas automaticamente, sem início manual por Administrador, depois de confirmadas a autorização da fonte (OPEN-086) e a viabilidade operacional da coleta (OPEN-087).
 - Cada frase configurada gera uma consulta rastreável por meio de `what_phrase`.
 - As respostas da API são validadas conforme o formato suportado.
 - Registros inválidos não comprometem registros válidos.
