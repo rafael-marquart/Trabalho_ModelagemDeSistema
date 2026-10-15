@@ -123,6 +123,16 @@ O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou t
 
 
 
+
+### 5.6 Relação com os critérios específicos de cada vaga — decisão OPEN-023
+
+1. INFRAESTRUTURA_EMPRESA registra informações gerais de acessibilidade declaradas pela Empresa e não garante, por si só, que todos os recursos estejam disponíveis ou sejam aplicáveis a toda vaga.
+2. Quando um recurso ou condição geral for pertinente a uma oportunidade, sua aplicabilidade deve estar explícita na declaração específica da vaga quando depender das condições daquela oportunidade.
+3. A disponibilização dos dados gerais a consumidores autorizados não substitui a declaração do estado das informações relevantes da vaga.
+4. Presença declarada, ausência declarada e informação não informada permanecem distintas quando aplicáveis. A ausência de dado não permite inferir existência ou inexistência de recurso ou barreira.
+5. Esta capacidade mantém a responsabilidade de registrar e disponibilizar infraestrutura geral; não cria nem preenche automaticamente TRAVA_CRITICA_VAGA e não calcula compatibilidade.
+6. Alterações relevantes na infraestrutura continuam rastreáveis conforme RB-27/RB-37 e RNF-14.
+
 ## 6. Regras e invariantes
 
 1. Credenciais devem ser validadas antes de conceder acesso (RB-21).
@@ -810,6 +820,8 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [ ] A decisão administrativa e sua justificativa ficam rastreáveis, com identificação do responsável.
 - [ ] Alterações decorrentes só são realizadas quando autorizadas pela decisão registrada e pelas regras aplicáveis.
 - [ ] A recorrência de relatos, isoladamente, não é tratada como comprovação de declaração incorreta.
+- [ ] Informações gerais da Empresa são distintas dos critérios específicos da vaga e não geram aplicabilidade automática.
+- [ ] A infraestrutura geral não preenche automaticamente TRAVA_CRITICA_VAGA nem calcula compatibilidade.
 
 ## 12. Casos de teste derivados
 
@@ -837,14 +849,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 - [ ] Texto revisado e aprovado.
 - [ ] Campos e obrigatoriedades conferidos com a baseline.
 - [ ] Questões em aberto decididas ou mantidas explicitamente.
-- [ ] Layout funcional anexado em `docs/layout/` e aprovado separadamente.
-- [ ] Critérios e testes revisados.
-- [ ] Integridade, autorização e rastreabilidade verificáveis.
-- [ ] Nenhuma implementação iniciada antes das aprovações exigidas.
-
----
-
-# SPEC-005 — Cadastrar e gerenciar vagas próprias
+- [ ] Layout funcio# SPEC-005 — Cadastrar e gerenciar vagas próprias
 
 ## 1. Identificação
 
@@ -990,6 +995,18 @@ Se a publicação for bloqueada, o sistema preserva os dados informados e identi
 6. O encerramento não movimenta automaticamente candidatos entre etapas nem elimina candidaturas.
 7. A mudança de estado e o responsável ficam registrados para auditoria.
 
+
+### 5.6 Critérios de acessibilidade específicos da vaga — decisão OPEN-023
+
+1. Cada vaga deve declarar o estado das informações relevantes de acessibilidade para a oportunidade, conforme a matriz de campos e validações já definidas.
+2. As informações de INFRAESTRUTURA_EMPRESA podem contextualizar a vaga, mas não substituem a declaração específica quando a aplicabilidade depender das condições da oportunidade.
+3. A declaração da vaga deve manter a distinção, quando aplicável, entre presença declarada, ausência declarada e informação não informada.
+4. Não se presume que um recurso geral da Empresa esteja disponível ou seja aplicável à vaga sem declaração que sustente essa relação.
+5. TRAVA_CRITICA_VAGA representa barreiras ou condições impeditivas pertinentes à oportunidade conforme as regras da SPEC-007. Dados ausentes, isoladamente, não criam uma barreira crítica.
+6. Quando faltarem dados necessários à análise de compatibilidade, a SPEC-007 deve indicar insuficiência de dados sem inferir compatibilidade; esta decisão não altera pesos, fórmula ou limiares do cálculo.
+7. Alterações relevantes nas informações de acessibilidade da vaga continuam sujeitas à rastreabilidade e às restrições de edição já definidas na OPEN-022.
+8. Esta decisão não cria entidades, atributos, escalas universais, campos obrigatórios adicionais ou catálogos novos.
+
 ## 6. Regras e invariantes
 
 1. Somente Recrutador autenticado e autorizado pode gerenciar vagas da Empresa vinculada.
@@ -1074,6 +1091,10 @@ Contratos conceituais; não especificam endpoints HTTP.
 - [ ] Encerrar a vaga bloqueia novas candidaturas e preserva candidaturas e histórico.
 - [ ] Encerramento identifica candidatos ativos para comunicação e não os movimenta automaticamente no funil.
 - [ ] Compatibilidade e gestão do funil não são implementadas nesta capacidade.
+- [ ] A declaração de acessibilidade específica da vaga permanece distinta das informações gerais da Empresa.
+- [ ] A infraestrutura geral não preenche automaticamente TRAVA_CRITICA_VAGA nem presume aplicabilidade por vaga.
+- [ ] Informação ausente não cria, isoladamente, barreira crítica nem permite presumir compatibilidade.
+- [ ] Quando faltarem dados necessários, a análise indica insuficiência sem inferir compatibilidade.
 
 ## 12. Casos de teste derivados
 
@@ -1112,7 +1133,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 - **OPEN-020:** lista completa de campos e obrigatoriedade de vaga própria.
 - **OPEN-021:** resolvida; validações por campo e consistência pré-publicação definidas nesta Spec.
 - **OPEN-022:** resolvida; limites de edição por estado e encerramento definidos nesta Spec.
-- **OPEN-023:** origem e representação dos critérios de acessibilidade e relação com INFRAESTRUTURA_EMPRESA e TRAVA_CRITICA_VAGA.
+- **OPEN-023 (resolvida):** separação entre infraestrutura geral da Empresa, declaração específica por vaga e uso de TRAVA_CRITICA_VAGA; dados ausentes não presumem compatibilidade.
 
 ## 14. Definition of Done
 
@@ -1120,6 +1141,13 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 - [ ] Campos e regras conferidos com RF-18, RF-25, UC-08, RB e modelo.
 - [ ] Questões em aberto decididas ou mantidas explicitamente.
 - [ ] Layouts anexados em `docs/layout/` e aprovados separadamente.
+- [ ] Critérios e testes revisados.
+- [ ] Autorização organizacional, validação e auditoria verificáveis.
+- [ ] Nenhuma implementação iniciada antes das aprovações exigidas.
+
+---
+
+dos em `docs/layout/` e aprovados separadamente.
 - [ ] Critérios e testes revisados.
 - [ ] Autorização organizacional, validação e auditoria verificáveis.
 - [ ] Nenhuma implementação iniciada antes das aprovações exigidas.
