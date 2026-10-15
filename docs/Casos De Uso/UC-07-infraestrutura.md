@@ -24,6 +24,14 @@ Permitir à empresa manter suas informações de acessibilidade e administrar os
 
 - EX01 (Alerta de Campos Obrigatórios Pendentes): O sistema impede o salvamento quando itens definidos como obrigatórios estiverem pendentes e identifica os itens a completar. A lista individual de obrigatórios permanece pendente de definição; nem todos os campos são automaticamente obrigatórios.
 
+## Relação entre infraestrutura geral e critérios da vaga — decisão OPEN-023
+
+- O mapeamento representa informações gerais de acessibilidade da Empresa; não garante que todos os recursos sejam aplicáveis ou estejam disponíveis em toda oportunidade.
+- Quando a aplicabilidade de um recurso depender das condições da oportunidade, a vaga mantém sua própria declaração do estado das informações relevantes.
+- Dados gerais são disponibilizados a consumidores autorizados, mas não preenchem automaticamente critérios da vaga nem TRAVA_CRITICA_VAGA.
+- Informação ausente permanece não informada, sem inferir presença, ausência ou compatibilidade.
+- Alterações relevantes da infraestrutura continuam rastreáveis.
+
 ## Pós-condições
 
 - Mapeamento estruturado de infraestrutura persistido e associado à empresa correta, disponível para consumidores autorizados conforme a finalidade e as regras aplicáveis. O estado atual é mantido e alterações relevantes são rastreáveis, sem exigir cópia integral a cada modificação.
@@ -45,6 +53,8 @@ Permitir à empresa manter suas informações de acessibilidade e administrar os
 ## Critérios de aceitação
 
 - A empresa consegue preencher e salvar o mapeamento de infraestrutura.
+- Informações gerais da Empresa não são tratadas automaticamente como critérios específicos de toda vaga.
+- Dados de infraestrutura não preenchem automaticamente TRAVA_CRITICA_VAGA nem presumem compatibilidade.
 - A empresa consegue cadastrar recrutadores pela área de configurações.
 - O recrutador cadastrado fica vinculado à empresa responsável.
 - Itens obrigatórios bloqueiam o salvamento quando pendentes.
