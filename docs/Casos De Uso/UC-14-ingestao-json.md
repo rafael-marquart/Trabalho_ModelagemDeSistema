@@ -77,5 +77,15 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 - A origem, as frases de busca, os resultados das consultas e as falhas relevantes ficam registrados na execução correspondente.
 - Cada registro recebido fica associado à execução e possui resultado individual distinguível entre processado, rejeitado, duplicado e falha de processamento.
 - Motivos relevantes de rejeição/falha ficam registrados; os quantitativos consolidados são coerentes com os resultados individuais.
-- A rastreabilidade permite investigar o resultado de cada registro sem exigir o registro detalhado de todas as etapas internas.\n- A persistência de cada registro é consistente e não deixa alterações parciais ou estado inválido quando ocorre falha.\n- Falhas individuais não interrompem outros registros independentes quando for seguro continuar.\n- Somente falhas recuperáveis provocam tentativas adicionais limitadas; erros permanentes e dados inválidos não são repetidos indefinidamente.\n- Reexecução após interrupção ou sucesso parcial verifica o estado existente e não cria representações equivalentes adicionais.\n- Uma nova execução não apaga a rastreabilidade anterior, e vagas válidas existentes são preservadas.
+- A rastreabilidade permite investigar o resultado de cada registro sem exigir o registro detalhado de todas as etapas internas.
+- A persistência de cada registro é consistente e não deixa alterações parciais ou estado inválido quando ocorre falha.
+- Falhas individuais não interrompem outros registros independentes quando for seguro continuar.
+- Somente falhas recuperáveis provocam tentativas adicionais limitadas; erros permanentes e dados inválidos não são repetidos indefinidamente.
+- Reexecução após interrupção ou sucesso parcial verifica o estado existente e não cria representações equivalentes adicionais.
+- Uma nova execução não apaga a rastreabilidade anterior, e vagas válidas existentes são preservadas.
 - Dados extraídos por LLM só são usados após validação; ausência de informação sobre acessibilidade permanece como “não informado” quando aplicável.
+- A integração valida as respostas da fonte autorizada conforme o contrato e o formato suportado.
+- Os campos de origem utilizados são mapeados conforme regras documentadas para o modelo comum de VAGA, incluindo conversões aplicáveis.
+- Registros normalizados são compatíveis com o modelo comum e preservam o significado dos dados de origem; o sistema não inventa informações.
+- Estruturas ou valores que não possam ser interpretados com segurança são rejeitados ou tratados como falha, com motivo rastreável, sem conversão silenciosa em fatos incorretos.
+- Cada fonte autorizada possui testes de mapeamento dos campos utilizados, conversões aplicáveis e dados ausentes ou inválidos.
