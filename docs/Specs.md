@@ -1297,7 +1297,10 @@ A faixa salarial e outros dados complementares não se tornam obrigatórios por 
 10. A LLM permanece atrás de adaptador no backend e pode ser substituída (ADR-003).
 11. A deduplicação desta Spec se aplica somente a dados externos e usa os critérios conservadores em camadas definidos na seção 5.4; em caso de dúvida, mantém registros separados e não altera vagas válidas existentes por mera semelhança.
 12. O sistema não deve afirmar que uma vaga é válida se seus dados obrigatórios não passaram pelas validações estabelecidas: título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, além dos demais requisitos aplicáveis da baseline.
-13. Cada registro é processado de forma independente e sua persistência deve ser consistente; falhas individuais não comprometem registros válidos existentes nem impedem outros registros independentes quando for seguro continuar.\n14. Repetições são limitadas e reservadas a falhas recuperáveis; erros permanentes, dados inválidos e violações de regra não são repetidos indefinidamente. Limites e intervalos são detalhamento operacional.\n15. Reexecuções verificam o estado existente e aplicam a deduplicação aprovada, sem criar representações equivalentes adicionais nem presumir sucesso apenas pela existência de uma vaga.\n16. Resultados individuais e agregados refletem o ocorrido; execuções anteriores e sua rastreabilidade são preservadas. A recuperação não autoriza alteração destrutiva de vaga válida sem fundamento suficiente.
+13. Cada registro é processado de forma independente e sua persistência deve ser consistente; falhas individuais não comprometem registros válidos existentes nem impedem outros registros independentes quando for seguro continuar.
+14. Repetições são limitadas e reservadas a falhas recuperáveis; erros permanentes, dados inválidos e violações de regra não são repetidos indefinidamente. Limites e intervalos são detalhamento operacional.
+15. Reexecuções verificam o estado existente e aplicam a deduplicação aprovada, sem criar representações equivalentes adicionais nem presumir sucesso apenas pela existência de uma vaga.
+16. Resultados individuais e agregados refletem o ocorrido; execuções anteriores e sua rastreabilidade são preservadas. A recuperação não autoriza alteração destrutiva de vaga válida sem fundamento suficiente.
 
 ## 7. Modelo de domínio envolvido
 
@@ -1329,7 +1332,10 @@ Contratos conceituais, sem definir endpoints HTTP:
 - **Extrair dados via adaptador LLM:** quando habilitado, retorna dados candidatos à validação, nunca diretamente confiáveis.
 - **Normalizar vaga externa:** transforma dados válidos para o modelo comum.
 - **Identificar duplicidade externa:** compara registros externos conforme critério aprovado.
-- **Persistir registros válidos:** grava cada registro de forma consistente, sem deixar estado parcial/inválido e sem comprometer dados válidos existentes.\n- **Repetir falha recuperável:** realiza tentativas adicionais limitadas apenas para falhas recuperáveis, validando cada novo resultado.\n- **Reexecutar ingestão:** verifica o estado existente e aplica a deduplicação aprovada para evitar representações equivalentes adicionais.\n- **Consolidar resultado da execução:** distingue sucesso integral, sucesso parcial e execução malsucedida conforme os resultados individuais reais, preservando o histórico de execuções anteriores.
+- **Persistir registros válidos:** grava cada registro de forma consistente, sem deixar estado parcial/inválido e sem comprometer dados válidos existentes.
+- **Repetir falha recuperável:** realiza tentativas adicionais limitadas apenas para falhas recuperáveis, validando cada novo resultado.
+- **Reexecutar ingestão:** verifica o estado existente e aplica a deduplicação aprovada para evitar representações equivalentes adicionais.
+- **Consolidar resultado da execução:** distingue sucesso integral, sucesso parcial e execução malsucedida conforme os resultados individuais reais, preservando o histórico de execuções anteriores.
 - **Registrar resultado agregado da ingestão:** registra a identificação da execução, origem, consultas realizadas, resultado geral, quantitativos e falhas relevantes.
 - **Registrar resultado individual do registro:** associa cada registro recebido à execução correspondente e registra seu resultado (processado, rejeitado, duplicado ou falha de processamento), com motivos relevantes de rejeição/falha.
 - **Consultar rastreabilidade da ingestão:** permite investigar o resultado agregado da execução e o resultado de cada registro sem exigir o histórico detalhado de todas as etapas internas.
@@ -1340,7 +1346,7 @@ Contratos conceituais, sem definir endpoints HTTP:
 - **RNF-07:** proteger o acesso e a integração externa.
 - **RNF-09:** manter integridade dos registros e da persistência.
 - **RNF-14:** manter rastreabilidade da execução e das alterações.
-- **RNF-16:** compatibilidade/normalização dos dados externos conforme descrição do mapa; confirmar formulação exata na baseline antes de fechar os testes.
+- **RNF-16 — Interoperabilidade:** o sistema deve permitir a integração com fontes externas e a normalização das informações recebidas para o modelo utilizado pela plataforma. A verificação nesta Spec ocorre pelos contratos/formato da fonte autorizada, mapeamento documentado, conversões aplicáveis, compatibilidade dos registros normalizados e tratamento rastreável de dados incompatíveis.
 
 ## 11. Critérios de aceitação
 
@@ -1372,6 +1378,12 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [ ] A rastreabilidade não exige o registro detalhado de cada etapa interna.
 - [ ] Falhas parciais não comprometem registros válidos existentes.
 - [ ] A operação não depende de um fornecedor LLM específico.
+- [ ] A integração valida as respostas conforme o contrato e o formato suportado da fonte autorizada.
+- [ ] Os campos de origem utilizados possuem regras de mapeamento documentadas para o modelo comum de VAGA, incluindo conversões aplicáveis.
+- [ ] Os registros aceitos após normalização são compatíveis com o modelo comum, respeitando tipos, formatos e dados mínimos exigidos.
+- [ ] Estruturas ou valores que não possam ser interpretados com segurança são rejeitados ou tratados como falha, com motivo rastreável, sem conversão silenciosa em fatos incorretos.
+- [ ] A normalização preserva o significado dos dados de origem e não inventa informações; campos opcionais não utilizados podem ser descartados conforme o mapeamento documentado.
+- [ ] Cada fonte externa autorizada possui testes para os campos utilizados, conversões aplicáveis e tratamento de dados ausentes ou inválidos.
 - [ ] A deduplicação não é aplicada a vagas próprias por esta Spec.
 - [ ] Falha em um registro não impede o processamento de outros registros independentes quando for seguro continuar.
 - [ ] Falha durante a persistência de um registro não deixa alterações parciais ou estado inválido.
@@ -1426,6 +1438,12 @@ Contratos conceituais, sem definir endpoints HTTP:
 | T-006-38 | Não é possível recuperar um registro após tentativas permitidas | Resultado de falha e motivo relevante ficam rastreáveis |
 | T-006-39 | Uma execução termina com resultados individuais mistos | Resultado agregado e quantitativos refletem os resultados individuais reais |
 | T-006-40 | Executar nova ingestão após execução malsucedida | Rastreabilidade da execução anterior é preservada e a nova execução possui resultado próprio |
+| T-006-41 | Resposta da fonte autorizada segue o contrato/formato esperado | Campos utilizados são mapeados conforme as regras documentadas |
+| T-006-42 | Campo de origem exige conversão prevista no mapeamento | Conversão esperada é aplicada sem alterar o significado do dado |
+| T-006-43 | Campo opcional não utilizado está ausente | Normalização prossegue sem inventar informação, desde que os dados mínimos sejam atendidos |
+| T-006-44 | Estrutura ou tipo incompatível não pode ser interpretado com segurança | Registro é rejeitado ou tratado como falha, com motivo rastreável e sem normalização silenciosa incorreta |
+| T-006-45 | Registro é aceito após normalização | Tipos, formatos e campos são compatíveis com o modelo comum de VAGA e suas validações |
+| T-006-46 | Fonte autorizada é adicionada ou alterada | Testes cobrem campos utilizados, conversões e dados ausentes/inválidos sem acoplar o domínio ao fornecedor |
 
 ## 13. Questões em aberto
 
@@ -1436,7 +1454,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 - **OPEN-027 (resolvida):** cada execução possui identificação e resultado agregado rastreável; cada registro recebido está associado à execução e possui resultado individual, com quantitativos consolidados coerentes. A estrutura persistente será detalhada no modelo de dados, sem imposição de entidades/tabelas nesta decisão.
 - **OPEN-028 (resolvida):** deduplicação externa conservadora em camadas por identificador na mesma fonte, URL original normalizada e, quando necessário, atributos normalizados confiáveis; casos incertos permanecem separados e não alteram vagas válidas existentes.
 - **OPEN-029 (resolvida):** processamento independente por registro, persistência consistente, repetição limitada apenas para falhas recuperáveis, reexecução segura com deduplicação aprovada, preservação de vagas válidas e rastreabilidade dos resultados individuais/agregados e das execuções anteriores. Limites e intervalos operacionais ficam para detalhamento, alinhados à OPEN-026; não se impõem tecnologias ou estruturas físicas.
-- **OPEN-030:** confirmação da formulação e medida verificável de RNF-16 aplicada à ingestão.
+- **OPEN-030 (resolvida):** preservada a formulação oficial de RNF-16 — interoperabilidade com fontes externas e normalização para o modelo da plataforma. A SPEC-006 verifica contrato/formato, mapeamento documentado, conversões, compatibilidade dos registros normalizados, tratamento rastreável de dados incompatíveis e preservação semântica, com testes por fonte autorizada; sem métricas arbitrárias ou alteração da baseline.
 - **OPEN-086:** confirmar acesso, cobertura, autorização e condições de uso da fonte externa, incluindo atribuição, links e uso de conteúdo com LLM.
 - **OPEN-087:** verificar se as cotas e os limites da API comportam a coleta diária e definir a abordagem para limites excedidos.
 
