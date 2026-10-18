@@ -118,7 +118,7 @@ Alterações de status, decisões, cancelamentos e demais operações relevantes
 Vaga encerrada não aceita novas candidaturas e candidatos ativos são informados.
 
 ### RB-43 Validação para avanço no processo
-Avanço de candidatura respeita as condições definidas para a etapa.
+Antes de alterar a etapa de uma candidatura, o sistema valida que o Recrutador está autenticado e autorizado a gerenciar a vaga, que a transição solicitada está prevista na RB-39 e que não existem pendências impeditivas conhecidas para o avanço. Se a transição não for autorizada, não estiver prevista ou houver pendência impeditiva, a mudança é recusada sem alterar a etapa. Havendo pendência impeditiva, o Recrutador pode solicitar complementação das informações necessárias conforme UC-09. Uma transição válida atualiza a etapa e mantém registro rastreável conforme RB-27, RB-37 e RB-41. Não se presumem critérios específicos adicionais por etapa, notas mínimas ou documentos obrigatórios sem decisão explícita do projeto.
 
 ### RB-44 Análise administrativa de denúncias
 Denúncia não altera automaticamente nota nem bloqueia vaga; exige análise administrativa.
