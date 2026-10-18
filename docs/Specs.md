@@ -1529,10 +1529,10 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 4. Para perfil técnico (T), comparar critérios técnicos definidos para a vaga com competências e conhecimentos declarados pelo candidato; formação, experiência e idiomas só entram quando forem critérios aplicáveis à vaga.
 5. Para distância/modalidade (D), considerar localização do candidato, local de trabalho e modalidade; avaliar distância/trajeto somente quando houver deslocamento, sem aplicar distância a vagas remotas.
 6. Comparar necessidades funcionais obrigatórias com barreiras e recursos eliminatórios registrados para a vaga.
-4. Se houver barreira incompatível com necessidade obrigatória, classificar a vaga como incompatível, independentemente de qualquer score.
-5. Se não houver trava crítica, calcular o score determinístico com os pesos definidos na baseline.
-6. Produzir resultado e fatores considerados, preservando transparência.
-7. Ao analisar várias vagas, permitir que a capacidade consumidora ordene os resultados por score.
+7. Se houver barreira incompatível com necessidade obrigatória, classificar a vaga como incompatível, independentemente de qualquer score.
+8. Se não houver trava crítica, calcular o score determinístico com os pesos definidos na baseline.
+9. Produzir resultado e fatores considerados, preservando transparência.
+10. Ao analisar várias vagas, permitir que a capacidade consumidora ordene os resultados por score.
 
 ## 6. Regras e invariantes
 1. Barreira incompatível com necessidade obrigatória torna a vaga incompatível (RB-02).
