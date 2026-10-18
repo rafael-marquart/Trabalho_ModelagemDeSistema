@@ -2037,7 +2037,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 - **RF:** RF-26 — Registro de candidatura.
 - **Dependências:** SPEC-001, 002, 007, 009, 010.
 - **Caso de uso:** UC-03 — Candidatar-se a Vaga.
-- **Questões abertas:** OPEN-047 a OPEN-049.
+- **Questões abertas:** nenhuma pendente desta SPEC entre OPEN-047 e OPEN-049; as três foram resolvidas em `docs/OPEN.md`.
 
 ## 3. Escopo
 Validar autenticação, status atual da vaga, compatibilidade/trava crítica, existência de candidatura ativa e disponibilidade do score determinístico. Se válido, registrar candidato, vaga, score obrigatório, data gerada pelo sistema no momento do registro e estado inicial `Inscrita`. Não permitir candidatura duplicada ativa nem criar registro parcial.
@@ -2112,11 +2112,11 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-011-04 | Existe candidatura ativa para o mesmo candidato e vaga | Nova candidatura é recusada |
 | T-011-05 | Compatibilidade indica trava crítica | Candidatura é recusada independentemente do score |
 | T-011-06 | Falha ocorre antes da persistência | Nenhuma candidatura parcial permanece |
-| T-011-08 | Score determinístico não está disponível | Registro é recusado sem criar candidatura parcial |
 | T-011-07 | Candidatura é registrada com sucesso | Vínculo candidato-vaga e evento são rastreáveis |
+| T-011-08 | Score determinístico não está disponível | Registro é recusado sem criar candidatura parcial |
 
 ## 13. Questões em aberto
-Consultar OPEN-047 a OPEN-049 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+As OPEN-047, OPEN-048 e OPEN-049 foram resolvidas e registradas em `docs/OPEN.md`. Novas lacunas identificadas para esta SPEC devem ser registradas ali antes de alterar comportamentos não definidos.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
