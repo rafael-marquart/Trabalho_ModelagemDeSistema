@@ -76,7 +76,7 @@ O sistema permite registrar candidatura em vaga elegível.
 O sistema comunica alterações relevantes no status da candidatura.
 
 ### RF-28 Gestão da candidatura pelo candidato
-O sistema permite ao candidato consultar e gerenciar sua candidatura conforme as regras do processo.
+O sistema permite ao candidato consultar suas próprias candidaturas, acompanhar o status, as etapas e o histórico disponível do processo seletivo e cancelar a própria candidatura conforme as regras do processo. Editar uma candidatura já enviada, excluir seu registro ou alterar etapas do processo seletivo não fazem parte deste requisito.
 
 ### RF-30 Gestão de candidatos no processo seletivo
 O sistema permite ao recrutador consultar e gerenciar candidatos vinculados às suas vagas.
