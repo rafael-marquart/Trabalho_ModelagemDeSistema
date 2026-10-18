@@ -1541,7 +1541,10 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 7. Resultado apresenta principais fatores considerados (RB-30).
 8. Mesmas entradas e mesmas regras devem produzir resultado consistente (RNF-10).
 9. Cálculo deve ser testável isoladamente (RNF-15).
-10. A fórmula detalhada das subpontuações e do arredondamento não é definida quando a baseline não a especifica.
+10. Cada dimensão é normalizada em uma subpontuação de 0 a 100: 0 quando nenhum critério aplicável é atendido, 100 quando todos são atendidos e valores intermediários proporcionais à quantidade de critérios atendidos. Dentro de cada dimensão, os critérios aplicáveis têm peso igual.
+11. O score final é calculado por S = 0,50 × A + 0,30 × T + 0,20 × D, em que A é acessibilidade, T é perfil técnico e D é distância/modalidade. A trava crítica continua sendo aplicada antes do score.
+12. Manter a precisão das subpontuações durante o cálculo e arredondar somente o score final para o inteiro mais próximo; em empate exato de meio ponto, arredondar para cima.
+13. Se uma dimensão não puder ser avaliada por falta de dados ou indisponibilidade de informação necessária, não atribuir a ela zero nem presumir compatibilidade. A composição do score nessa situação depende dos tratamentos de dados incompletos registrados nas OPEN-032 a OPEN-034; esta fórmula não encerra essas questões.
 
 ## 7. Modelo de domínio
 - **CANDIDATO:** dados profissionais.
@@ -1577,7 +1580,8 @@ Contratos conceituais, sem endpoints HTTP.
 - [ ] Mesmas entradas e regras produzem resultado consistente.
 - [ ] Vaga externa só é analisada depois de validada e normalizada.
 - [ ] Cálculo pode ser testado isoladamente.
-- [ ] Não é inventada fórmula detalhada ausente da baseline.
+- [ ] Subpontuações e score final seguem a fórmula aprovada na OPEN-031, com arredondamento apenas no resultado final.
+- [ ] Dimensões não avaliáveis por falta de dados não recebem zero nem compatibilidade presumida.
 
 ## 12. Casos de teste derivados
 | ID | Cenário | Resultado esperado |
@@ -1592,7 +1596,7 @@ Contratos conceituais, sem endpoints HTTP.
 | T-007-08 | Vaga externa não validada | Não participa da análise |
 
 ## 13. Questões em aberto
-- **OPEN-031:** fórmula detalhada das subpontuações, normalização e arredondamento.
+- **OPEN-031:** resolvida; subpontuações de 0 a 100 por proporção de critérios atendidos, critérios aplicáveis com peso igual dentro de cada dimensão; score final S = 0,50 × A + 0,30 × T + 0,20 × D; manter precisão intermediária e arredondar apenas o score final ao inteiro mais próximo, com meio ponto arredondado para cima. A trava crítica precede o score. Dados ausentes/não avaliáveis não recebem zero nem compatibilidade presumida; seu tratamento permanece nas OPEN-032 a OPEN-034.
 - **OPEN-032:** dados mínimos necessários para cada dimensão do cálculo.
 - **OPEN-033:** representação de falta de dados versus incompatibilidade comprovada.
 - **OPEN-034:** medição de distância/modalidade quando faltam localização ou preferências.
