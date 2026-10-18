@@ -2254,7 +2254,7 @@ OPEN-050, OPEN-051 e OPEN-052 foram resolvidas e registradas em `docs/OPEN.md`.
 - **Baseline:** RF-20, RF-30, RF-35; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 005, 011.
 - **Caso de uso:** UC-09 — Gerenciar Funil de Seleção.
-- **Questões abertas:** OPEN-054 a OPEN-056. OPEN-053 foi resolvida: UC-09 é o caso de uso de referência para gestão do funil pelo Recrutador; UC-05 permanece voltado ao acompanhamento pelo candidato.
+- **Questões abertas:** OPEN-055 e OPEN-056. OPEN-053 foi resolvida: UC-09 é o caso de uso de referência para gestão do funil pelo Recrutador; UC-05 permanece voltado ao acompanhamento pelo candidato. OPEN-054 foi resolvida: validar autorização do Recrutador, transição prevista na RB-39 e ausência de pendências impeditivas, sem criar critérios específicos adicionais por etapa.
 
 ## 3. Escopo
 Recrutador autorizado consulta candidaturas das próprias vagas; solicita mudança de etapa; backend valida transição e condições de avanço; registra estado, decisão e histórico.
@@ -2276,12 +2276,12 @@ SPEC-001, 005, 011. As dependências fornecem dados e capacidades; esta Spec nã
 1. Recrutador autenticado acessa candidaturas somente das vagas da Empresa a que está vinculado e autorizado.
 2. Sistema apresenta candidaturas e etapa atual.
 3. Recrutador seleciona uma candidatura e solicita mudança de etapa.
-4. Sistema valida a transição contra o fluxo definido e as condições de avanço aplicáveis.
-5. Transição inválida é recusada sem alterar o estado.
-6. Transição válida atualiza etapa e histórico, incluindo responsável e data quando esses campos estiverem definidos na baseline.
+4. O backend valida que o Recrutador está autenticado e autorizado a gerenciar a vaga, que a transição está prevista na RB-39 e que não há pendências impeditivas conhecidas para o avanço.
+5. Se houver pendência impeditiva, o sistema não altera a etapa e permite ao Recrutador solicitar a complementação das informações necessárias, conforme UC-09. Transição não prevista ou não autorizada é recusada sem alteração de estado.
+6. Transição válida atualiza etapa e histórico, mantendo a rastreabilidade conforme RB-27, RB-37 e RB-41.
 
 ## 6. Regras e invariantes
-- Transições padronizadas: Inscrito→Triagem; Triagem→Entrevista/Recusado; Entrevista→Finalista/Recusado; Finalista→Contratado/Recusado. Transições inválidas recusadas; dados visíveis conforme autorização.
+- Transições padronizadas: Inscrito→Triagem; Triagem→Entrevista/Recusado; Entrevista→Finalista/Recusado; Finalista→Contratado/Recusado. Antes de alterar a etapa, validar autorização do Recrutador, transição prevista na RB-39 e ausência de pendências impeditivas conhecidas. Transições não autorizadas ou inválidas e avanços com pendências impeditivas são recusados sem alterar a etapa. Dados visíveis conforme autorização.
 - Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
 - Operações protegidas são validadas no backend.
 - Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
@@ -2297,7 +2297,7 @@ A capacidade mantém separação entre interface, regras de domínio e persistê
 - **Listar candidaturas da organização:** retorna somente candidaturas das vagas da Empresa vinculada ao Recrutador autenticado e autorizado.
 - **Consultar funil e candidatura:** apresenta etapa atual e dados permitidos ao perfil, conforme RB-26.
 - **Solicitar transição:** recebe candidatura e etapa de destino; não confia em autorização ou estado enviados pelo cliente.
-- **Validar transição:** verifica a transição padronizada e as condições de avanço aplicáveis.
+- **Validar transição:** verifica a autorização do Recrutador, se a transição consta na RB-39 e se existem pendências impeditivas conhecidas para o avanço; não cria critérios específicos por etapa que não estejam definidos na baseline.
 - **Persistir transição:** atualiza etapa e histórico apenas se válida; retorna recusa sem alteração em caso inválido.
 
 Contratos conceituais; não definem endpoints HTTP.
@@ -2308,7 +2308,9 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 ## 11. Critérios de aceitação
 
 - [ ] Recrutador só consulta e altera candidaturas de vagas da Empresa à qual está vinculado e autorizado.
-- [ ] Transição recusada não altera etapa nem histórico; transição concluída registra mudança rastreável (RNF-07/RNF-09/RNF-14).
+- [ ] O backend valida autorização do Recrutador, transição prevista na RB-39 e ausência de pendências impeditivas conhecidas antes de avançar.
+- [ ] Pendência impeditiva impede a mudança de etapa e permite solicitar complementação; não são presumidos critérios específicos adicionais por etapa.
+- [ ] Transição recusada não altera etapa; transição concluída registra mudança rastreável (RNF-07/RNF-09/RNF-14).
 
 - [ ] Acesso limitado ao ator autorizado.
 - [ ] Pré-condições e regras são validadas no backend.
@@ -2325,14 +2327,16 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 |---|---|---|
 | T-013-01 | Recrutador autorizado consulta funil da própria Empresa | São exibidas apenas candidaturas de vagas autorizadas |
 | T-013-02 | Recrutador tenta consultar vaga de outra Empresa | Acesso negado |
-| T-013-03 | Transição Inscrito→Triagem solicitada | Transição aceita se a autorização e as pré-condições forem válidas |
+| T-013-03 | Transição Inscrito→Triagem solicitada por Recrutador autorizado, sem pendência impeditiva | Transição aceita se a autorização e as demais pré-condições forem válidas |
 | T-013-04 | Transição fora do fluxo padronizado solicitada | Transição recusada sem alterar estado ou histórico |
+| T-013-08 | Recrutador não autorizado solicita transição | Operação recusada sem alterar etapa ou histórico |
+| T-013-09 | Há pendência impeditiva conhecida para o avanço | Etapa não é alterada; Recrutador pode solicitar complementação das informações necessárias |
 | T-013-05 | Transição válida é persistida | Etapa e evento de histórico são atualizados de forma íntegra |
 | T-013-06 | Dados de candidato não necessários à etapa são solicitados | Dados protegidos não são expostos |
 | T-013-07 | Falha ocorre durante a alteração | Estado anterior é preservado; não há transição parcial |
 
 ## 13. Questões em aberto
-Consultar OPEN-054 a OPEN-056 em `docs/OPEN.md`. A OPEN-053 foi resolvida e registrada: UC-09 é o caso de uso de referência para a gestão do funil pelo Recrutador, enquanto UC-05 cobre o acompanhamento pelo candidato.
+Consultar OPEN-055 e OPEN-056 em `docs/OPEN.md`. A OPEN-053 foi resolvida: UC-09 é referência para gestão do funil pelo Recrutador, enquanto UC-05 cobre o acompanhamento pelo candidato. A OPEN-054 foi resolvida: autorização do Recrutador, transição prevista na RB-39, ausência de pendências impeditivas e registro rastreável da mudança; não foram criados critérios específicos adicionais por etapa.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
