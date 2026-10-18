@@ -1561,6 +1561,21 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 
 **Aplicabilidade e dados ausentes:** critérios não aplicáveis à vaga são excluídos da composição. Quando faltar informação necessária para avaliar uma dimensão (incluindo preferência de modalidade, localização ou estimativa de rota, conforme aplicável), indicar “dados insuficientes” e não apresentar score final completo, conforme OPEN-033. Ausência de dados não é nota zero nem compatibilidade presumida. Não calcular score parcial final por esta decisão. Manter precisão intermediária e arredondar somente o score final ao inteiro mais próximo, com meio ponto exato arredondado para cima.
 
+## 6.2. Rastreabilidade e reprodução do cálculo (OPEN-035)
+
+Cada execução do cálculo deve produzir um registro histórico imutável que permita explicar e reproduzir o resultado daquele momento, sem alterar a fórmula ou os critérios de pontuação definidos nesta Spec.
+
+O registro deve incluir:
+- identificador único do cálculo, identificação do candidato e da vaga e data/hora da execução;
+- versão da SPEC-007 e do conjunto de regras/parâmetros aplicados; versão do mecanismo de cálculo quando houver versionamento;
+- fotografia minimizada dos dados efetivamente usados nas dimensões A, T e D, preservando valores e estados informacionais relevantes naquele momento (por exemplo: declarado, não informado e não aplicável);
+- notas/subresultados avaliáveis, fatores considerados e valores intermediários necessários para explicar a composição do resultado, score final quando completo e resultado da trava crítica;
+- quando houver dados insuficientes, dimensões avaliáveis e informações faltantes, sem registrar nota zero como substituição e sem apresentar score final completo.
+
+A reprodução deve utilizar os dados preservados e as mesmas regras/versões registradas. Alterações posteriores no perfil, na vaga ou nas regras não modificam o registro histórico. Um recálculo cria um novo registro, relacionado ao contexto pertinente, sem sobrescrever a execução anterior.
+
+Aplicar minimização: não copiar o perfil integral nem dados da vaga que não participaram do cálculo. Restringir o acesso aos registros e proteger especialmente os dados de acessibilidade. Retenção: 1 ano conforme OPEN-006, seguida de descarte seguro, ressalvadas obrigações aplicáveis de preservação. Esse prazo técnico não altera o histórico funcional exibido ao usuário por 60 dias após cancelamento/encerramento de vaga, conforme OPEN-065.
+
 ## 7. Modelo de domínio
 - **CANDIDATO:** dados profissionais.
 - **VETOR_ACESSIBILIDADE_CANDIDATO:** necessidades funcionais e indicação de obrigatoriedade.
