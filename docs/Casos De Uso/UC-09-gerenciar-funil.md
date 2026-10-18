@@ -25,12 +25,13 @@ Permitir que o recrutador acompanhe, avalie e gerencie candidaturas dentro do fu
 2. O sistema exibe as candidaturas agrupadas por etapa (Inscrito, Triagem, Entrevista, Finalista, Contratado, Recusado).
 3. O recrutador seleciona uma candidatura para avaliar os dados do candidato e o histórico do processo.
 4. O sistema apresenta informações relevantes da candidatura, incluindo perfil e status.
-5. O recrutador decide a próxima etapa ou a decisão final e salva a alteração.
-6. O sistema atualiza o status da candidatura, registra o histórico da ação e notifica o candidato.
+5. O recrutador decide a próxima etapa ou a decisão final e solicita a alteração.
+6. O sistema valida a autorização do recrutador, se a transição está prevista na RB-39 e se existem pendências impeditivas conhecidas para o avanço.
+7. Se a transição for válida e não houver pendência impeditiva, o sistema atualiza o status da candidatura, registra o histórico da ação e notifica o candidato. Caso contrário, recusa a mudança sem alterar a etapa.
 
 ## Exceções e Fluxos Alternativos
 
-- EX01 (Candidatura com pendências): Se a candidatura não estiver apta para avanço, o recrutador pode solicitar complementação das informações necessárias antes de avançar o candidato.
+- EX01 (Candidatura com pendências): Se houver pendência impeditiva para o avanço, o sistema não altera a etapa. O recrutador pode solicitar complementação das informações necessárias antes de tentar avançar novamente.
 - EX03 (Vaga encerrada): Se a vaga for encerrada ou desativada, o recrutador não consegue mover candidatos para etapas posteriores sem registrar a justificativa.
 
 ## Pós-condições
@@ -61,6 +62,8 @@ Permitir que o recrutador acompanhe, avalie e gerencie candidaturas dentro do fu
 
 ## Critérios de aceitação
 
-- O recrutador consegue visualizar todas as candidaturas vinculadas à vaga e movimentá-las entre etapas.
-- Alterações de status são registradas no histórico com data, responsável e justificativa.
+- O recrutador autorizado consegue visualizar as candidaturas vinculadas às vagas sob sua autorização e solicitar movimentação entre etapas.
+- O sistema valida autorização, transição prevista na RB-39 e ausência de pendências impeditivas conhecidas antes de avançar.
+- Transição não autorizada, inválida ou impedida por pendências não altera a etapa.
+- Alterações de status são registradas no histórico para rastreabilidade.
 - Candidatos recebem notificações sobre mudanças de fase e decisões relevantes.
