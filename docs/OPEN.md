@@ -110,6 +110,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 | OPEN-033 | aberta | Como distinguir e representar ausência de dados de acessibilidade de incompatibilidade comprovada? | RB-16 proíbe presumir compatibilidade quando faltam informações. |
 | OPEN-034 | aberta | Como distância e modalidade serão avaliadas quando localização ou preferências do candidato estiverem ausentes? | RB-05 atribui peso conjunto a distância/modalidade, mas não resolve os dados incompletos. |
 | OPEN-035 | aberta | Quais parâmetros e resultados precisam ser armazenados para permitir rastreabilidade ou reprodução do cálculo? | UC-13 menciona histórico/parâmetros, mas o formato e a retenção não estão definidos. |
+| OPEN-088 | aberta | Qual provedor de mapas/rotas será adotado e quais critérios funcionais e operacionais devem orientar essa escolha? | A SPEC-007 prevê consultar uma API na implementação para estimar deslocamentos; provedor, modalidades de transporte suportadas, métrica retornada e limites de cobertura/uso precisam ser definidos antes da integração. A regra de como tratar localização ou rota ausente permanece relacionada à OPEN-034. |
 
 ### SPEC-008 — Buscar e filtrar vagas
 
