@@ -1597,6 +1597,7 @@ Contratos conceituais, sem endpoints HTTP.
 - **OPEN-033:** representação de falta de dados versus incompatibilidade comprovada.
 - **OPEN-034:** medição de distância/modalidade quando faltam localização ou preferências.
 - **OPEN-035:** parâmetros e resultados que devem ser armazenados para rastreabilidade.
+- **OPEN-088:** provedor de mapas/rotas e critérios funcionais/operacionais para a API a integrar.
 
 ## 14. Definition of Done
 - [ ] Texto aprovado.
