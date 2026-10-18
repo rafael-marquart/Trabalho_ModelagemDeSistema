@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Permitir ao candidato acompanhar suas candidaturas, etapas, status e decisões do processo seletivo.
+Permitir ao candidato consultar suas próprias candidaturas, acompanhar etapas, status e histórico disponível do processo seletivo e cancelar a própria candidatura conforme as regras aplicáveis.
 
 ## Ator principal
 
@@ -45,9 +45,14 @@ Permitir ao candidato acompanhar suas candidaturas, etapas, status e decisões d
 - RB-41 — Auditoria das alterações.
 - RB-42 — Vaga encerrada.
 
+## Escopo de gestão da candidatura (RF-28)
+
+As operações disponíveis ao candidato são consultar suas próprias candidaturas, acompanhar status/etapas e histórico disponível e cancelar a própria candidatura nas condições definidas neste caso de uso. Editar uma candidatura já enviada, excluir seu registro ou alterar etapas do processo seletivo não fazem parte deste escopo.
+
 ## Requisitos relacionados
 
 - RF-11 — Minhas candidaturas.
+- RF-28 — Gestão da candidatura pelo candidato.
 - RF-27 — Notificações do processo seletivo.
 - RF-31 — Acompanhamento do processo seletivo.
 - RF-34 — Cancelamento de candidatura.
