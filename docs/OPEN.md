@@ -158,7 +158,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 ### SPEC-013 — Gerenciar processo seletivo e funil
 | ID | Estado | Questão em aberto | Contexto/impacto |
 |---|---|---|---|
-| OPEN-053 | aberta | Qual caso de uso descreve especificamente a gestão do funil pelo Recrutador? | UC-05 descreve principalmente o acompanhamento pelo candidato; confirmar artefato de gestão empresarial. |
+| OPEN-053 | resolvida | Qual caso de uso descreve especificamente a gestão do funil pelo Recrutador? | **Decisão aprovada:** UC-09 — Gerenciar Funil de Seleção é o caso de uso de referência para a gestão do funil pelo Recrutador autorizado e está associado à SPEC-013. UC-05 permanece voltado ao acompanhamento das próprias candidaturas pelo candidato e não é um caso de uso incluído por UC-09. Decisão refletida na SPEC-013, no mapa de Specs e em UC-09. |
 | OPEN-054 | aberta | Quais condições formais precisam ser satisfeitas para avançar em cada etapa? | RB-43 exige condições de avanço, mas não detalha todos os critérios. |
 | OPEN-055 | aberta | Quais dados do candidato são visíveis ao Recrutador em cada etapa? | RB-26 exige confidencialidade e necessidade de acesso. |
 | OPEN-056 | aberta | Quais dados de decisão/histórico são obrigatórios e é permitido reverter transições? | RB-27/RB-41 exigem rastreabilidade; regras de reversão precisam ser confirmadas. |
