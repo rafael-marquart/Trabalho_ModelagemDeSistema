@@ -144,7 +144,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 ### SPEC-011 — Registrar candidatura
 | ID | Estado | Questão em aberto | Contexto/impacto |
 |---|---|---|---|
-| OPEN-047 | aberta | Qual caso de uso descreve integralmente o registro de candidatura e seu fluxo principal? | RF-26 define a capacidade, mas o mapeamento do caso de uso específico deve ser confirmado. |
+| OPEN-047 | resolvida | Qual caso de uso descreve integralmente o registro de candidatura e seu fluxo principal? | Decisão: UC-03 — Candidatar-se a Vaga é o caso de uso de referência. Ele cobre seleção da vaga elegível, solicitação, verificações de elegibilidade e duplicidade, registro e comunicação conforme regras de notificação, além das exceções de duplicidade, vaga encerrada/bloqueada e barreira crítica. Rastreabilidade: RF-26, UC-03 e SPEC-011. Não é necessário criar novo caso de uso. |
 | OPEN-048 | aberta | Quais verificações de elegibilidade são realizadas no registro e como cada recusa é comunicada? | É necessário conciliar status, compatibilidade e regras de candidatura. |
 | OPEN-049 | aberta | Qual é o estado inicial e quais dados obrigatórios são registrados na candidatura? | O modelo apresenta etapa_funil/data_inscricao, mas a inicialização completa precisa ser confirmada. |
 
