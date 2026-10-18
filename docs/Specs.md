@@ -1527,7 +1527,7 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 2. Verificar se os dados mínimos definidos na OPEN-032 estão disponíveis; se faltar informação necessária em qualquer dimensão, classificar a análise como “dados insuficientes” e não apresentar o score final como completo. Informar quais dimensões puderam ser avaliadas e quais dados faltam, sem presumir valores.
 3. Para acessibilidade (A), comparar somente necessidades funcionais e recursos indispensáveis explicitamente declarados pelo candidato com recursos, condições e requisitos de acessibilidade explicitamente declarados para a vaga.
 4. Para perfil técnico (T), comparar critérios técnicos definidos para a vaga com competências e conhecimentos declarados pelo candidato; formação, experiência e idiomas só entram quando forem critérios aplicáveis à vaga.
-5. Para distância/modalidade (D), calcular a compatibilidade de modalidade (peso interno 60%) e, em vagas presenciais ou híbridas, a compatibilidade de localização/deslocamento (40%) pelas faixas de tempo da seção 6.1. Em vaga totalmente remota, excluir o componente de localização/deslocamento e calcular D somente pela modalidade; não penalizar distância.
+5. Para distância/modalidade (D), calcular a compatibilidade de modalidade (peso interno 60%) e, em vagas presenciais ou híbridas, a compatibilidade de localização/deslocamento (40%) pelas faixas de tempo da seção 6.1. A estimativa de deslocamento usa a Google Maps Platform Routes API e o modo selecionado para a análise (carro, motocicleta ou transporte público). Em vaga totalmente remota, excluir o componente de localização/deslocamento e calcular D somente pela modalidade; não penalizar distância.
 6. Comparar necessidades funcionais obrigatórias com barreiras e recursos eliminatórios registrados para a vaga.
 7. Se houver barreira incompatível com necessidade obrigatória, classificar a vaga como incompatível, independentemente de qualquer score.
 8. Se não houver trava crítica, calcular o score determinístico com os pesos definidos na baseline.
@@ -1568,7 +1568,7 @@ Cada execução do cálculo deve produzir um registro histórico imutável que p
 O registro deve incluir:
 - identificador único do cálculo, identificação do candidato e da vaga e data/hora da execução;
 - versão da SPEC-007 e do conjunto de regras/parâmetros aplicados; versão do mecanismo de cálculo quando houver versionamento;
-- fotografia minimizada dos dados efetivamente usados nas dimensões A, T e D, preservando valores e estados informacionais relevantes naquele momento (por exemplo: declarado, não informado e não aplicável);
+- fotografia minimizada dos dados efetivamente usados nas dimensões A, T e D, preservando valores e estados informacionais relevantes naquele momento (por exemplo: declarado, não informado e não aplicável); para deslocamento, registrar o modo selecionado (`DRIVE`, `TWO_WHEELER` ou `TRANSIT`) e a duração estimada em minutos utilizada na faixa, sem copiar dados ou conteúdo de rota desnecessários;
 - notas/subresultados avaliáveis, fatores considerados e valores intermediários necessários para explicar a composição do resultado, score final quando completo e resultado da trava crítica;
 - quando houver dados insuficientes, dimensões avaliáveis e informações faltantes, sem registrar nota zero como substituição e sem apresentar score final completo.
 
