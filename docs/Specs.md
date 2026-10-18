@@ -2143,7 +2143,7 @@ As OPEN-047, OPEN-048 e OPEN-049 foram resolvidas e registradas em `docs/OPEN.md
 - **Baseline:** RF-11, RF-28, RF-34; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 011, 013, 016, 017.
 - **Caso de uso:** UC-05 — Acompanhar Funil de Candidaturas; RF-34 — Cancelamento de candidatura.
-- **Questões abertas:** OPEN-051 e OPEN-052. OPEN-050 foi resolvida em `docs/OPEN.md`.
+- **Questões abertas:** OPEN-052 permanece aberta. OPEN-050 e OPEN-051 foram resolvidas em `docs/OPEN.md`.
 
 ## 3. Escopo
 Listar somente candidaturas próprias; consultar estado/histórico; permitir que o candidato cancele a própria candidatura nos estados ativos `Inscrita`, `Triagem`, `Entrevista` e `Finalista`, desde que a vaga não esteja encerrada nem bloqueada de forma que impeça o cancelamento; preservar histórico após cancelamento.
@@ -2164,10 +2164,12 @@ SPEC-001, 011, 013, 016, 017. As dependências fornecem dados e capacidades; est
 1. Candidato autenticado abre a lista de candidaturas próprias.
 2. Sistema retorna apenas candidaturas associadas ao candidato autenticado.
 3. Ao selecionar uma candidatura, apresenta estado atual, vaga e histórico disponível.
-4. Ao solicitar cancelamento, o sistema confirma a intenção do candidato e verifica que a candidatura pertence ao candidato autenticado, está em estado `Inscrita`, `Triagem`, `Entrevista` ou `Finalista`, e que a vaga não está encerrada nem bloqueada de forma que impeça o cancelamento.
-5. Se permitido, registra o cancelamento como estado final, preserva o registro e o histórico; se não, informa o motivo e não altera o estado.
-6. Uma candidatura `Contratado`, `Recusado` ou já cancelada não pode ser cancelada novamente.
-7. Sistema disponibiliza o estado atualizado para acompanhamento e notifica o recrutador responsável conforme SPEC-017.
+4. A linha do tempo inclui, quando aplicáveis, os eventos “Candidatura realizada”, “Status” e “Candidatura cancelada”. Cada evento apresenta a data, sem exigir horário, uma descrição breve e compreensível e o status ou etapa resultante quando aplicável. Os eventos são exibidos do mais recente para o mais antigo.
+5. O histórico exibido é limitado à própria candidatura do candidato autenticado e não expõe dados de terceiros nem informações internas não destinadas ao acompanhamento.
+6. Ao solicitar cancelamento, o sistema confirma a intenção do candidato e verifica que a candidatura pertence ao candidato autenticado, está em estado `Inscrita`, `Triagem`, `Entrevista` ou `Finalista`, e que a vaga não está encerrada nem bloqueada de forma que impeça o cancelamento.
+7. Se permitido, registra o cancelamento como estado final, preserva o registro e o histórico; se não, informa o motivo e não altera o estado.
+8. Uma candidatura `Contratado`, `Recusado` ou já cancelada não pode ser cancelada novamente.
+9. Sistema disponibiliza o estado atualizado para acompanhamento e notifica o recrutador responsável conforme SPEC-017.
 
 ## 6. Regras e invariantes
 - Candidato só acessa seus processos. Pode cancelar candidatura nos estados `Inscrita`, `Triagem`, `Entrevista` e `Finalista`, se a vaga não estiver encerrada nem bloqueada de forma que impeça a operação. `Contratado`, `Recusado` e `Cancelada` não permitem novo cancelamento. O cancelamento exige confirmação, respeita RB-36, preserva o registro/histórico e não pode ser repetido.
@@ -2184,7 +2186,7 @@ A capacidade mantém separação entre interface, regras de domínio e persistê
 
 ## 9. Contratos necessários
 - **Listar candidaturas próprias:** identifica o candidato pela sessão autenticada e retorna somente seus registros.
-- **Consultar detalhe e histórico:** retorna vaga, estado atual e eventos disponíveis da candidatura selecionada.
+- **Consultar detalhe e histórico:** retorna vaga, estado atual e eventos funcionais disponíveis da candidatura selecionada, limitados ao histórico próprio e sem dados internos ou de terceiros não destinados ao candidato.
 - **Solicitar cancelamento:** recebe a candidatura selecionada e verifica se o estado permite cancelamento conforme RB-36 e regras de estado.
 - **Confirmar cancelamento:** quando permitido, registra o cancelamento e preserva o histórico; caso contrário, retorna recusa sem alterar o estado.
 - **Publicar mudança de estado:** disponibiliza o cancelamento confirmado para acompanhamento e notificações.
@@ -2220,9 +2222,12 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-012-05 | Duas solicitações de cancelamento concorrentes | Não ocorre duplicação nem corrupção do estado |
 | T-012-06 | Cancelamento concluído | Estado atualizado fica disponível para acompanhamento/notificação |
 | T-012-07 | Histórico é consultado após cancelamento | Eventos anteriores continuam disponíveis conforme retenção aprovada |
+| T-012-09 | Candidato consulta a linha do tempo | Eventos aplicáveis são exibidos com data, descrição breve e status/etapa resultante quando aplicável, do mais recente para o mais antigo |
+| T-012-10 | Candidato tenta consultar histórico de outra pessoa ou dados internos restritos | Acesso negado ou conteúdo restrito não é exposto |
+| T-012-11 | Histórico funcional deixa de ser exibido após o prazo aplicável | A retenção técnica de auditoria permanece independente da exibição funcional |
 
 ## 13. Questões em aberto
-OPEN-050 foi resolvida e registrada em `docs/OPEN.md`. Consultar OPEN-051 e OPEN-052, que permanecem abertas até decisão explícita do grupo.
+OPEN-050 e OPEN-051 foram resolvidas e registradas em `docs/OPEN.md`. Consultar OPEN-052, que permanece aberta até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
