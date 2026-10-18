@@ -14,9 +14,10 @@ Permitir que o recrutador acompanhe, avalie e gerencie candidaturas dentro do fu
 - A vaga deve estar cadastrada e ativa.
 - Há pelo menos uma candidatura associada à vaga ou ao processo seletivo.
 
-## Pontos de Inclusão e Extensão
+## Relação com outros casos de uso
 
-- Inclusão (<<include>>): UC-05 (Acompanhar Funil de Candidaturas).
+- UC-09 é o caso de uso de referência para gestão do funil pelo Recrutador autorizado e está associado à SPEC-013.
+- UC-05 — Acompanhar Funil de Candidaturas é voltado ao candidato para consultar as próprias candidaturas e acompanhar status/histórico. É um caso de uso distinto, não incluído por UC-09.
 
 ## Fluxo Principal
 
