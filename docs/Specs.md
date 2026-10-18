@@ -2254,7 +2254,7 @@ OPEN-050, OPEN-051 e OPEN-052 foram resolvidas e registradas em `docs/OPEN.md`.
 - **Baseline:** RF-20, RF-30, RF-35; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 005, 011.
 - **Caso de uso:** UC-09 — Gerenciar Funil de Seleção.
-- **Questões abertas:** OPEN-053 a OPEN-056.
+- **Questões abertas:** OPEN-054 a OPEN-056. OPEN-053 foi resolvida: UC-09 é o caso de uso de referência para gestão do funil pelo Recrutador; UC-05 permanece voltado ao acompanhamento pelo candidato.
 
 ## 3. Escopo
 Recrutador autorizado consulta candidaturas das próprias vagas; solicita mudança de etapa; backend valida transição e condições de avanço; registra estado, decisão e histórico.
@@ -2332,7 +2332,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-013-07 | Falha ocorre durante a alteração | Estado anterior é preservado; não há transição parcial |
 
 ## 13. Questões em aberto
-Consultar OPEN-053 a OPEN-056 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+Consultar OPEN-054 a OPEN-056 em `docs/OPEN.md`. A OPEN-053 foi resolvida e registrada: UC-09 é o caso de uso de referência para a gestão do funil pelo Recrutador, enquanto UC-05 cobre o acompanhamento pelo candidato.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
