@@ -1524,7 +1524,7 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 
 ## 5. Comportamento esperado
 1. Receber candidato e vaga preparada para análise.
-2. Verificar se os dados mínimos definidos na OPEN-032 estão disponíveis; caso contrário, indicar que não é possível concluir a análise sem presumir valores.
+2. Verificar se os dados mínimos definidos na OPEN-032 estão disponíveis; se faltar informação necessária em qualquer dimensão, classificar a análise como “dados insuficientes” e não apresentar o score final como completo. Informar quais dimensões puderam ser avaliadas e quais dados faltam, sem presumir valores.
 3. Para acessibilidade (A), comparar somente necessidades funcionais e recursos indispensáveis explicitamente declarados pelo candidato com recursos, condições e requisitos de acessibilidade explicitamente declarados para a vaga.
 4. Para perfil técnico (T), comparar critérios técnicos definidos para a vaga com competências e conhecimentos declarados pelo candidato; formação, experiência e idiomas só entram quando forem critérios aplicáveis à vaga.
 5. Para distância/modalidade (D), considerar localização do candidato, local de trabalho e modalidade; avaliar distância/trajeto somente quando houver deslocamento, sem aplicar distância a vagas remotas.
@@ -1547,7 +1547,7 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 10. Cada dimensão é normalizada em uma subpontuação de 0 a 100: 0 quando nenhum critério aplicável é atendido, 100 quando todos são atendidos e valores intermediários proporcionais à quantidade de critérios atendidos. Dentro de cada dimensão, os critérios aplicáveis têm peso igual.
 11. O score final é calculado por S = 0,50 × A + 0,30 × T + 0,20 × D, em que A é acessibilidade, T é perfil técnico e D é distância/modalidade. A trava crítica continua sendo aplicada antes do score.
 12. Manter a precisão das subpontuações durante o cálculo e arredondar somente o score final para o inteiro mais próximo; em empate exato de meio ponto, arredondar para cima.
-13. Se uma dimensão não puder ser avaliada por falta de dados ou indisponibilidade de informação necessária, não atribuir a ela zero nem presumir compatibilidade. A composição do score nessa situação depende dos tratamentos de dados incompletos registrados nas OPEN-032 a OPEN-034; esta fórmula não encerra essas questões.
+13. Se faltar informação necessária em qualquer dimensão, sinalizar a análise como “dados insuficientes” e não apresentar o score final como completo. Podem ser exibidas as dimensões já avaliadas e os dados faltantes. Ausência de dados não recebe zero nem compatibilidade presumida. A composição de score parcial não está autorizada por esta decisão.
 
 ## 7. Modelo de domínio
 - **CANDIDATO:** dados profissionais.
@@ -1584,7 +1584,7 @@ Contratos conceituais, sem endpoints HTTP.
 - [ ] Vaga externa só é analisada depois de validada e normalizada.
 - [ ] Cálculo pode ser testado isoladamente.
 - [ ] Subpontuações e score final seguem a fórmula aprovada na OPEN-031, com arredondamento apenas no resultado final.
-- [ ] Dimensões não avaliáveis por falta de dados não recebem zero nem compatibilidade presumida.
+- [ ] Quando faltar informação necessária em qualquer dimensão, análise sinaliza “dados insuficientes”, sem score final completo; informa dimensões avaliadas e dados faltantes, sem converter ausência em zero ou compatibilidade presumida.
 
 ## 12. Casos de teste derivados
 | ID | Cenário | Resultado esperado |
@@ -1601,7 +1601,7 @@ Contratos conceituais, sem endpoints HTTP.
 ## 13. Questões em aberto
 - **OPEN-031:** resolvida; subpontuações de 0 a 100 por proporção de critérios atendidos, critérios aplicáveis com peso igual dentro de cada dimensão; score final S = 0,50 × A + 0,30 × T + 0,20 × D; manter precisão intermediária e arredondar apenas o score final ao inteiro mais próximo, com meio ponto arredondado para cima. A trava crítica precede o score. Dados ausentes/não avaliáveis não recebem zero nem compatibilidade presumida; seu tratamento permanece nas OPEN-032 a OPEN-034.
 - **OPEN-032:** dados mínimos necessários para cada dimensão do cálculo.
-- **OPEN-033:** representação de falta de dados versus incompatibilidade comprovada.
+- **OPEN-033:** resolvida; quando faltar informação necessária em qualquer dimensão, indicar “dados insuficientes”, não apresentar score final como completo e informar dimensões avaliadas/dados faltantes; ausência não vira zero nem compatibilidade presumida.
 - **OPEN-034:** medição de distância/modalidade quando faltam localização ou preferências.
 - **OPEN-035:** parâmetros e resultados que devem ser armazenados para rastreabilidade.
 - **OPEN-088:** provedor de mapas/rotas e critérios funcionais/operacionais para a API a integrar.
