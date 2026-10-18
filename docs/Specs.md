@@ -1527,7 +1527,7 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 2. Verificar se os dados mínimos definidos na OPEN-032 estão disponíveis; se faltar informação necessária em qualquer dimensão, classificar a análise como “dados insuficientes” e não apresentar o score final como completo. Informar quais dimensões puderam ser avaliadas e quais dados faltam, sem presumir valores.
 3. Para acessibilidade (A), comparar somente necessidades funcionais e recursos indispensáveis explicitamente declarados pelo candidato com recursos, condições e requisitos de acessibilidade explicitamente declarados para a vaga.
 4. Para perfil técnico (T), comparar critérios técnicos definidos para a vaga com competências e conhecimentos declarados pelo candidato; formação, experiência e idiomas só entram quando forem critérios aplicáveis à vaga.
-5. Para distância/modalidade (D), considerar localização do candidato, local de trabalho e modalidade; avaliar distância/trajeto somente quando houver deslocamento, sem aplicar distância a vagas remotas.
+5. Para distância/modalidade (D), calcular a compatibilidade de modalidade (peso interno 60%) e, em vagas presenciais ou híbridas, a compatibilidade de localização/deslocamento (40%) pelas faixas de tempo da seção 6.1. Em vaga totalmente remota, excluir o componente de localização/deslocamento e calcular D somente pela modalidade; não penalizar distância.
 6. Comparar necessidades funcionais obrigatórias com barreiras e recursos eliminatórios registrados para a vaga.
 7. Se houver barreira incompatível com necessidade obrigatória, classificar a vaga como incompatível, independentemente de qualquer score.
 8. Se não houver trava crítica, calcular o score determinístico com os pesos definidos na baseline.
@@ -1544,10 +1544,22 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 7. Resultado apresenta principais fatores considerados (RB-30).
 8. Mesmas entradas e mesmas regras devem produzir resultado consistente (RNF-10).
 9. Cálculo deve ser testável isoladamente (RNF-15).
-10. Cada dimensão é normalizada em uma subpontuação de 0 a 100: 0 quando nenhum critério aplicável é atendido, 100 quando todos são atendidos e valores intermediários proporcionais à quantidade de critérios atendidos. Dentro de cada dimensão, os critérios aplicáveis têm peso igual.
+10. As subpontuações A, T e D são calculadas pelos critérios e pesos internos documentados na seção 6.1; não se aplica uma regra genérica de pesos iguais a todas as dimensões.
 11. O score final é calculado por S = 0,50 × A + 0,30 × T + 0,20 × D, em que A é acessibilidade, T é perfil técnico e D é distância/modalidade. A trava crítica continua sendo aplicada antes do score.
 12. Manter a precisão das subpontuações durante o cálculo e arredondar somente o score final para o inteiro mais próximo; em empate exato de meio ponto, arredondar para cima.
 13. Se faltar informação necessária em qualquer dimensão, sinalizar a análise como “dados insuficientes” e não apresentar o score final como completo. Podem ser exibidas as dimensões já avaliadas e os dados faltantes. Ausência de dados não recebe zero nem compatibilidade presumida. A composição de score parcial não está autorizada por esta decisão.
+
+## 6.1. Parâmetros numéricos e cálculo das dimensões
+
+**Pesos gerais:** A (acessibilidade) = 50%; T (perfil técnico) = 30%; D (distância/modalidade) = 20%. O score final é S = 0,50 × A + 0,30 × T + 0,20 × D.
+
+**A — Acessibilidade (50% do score final):** comparar requisitos de acessibilidade aplicáveis da vaga com necessidades e recursos indispensáveis declarados pelo candidato. Para cada requisito com informação suficiente: recurso necessário confirmado disponível = 100; parcialmente disponível com limitação conhecida = 50; confirmado indisponível, mas não constituindo barreira crítica = 0. Informação não fornecida ou não validada não pontua. A = média simples das pontuações dos requisitos aplicáveis e avaliáveis. A trava crítica por barreira incompatível com necessidade obrigatória é aplicada antes do score.
+
+**T — Perfil técnico (30% do score final):** comparar critérios da vaga com dados declarados pelo candidato. Pesos internos: competências e conhecimentos = 40%; experiência profissional = 30%; formação e escolaridade = 20%; idiomas = 10%. Só entram critérios aplicáveis à vaga. A nota T é a soma das notas de critério multiplicadas pelos pesos internos aplicáveis, normalizada pela soma desses pesos aplicáveis. As faixas/escala de pontuação por critério técnico devem seguir critérios explícitos da vaga e não são inventadas por esta especificação.
+
+**D — Distância e modalidade (20% do score final):** pesos internos: compatibilidade com modalidade = 60%; compatibilidade de localização/deslocamento = 40%. Modalidade atende à preferência informada = 100; atende parcialmente = 50; modalidade confirmada não atende = 0. Para vaga presencial ou híbrida, pontuar o tempo estimado de deslocamento até o local de trabalho: até 30 minutos = 100; mais de 30 minutos até 1 hora = 75; mais de 1 hora até 1h30 = 50; mais de 1h30 = 25. Para vaga totalmente remota, localização/deslocamento não se aplica: excluir o componente de 40%, não atribuir zero e calcular D somente pela nota de modalidade (D = M), se modalidade for avaliável. Em vagas presenciais/híbridas, D = 0,60 × M + 0,40 × L.
+
+**Aplicabilidade e dados ausentes:** critérios não aplicáveis à vaga são excluídos da composição. Quando faltar informação necessária para avaliar uma dimensão (incluindo preferência de modalidade, localização ou estimativa de rota, conforme aplicável), indicar “dados insuficientes” e não apresentar score final completo, conforme OPEN-033. Ausência de dados não é nota zero nem compatibilidade presumida. Não calcular score parcial final por esta decisão. Manter precisão intermediária e arredondar somente o score final ao inteiro mais próximo, com meio ponto exato arredondado para cima.
 
 ## 7. Modelo de domínio
 - **CANDIDATO:** dados profissionais.
@@ -1559,7 +1571,7 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 ## 8. Impacto arquitetural
 A lógica fica concentrada em serviço de domínio independente da interface e da persistência. A trava ocorre antes do score. Dados externos precisam ter passado pela SPEC-006.
 
-**Integração prevista para a etapa de implementação:** a dimensão de distância/modalidade deverá consultar uma API de mapas/rotas para obter estimativas de deslocamento entre a localização do candidato e a da vaga, quando essa avaliação for aplicável. A integração será realizada na implementação da SPEC-007; o provedor e os detalhes técnicos da API serão selecionados nessa etapa, sem fixar agora um fornecedor específico. Vagas remotas não terão cálculo de trajeto/distância. Localização ausente, rota indisponível ou falha da API não serão interpretadas como distância zero nem como incompatibilidade automática; o resultado deverá indicar a dimensão não avaliada, conforme as decisões registradas nas OPENs pertinentes.
+**Integração prevista para a etapa de implementação:** em vagas presenciais ou híbridas, consultar uma API de mapas/rotas para estimar o tempo de deslocamento entre a localização do candidato e a da vaga, aplicando as faixas de pontuação da seção 6.1. Em vaga totalmente remota, não consultar rota nem calcular localização/distância. Provedor e detalhes técnicos serão selecionados na implementação. Localização ausente, rota indisponível ou falha da API, quando necessárias à avaliação, não serão interpretadas como distância zero nem incompatibilidade automática; indicar dados insuficientes conforme OPEN-033.
 
 ## 9. Contratos necessários
 - **Verificar elegibilidade por barreiras:** compara necessidades obrigatórias e barreiras registradas.
@@ -1599,10 +1611,10 @@ Contratos conceituais, sem endpoints HTTP.
 | T-007-08 | Vaga externa não validada | Não participa da análise |
 
 ## 13. Questões em aberto
-- **OPEN-031:** resolvida; subpontuações de 0 a 100 por proporção de critérios atendidos, critérios aplicáveis com peso igual dentro de cada dimensão; score final S = 0,50 × A + 0,30 × T + 0,20 × D; manter precisão intermediária e arredondar apenas o score final ao inteiro mais próximo, com meio ponto arredondado para cima. A trava crítica precede o score. Dados ausentes/não avaliáveis não recebem zero nem compatibilidade presumida; seu tratamento permanece nas OPEN-032 a OPEN-034.
+- **OPEN-031:** resolvida; pesos gerais A=50%, T=30%, D=20%; parâmetros e pesos internos de A/T/D, score final, precisão e arredondamento estão na seção 6.1. A trava crítica precede o score; dados necessários ausentes seguem OPEN-033/034 e não recebem zero nem compatibilidade presumida.
 - **OPEN-032:** dados mínimos necessários para cada dimensão do cálculo.
 - **OPEN-033:** resolvida; quando faltar informação necessária em qualquer dimensão, indicar “dados insuficientes”, não apresentar score final como completo e informar dimensões avaliadas/dados faltantes; ausência não vira zero nem compatibilidade presumida.
-- **OPEN-034:** medição de distância/modalidade quando faltam localização ou preferências.
+- **OPEN-034:** resolvida; modalidade e deslocamento, faixas de tempo e regra de exclusão de distância para vagas totalmente remotas estão documentados na seção 6.1
 - **OPEN-035:** parâmetros e resultados que devem ser armazenados para rastreabilidade.
 - **OPEN-088:** provedor de mapas/rotas e critérios funcionais/operacionais para a API a integrar.
 
