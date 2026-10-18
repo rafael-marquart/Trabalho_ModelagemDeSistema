@@ -1551,7 +1551,9 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 - **Resultado de compatibilidade:** resultado lógico, score e fatores produzidos pelo cálculo; atributos persistidos adicionais não são presumidos.
 
 ## 8. Impacto arquitetural
-A lógica fica concentrada em serviço de domínio independente da interface e da persistência. A trava ocorre antes do score. Dados externos precisam ter passado pela SPEC-006. Não se escolhe linguagem, biblioteca ou algoritmo auxiliar.
+A lógica fica concentrada em serviço de domínio independente da interface e da persistência. A trava ocorre antes do score. Dados externos precisam ter passado pela SPEC-006.
+
+**Integração prevista para a etapa de implementação:** a dimensão de distância/modalidade deverá consultar uma API de mapas/rotas para obter estimativas de deslocamento entre a localização do candidato e a da vaga, quando essa avaliação for aplicável. A integração será realizada na implementação da SPEC-007; o provedor e os detalhes técnicos da API serão selecionados nessa etapa, sem fixar agora um fornecedor específico. Vagas remotas não terão cálculo de trajeto/distância. Localização ausente, rota indisponível ou falha da API não serão interpretadas como distância zero nem como incompatibilidade automática; o resultado deverá indicar a dimensão não avaliada, conforme as decisões registradas nas OPENs pertinentes.
 
 ## 9. Contratos necessários
 - **Verificar elegibilidade por barreiras:** compara necessidades obrigatórias e barreiras registradas.
