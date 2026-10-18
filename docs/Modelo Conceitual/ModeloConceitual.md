@@ -71,9 +71,9 @@
 - `id_candidatura` (PK)
 - `id_candidato` (FK)
 - `id_vaga` (FK)
-- `data_inscricao`
-- `etapa_funil`
-- `score_match_deterministico`
+- `data_inscricao` (gerada pelo sistema no momento do registro)
+- `etapa_funil` (estado inicial: `Inscrita`)
+- `score_match_deterministico` (obrigatório para registrar a candidatura)
 
 ### ENTREVISTA
 
