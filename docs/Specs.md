@@ -1524,8 +1524,11 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 
 ## 5. Comportamento esperado
 1. Receber candidato e vaga preparada para análise.
-2. Verificar se os dados mínimos estão disponíveis; caso contrário, indicar que não é possível concluir a análise sem presumir valores.
-3. Comparar necessidades funcionais obrigatórias com barreiras e recursos eliminatórios registrados para a vaga.
+2. Verificar se os dados mínimos definidos na OPEN-032 estão disponíveis; caso contrário, indicar que não é possível concluir a análise sem presumir valores.
+3. Para acessibilidade (A), comparar somente necessidades funcionais e recursos indispensáveis explicitamente declarados pelo candidato com recursos, condições e requisitos de acessibilidade explicitamente declarados para a vaga.
+4. Para perfil técnico (T), comparar critérios técnicos definidos para a vaga com competências e conhecimentos declarados pelo candidato; formação, experiência e idiomas só entram quando forem critérios aplicáveis à vaga.
+5. Para distância/modalidade (D), considerar localização do candidato, local de trabalho e modalidade; avaliar distância/trajeto somente quando houver deslocamento, sem aplicar distância a vagas remotas.
+6. Comparar necessidades funcionais obrigatórias com barreiras e recursos eliminatórios registrados para a vaga.
 4. Se houver barreira incompatível com necessidade obrigatória, classificar a vaga como incompatível, independentemente de qualquer score.
 5. Se não houver trava crítica, calcular o score determinístico com os pesos definidos na baseline.
 6. Produzir resultado e fatores considerados, preservando transparência.
