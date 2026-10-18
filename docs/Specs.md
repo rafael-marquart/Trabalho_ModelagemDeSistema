@@ -2040,7 +2040,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 - **Questões abertas:** OPEN-047 a OPEN-049.
 
 ## 3. Escopo
-Validar autenticação, status atual da vaga, compatibilidade/trava crítica e candidatura ativa existente; se válido, registrar candidato, vaga, data e estado inicial previsto na baseline. Não permitir candidatura duplicada ativa.
+Validar autenticação, status atual da vaga, compatibilidade/trava crítica, existência de candidatura ativa e disponibilidade do score determinístico. Se válido, registrar candidato, vaga, score obrigatório, data gerada pelo sistema no momento do registro e estado inicial `Inscrita`. Não permitir candidatura duplicada ativa nem criar registro parcial.
 
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
@@ -2058,9 +2058,10 @@ SPEC-001, 002, 007, 009, 010. As dependências fornecem dados e capacidades; est
 1. Candidato autenticado seleciona vaga elegível e solicita candidatura.
 2. Sistema consulta o status atual da vaga e verifica bloqueio, trava crítica e compatibilidade obrigatória.
 3. Sistema verifica se já existe candidatura ativa do candidato para a vaga.
-4. Se alguma condição falhar, recusa o registro e informa o motivo; nenhuma candidatura parcial é criada.
-5. Se todas as condições forem satisfeitas, registra a candidatura e disponibiliza o resultado ao candidato.
-6. Sistema registra o evento e aciona a capacidade de notificação quando aplicável.
+4. Sistema confirma que o score determinístico de compatibilidade está calculado; o score é obrigatório para registrar a candidatura.
+5. Se alguma condição falhar ou o score não estiver disponível, recusa o registro e informa o motivo; nenhuma candidatura parcial é criada.
+6. Se todas as condições forem satisfeitas, registra a candidatura com estado inicial `Inscrita`, gera `data_inscricao` no momento do registro e disponibiliza o resultado ao candidato.
+7. Sistema registra o evento e aciona a capacidade de notificação quando aplicável.
 
 ## 6. Regras e invariantes
 - Vaga disponível e não bloqueada; trava crítica prevalece; uma candidatura ativa por vaga; operação auditável.
@@ -2105,12 +2106,13 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 | ID | Cenário | Resultado esperado |
 |---|---|---|
-| T-011-01 | Candidato autenticado envia candidatura a vaga disponível, sem duplicidade e sem trava crítica | Candidatura única é registrada e confirmação é apresentada |
+| T-011-01 | Candidato autenticado envia candidatura a vaga disponível, sem duplicidade, sem trava crítica e com score calculado | Candidatura única é registrada com estado `Inscrita`, data gerada pelo sistema e score associado; confirmação é apresentada |
 | T-011-02 | Visitante ou usuário não candidato tenta candidatar-se | Operação recusada sem registro |
 | T-011-03 | Vaga encerrada, indisponível ou bloqueada | Operação recusada sem registro parcial |
 | T-011-04 | Existe candidatura ativa para o mesmo candidato e vaga | Nova candidatura é recusada |
 | T-011-05 | Compatibilidade indica trava crítica | Candidatura é recusada independentemente do score |
 | T-011-06 | Falha ocorre antes da persistência | Nenhuma candidatura parcial permanece |
+| T-011-08 | Score determinístico não está disponível | Registro é recusado sem criar candidatura parcial |
 | T-011-07 | Candidatura é registrada com sucesso | Vínculo candidato-vaga e evento são rastreáveis |
 
 ## 13. Questões em aberto
