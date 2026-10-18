@@ -67,6 +67,17 @@ Os estados padronizados do funil de seleção são:
 
 O sistema deve impedir transições que não estejam previstas nesse conjunto.
 
+### Condições formais para avanço
+
+Antes de alterar a etapa da candidatura, o sistema deve validar:
+
+1. **Autorização:** o Recrutador está autenticado e autorizado a gerenciar a vaga e suas candidaturas.
+2. **Transição permitida:** a mudança solicitada pertence ao conjunto de transições válidas listado acima, conforme RB-39.
+3. **Pendências impeditivas:** não há pendências conhecidas que impeçam o avanço. Se houver, a etapa permanece inalterada e o Recrutador pode solicitar complementação das informações necessárias, conforme UC-09.
+4. **Rastreabilidade:** quando a transição for válida, a etapa é atualizada e a movimentação é registrada conforme RB-27, RB-37 e RB-41.
+
+Não são definidos critérios específicos adicionais por etapa, notas mínimas ou documentos obrigatórios sem decisão explícita do projeto.
+
 ## Regras relacionadas ao funil
 
 - RB-38 — Estados do funil.
