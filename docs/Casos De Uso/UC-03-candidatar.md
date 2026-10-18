@@ -18,18 +18,20 @@ Registrar candidatura em vaga elegível.
 1. Candidato seleciona vaga elegível.
 2. Solicita candidatura.
 3. Sistema verifica elegibilidade e candidatura ativa existente.
-4. Sistema registra a candidatura quando as condições forem atendidas.
-5. Sistema comunica os usuários envolvidos conforme regras de notificação.
+4. Sistema confirma que o score determinístico está calculado.
+5. Sistema registra a candidatura com estado inicial `Inscrita` e data de inscrição gerada pelo sistema, somente quando todas as condições forem atendidas.
+6. Sistema comunica os usuários envolvidos conforme regras de notificação.
 
 ## Exceções
 
 - EX01: candidatura ativa duplicada é impedida.
 - EX02: vaga encerrada ou bloqueada impede candidatura.
 - EX03: barreira crítica impede candidatura independentemente do score.
+- EX04: score determinístico indisponível impede o registro da candidatura.
 
 ## Pós-condições
 
-- Candidatura registrada.
+- Candidatura registrada com estado inicial `Inscrita`, data de inscrição gerada pelo sistema e score determinístico disponível.
 - Histórico atualizado.
 - Notificações emitidas conforme regras aplicáveis.
 
