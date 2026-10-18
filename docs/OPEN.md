@@ -151,7 +151,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 ### SPEC-012 — Gerenciar candidatura pelo candidato
 | ID | Estado | Questão em aberto | Contexto/impacto |
 |---|---|---|---|
-| OPEN-050 | aberta | Em quais estados e condições o candidato pode cancelar a candidatura? | RB-36 remete às regras/estados do processo, mas não detalha todos os casos. |
+| OPEN-050 | resolvida | Em quais estados e condições o candidato pode cancelar a candidatura? | **Decisão aprovada:** o candidato autenticado pode cancelar apenas a própria candidatura nos estados ativos `Inscrita`, `Triagem`, `Entrevista` e `Finalista`, desde que a vaga não esteja encerrada nem bloqueada de forma que impeça o cancelamento. O sistema solicita confirmação antes de efetivar a ação. Candidaturas `Contratado`, `Recusado` ou já canceladas não podem ser canceladas novamente. O cancelamento confirmado preserva o registro e o histórico, atualiza o estado e notifica o recrutador responsável conforme SPEC-017/OPEN-066; tentativas não permitidas são recusadas sem alteração. A regra foi refletida na SPEC-012. |
 | OPEN-051 | aberta | Quais eventos e dados compõem o histórico mostrado ao candidato? | UC-05 exige acompanhamento, mas a granularidade da linha do tempo precisa ser definida. |
 | OPEN-052 | aberta | Quais operações, além de consultar e cancelar, estão incluídas em RF-28? | O requisito fala em gerenciar conforme regras do processo; o conjunto completo de ações deve ser confirmado. |
 
