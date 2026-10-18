@@ -2143,10 +2143,10 @@ As OPEN-047, OPEN-048 e OPEN-049 foram resolvidas e registradas em `docs/OPEN.md
 - **Baseline:** RF-11, RF-28, RF-34; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 011, 013, 016, 017.
 - **Caso de uso:** UC-05 — Acompanhar Funil de Candidaturas; RF-34 — Cancelamento de candidatura.
-- **Questões abertas:** OPEN-050 a OPEN-052.
+- **Questões abertas:** OPEN-051 e OPEN-052. OPEN-050 foi resolvida em `docs/OPEN.md`.
 
 ## 3. Escopo
-Listar somente candidaturas próprias; consultar estado/histórico; permitir cancelamento apenas quando estado e regras permitirem; preservar histórico após cancelamento.
+Listar somente candidaturas próprias; consultar estado/histórico; permitir que o candidato cancele a própria candidatura nos estados ativos `Inscrita`, `Triagem`, `Entrevista` e `Finalista`, desde que a vaga não esteja encerrada nem bloqueada de forma que impeça o cancelamento; preservar histórico após cancelamento.
 
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
@@ -2164,12 +2164,13 @@ SPEC-001, 011, 013, 016, 017. As dependências fornecem dados e capacidades; est
 1. Candidato autenticado abre a lista de candidaturas próprias.
 2. Sistema retorna apenas candidaturas associadas ao candidato autenticado.
 3. Ao selecionar uma candidatura, apresenta estado atual, vaga e histórico disponível.
-4. Ao solicitar cancelamento, sistema verifica as condições aplicáveis antes de alterar o estado.
-5. Se permitido, registra o cancelamento e preserva o histórico; se não, informa que a ação não pode ser executada.
-6. Sistema disponibiliza o estado atualizado para acompanhamento e notificação.
+4. Ao solicitar cancelamento, o sistema confirma a intenção do candidato e verifica que a candidatura pertence ao candidato autenticado, está em estado `Inscrita`, `Triagem`, `Entrevista` ou `Finalista`, e que a vaga não está encerrada nem bloqueada de forma que impeça o cancelamento.
+5. Se permitido, registra o cancelamento como estado final, preserva o registro e o histórico; se não, informa o motivo e não altera o estado.
+6. Uma candidatura `Contratado`, `Recusado` ou já cancelada não pode ser cancelada novamente.
+7. Sistema disponibiliza o estado atualizado para acompanhamento e notifica o recrutador responsável conforme SPEC-017.
 
 ## 6. Regras e invariantes
-- Candidato só acessa seus processos; cancelamento respeita RB-36; estados/transições válidos; histórico preservado.
+- Candidato só acessa seus processos. Pode cancelar candidatura nos estados `Inscrita`, `Triagem`, `Entrevista` e `Finalista`, se a vaga não estiver encerrada nem bloqueada de forma que impeça a operação. `Contratado`, `Recusado` e `Cancelada` não permitem novo cancelamento. O cancelamento exige confirmação, respeita RB-36, preserva o registro/histórico e não pode ser repetido.
 - Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
 - Operações protegidas são validadas no backend.
 - Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
@@ -2213,14 +2214,15 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 |---|---|---|
 | T-012-01 | Candidato consulta suas candidaturas | Somente registros próprios são apresentados |
 | T-012-02 | Candidato tenta consultar candidatura de outra pessoa | Acesso negado sem revelar os dados |
-| T-012-03 | Candidatura está em estado que permite cancelamento | Cancelamento é registrado e histórico preservado |
-| T-012-04 | Estado não permite cancelamento | Operação recusada e estado mantido |
+| T-012-03 | Candidatura em `Inscrita`, `Triagem`, `Entrevista` ou `Finalista`, com vaga não encerrada/bloqueada | Após confirmação, cancelamento é registrado e histórico preservado |
+| T-012-04 | Candidatura em `Contratado`, `Recusado` ou já cancelada | Operação recusada e estado mantido |
+| T-012-08 | Vaga encerrada ou bloqueada de forma que impeça cancelamento | Operação recusada sem alteração de estado |
 | T-012-05 | Duas solicitações de cancelamento concorrentes | Não ocorre duplicação nem corrupção do estado |
 | T-012-06 | Cancelamento concluído | Estado atualizado fica disponível para acompanhamento/notificação |
 | T-012-07 | Histórico é consultado após cancelamento | Eventos anteriores continuam disponíveis conforme retenção aprovada |
 
 ## 13. Questões em aberto
-Consultar OPEN-050 a OPEN-052 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+OPEN-050 foi resolvida e registrada em `docs/OPEN.md`. Consultar OPEN-051 e OPEN-052, que permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
