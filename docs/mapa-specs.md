@@ -208,7 +208,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | Campo | Conteúdo |
 |---|---|
 | **ID** | SPEC-012 |
-| **Objetivo** | Permitir ao candidato consultar e gerenciar sua candidatura, incluindo o cancelamento quando permitido pelas regras do processo. |
+| **Objetivo** | Permitir ao candidato consultar suas próprias candidaturas, acompanhar status/etapas e histórico disponível e cancelar a própria candidatura conforme as regras do processo. Não inclui editar candidatura enviada, excluir seu registro ou alterar etapas do processo seletivo. |
 | **Valor** | Dá autonomia ao candidato sobre sua participação no processo seletivo. |
 | **RF** | RF-28, RF-34 |
 | **RB** | RB-23, RB-36, RB-41, RB-42 |
