@@ -230,7 +230,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **RF** | RF-20, RF-30, RF-35 |
 | **RB** | RB-23, RB-27, RB-38, RB-39, RB-41, RB-42, RB-43 |
 | **RNF** | RNF-07, RNF-09, RNF-14, RNF-15 |
-| **UC / fluxo** | UC-09 — Gerenciar Funil; estados e transições definidos em docs/Fluxos e Estados/estados-trilha.md. |
+| **UC / fluxo** | UC-09 — Gerenciar Funil de Seleção (referência para gestão pelo Recrutador); estados e transições definidos em docs/Fluxos e Estados/estados-trilha.md. UC-05 é o acompanhamento pelo candidato e permanece separado. |
 | **Entidades** | CANDIDATURA, VAGA, ENTREVISTA, USUARIO/RECRUTADOR vinculado à EMPRESA. |
 | **Drivers** | DA-02, DA-07 |
 | **ADRs** | ADR-002, ADR-004 |
