@@ -2143,10 +2143,10 @@ As OPEN-047, OPEN-048 e OPEN-049 foram resolvidas e registradas em `docs/OPEN.md
 - **Baseline:** RF-11, RF-28, RF-34; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 011, 013, 016, 017.
 - **Caso de uso:** UC-05 — Acompanhar Funil de Candidaturas; RF-34 — Cancelamento de candidatura.
-- **Questões abertas:** OPEN-052 permanece aberta. OPEN-050 e OPEN-051 foram resolvidas em `docs/OPEN.md`.
+- **Questões abertas:** OPEN-050, OPEN-051 e OPEN-052 foram resolvidas e registradas em `docs/OPEN.md`.
 
 ## 3. Escopo
-Listar somente candidaturas próprias; consultar estado/histórico; permitir que o candidato cancele a própria candidatura nos estados ativos `Inscrita`, `Triagem`, `Entrevista` e `Finalista`, desde que a vaga não esteja encerrada nem bloqueada de forma que impeça o cancelamento; preservar histórico após cancelamento.
+Escopo de RF-28: (1) consultar somente candidaturas próprias; (2) acompanhar status, etapas e histórico disponível; e (3) cancelar a própria candidatura nos estados ativos `Inscrita`, `Triagem`, `Entrevista` e `Finalista`, desde que a vaga não esteja encerrada nem bloqueada de forma que impeça o cancelamento; preservar histórico após cancelamento. Editar uma candidatura já enviada, excluir seu registro ou alterar etapas do processo seletivo não fazem parte deste escopo.
 
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
@@ -2227,7 +2227,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-012-11 | Histórico funcional deixa de ser exibido após o prazo aplicável | A retenção técnica de auditoria permanece independente da exibição funcional |
 
 ## 13. Questões em aberto
-OPEN-050 e OPEN-051 foram resolvidas e registradas em `docs/OPEN.md`. Consultar OPEN-052, que permanece aberta até decisão explícita do grupo.
+OPEN-050, OPEN-051 e OPEN-052 foram resolvidas e registradas em `docs/OPEN.md`.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
