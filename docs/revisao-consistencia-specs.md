@@ -15,7 +15,7 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 - Todas as RBs identificadas na baseline aparecem referenciadas em algum ponto de `Specs.md`; isso não garante, por si só, que cada regra esteja associada à Spec correta.
 - RF-34 e RF-35 estão associados, respectivamente, à SPEC-012 e à SPEC-013.
 - O detalhamento de contratos e testes das SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 foi ampliado e aprovado pelo grupo (REV-002 encerrada).
-- Nesta rodada, foram corrigidos o texto do mapa que sugeria ausência de pendências, a orientação para tratar referências às Specs removidas e as afirmações de escopo/contagem neste relatório. As correções são documentais e não alteram decisões funcionais..
+- Nesta rodada, foram corrigidos o texto do mapa que sugeria ausência de pendências, a orientação para tratar referências às Specs removidas e as afirmações de escopo/contagem neste relatório. As correções são documentais e não alteram decisões funcionais.
 
 ## 3. Achados prioritários
 
