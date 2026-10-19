@@ -1801,6 +1801,8 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 
 **Fora do escopo:** criar estados/transições novos; gerenciar o funil; publicar/editar vaga; implementar todos os tipos de notificação.
 
+**Permissões e transições (OPEN-041):** somente Recrutador autorizado da Empresa responsável pode alterar status. São permitidas as transições aberta → indisponível, aberta → encerrada, indisponível → aberta e indisponível → encerrada. Encerrada → aberta/reaberta é proibida; nova oportunidade exige nova publicação. Candidato não altera status, e o papel de Administrador da plataforma, por si só, não concede essa permissão. Toda operação verifica autorização e status atual; transição inválida ou ator não autorizado é recusado sem alteração. A alteração registra status anterior e resultante, data/hora e ator. Indisponibilizar preserva publicação e candidaturas; encerrar não exclui a publicação.
+
 ## 3.1. Telas e evidência de layout
 | Tela/área | Finalidade | Layout |
 |---|---|---|
@@ -1820,11 +1822,11 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 2. Sistema recupera o status atual registrado.
 3. Sistema apresenta o estado de forma clara e acessível.
 4. Se aberta, o candidato pode seguir às verificações de elegibilidade.
-5. Se indisponível, o sistema informa a condição e bloqueia candidaturas enquanto durar esse estado; uma operação autorizada pode restabelecer a vaga como aberta, conforme OPEN-041.
+5. Se indisponível, o sistema informa a condição e bloqueia candidaturas enquanto durar esse estado; somente Recrutador autorizado da Empresa responsável pode restabelecer a vaga como aberta, conforme OPEN-041.
 6. Se encerrada, o sistema informa a condição e bloqueia permanentemente novas candidaturas naquela publicação; uma nova oportunidade exige nova publicação conforme regras aplicáveis.
 7. Se o status mudar após a busca, a operação seguinte verifica o estado atual. Se não for possível confirmar disponibilidade por ausência ou falha de informação, não presume disponibilidade e bloqueia a candidatura
 8. Ao encerrar uma vaga, candidatos ativos são identificados para comunicação conforme RB-42 e a Spec de notificação
-9. Alterações relevantes são rastreáveis
+9. Alterações de status são permitidas somente ao Recrutador autorizado da Empresa responsável e apenas nas transições da OPEN-041; operações inválidas ou não autorizadas são recusadas sem alteração. Alterações relevantes são rastreáveis
 
 ## 6. Regras e invariantes
 1. Candidatura somente em vaga aberta e não bloqueada (RB-01).
@@ -1833,7 +1835,7 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 4. Status relevante deve ser claro antes da candidatura (RB-13, RB-23).
 5. Estado exibido reflete o registro atual; ausência/falha de informação não presume disponibilidade e bloqueia candidatura quando não for possível confirmá-la
 6. Estados novos não são criados sem decisão formal
-7. Esta Spec trata consulta e aplicação de restrições; não concede ao candidato permissão para alterar status
+7. Esta Spec trata consulta e aplicação de restrições; não concede ao candidato permissão para alterar status. As permissões e transições de alteração seguem OPEN-041
 8. Consulta de status não substitui verificação de compatibilidade da SPEC-007
 
 ## 7. Modelo de domínio
@@ -1849,7 +1851,7 @@ A disponibilidade deve ser consultada por operações que dependem dela, especia
 - **Verificar disponibilidade:** informa se a ação solicitada é permitida.
 - **Aplicar restrições por status:** bloqueia operações incompatíveis.
 - **Identificar candidaturas afetadas:** fornece o conjunto para notificação.
-- **Registrar alteração de status:** mantém rastreabilidade quando houver operação que altere estado.
+- **Alterar status da vaga:** valida ator autorizado, status atual e transição permitida na OPEN-041; recusa operações inválidas sem alteração e registra status anterior/resultante, data/hora e ator responsável.
 
 ## 10. RNFs aplicáveis
 RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (controle de acesso às operações protegidas).
@@ -1857,7 +1859,8 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 ## 11. Critérios de aceitação
 
 - [ ] Somente perfis autorizados consultam informações protegidas e a consulta não permite alteração de status (RNF-07/RNF-08).
-- [ ] Mudanças de status relevantes, quando originadas por operação autorizada, permanecem rastreáveis (RNF-14).
+- [ ] Somente Recrutador autorizado da Empresa responsável consegue alterar status, respeitando transições da OPEN-041; operações não autorizadas ou inválidas são recusadas sem alteração.
+- [ ] Mudanças de status registram estado anterior/resultante, data/hora e ator responsável (RNF-14).
 
 - [ ] Candidato visualiza estado atual.
 - [ ] Vaga encerrada/indisponível bloqueia novas candidaturas.
@@ -1876,10 +1879,13 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 | T-009-04 | Vaga encerra após busca | Estado atualizado respeitado |
 | T-009-05 | Encerrar vaga com candidaturas ativas | Candidatos identificados para notificação |
 | T-009-06 | Status não definido/indisponível | Comunicar apenas estado registrado |
+| T-009-07 | Candidato, Recrutador de outra Empresa ou Administrador da plataforma sem autorização específica tenta alterar status | Operação recusada sem alteração |
+| T-009-08 | Recrutador autorizado tenta transição não permitida, incluindo encerrada → aberta | Operação recusada sem alteração |
+| T-009-09 | Recrutador autorizado altera status por transição permitida | Status resultante e trilha com status anterior, data/hora e ator são registrados |
 
 ## 13. Questões em aberto
 - **OPEN-040:** resolvida pela decisão aprovada; catálogo e distinções operacionais registrados nesta Spec.
-- **OPEN-041:** papéis que podem alterar status e transições permitidas.
+- **OPEN-041:** resolvida; permissões, transições e rastreabilidade registradas no escopo e nos comportamentos desta Spec.
 - **OPEN-042:** prazo e canal para informar candidatos ativos após encerramento.
 
 ## 14. Definition of Done
