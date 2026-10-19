@@ -1947,6 +1947,11 @@ O layout não deve depender apenas de cor para indicar compatibilidade, deve per
 
 ## 5. Comportamento esperado
 1. Candidato abre vaga a partir da busca ou acesso autorizado.
+2. Apresenta título/cargo, descrição, requisitos e critérios de elegibilidade publicados; modalidade, localização e faixa salarial quando disponíveis; status atual; origem quando aplicável; e resultado/fatores de compatibilidade fornecidos pela SPEC-007, sem recalcular.
+3. Informações de acessibilidade declaradas para a vaga e para a infraestrutura da Empresa são apresentadas em grupos distintos; não se presume que recursos gerais da Empresa estejam disponíveis na vaga.
+4. Campo sem informação disponível é indicado como “Não informado”; o sistema não infere nem transforma ausência em confirmação positiva ou negativa.
+5. Não são exibidos dados internos administrativos, contatos privados, identificadores internos ou informações de outros candidatos.
+6. Status e elegibilidade governam a continuidade: vaga indisponível ou encerrada não permite candidatura; a operação deve validar o estado atual conforme SPEC-009/SPEC-011.
 2. Sistema recupera detalhes disponíveis e status atual.
 3. Sistema apresenta os dados da oportunidade e acessibilidade registrada.
 4. Campos ausentes são identificados como não informados.
