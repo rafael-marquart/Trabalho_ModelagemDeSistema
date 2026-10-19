@@ -208,7 +208,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 ### SPEC-021 — Gerenciar nota pública de acessibilidade
 | ID | Estado | Questão em aberto | Contexto/impacto |
 |---|---|---|---|
-| OPEN-082 | parcialmente definida | Como apresentar a nota pública com base em estrelas? | Decisão do grupo: exibir a frequência de avaliações válidas em cada quantidade de estrelas, sem presumir média ou pesos adicionais. |
+| OPEN-082 | resolvida | Como apresentar a nota pública com base em estrelas? | **Decisão aprovada:** exibir a distribuição das avaliações válidas de 1 a 5 estrelas, mostrando a quantidade de avaliações em cada nível. Não calcular uma média geral nem transformar a distribuição em outra pontuação. |
 | OPEN-083 | parcialmente definida | Qual quantidade mínima e quais critérios de validade tornam dados/avaliações suficientes para a nota? | Decisão do grupo: uma avaliação válida é suficiente para apresentar a distribuição; os critérios adicionais de validade permanecem conforme a baseline e as decisões ainda necessárias. |
 | OPEN-084 | parcialmente definida | Como a nota será apresentada quando os dados forem insuficientes ou conflitantes? | Decisão do grupo: sem avaliações válidas, não exibir nota e informar que os dados são insuficientes. O tratamento de dados conflitantes permanece a confirmar se aplicável. |
 | OPEN-085 | resolvida | A moderação pode alterar a nota pública ou a distribuição de estrelas? | Decisão do grupo: não. A administração atua sobre denúncias; a nota pública é formada pelas avaliações válidas e não pode ser editada ou recalculada diretamente por administradores. |
