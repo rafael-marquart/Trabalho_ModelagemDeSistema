@@ -11,7 +11,7 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 **Status atual:** somente REV-009 permanece aberta neste relatório, por envolver regras centrais de compatibilidade e descoberta de vagas. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
 
 - O mapa e o documento de detalhamento preservam os IDs SPEC-001 a SPEC-021; SPEC-014 e SPEC-015 foram removidas do escopo, sem renumerar as posteriores.
-- O `OPEN.md` contém 81 questões identificadas, incluindo OPEN-086, OPEN-087 e OPEN-088; não foram detectados IDs duplicados nas linhas de cadastro das questões. Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua.
+- O `OPEN.md` contém 83 questões identificadas; não foram detectados IDs duplicados nas linhas de cadastro. Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado atual das pendências finais está consolidado abaixo.
 - Todas as RBs identificadas na baseline aparecem referenciadas em algum ponto de `Specs.md`; isso não garante, por si só, que cada regra esteja associada à Spec correta.
 - RF-34 e RF-35 estão associados, respectivamente, à SPEC-012 e à SPEC-013.
 - O detalhamento de contratos e testes das SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 foi ampliado e aprovado pelo grupo (REV-002 encerrada).
@@ -35,7 +35,20 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 **Status: REV-009 permanece aberta** para validação final do cálculo e da descoberta de vagas. As decisões consolidadas nas OPEN-031 a OPEN-046 devem ser refletidas nos artefatos; OPEN-046 já está resolvida e não deve ser tratada como pendência. Não inventar regras adicionais nem iniciar implementação de comportamentos ainda indefinidos.
 
-## 4. Verificações que passaram
+## 4. Estado atual das pendências OPEN
+
+Conforme o cadastro vigente em `docs/OPEN.md`, as questões ainda não totalmente resolvidas são:
+
+- **Abertas:** OPEN-075, OPEN-076, OPEN-077, OPEN-078, OPEN-079, OPEN-080, OPEN-081 e OPEN-088.
+- **Parcialmente resolvidas:** OPEN-086 e OPEN-087.
+- **Parcialmente definidas:** OPEN-082, OPEN-083 e OPEN-084.
+- **Resolvida:** OPEN-085.
+
+OPEN-086 e OPEN-087 dependem de confirmação documentada das condições de acesso/licença do Adzuna e da viabilidade operacional da coleta diária. OPEN-088 continua sem método/provedor aprovado para determinar distância em quilômetros; não calcular tempo de deslocamento nem reintroduzir o provedor de rotas anteriormente considerado.
+
+A revisão de consistência documental, por si só, não altera esses estados funcionais. Não marcar questões como resolvidas sem decisão explícita e atualização dos artefatos correspondentes.
+
+## 5. Verificações que passaram
 
 - Os IDs SPEC-001 a SPEC-021 aparecem tanto no mapa quanto no documento de detalhamento.
 - Os títulos das Specs no mapa correspondem aos títulos do documento de detalhamento.
