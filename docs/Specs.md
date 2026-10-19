@@ -1826,6 +1826,7 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 6. Se encerrada, o sistema informa a condição e bloqueia permanentemente novas candidaturas naquela publicação; uma nova oportunidade exige nova publicação conforme regras aplicáveis.
 7. Se o status mudar após a busca, a operação seguinte verifica o estado atual. Se não for possível confirmar disponibilidade por ausência ou falha de informação, não presume disponibilidade e bloqueia a candidatura
 8. Ao encerrar uma vaga, candidatos ativos são identificados para comunicação conforme RB-42 e a Spec de notificação
+9. Após o encerramento, o sistema envia comunicação individual por e-mail cadastrado aos candidatos com candidaturas ativas no momento do encerramento. A mensagem informa que a vaga foi encerrada, não receberá novas candidaturas e que a candidatura existente permanece registrada e não foi automaticamente excluída. Se o envio falhar ou não puder ocorrer imediatamente, a vaga permanece encerrada e a comunicação fica registrada como pendente para nova tentativa; o encerramento não depende do serviço de e-mail. A comunicação não expõe dados de outros candidatos.
 9. Alterações de status são permitidas somente ao Recrutador autorizado da Empresa responsável e apenas nas transições da OPEN-041; operações inválidas ou não autorizadas são recusadas sem alteração. Alterações relevantes são rastreáveis
 
 ## 6. Regras e invariantes
@@ -1851,6 +1852,7 @@ A disponibilidade deve ser consultada por operações que dependem dela, especia
 - **Verificar disponibilidade:** informa se a ação solicitada é permitida.
 - **Aplicar restrições por status:** bloqueia operações incompatíveis.
 - **Identificar candidaturas afetadas:** fornece o conjunto para notificação.
+- **Comunicar encerramento:** envia e-mail individual aos candidatos ativos identificados no momento do encerramento; registra pendência e permite nova tentativa em caso de falha, sem reabrir a vaga. A mensagem esclarece que candidaturas existentes permanecem registradas e não são automaticamente excluídas.
 - **Alterar status da vaga:** valida ator autorizado, status atual e transição permitida na OPEN-041; recusa operações inválidas sem alteração e registra status anterior/resultante, data/hora e ator responsável.
 
 ## 10. RNFs aplicáveis
@@ -1878,6 +1880,8 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 | T-009-03 | Candidatar-se em vaga encerrada | Ação bloqueada |
 | T-009-04 | Vaga encerra após busca | Estado atualizado respeitado |
 | T-009-05 | Encerrar vaga com candidaturas ativas | Candidatos identificados para notificação |
+| T-009-10 | Encerramento e envio de e-mail concluído | Candidato ativo recebe mensagem individual; candidatura permanece registrada |
+| T-009-11 | Serviço de e-mail falha no encerramento | Vaga permanece encerrada; comunicação fica pendente para nova tentativa; candidatura permanece registrada |
 | T-009-06 | Status não definido/indisponível | Comunicar apenas estado registrado |
 | T-009-07 | Candidato, Recrutador de outra Empresa ou Administrador da plataforma sem autorização específica tenta alterar status | Operação recusada sem alteração |
 | T-009-08 | Recrutador autorizado tenta transição não permitida, incluindo encerrada → aberta | Operação recusada sem alteração |
@@ -1886,7 +1890,7 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 ## 13. Questões em aberto
 - **OPEN-040:** resolvida pela decisão aprovada; catálogo e distinções operacionais registrados nesta Spec.
 - **OPEN-041:** resolvida; permissões, transições e rastreabilidade registradas no escopo e nos comportamentos desta Spec.
-- **OPEN-042:** prazo e canal para informar candidatos ativos após encerramento.
+- **OPEN-042:** resolvida; comunicação imediata por e-mail individual aos candidatos ativos, com tentativa posterior registrada se houver falha. A mensagem informa encerramento, bloqueio de novas candidaturas e preservação da candidatura já realizada, que não é automaticamente excluída.
 
 ## 14. Definition of Done
 - [ ] Texto aprovado.
