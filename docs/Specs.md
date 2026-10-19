@@ -68,7 +68,7 @@ Estados possíveis: especificada, aprovada, em implementação, implementada ou 
 | Configurações da Empresa — Recrutadores | Cadastrar ou associar recrutador à Empresa autenticada | Pendente |
 | Mensagens de autenticação | Informar falha ou bloqueio sem expor dados indevidos | Pendente |
 
-A lista identifica áreas funcionais, não define quantidade final de páginas ou composição visual. Os protótipos devem ser anexados em docs/layout/ e aprovados separadamente.
+A lista identifica áreas funcionais, não define quantidade final de páginas ou composição visual. Os protótipos devem ser anexados em `docs/layout/` e aprovados separadamente.
 
 ## 4. Dependências
 
@@ -881,6 +881,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 - Permitir salvar como rascunho ou publicar imediatamente, conforme UC-08.
 - Tornar uma vaga publicada visível no catálogo para candidatos elegíveis.
 - Permitir editar e gerenciar vagas próprias dentro das regras definidas.
+- Responsabilidade do Recrutador: o Recrutador autorizado da Empresa responsável pela vaga deve poder, no exercício de sua função, indisponibilizar temporariamente uma vaga ou encerrá-la definitivamente. A indisponibilização suspende o recebimento de candidaturas e permite posterior restabelecimento da vaga como aberta, conforme as regras de autorização e transição. O encerramento finaliza o recebimento de candidaturas naquela publicação. As condições, permissões e transições detalhadas são definidas na OPEN-041.
 - Registrar publicação e alterações relevantes para rastreabilidade.
 - Manter informações de acessibilidade e origem conforme os requisitos aplicáveis.
 
@@ -2490,11 +2491,7 @@ Consultar OPEN-063 a OPEN-065 em `docs/OPEN.md`. As questões permanecem abertas
 Diante de alteração relevante, identificar destinatários autorizados, preparar e enviar comunicação pelo canal aprovado, registrar resultado conforme política; falha no envio não reverte alteração de domínio.
 
 ## 3.1. Telas e evidência de layout
-| Área/tela | Finalidade | Layout |
-|---|---|---|
-| Não haverá central nem histórico separado de notificações enviadas. O candidato acompanha os acontecimentos do processo na linha do tempo da candidatura, conforme SPEC-016/OPEN-065 | Consultar os eventos e o status oficial da candidatura; a linha do tempo não representa uma lista de e-mails enviados | Não se aplica ao escopo atual |
-
-O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
+Não há tela própria para central ou histórico de notificações enviadas no escopo atual. O candidato acompanha os acontecimentos do processo na linha do tempo funcional da candidatura, conforme SPEC-016/OPEN-065; essa linha do tempo não representa uma lista de e-mails enviados.
 
 ## 4. Dependências
 SPEC-009, 011 a 016. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
