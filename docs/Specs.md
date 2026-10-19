@@ -2065,6 +2065,8 @@ SPEC-001, 002, 007, 009, 010. As dependências fornecem dados e capacidades; est
 
 ## 6. Regras e invariantes
 - Vaga disponível e não bloqueada; trava crítica prevalece; uma candidatura ativa por vaga; operação auditável.
+- Cada avaliação contém duas notas obrigatórias e independentes, ambas em escala de 1 a 5 estrelas: acessibilidade e postura inclusiva. Comentário textual é opcional.
+- Após o envio, a avaliação é imutável para o candidato; não oferecer fluxo de edição ou reenvio para alterar uma avaliação já registrada. Denúncias e moderação continuam no fluxo existente.
 - Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
 - Operações protegidas são validadas no backend.
 - Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
@@ -2584,7 +2586,7 @@ Consultar OPEN-068 e OPEN-069 em `docs/OPEN.md`. Os eventos obrigatórios e o en
 - **Baseline:** RF-21; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 011, 016.
 - **Caso de uso:** UC-06 — Avaliar Pós-Entrevista.
-- **Questões abertas:** OPEN-071 a OPEN-073.
+- **Questões abertas:** OPEN-072 e OPEN-073.
 
 ## 3. Escopo
 Candidato elegível registra avaliação com campos definidos na baseline; sistema valida associação e conteúdo, armazena e disponibiliza avaliações válidas para nota pública, preservando anonimato na apresentação pública.
@@ -2605,11 +2607,12 @@ SPEC-001, 011, 016. As dependências fornecem dados e capacidades; esta Spec nã
 1. Somente candidato autenticado com candidatura vinculada a entrevista cadastrada e concluída pode avaliar o processo de que participou; a elegibilidade independe de contratação ou rejeição.
 2. A avaliação deve ser enviada em até 60 dias corridos após a conclusão da entrevista. Após esse prazo, novas submissões para essa entrevista são recusadas.
 3. O sistema valida no backend a associação entre o candidato autenticado, a candidatura e a entrevista, além do prazo de elegibilidade.
-4. Sistema apresenta critérios e escala definidos na baseline.
-5. Candidato preenche e envia a avaliação.
-6. Sistema valida campos e vínculo com entrevista/processo correspondente, incluindo a janela de 60 dias corridos.
-7. Avaliação válida é registrada e disponibilizada à SPEC-021 sem expor publicamente a identidade do candidato.
-8. Avaliação não altera diretamente a nota pública nesta capacidade.
+4. Sistema apresenta dois critérios separados: acessibilidade e postura inclusiva, cada um avaliado em escala de 1 a 5 estrelas.
+5. Candidato informa obrigatoriamente uma nota em estrelas para cada critério e pode incluir comentário opcional; antes do envio, pode revisar os dados preenchidos.
+6. Sistema valida presença e faixa das duas notas, valida o comentário quando informado e valida o vínculo com a candidatura/entrevista correspondente, incluindo a janela de 60 dias corridos.
+7. Após o envio bem-sucedido, a avaliação é registrada e disponibilizada à SPEC-021 sem expor publicamente a identidade do candidato.
+8. A avaliação não pode ser editada após o envio. Eventuais denúncias ou problemas seguem o fluxo de moderação existente.
+9. A avaliação não altera diretamente a nota pública nesta capacidade.
 
 ## 6. Regras e invariantes
 - Só avaliação válida participa da nota; identidade não é pública; avaliação não altera nota diretamente nesta Spec; registrar auditoria.
@@ -2626,8 +2629,8 @@ A capacidade mantém separação entre interface, regras de domínio e persistê
 
 ## 9. Contratos necessários
 - **Consultar elegibilidade:** verifica se o candidato autenticado possui candidatura vinculada à entrevista cadastrada e concluída e se a submissão ocorre em até 60 dias corridos após a conclusão da entrevista.
-- **Apresentar formulário:** disponibiliza critérios, escala e campos aprovados; não cria perguntas ou escalas não definidas.
-- **Validar submissão:** verifica campos obrigatórios e vínculo com a candidatura/entrevista correspondente.
+- **Apresentar formulário:** disponibiliza os critérios separados de acessibilidade e postura inclusiva, cada um com escala de 1 a 5 estrelas, duas notas obrigatórias e comentário opcional.
+- **Validar submissão:** verifica que as duas notas obrigatórias estão presentes e dentro da escala de 1 a 5 estrelas, valida o comentário se informado e confirma o vínculo com a candidatura/entrevista correspondente.
 - **Registrar avaliação:** persiste avaliação válida com controles de integridade e confidencialidade.
 - **Disponibilizar dados válidos:** entrega os dados necessários à SPEC-021 sem publicar identidade ou avaliação individual.
 
@@ -2639,6 +2642,9 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 ## 11. Critérios de aceitação
 
 - [ ] Apenas candidato elegível registra avaliação associada ao processo correspondente.
+- [ ] As notas de acessibilidade e postura inclusiva são campos separados e obrigatórios, cada uma de 1 a 5 estrelas.
+- [ ] O comentário pode ficar vazio; quando informado, é validado.
+- [ ] Após o envio, o candidato não consegue editar nem reenviar a avaliação para alterá-la.
 - [ ] A apresentação pública não identifica o autor; avaliação inválida não alimenta a nota pública (RNF-08/RNF-09).
 
 - [ ] Acesso limitado ao ator autorizado.
@@ -2659,12 +2665,14 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-018-07 | Candidato elegível envia avaliação até 60 dias corridos após a conclusão da entrevista | Submissão pode prosseguir, sujeita às demais validações aprovadas |
 | T-018-08 | Candidato tenta enviar avaliação após 60 dias corridos da conclusão da entrevista | Nova submissão para essa entrevista é recusada |
 | T-018-03 | Avaliação não está vinculada ao processo correspondente | Submissão é recusada |
-| T-018-04 | Campos obrigatórios definidos estão ausentes | Sistema indica validação e não registra avaliação inválida |
-| T-018-05 | Avaliação é consultada em contexto público | Identidade do autor e conteúdo individual não são expostos |
-| T-018-06 | Avaliação é editada ou submetida novamente | Sistema aplica a política aprovada; enquanto não definida, não se presume edição ou duplicação |
+| T-018-04 | Uma ou ambas as notas obrigatórias estão ausentes | Sistema indica validação e não registra avaliação inválida |
+| T-018-05 | Uma das notas está fora da escala de 1 a 5 estrelas | Sistema recusa a submissão e informa a validação |
+| T-018-06 | Comentário não foi informado | Submissão pode prosseguir se os demais campos e regras forem válidos |
+| T-018-09 | Candidato tenta editar ou reenviar uma avaliação já registrada | Sistema não permite alterar a avaliação enviada |
+| T-018-10 | Avaliação é consultada em contexto público | Identidade do autor e conteúdo individual não são expostos |
 
 ## 13. Questões em aberto
-OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado à candidatura/entrevista concluída, com prazo de 60 dias corridos após a conclusão. Consultar OPEN-071 a OPEN-073 em `docs/OPEN.md`; essas questões permanecem abertas até decisão explícita do grupo.
+OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado à candidatura/entrevista concluída, com prazo de 60 dias corridos após a conclusão. OPEN-071 foi resolvida: duas notas obrigatórias e separadas (acessibilidade e postura inclusiva), cada uma de 1 a 5 estrelas, comentário opcional e impossibilidade de edição após envio. Consultar OPEN-072 e OPEN-073 em `docs/OPEN.md`; essas questões permanecem abertas.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
