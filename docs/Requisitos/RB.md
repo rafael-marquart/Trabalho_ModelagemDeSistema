@@ -73,10 +73,10 @@ O sistema aplica controles contra uso abusivo de denúncias e candidaturas.
 Denúncias são analisadas por Administrador antes de bloqueio ou alteração de nota.
 
 ### RB-26 Confidencialidade das informações de acessibilidade
-Informações de acessibilidade são disponibilizadas somente a usuários autorizados e necessários ao processo.
+Informações de acessibilidade são disponibilizadas somente a usuários autorizados e necessários ao processo. O acesso do Recrutador é orientado pela finalidade e limitado às informações necessárias à candidatura e à vaga sob sua responsabilidade durante todas as etapas. Informações de acessibilidade só podem ser consultadas na medida necessária para avaliar compatibilidade e viabilizar acessibilidade no processo. É vedado acesso a candidatos/candidaturas de outras Empresas e a laudos médicos. Avanço, encerramento ou mudança de etapa não ampliam automaticamente as permissões; preservam-se as regras existentes de histórico e retenção.
 
 ### RB-27 Histórico de alterações
-Alterações relevantes mantêm registro para rastreabilidade.
+Alterações relevantes mantêm registro para rastreabilidade. Para movimentações do funil, registrar etapa anterior e resultante, data e hora, ator responsável e tipo de movimentação/decisão, incluindo justificativa quando exigida pelo fluxo ou regra aplicável. Preservar eventos anteriores, sem exclusão silenciosa; reversões só são permitidas quando correspondem a transições previstas na RB-39. Mudanças futuras do fluxo dependem de aprovação explícita do projeto.
 
 ### RB-28 Autodeclaração das necessidades
 O candidato pode informar necessidades por autodeclaração, sem armazenamento de laudo médico.
