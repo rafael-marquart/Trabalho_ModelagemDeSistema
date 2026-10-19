@@ -59,6 +59,6 @@ Filtrar e visualizar exclusivamente vagas compatíveis com o perfil, ocultando a
 
 - Busca retorna apenas vagas que passaram pela trava crítica.
 - Resultados respeitam o limite de 100 vagas elegíveis e 20 por página, com paginação e ordenações alternativas conforme SPEC-008.
-- Quando nenhuma vaga compatível for encontrada, o sistema informa o estado sem resultados e permite revisar os filtros aplicados. Salvamento de alertas por e-mail permanece fora do escopo até decisão da OPEN-039.
+- Quando nenhuma vaga compatível for encontrada, o sistema informa o estado sem resultados e permite revisar os filtros aplicados. Alertas por e-mail e salvamento de buscas permanecem fora do escopo atual, conforme decisão da OPEN-039.
 
 ---
