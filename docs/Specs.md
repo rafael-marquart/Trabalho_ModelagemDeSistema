@@ -2778,11 +2778,12 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | ID | Cenário | Resultado esperado |
 |---|---|---|
 | T-019-01 | Candidato autenticado com acesso à vaga denuncia possível incompatibilidade de acessibilidade ou possível falsa inclusão | Denúncia é registrada e encaminhada à moderação |
-| T-019-02 | Usuário não autenticado tenta denunciar | Operação recusada |\n| T-019-07 | Candidato autenticado tenta denunciar vaga à qual não tem acesso | Operação recusada ou referência não aceita; nenhuma denúncia é associada incorretamente |
+| T-019-02 | Usuário não autenticado tenta denunciar | Operação recusada |
 | T-019-03 | Referência à vaga é inválida ou não acessível | Denúncia não é associada incorretamente |
 | T-019-04 | Denúncia é registrada | Confirmação não promete decisão nem sanção |
 | T-019-05 | Denúncia está pendente | Vaga e nota não são alteradas automaticamente |
 | T-019-06 | Usuário sem permissão consulta conteúdo restrito | Conteúdo e identidade protegidos não são expostos |
+| T-019-07 | Candidato autenticado tenta denunciar vaga à qual não tem acesso | Operação recusada ou referência não aceita; nenhuma denúncia é associada incorretamente |
 
 ## 13. Questões em aberto
 OPEN-074 foi resolvida: somente candidato autenticado com acesso à vaga pode denunciar possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga. Consultar OPEN-075 a OPEN-077 em `docs/OPEN.md`; essas questões permanecem abertas até decisão explícita do grupo.
