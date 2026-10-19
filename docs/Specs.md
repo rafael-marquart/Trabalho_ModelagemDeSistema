@@ -2734,7 +2734,7 @@ OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado
 - **Baseline:** RF-14; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 018, 020.
 - **Caso de uso:** UC-11 — Denunciar Vaga Incompatível.
-- **Questões abertas:** OPEN-075 a OPEN-077. OPEN-074 resolvida: elegibilidade e circunstâncias de denúncia definidas.
+- **Questões abertas:** OPEN-076 e OPEN-077. OPEN-074 e OPEN-075 resolvidas: elegibilidade/circunstâncias e campos/evidências/vínculos da denúncia definidos.
 
 ## 3. Escopo
 Candidato autenticado com acesso à vaga pode registrar denúncia sobre possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga. O sistema valida e encaminha para moderação, confirmando o registro sem antecipar conclusão.
@@ -2753,7 +2753,7 @@ SPEC-001, 018, 020. As dependências fornecem dados e capacidades; esta Spec nã
 
 ## 5. Comportamento esperado
 1. Candidato autenticado com acesso à vaga seleciona a vaga e registra denúncia sobre possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga.
-2. Sistema valida autenticação, referência válida à vaga e controles antiabuso existentes. Campos/evidências adicionais e limites de frequência permanecem nas OPEN-075 e OPEN-076.
+2. Sistema valida autenticação, referência válida à vaga e controles antiabuso existentes. Exige categoria da situação e descrição/justificativa; evidências adicionais são opcionais. Não exige laudo médico ou documento pessoal sensível como condição de registro. Os limites de frequência permanecem na OPEN-076.
 3. Denúncia é registrada e encaminhada à moderação.
 4. Sistema confirma o registro sem antecipar a decisão.
 5. O registro da denúncia não bloqueia vaga nem altera nota automaticamente.
@@ -2775,7 +2775,7 @@ RF-14; RB-24, RB-25, RB-27, RB-37, RB-44, RB-45; DENUNCIA_FALSA_INCLUSAO, AVALIA
 A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
 
 ## 9. Contratos necessários
-- **Registrar denúncia:** recebe vaga referenciada, motivo e descrição permitidos pela baseline.
+- **Registrar denúncia:** recebe referência válida à vaga, categoria da situação e descrição/justificativa; evidências adicionais são opcionais. Vincula a denúncia à vaga e à Empresa responsável por meio dessa vaga. Se a denúncia questionar avaliação específica, permite vínculo ao registro correspondente após validar a referência; esse vínculo não é obrigatório para as demais denúncias.
 - **Validar solicitação:** verifica autenticação do candidato, referência válida à vaga acessível ao candidato e controles antiabuso existentes, sem inventar limites numéricos.
 - **Persistir e encaminhar:** registra a denúncia e disponibiliza-a à fila de moderação.
 - **Confirmar recebimento:** informa que a denúncia foi registrada, sem antecipar o resultado da análise.
@@ -2788,6 +2788,9 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
+- [ ] O registro exige vaga válida, categoria da situação e descrição/justificativa; evidências adicionais são opcionais e laudos médicos/documentos pessoais sensíveis não são exigidos como condição de registro.
+- [ ] A denúncia fica vinculada à vaga e à Empresa responsável; quando questiona avaliação específica, pode ser vinculada à avaliação correspondente após validação.
+- [ ] Denúncia e evidências não comprovam irregularidade nem provocam bloqueio da vaga ou alteração de nota sem decisão administrativa.
 - [ ] Denúncia é acessível apenas a atores autorizados e o registro não publica identidade ou conteúdo privado indevidamente (RNF-07/RNF-08).
 - [ ] Registrar denúncia não bloqueia automaticamente vaga nem altera a nota antes da análise administrativa.
 
@@ -2813,7 +2816,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-019-07 | Candidato autenticado tenta denunciar vaga à qual não tem acesso | Operação recusada ou referência não aceita; nenhuma denúncia é associada incorretamente |
 
 ## 13. Questões em aberto
-OPEN-074 foi resolvida: somente candidato autenticado com acesso à vaga pode denunciar possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga. Consultar OPEN-075 a OPEN-077 em `docs/OPEN.md`; essas questões permanecem abertas até decisão explícita do grupo.
+OPEN-074 foi resolvida: somente candidato autenticado com acesso à vaga pode denunciar possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga. OPEN-075 foi resolvida: campos obrigatórios, evidências opcionais e vínculos à vaga/Empresa e, quando aplicável, à avaliação específica estão definidos. Consultar OPEN-076 e OPEN-077 em `docs/OPEN.md`; essas questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
