@@ -23,7 +23,7 @@ Filtrar e visualizar exclusivamente vagas compatíveis com o perfil, ocultando a
 2. O sistema combina filtros de categorias diferentes por AND e valores selecionados dentro da mesma categoria por OR. Filtros não selecionados não restringem a busca; ao remover um filtro, os demais permanecem aplicados.
 3. O sistema dispara internamente a execução do UC13 para cruzar o vetor do candidato com o banco de vagas ativas
 4. O sistema aplica a trava crítica eliminatória (filtro booleano), considera somente vagas ativas e válidas e respeita os filtros informados.
-5. O sistema exibe o catálogo de vagas elegíveis ordenadas pelo percentual de compatibilidade calculado pela SPEC-007.
+5. O sistema exibe até 100 vagas elegíveis, em páginas de 20, ordenadas pela opção selecionada: maior compatibilidade (padrão, conforme SPEC-007), mais recentes ou mais antigas (data de publicação). A paginação é numerada, com navegação anterior/próxima, preservando busca, filtros e ordenação; alterações em busca/filtros reiniciam na primeira página. Empates usam identificador interno para estabilidade, sem expô-lo
 
 ## Exceções e Fluxos Alternativos
 
@@ -58,7 +58,7 @@ Filtrar e visualizar exclusivamente vagas compatíveis com o perfil, ocultando a
 ## Critérios de aceitação
 
 - Busca retorna apenas vagas que passaram pela trava crítica.
-- Resultados são ordenados pelo percentual de compatibilidade calculado.
+- Resultados respeitam o limite de 100 vagas elegíveis e 20 por página, com paginação e ordenações alternativas conforme SPEC-008.
 - Quando nenhuma vaga compatível for encontrada, o sistema informa o estado sem resultados e permite revisar os filtros aplicados. Salvamento de alertas por e-mail permanece fora do escopo até decisão da OPEN-039.
 
 ---
