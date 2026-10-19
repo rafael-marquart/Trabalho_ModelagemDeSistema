@@ -56,13 +56,13 @@ As decisões das OPEN-075 a OPEN-085 foram refletidas nas Specs correspondentes,
 - As decisões consolidadas sobre conta Empresa, perfil Recrutador, Administrador da plataforma, não armazenamento de laudos, análise de denúncia e deduplicação de vagas externas estão registradas no `OPEN.md`.
 - O fluxo consolidado de estados do funil está documentado em `docs/Fluxos e Estados/estados-trilha.md`.
 
-## 5. Plano recomendado de correção
+## 6. Plano recomendado de correção
 
 1. Manter OPEN-088 como pendência funcional isolada do escopo de compatibilidade/distância; não reabrir OPEN-031 a OPEN-046, já decididas.
 2. Manter as demais questões OPEN pertinentes explicitamente abertas até decisão do grupo.
 3. Manter a aprovação textual separada da aprovação dos layouts. Implementação somente após as aprovações aplicáveis.
 
-## 6. Limite desta revisão
+## 7. Limite desta revisão
 
 Esta é uma auditoria de consistência documental. Ela identifica cobertura e problemas verificáveis por comparação dos artefatos, mas não substitui a leitura e validação funcional do grupo. Questões de produto que a baseline não resolve continuam abertas.
 
