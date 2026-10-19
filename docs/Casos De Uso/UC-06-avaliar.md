@@ -20,10 +20,12 @@ Avaliar a experiência da entrevista quanto ao cumprimento dos recursos de acess
 
 ## Fluxo Principal
 
-1. O candidato registra uma avaliação sobre o processo seletivo.
-2. O sistema valida que o candidato autenticado está vinculado à candidatura e à entrevista concluída e que a submissão ocorre em até 60 dias corridos após a conclusão.
-3. Se o prazo tiver expirado ou o vínculo não for válido, o sistema recusa a submissão.
-4. Se a validação for bem-sucedida, o sistema registra a avaliação e preserva os dados necessários à moderação.
+1. O sistema apresenta campos separados para avaliar acessibilidade e postura inclusiva, cada um em escala de 1 a 5 estrelas.
+2. O candidato informa obrigatoriamente as duas notas e, se desejar, um comentário opcional; antes de enviar, pode revisar os dados.
+3. O sistema valida que o candidato autenticado está vinculado à candidatura e à entrevista concluída e que a submissão ocorre em até 60 dias corridos após a conclusão.
+4. O sistema valida que ambas as notas estão preenchidas e dentro da escala de 1 a 5 estrelas e valida o comentário quando informado.
+5. Se o prazo tiver expirado, o vínculo não for válido ou os campos obrigatórios forem inválidos, o sistema recusa a submissão.
+6. Se a validação for bem-sucedida, o sistema registra a avaliação e preserva os dados necessários à moderação. Após o envio, o candidato não pode editar a avaliação.
 5. Quando houver denúncia ou indício de abuso, o registro segue para análise administrativa.
 6. O Administrador analisa a ocorrência e registra a decisão.
 7. Qualquer alteração de nota ou efeito de moderação ocorre somente após a decisão administrativa.
@@ -58,6 +60,9 @@ Avaliar a experiência da entrevista quanto ao cumprimento dos recursos de acess
 ## Critérios de aceitação
 
 - Apenas candidato autenticado vinculado à candidatura e à entrevista concluída pode avaliar; a elegibilidade independe de contratação ou rejeição.
+- A avaliação contém duas notas obrigatórias e separadas: acessibilidade e postura inclusiva, cada uma de 1 a 5 estrelas.
+- O comentário é opcional; quando informado, é validado.
+- O candidato pode revisar a avaliação antes de enviá-la, mas não pode editar ou reenviar para alterar uma avaliação já registrada.
 - Novas submissões são aceitas somente até 60 dias corridos após a conclusão da entrevista; após o prazo, são recusadas.
 - Avaliações submetidas são gravadas para composição da nota pública conforme as regras aplicáveis.
 - Avaliação anônima preserva anonimato enquanto permite a triagem de conteúdo pela equipe de moderação.
