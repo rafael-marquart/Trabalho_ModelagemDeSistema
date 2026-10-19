@@ -228,9 +228,9 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Objetivo** | Permitir ao recrutador autorizado consultar candidatos e administrar o andamento das candidaturas no funil, respeitando estados e transições válidas. |
 | **Valor** | Estrutura o processo seletivo da empresa e evita alterações de etapa inconsistentes. |
 | **RF** | RF-20, RF-30, RF-35 |
-| **RB** | RB-23, RB-27, RB-38, RB-39, RB-41, RB-42, RB-43 |
+| **RB** | RB-23, RB-26, RB-27, RB-38, RB-39, RB-41, RB-42, RB-43 |
 | **RNF** | RNF-07, RNF-09, RNF-14, RNF-15 |
-| **UC / fluxo** | UC-09 — Gerenciar Funil de Seleção (referência para gestão pelo Recrutador); estados, transições e condições formais de avanço definidos em docs/Fluxos e Estados/estados-trilha.md. Validar autorização, transição prevista na RB-39 e ausência de pendências impeditivas, conforme OPEN-054 resolvida. UC-05 é o acompanhamento pelo candidato e permanece separado. |
+| **UC / fluxo** | UC-09 — Gerenciar Funil de Seleção (referência para gestão pelo Recrutador); estados, transições e condições formais de avanço definidos em docs/Fluxos e Estados/estados-trilha.md. Validar autorização, transição prevista na RB-39 e ausência de pendências impeditivas, conforme OPEN-054 resolvida. OPEN-055/056 resolvidas: acesso limitado à finalidade/necessidade em todas as etapas; histórico com etapa anterior/resultante, data/hora, ator, tipo de movimentação/decisão e justificativa quando exigida; preservação dos eventos e vedação de reversões fora da RB-39. UC-05 é o acompanhamento pelo candidato e permanece separado. |
 | **Entidades** | CANDIDATURA, VAGA, ENTREVISTA, USUARIO/RECRUTADOR vinculado à EMPRESA. |
 | **Drivers** | DA-02, DA-07 |
 | **ADRs** | ADR-002, ADR-004 |
