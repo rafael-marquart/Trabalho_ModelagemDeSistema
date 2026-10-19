@@ -19,15 +19,16 @@ Filtrar e visualizar exclusivamente vagas compatíveis com o perfil, ocultando a
 
 ## Fluxo Principal
 
-1. O candidato acessa o painel de busca de vagas e insere termos de interesse ou filtros de localização/cargo.
-2. O sistema dispara internamente a execução do UC13 para cruzar o vetor do candidato com o banco de vagas ativas.
-3. O sistema aplica a trava crítica eliminatória (filtro booleano).
-4. O sistema exibe o catálogo de vagas elegíveis ordenadas pelo percentual de compatibilidade.
+1. O candidato acessa o painel de busca de vagas e insere termos de interesse ou filtros por cargo, área profissional, modalidade e localização. A busca textual segue as regras da OPEN-037. O filtro de acessibilidade previsto no RF-06 utiliza apenas opções definidas e validadas na OPEN-023, sem expor necessidades funcionais individuais.
+2. O sistema combina filtros de categorias diferentes por AND e valores selecionados dentro da mesma categoria por OR. Filtros não selecionados não restringem a busca; ao remover um filtro, os demais permanecem aplicados.
+3. O sistema dispara internamente a execução do UC13 para cruzar o vetor do candidato com o banco de vagas ativas
+4. O sistema aplica a trava crítica eliminatória (filtro booleano), considera somente vagas ativas e válidas e respeita os filtros informados.
+5. O sistema exibe o catálogo de vagas elegíveis ordenadas pelo percentual de compatibilidade calculado pela SPEC-007.
 
 ## Exceções e Fluxos Alternativos
 
-- EX01 (Nenhuma Vaga Compatível Encontrada): Se o motor de match descartar todas as vagas por incompatibilidade na trava crítica, o sistema exibe mensagem informativa e sugere ajuste nos filtros de localização/cargo.
-- FA01 (Filtro Manual por Categoria de Acessibilidade): O candidato aplica filtros adicionais refinando os resultados apenas por tipo de regime (remoto, híbrido, presencial).
+- EX01 (Nenhuma Vaga Compatível Encontrada): Se o motor de match descartar todas as vagas por incompatibilidade na trava crítica, o sistema exibe mensagem informativa e sugere revisar os filtros aplicados.
+- FA01 (Filtros adicionais): O candidato pode refinar os resultados por cargo, área profissional, modalidade e localização, conforme as regras de combinação definidas. Filtro de acessibilidade só é disponibilizado conforme critérios validados na OPEN-023.
 
 ## Pós-condições
 
@@ -58,6 +59,6 @@ Filtrar e visualizar exclusivamente vagas compatíveis com o perfil, ocultando a
 
 - Busca retorna apenas vagas que passaram pela trava crítica.
 - Resultados são ordenados pelo percentual de compatibilidade calculado.
-- Quando nenhuma vaga compatível for encontrada, o sistema sugere ações ao candidato (ajustar filtros, salvar alerta por e-mail).
+- Quando nenhuma vaga compatível for encontrada, o sistema informa o estado sem resultados e permite revisar os filtros aplicados. Salvamento de alertas por e-mail permanece fora do escopo até decisão da OPEN-039.
 
 ---
