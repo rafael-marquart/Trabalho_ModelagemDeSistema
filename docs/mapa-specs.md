@@ -11,7 +11,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 
 ---
 
-## 3. Mapa ordenado
+## 2. Mapa ordenado
 
 **Escopo atualizado:** SPEC-014 (Solicitar acomodação) e SPEC-015 (Processar solicitação de acomodação) foram removidas do escopo. Os IDs posteriores foram preservados para evitar quebrar rastreabilidade.
 
@@ -339,7 +339,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **Dependências** | SPEC-018, SPEC-020. |
 | **Justificativa da ordem** | A nota depende de avaliações válidas e, quando aplicável, das decisões administrativas que podem afetar os dados considerados. |
 
-## 4. Dependências resumidas
+## 3. Dependências resumidas
 
 A ordem proposta é:
 
@@ -361,7 +361,7 @@ A ordem proposta é:
 
 A ordem não significa que cada Spec precise ser implementada de forma estritamente serial quando não houver dependência direta; ela representa uma **ordem de implementação e validação orientada pelas dependências funcionais e arquiteturais**.
 
-## 5. RNFs transversais
+## 4. RNFs transversais
 
 Os RNFs não foram transformados em Specs independentes. Eles foram associados às capacidades em que são verificáveis, conforme a orientação do processo SDD.
 
@@ -375,7 +375,7 @@ Em especial:
 - **RNF-14 e RNF-15:** aplicam-se especialmente às capacidades auditáveis e às regras críticas.
 - **RNF-16:** aplica-se principalmente à importação, normalização e integração de dados externos.
 
-## 6. Decisões arquiteturais transversais
+## 5. Decisões arquiteturais transversais
 
 As ADRs não originam Specs técnicas independentes:
 
@@ -384,11 +384,11 @@ As ADRs não originam Specs técnicas independentes:
 - **ADR-003:** LLM isolada no backend por adaptador e submetida à validação.
 - **ADR-004:** separação em camadas e concentração das regras de domínio.
 
-## 7. Questões em aberto
+## 6. Questões em aberto
 
 As questões funcionais em aberto e seus estados são centralizados em `docs/OPEN.md`. Este mapa não mantém um cadastro paralelo de pendências; portanto, a ausência de questões específicas do mapa não significa que o projeto esteja sem questões em aberto.
 
-## 8. Parada obrigatória
+## 7. Parada obrigatória
 
 Este documento contém **somente o mapa de Specs**.
 
