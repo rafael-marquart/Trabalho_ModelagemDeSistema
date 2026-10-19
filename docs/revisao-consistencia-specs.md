@@ -37,16 +37,15 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 4. Estado atual das pendências OPEN
 
-Conforme o cadastro vigente em `docs/OPEN.md`, as questões ainda não totalmente resolvidas são:
+Conforme o cadastro vigente de `docs/OPEN.md`:
 
-- **Abertas:** OPEN-075, OPEN-076, OPEN-077, OPEN-078, OPEN-079, OPEN-080, OPEN-081 e OPEN-088.
+- **Abertas:** OPEN-088.
 - **Parcialmente resolvidas:** OPEN-086 e OPEN-087.
-- **Parcialmente definidas:** OPEN-082, OPEN-083 e OPEN-084.
-- **Resolvida:** OPEN-085.
+- **Resolvidas:** OPEN-075 a OPEN-085.
 
 OPEN-086 e OPEN-087 dependem de confirmação documentada das condições de acesso/licença do Adzuna e da viabilidade operacional da coleta diária. OPEN-088 continua sem método/provedor aprovado para determinar distância em quilômetros; não calcular tempo de deslocamento nem reintroduzir o provedor de rotas anteriormente considerado.
 
-A revisão de consistência documental, por si só, não altera esses estados funcionais. Não marcar questões como resolvidas sem decisão explícita e atualização dos artefatos correspondentes.
+As decisões das OPEN-075 a OPEN-085 foram refletidas nas Specs correspondentes, incluindo denúncia, moderação e nota pública (SPEC-019 a SPEC-021). A revisão de consistência documental, por si só, não altera estados funcionais. Não marcar questões como resolvidas sem decisão explícita e atualização dos artefatos correspondentes.
 
 ## 5. Verificações que passaram
 
