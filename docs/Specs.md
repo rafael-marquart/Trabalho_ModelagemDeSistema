@@ -2586,10 +2586,10 @@ Consultar OPEN-068 e OPEN-069 em `docs/OPEN.md`. Os eventos obrigatórios e o en
 - **Baseline:** RF-21; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 011, 016.
 - **Caso de uso:** UC-06 — Avaliar Pós-Entrevista.
-- **Questão aberta:** OPEN-073. OPEN-072 foi resolvida: uma avaliação por candidato por entrevista concluída, sem edição/substituição, com rejeição de duplicatas e registro/encaminhamento administrativo de indícios relevantes de abuso.
+- **Questões abertas:** OPEN-073 foi resolvida: publicar somente distribuição agregada por quantidade de estrelas, não publicar comentários individuais, restringir acesso aos registros individuais e reter esses registros por 1 ano após o envio. OPEN-072 também foi resolvida: uma avaliação por candidato por entrevista concluída, sem edição/substituição, com rejeição de duplicatas e registro/encaminhamento administrativo de indícios relevantes de abuso.
 
 ## 3. Escopo
-Candidato elegível registra avaliação com campos definidos na baseline; sistema valida associação e conteúdo, armazena e disponibiliza avaliações válidas para nota pública, preservando anonimato na apresentação pública.
+Candidato elegível registra avaliação com campos definidos na baseline; o sistema valida associação e conteúdo, armazena registros individuais com acesso restrito por 1 ano após o envio e disponibiliza para a nota pública somente a distribuição agregada das avaliações válidas por quantidade de estrelas. Comentários individuais não são publicados; a distribuição agregada pode ser mantida por prazo indeterminado apenas se não permitir reconstruir avaliações individuais nem identificar candidatos.
 
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
@@ -2610,12 +2610,12 @@ SPEC-001, 011, 016. As dependências fornecem dados e capacidades; esta Spec nã
 4. Sistema apresenta dois critérios separados: acessibilidade e postura inclusiva, cada um avaliado em escala de 1 a 5 estrelas.
 5. Candidato informa obrigatoriamente uma nota em estrelas para cada critério e pode incluir comentário opcional; antes do envio, pode revisar os dados preenchidos.
 6. Sistema valida presença e faixa das duas notas, valida o comentário quando informado e valida o vínculo com a candidatura/entrevista correspondente, incluindo a janela de 60 dias corridos.
-7. Após o envio bem-sucedido, a avaliação é registrada e disponibilizada à SPEC-021 sem expor publicamente a identidade do candidato.
+7. Após o envio bem-sucedido, a avaliação é registrada com acesso individual restrito a pessoas autorizadas para finalidades legítimas da plataforma. Para a SPEC-021, são disponibilizados apenas dados válidos necessários à distribuição agregada por quantidade de estrelas; não são publicados comentários individuais, identidade ou identificadores dos candidatos. O registro individual e seu comentário opcional são retidos por 1 ano após o envio e, ao fim do prazo, excluídos ou irreversivelmente anonimizados, respeitando obrigações aplicáveis de preservação.
 8. Cada candidato pode registrar uma única avaliação por entrevista concluída, vinculada à candidatura correspondente. Submissões duplicadas são recusadas; a avaliação não pode ser editada nem substituída após o envio. Eventuais denúncias ou indícios relevantes de abuso são registrados e encaminhados para análise administrativa, sem bloqueio automático.
 9. A avaliação não altera diretamente a nota pública nesta capacidade.
 
 ## 6. Regras e invariantes
-- Só avaliação válida participa da nota; identidade não é pública; avaliação não altera nota diretamente nesta Spec; registrar auditoria. O limite é uma avaliação por candidato por entrevista concluída; duplicatas são recusadas e a avaliação enviada não pode ser editada ou substituída. Eventos relevantes e indícios pertinentes de abuso são registrados/encaminhados para análise administrativa, sem bloqueio automático.
+- Só avaliação válida participa da nota; identidade e comentários individuais não são públicos; a nota pública apresenta somente distribuição agregada por quantidade de estrelas. Registros individuais e comentários opcionais têm acesso restrito a pessoas autorizadas para finalidades legítimas da plataforma e são retidos por 1 ano após o envio; ao fim do prazo, são excluídos ou irreversivelmente anonimizados, respeitando obrigações aplicáveis de preservação. A distribuição agregada pode ser mantida por prazo indeterminado se não permitir reconstrução de avaliações individuais nem identificação. A avaliação não altera nota diretamente nesta Spec; registrar auditoria. O limite é uma avaliação por candidato por entrevista concluída; duplicatas são recusadas e a avaliação enviada não pode ser editada ou substituída. Eventos relevantes e indícios pertinentes de abuso são registrados/encaminhados para análise administrativa, sem bloqueio automático.
 - Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
 - Operações protegidas são validadas no backend.
 - Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
@@ -2633,7 +2633,7 @@ A capacidade mantém separação entre interface, regras de domínio e persistê
 - **Validar submissão:** verifica que as duas notas obrigatórias estão presentes e dentro da escala de 1 a 5 estrelas, valida o comentário se informado, confirma o vínculo com a candidatura/entrevista correspondente e verifica se o mesmo candidato já avaliou aquela entrevista.
 - **Registrar avaliação:** persiste avaliação válida com controles de integridade e confidencialidade; recusa submissão duplicada e não permite edição ou substituição após o registro.
 - **Registrar e encaminhar indícios de abuso:** registra eventos relevantes e encaminha indícios pertinentes para análise administrativa, sem bloqueio automático nem alteração automática da avaliação ou da distribuição pública.
-- **Disponibilizar dados válidos:** entrega os dados necessários à SPEC-021 sem publicar identidade ou avaliação individual.
+- **Disponibilizar dados válidos:** entrega à SPEC-021 somente os dados necessários à distribuição agregada por quantidade de estrelas, sem publicar identidade, identificadores ou comentários individuais. O acesso aos registros individuais é restrito a pessoas autorizadas para finalidades legítimas da plataforma.
 
 Contratos conceituais; não definem endpoints HTTP.
 
@@ -2647,7 +2647,9 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 - [ ] O comentário pode ficar vazio; quando informado, é validado.
 - [ ] Após o envio, o candidato não consegue editar nem substituir a avaliação; uma segunda avaliação do mesmo candidato para a mesma entrevista é recusada.
 - [ ] Eventos relevantes são registrados e indícios pertinentes de abuso podem ser encaminhados para análise administrativa, sem bloqueio automático nem alteração automática da avaliação/distribuição pública.
-- [ ] A apresentação pública não identifica o autor; avaliação inválida não alimenta a nota pública (RNF-08/RNF-09).
+- [ ] A apresentação pública mostra somente distribuição agregada por quantidade de estrelas e não expõe identidade, identificadores ou comentários individuais; avaliação inválida não alimenta a nota pública (RNF-08/RNF-09).
+- [ ] Registros individuais e comentários opcionais têm acesso restrito e são excluídos ou irreversivelmente anonimizados após 1 ano do envio, respeitando obrigações aplicáveis de preservação.
+- [ ] A distribuição agregada só é mantida por prazo indeterminado se não permitir reconstruir avaliações individuais nem identificar candidatos.
 
 - [ ] Acesso limitado ao ator autorizado.
 - [ ] Pré-condições e regras são validadas no backend.
@@ -2671,12 +2673,14 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-018-05 | Uma das notas está fora da escala de 1 a 5 estrelas | Sistema recusa a submissão e informa a validação |
 | T-018-06 | Comentário não foi informado | Submissão pode prosseguir se os demais campos e regras forem válidos |
 | T-018-09 | Candidato tenta editar ou reenviar uma avaliação já registrada | Sistema não permite alterar a avaliação enviada |
-| T-018-10 | Avaliação é consultada em contexto público | Identidade do autor e conteúdo individual não são expostos |
+| T-018-10 | Avaliação é consultada em contexto público | Somente a distribuição agregada por quantidade de estrelas é exposta; identidade, identificadores e comentários individuais não são publicados |
+| T-018-13 | Registro individual completa 1 ano desde o envio | Registro individual e comentário opcional são excluídos ou irreversivelmente anonimizados, respeitando obrigações aplicáveis de preservação |
+| T-018-14 | Distribuição agregada não permite reconstruir registros individuais nem identificar candidatos | Distribuição pode ser mantida por prazo indeterminado |
 | T-018-11 | Candidato tenta registrar segunda avaliação para a mesma entrevista | Submissão duplicada é recusada sem substituir a avaliação existente |
 | T-018-12 | Há indício relevante de abuso relacionado à avaliação | Evento é registrado e encaminhado para análise administrativa, sem bloqueio automático ou alteração automática da avaliação/distribuição pública |
 
 ## 13. Questões em aberto
-OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado à candidatura/entrevista concluída, com prazo de 60 dias corridos após a conclusão. OPEN-071 foi resolvida: duas notas obrigatórias e separadas (acessibilidade e postura inclusiva), cada uma de 1 a 5 estrelas, comentário opcional e impossibilidade de edição após envio. OPEN-072 foi resolvida: uma avaliação por candidato por entrevista concluída, sem edição/substituição, com rejeição de duplicatas e registro/encaminhamento administrativo de indícios relevantes de abuso, sem bloqueio automático. Consultar OPEN-073 em `docs/OPEN.md`, que permanece aberta.
+OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado à candidatura/entrevista concluída, com prazo de 60 dias corridos após a conclusão. OPEN-071 foi resolvida: duas notas obrigatórias e separadas (acessibilidade e postura inclusiva), cada uma de 1 a 5 estrelas, comentário opcional e impossibilidade de edição após envio. OPEN-072 foi resolvida: uma avaliação por candidato por entrevista concluída, sem edição/substituição, com rejeição de duplicatas e registro/encaminhamento administrativo de indícios relevantes de abuso, sem bloqueio automático. OPEN-073 foi resolvida: publicação apenas da distribuição agregada por quantidade de estrelas, sem comentários individuais, acesso restrito aos registros individuais e retenção por 1 ano após o envio; agregados só podem ser mantidos indefinidamente se não permitirem reconstrução ou identificação.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2914,7 +2918,7 @@ Consultar OPEN-078 a OPEN-081 em `docs/OPEN.md`. As questões permanecem abertas
 - **Questões abertas:** OPEN-082 a OPEN-085.
 
 ## 3. Escopo
-Exibir a distribuição da frequência das avaliações válidas em estrelas; preservar anonimato; quando não houver avaliações válidas, não exibir nota e informar dados insuficientes; refletir decisão de moderação somente após decisão registrada e conforme efeito autorizado.
+Exibir somente a distribuição agregada da frequência das avaliações válidas por quantidade de estrelas, sem identidade, identificadores ou comentários individuais; quando não houver avaliações válidas, não exibir nota e informar dados insuficientes; refletir decisão de moderação somente após decisão registrada e conforme efeito autorizado. Os registros individuais e comentários opcionais ficam restritos a pessoas autorizadas para finalidades legítimas da plataforma e são retidos por 1 ano após o envio. A distribuição agregada pode ser mantida por prazo indeterminado apenas se não permitir reconstruir avaliações individuais nem identificar candidatos.
 
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
@@ -2931,7 +2935,7 @@ SPEC-004, 018, 020. As dependências fornecem dados e capacidades; esta Spec nã
 ## 5. Comportamento esperado
 1. Sistema recupera somente dados registrados e válidos para cálculo.
 2. Apresenta a frequência de avaliações válidas por quantidade de estrelas, sem calcular média ou pesos não aprovados.
-3. Sistema preserva anonimato público das avaliações.
+3. Sistema preserva o anonimato público e apresenta somente a distribuição agregada por quantidade de estrelas; não publica comentários individuais, identidade ou identificadores dos candidatos. Registros individuais e comentários opcionais têm acesso restrito a pessoas autorizadas para finalidades legítimas da plataforma.
 4. Uma avaliação válida é suficiente para apresentar a distribuição; sem avaliações válidas, não exibe nota e informa dados insuficientes.
 5. A administração da plataforma atua sobre denúncias; não edita avaliações nem altera diretamente a distribuição pública de estrelas.
 6. Cálculos e alterações de avaliações válidas são rastreáveis.
@@ -2950,7 +2954,7 @@ RF-13; RB-08, RB-19, RB-20, RB-25, RB-27, RB-37, RB-45; EMPRESA, INFRAESTRUTURA_
 A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
 
 ## 9. Contratos necessários
-- **Consultar avaliações válidas:** recupera avaliações registradas e elegíveis, sem expor autores.
+- **Consultar avaliações válidas:** recupera avaliações registradas e elegíveis para construir a distribuição agregada, sem expor autores, identificadores ou comentários individuais no contexto público. O acesso aos registros individuais é restrito a pessoas autorizadas para finalidades legítimas da plataforma.
 - **Construir distribuição de estrelas:** apresenta a frequência de avaliações válidas em cada quantidade de estrelas; não inventa média, pesos ou fórmula adicional.
 - **Verificar suficiência:** uma avaliação válida é suficiente para exibir a distribuição; quando não houver dados válidos, não exibe nota e informa que os dados são insuficientes.
 - **Encaminhar resultado da moderação:** mantém a decisão administrativa vinculada à denúncia; não edita avaliações nem altera diretamente a distribuição pública de estrelas.
@@ -2963,7 +2967,9 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
-- [ ] Nota pública usa apenas dados válidos e não revela identidade ou avaliação individual (RNF-08/RNF-09).
+- [ ] Nota pública usa apenas dados válidos e apresenta somente distribuição agregada por quantidade de estrelas, sem revelar identidade, identificadores ou comentários individuais (RNF-08/RNF-09).
+- [ ] Registros individuais e comentários opcionais têm acesso restrito e são excluídos ou irreversivelmente anonimizados após 1 ano do envio, respeitando obrigações aplicáveis de preservação.
+- [ ] A distribuição agregada só é mantida por prazo indeterminado se não permitir reconstruir avaliações individuais nem identificar candidatos.
 - [ ] Denúncia pendente não altera automaticamente a nota; ausência de dados suficientes não é apresentada como nota calculada.
 
 - [ ] Acesso limitado ao ator autorizado.
@@ -2985,7 +2991,9 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-021-04 | Há avaliação inválida ou não elegível | Avaliação não integra a distribuição |
 | T-021-05 | Denúncia ainda não tem decisão registrada | Distribuição permanece baseada nas avaliações válidas, sem efeito automático da denúncia |
 | T-021-06 | Administrador registra decisão sobre denúncia | Decisão fica vinculada à denúncia; avaliações e distribuição pública de estrelas não são editadas pelo administrador |
-| T-021-07 | Usuário tenta inferir identidade de avaliador pela tela pública | Tela não expõe identidade nem avaliação individual |
+| T-021-07 | Usuário tenta inferir identidade de avaliador pela tela pública | Tela não expõe identidade, identificadores nem comentários individuais; exibe somente distribuição agregada por quantidade de estrelas |
+| T-021-08 | Registro individual completa 1 ano desde o envio | Registro individual e comentário opcional são excluídos ou irreversivelmente anonimizados, respeitando obrigações aplicáveis de preservação |
+| T-021-09 | Distribuição agregada pode permitir reconstrução de avaliação individual ou identificação | Distribuição não é mantida/publicada nesse formato; apresentação deve evitar reconstrução ou identificação |
 
 ## 13. Questões em aberto
 As decisões de apresentação por estrelas, mínimo de uma avaliação válida e estado sem dados suficientes estão registradas. A OPEN-085 foi resolvida: administradores tratam denúncias, mas não alteram diretamente avaliações nem a distribuição pública de estrelas.
