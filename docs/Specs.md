@@ -675,7 +675,7 @@ Este bloco detalha SPEC-004, SPEC-005 e SPEC-006. As questões pendentes são re
 - **Drivers:** DA-01, DA-04, DA-07.
 - **ADRs:** ADR-001, ADR-004.
 - **Dependência:** SPEC-001, para autenticação e autorização.
-- **Questões relacionadas:** OPEN-017 a OPEN-019, com OPEN-018 resolvida; OPEN-019 permanece aberta.
+- **Questões relacionadas:** OPEN-017 a OPEN-019. OPEN-018 e OPEN-019 estão resolvidas conforme `docs/OPEN.md`; detalhes operacionais que ainda não foram definidos devem permanecer explicitados como lacunas de implementação, sem reabrir as decisões aprovadas.
 
 ## 3. Escopo
 
@@ -844,14 +844,16 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 
 - **OPEN-017 (decisão aprovada):** estruturar o questionário da Empresa preservando os itens do UC-07 — rampas, elevadores, banheiros adaptados, leitores de tela, sinalização e políticas inclusivas — nas categorias propostas: acesso físico e circulação; instalações; comunicação e orientação; recursos tecnológicos; políticas e práticas inclusivas. Sugestões adicionais (rotas acessíveis, circulação interna, estacionamento acessível, sinalização tátil/Braille, alternativas de comunicação, compatibilidade com tecnologias assistivas e práticas de acolhimento) dependem de aprovação explícita antes de integrar o escopo. Impedir salvamento se itens definidos como obrigatórios estiverem pendentes, sem tornar todos os campos obrigatórios automaticamente; a lista individual de obrigatórios permanece pendente. Dados associados à Empresa seguem os usos da baseline e devem ser distinguidos de barreiras/critérios específicos da vaga. Tipos de resposta, escalas, validações, persistência, versionamento e conversão em barreiras impeditivas permanecem pendentes, relacionados às OPEN-018/023.
 - **OPEN-018 (resolvida):** tipos de resposta adequados a cada item, ausência de escala universal, histórico de alterações relevantes e organização estruturada/extensível do mapeamento. Permanecem pendentes os valores exatos, a lista individual de itens obrigatórios, campos internos/limites e casos de preservação de valores anteriores ou versões completas.
-- **OPEN-019 (resolvida):** adotar registro, análise administrativa e decisão fundamentada, com rastreabilidade; relato ou recorrência isoladamente não comprova declaração incorreta nem gera alteração automática. Evidências mínimas, limiar de recorrência, prazos, contestação, catálogo de decisões e sanções possíveis permanecem em aberto.
+- **OPEN-019 (resolvida):** adotar registro, análise administrativa e decisão fundamentada, com rastreabilidade; relato ou recorrência isoladamente não comprova declaração incorreta nem gera alteração automática. Detalhes operacionais não definidos devem ser tratados como lacunas de implementação, sem alterar a decisão aprovada.
 
 ## 14. Definition of Done
 
 - [ ] Texto revisado e aprovado.
 - [ ] Campos e obrigatoriedades conferidos com a baseline.
 - [ ] Questões em aberto decididas ou mantidas explicitamente.
-- [ ] Layout funcio# SPEC-005 — Cadastrar e gerenciar vagas próprias
+- [ ] Layout funcional anexado e aprovado quando aplicável.
+
+# SPEC-005 — Cadastrar e gerenciar vagas próprias
 
 ## 1. Identificação
 
@@ -872,7 +874,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 - **Drivers:** DA-02, DA-03, DA-04.
 - **ADRs:** ADR-002, ADR-004.
 - **Dependências:** SPEC-001 e SPEC-004.
-- **Questões relacionadas:** OPEN-020 a OPEN-023.
+- **Questões relacionadas:** OPEN-020 a OPEN-023. OPEN-020 está resolvida: cargo/título, descrição, requisitos, modalidade, localização compatível com a modalidade, critérios de acessibilidade com estado da informação declarado e prazo de inscrição são obrigatórios para publicar; faixa salarial é opcional. Identificador, empresa responsável, estado e origem são controlados pelo sistema. Rascunhos podem permanecer incompletos. OPEN-021 a OPEN-023 mantêm seus estados e decisões registrados em `docs/OPEN.md`.
 
 ## 3. Escopo
 
@@ -2479,8 +2481,8 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-016-05 | Candidato tenta acessar acompanhamento alheio | Acesso negado |
 | T-016-06 | Usuário tenta alterar etapa pelo acompanhamento | Nenhuma alteração é realizada por esta capacidade |
 
-## 13. Questões em aberto
-Consultar OPEN-063 a OPEN-065 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+## 13. Questões relacionadas
+OPEN-063 a OPEN-065 estão resolvidas conforme `docs/OPEN.md`. A linha do tempo apresenta eventos relevantes da candidatura, em ordem do mais recente para o mais antigo, com data (sem exigir horário), tipo, descrição breve e status/etapa resultante quando aplicável. O histórico funcional fica disponível por 60 dias após cancelamento da candidatura ou encerramento da vaga, conforme o evento ocorrido. Esse prazo não define retenção de auditoria técnica.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2584,8 +2586,8 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-017-09 | Candidato cancela a candidatura | Recrutador responsável recebe a notificação |
 | T-017-10 | Vaga é encerrada com candidatos ativos | Candidatos ativos são identificados para comunicação conforme RB-42 |
 
-## 13. Questões em aberto
-Consultar OPEN-068 e OPEN-069 em `docs/OPEN.md`. Os eventos obrigatórios e o envio por e-mail estão definidos pelas decisões OPEN-066 e OPEN-067; as questões restantes permanecem abertas até decisão explícita do grupo.
+## 13. Questões relacionadas
+OPEN-066 a OPEN-069 estão resolvidas conforme `docs/OPEN.md`. As notificações obrigatórias são enviadas por e-mail para os eventos definidos; o envio é solicitado após confirmação do evento, com novas tentativas automáticas em falhas temporárias e registro de falha final. Não há central/histórico separado de notificações; o acompanhamento funcional ocorre na linha do tempo da candidatura.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
