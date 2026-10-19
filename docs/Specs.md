@@ -4,7 +4,7 @@ Documento de detalhamento das Specs do AcessaVagas, baseado na baseline do proje
 
 ## Controle do documento
 
-- Escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021.
+- Escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. A SPEC-005 — Cadastrar e gerenciar vagas próprias — integra o intervalo SPEC-001 a SPEC-013. As antigas SPEC-014 e SPEC-015 deixaram de existir e não serão restauradas nesta revisão; referências remanescentes a elas são mantidas, sem revisão ou substituição em massa.
 - Estado dos textos: especificada, aguardando revisão e aprovação humana.
 - Estado dos layouts: pendente quando aplicável; não se aplica às capacidades sem interface própria.
 - **Layout significa evidência visual/protótipo, não código.** A identidade visual existente é uma referência inicial de estilo; ainda será necessário especificar e aprovar os layouts das telas aplicáveis.
@@ -1832,9 +1832,9 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 5. Se indisponível, o sistema informa a condição e bloqueia candidaturas enquanto durar esse estado; somente Recrutador autorizado da Empresa responsável pode restabelecer a vaga como aberta, conforme OPEN-041.
 6. Se encerrada, o sistema informa a condição e bloqueia permanentemente novas candidaturas naquela publicação; uma nova oportunidade exige nova publicação conforme regras aplicáveis.
 7. Se o status mudar após a busca, a operação seguinte verifica o estado atual. Se não for possível confirmar disponibilidade por ausência ou falha de informação, não presume disponibilidade e bloqueia a candidatura
-8. Ao encerrar uma vaga, candidatos ativos são identificados para comunicação conforme RB-42 e a Spec de notificação
-9. Após o encerramento, o sistema envia comunicação individual por e-mail cadastrado aos candidatos com candidaturas ativas no momento do encerramento. A mensagem informa que a vaga foi encerrada, não receberá novas candidaturas e que a candidatura existente permanece registrada e não foi automaticamente excluída. Se o envio falhar ou não puder ocorrer imediatamente, a vaga permanece encerrada e a comunicação fica registrada como pendente para nova tentativa; o encerramento não depende do serviço de e-mail. A comunicação não expõe dados de outros candidatos.
-9. Alterações de status são permitidas somente ao Recrutador autorizado da Empresa responsável e apenas nas transições da OPEN-041; operações inválidas ou não autorizadas são recusadas sem alteração. Alterações relevantes são rastreáveis
+8. Ao encerrar uma vaga, a capacidade identifica os candidatos ativos para comunicação conforme RB-42 e encaminha o evento confirmado à SPEC-017, responsável pela execução da notificação.
+9. O encerramento da vaga não depende do serviço de e-mail. A comunicação informa que a vaga foi encerrada, não receberá novas candidaturas e que a candidatura existente permanece registrada e não foi automaticamente excluída; não expõe dados de outros candidatos. Falha ou atraso no envio é tratado e registrado pela SPEC-017, sem reabrir a vaga.
+10. Alterações de status são permitidas somente ao Recrutador autorizado da Empresa responsável e apenas nas transições da OPEN-041; operações inválidas ou não autorizadas são recusadas sem alteração. Alterações relevantes são rastreáveis
 
 ## 6. Regras e invariantes
 1. Candidatura somente em vaga aberta e não bloqueada (RB-01).
@@ -1852,14 +1852,15 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 - Estados e transições permanecem limitados à baseline.
 
 ## 8. Impacto arquitetural
-A disponibilidade deve ser consultada por operações que dependem dela, especialmente candidatura. A validação ocorre no backend para impedir ações com estado desatualizado. A comunicação pode ser delegada à SPEC-017. Não se escolhe mecanismo em tempo real nem tecnologia de notificação.
+A disponibilidade deve ser consultada por operações que dependem dela, especialmente candidatura. A validação ocorre no backend para impedir ações com estado desatualizado. A SPEC-009 produz/encaminha o evento de encerramento e identifica os candidatos ativos; a SPEC-017 executa a comunicação, incluindo envio e tratamento de falhas. Não se escolhe mecanismo em tempo real nem tecnologia de notificação
 
 ## 9. Contratos necessários
 - **Consultar status da vaga:** retorna estado atual.
 - **Verificar disponibilidade:** informa se a ação solicitada é permitida.
 - **Aplicar restrições por status:** bloqueia operações incompatíveis.
 - **Identificar candidaturas afetadas:** fornece o conjunto para notificação.
-- **Comunicar encerramento:** envia e-mail individual aos candidatos ativos identificados no momento do encerramento; registra pendência e permite nova tentativa em caso de falha, sem reabrir a vaga. A mensagem esclarece que candidaturas existentes permanecem registradas e não são automaticamente excluídas.
+- **Encaminhar evento de encerramento:** fornece à SPEC-017 o evento confirmado e os candidatos ativos identificados no momento do encerramento, com os dados mínimos necessários para a comunicação. A vaga permanece encerrada independentemente do envio.
+- **Comunicar encerramento (SPEC-017):** envia e-mail individual aos candidatos ativos; registra pendência e permite nova tentativa em caso de falha, sem reabrir a vaga. A mensagem esclarece que candidaturas existentes permanecem registradas e não são automaticamente excluídas.
 - **Alterar status da vaga:** valida ator autorizado, status atual e transição permitida na OPEN-041; recusa operações inválidas sem alteração e registra status anterior/resultante, data/hora e ator responsável.
 
 ## 10. RNFs aplicáveis
@@ -1954,19 +1955,16 @@ O layout não deve depender apenas de cor para indicar compatibilidade, deve per
 
 ## 5. Comportamento esperado
 1. Candidato abre vaga a partir da busca ou acesso autorizado.
-2. Apresenta título/cargo, descrição, requisitos e critérios de elegibilidade publicados; modalidade, localização e faixa salarial quando disponíveis; status atual; origem quando aplicável; e resultado/fatores de compatibilidade fornecidos pela SPEC-007, sem recalcular.
-3. Informações de acessibilidade declaradas para a vaga e para a infraestrutura da Empresa são apresentadas em grupos distintos; não se presume que recursos gerais da Empresa estejam disponíveis na vaga.
-4. Campo sem informação disponível é indicado como “Não informado” (ou “Não informada” para origem); o sistema não infere nem transforma ausência em confirmação positiva ou negativa. Para faixa salarial ausente, não presumir ausência de remuneração; para localização ausente, não presumir modalidade remota. Quando houver valor registrado por uma fonte, apresentar o valor original e a origem quando disponível. Se fontes divergirem, sinalizar a divergência e identificar as fontes disponíveis, sem selecionar silenciosamente uma delas nem combinar valores. Preservar o significado original e a rastreabilidade, sem expor informações internas
-5. Não são exibidos dados internos administrativos, contatos privados, identificadores internos ou informações de outros candidatos.
-6. Status e elegibilidade governam a continuidade: vaga indisponível ou encerrada não permite candidatura; a operação deve validar o estado atual conforme SPEC-009/SPEC-011.
-2. Sistema recupera detalhes disponíveis e status atual.
-3. Sistema apresenta os dados da oportunidade e acessibilidade registrada.
-4. Campos ausentes são identificados como não informados.
-5. Se a análise de compatibilidade estiver completa e válida, apresenta score final e fatores retornados pela SPEC-007, sem recalcular. Se o perfil estiver incompleto, não apresenta score final nem parcial: mostra somente dimensões/fatores avaliáveis e dados pendentes; dimensões sem dados são “Dados insuficientes”, sem nota zero ou incompatibilidade presumida. Se faltarem dados para verificar trava crítica, informa que a elegibilidade não foi concluída, sem confirmar compatibilidade ou incompatibilidade. Solicita complementação pelo fluxo existente e apresenta resultado completo somente após nova análise válida com dados suficientes. Esta apresentação não altera fórmula, pesos ou travas da SPEC-007, nem cria campos obrigatórios
-6. Se houver incompatibilidade por trava crítica, comunica que a vaga não é elegível para aquele candidato e apresenta fatores disponíveis.
-7. Apresenta status aberto/encerrado/indisponível conforme registro atual.
-8. A continuidade para candidatura só é oferecida quando status e elegibilidade permitirem; SPEC-011 fará validação final.
-9. Apresentação funciona com teclado, leitores de tela e dispositivos suportados.
+2. Sistema recupera detalhes disponíveis, acessibilidade declarada, origem quando aplicável e status atual.
+3. Sistema apresenta título/cargo, descrição, requisitos, modalidade, localização e faixa salarial quando disponíveis; distingue informações da vaga das informações gerais da infraestrutura da Empresa.
+4. Campo sem informação disponível é indicado como “Não informado” (ou “Não informada” para origem). O sistema não infere nem transforma ausência em confirmação positiva ou negativa. Para faixa salarial ausente, não presume ausência de remuneração; para localização ausente, não presume modalidade remota. Quando houver valor registrado por uma fonte, apresenta o valor original e a origem quando disponível. Se fontes divergirem, sinaliza a divergência e identifica as fontes disponíveis, sem selecionar silenciosamente uma delas nem combinar valores. Preserva o significado original e a rastreabilidade, sem expor informações internas.
+5. Sistema consulta e apresenta os fatores e o resultado de compatibilidade fornecidos pela SPEC-007, sem recalcular. Quando a análise estiver completa e o score for válido, apresenta o score final e os fatores correspondentes.
+6. Quando houver dados insuficientes, não apresenta score final, score parcial ou score zero, nem presume compatibilidade ou incompatibilidade. Mostra somente as dimensões/fatores avaliáveis e as pendências; dimensões sem dados suficientes são indicadas como “Dados insuficientes”.
+7. Se faltarem dados necessários para verificar uma trava crítica, informa que a elegibilidade ainda não foi concluída. Não presume que a trava foi satisfeita nem que houve incompatibilidade. Solicita complementação pelo fluxo existente e apresenta resultado completo somente após nova análise válida com dados suficientes.
+8. Se houver incompatibilidade confirmada por trava crítica, comunica que a vaga não é elegível para aquele candidato e apresenta os fatores disponíveis.
+9. Não exibe dados internos administrativos, contatos privados, identificadores internos ou informações de outros candidatos.
+10. Status e elegibilidade governam a continuidade: vaga indisponível ou encerrada não permite candidatura; a operação deve validar o estado atual conforme SPEC-009/SPEC-011.
+11. A apresentação funciona com teclado, leitores de tela e dispositivos suportados.
 
 ## 6. Regras e invariantes
 1. Informações relevantes de acessibilidade disponíveis antes da candidatura (RB-13).
