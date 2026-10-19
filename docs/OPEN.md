@@ -200,7 +200,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 ### SPEC-020 — Moderar denúncias de incompatibilidade
 | ID | Estado | Questão em aberto | Contexto/impacto |
 |---|---|---|---|
-| OPEN-078 | aberta | Quais critérios e evidências o Administrador consulta para analisar uma denúncia? | RB-25 exige análise administrativa, mas não define o procedimento completo. |
+| OPEN-078 | resolvida | Quais critérios e evidências o Administrador consulta para analisar uma denúncia? | **Decisão aprovada:** o Administrador deve verificar a vaga denunciada, a categoria e a descrição da denúncia e as evidências disponíveis. A análise deve comparar as informações com os requisitos de acessibilidade e inclusão aplicáveis à vaga. Quando necessário, o Administrador pode solicitar esclarecimentos à empresa denunciada antes de concluir a análise. A conclusão e sua justificativa devem ser registradas, e o resultado comunicado às partes conforme a OPEN-077. A denúncia, por si só, não comprova irregularidade e não deve causar bloqueio automático da vaga nem alteração automática de avaliações. |
 | OPEN-079 | aberta | Qual catálogo de decisões e quais efeitos cada decisão pode autorizar sobre a denúncia? | RB-45 prevê consequências conforme decisão registrada; definir os efeitos de moderação da denúncia sem alterar diretamente avaliações ou a distribuição pública de estrelas. |
 | OPEN-080 | aberta | Quais prazos e prioridades serão aplicados à fila de moderação? | A baseline não estabelece SLA ou priorização. |
 | OPEN-081 | aberta | Quais informações da decisão serão comunicadas às partes e quais permanecem confidenciais? | Impacta transparência, privacidade e segurança. |
