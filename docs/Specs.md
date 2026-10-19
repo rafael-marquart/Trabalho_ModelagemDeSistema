@@ -1962,7 +1962,7 @@ O layout não deve depender apenas de cor para indicar compatibilidade, deve per
 2. Sistema recupera detalhes disponíveis e status atual.
 3. Sistema apresenta os dados da oportunidade e acessibilidade registrada.
 4. Campos ausentes são identificados como não informados.
-5. Se existir resultado de compatibilidade, apresenta score e fatores retornados pela SPEC-007.
+5. Se a análise de compatibilidade estiver completa e válida, apresenta score final e fatores retornados pela SPEC-007, sem recalcular. Se o perfil estiver incompleto, não apresenta score final nem parcial: mostra somente dimensões/fatores avaliáveis e dados pendentes; dimensões sem dados são “Dados insuficientes”, sem nota zero ou incompatibilidade presumida. Se faltarem dados para verificar trava crítica, informa que a elegibilidade não foi concluída, sem confirmar compatibilidade ou incompatibilidade. Solicita complementação pelo fluxo existente e apresenta resultado completo somente após nova análise válida com dados suficientes. Esta apresentação não altera fórmula, pesos ou travas da SPEC-007, nem cria campos obrigatórios
 6. Se houver incompatibilidade por trava crítica, comunica que a vaga não é elegível para aquele candidato e apresenta fatores disponíveis.
 7. Apresenta status aberto/encerrado/indisponível conforme registro atual.
 8. A continuidade para candidatura só é oferecida quando status e elegibilidade permitirem; SPEC-011 fará validação final.
