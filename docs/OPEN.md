@@ -116,7 +116,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 
 | ID | Estado | Questão em aberto | Contexto/impacto |
 |---|---|---|---|
-| OPEN-036 | aberta | Qual é a lista definitiva de filtros e como filtros combinados devem ser aplicados? | UC-02 cita termos, localização/cargo e modalidade, mas não define o catálogo completo e a combinação. |
+| OPEN-036 | resolvida | Qual é a lista definitiva de filtros e como filtros combinados devem ser aplicados? | **Decisão aprovada:** filtros por cargo, área profissional, modalidade e localização, além de busca textual conforme OPEN-037. Filtro de acessibilidade previsto no RF-06 fica condicionado aos critérios/opções definidos e validados na OPEN-023, sem criar catálogo novo nem expor necessidades funcionais individuais. Categorias diferentes combinam por AND; valores dentro da mesma categoria por OR. Filtros não selecionados não restringem; remover um filtro mantém os demais. Buscar vagas ativas e válidas, respeitar trava crítica e consumir elegibilidade/ordenação da SPEC-007 sem duplicar score. Paginação e ordenações alternativas permanecem na OPEN-038. |
 | OPEN-037 | aberta | Quais campos são consultáveis por busca textual e quais regras de correspondência devem ser usadas? | RF-06 descreve critérios gerais sem detalhar busca textual. |
 | OPEN-038 | aberta | Quais limites de resultados, paginação e ordenações alternativas serão oferecidos? | A baseline não define esses comportamentos de interface/consulta. |
 | OPEN-039 | aberta | Alertas por e-mail ou salvamento de busca fazem parte do escopo ou são apenas sugestões de UC-02? | A possibilidade é mencionada no caso de uso, mas não está estabelecida como requisito funcional próprio. |
