@@ -61,7 +61,7 @@ Estados possíveis: especificada, aprovada, em implementação, implementada ou 
 - Exibir resultado geral e score final somente quando a análise da SPEC-007 estiver completa e o score for válido. Trava crítica prevalece e impede avanço mesmo com score positivo.
 - Apresentar os fatores A (acessibilidade), T (perfil técnico) e D (distância/modalidade), com seus resultados e explicações curtas, sem recalcular nem alterar os fatores da SPEC-007.
 - Oferecer detalhamento expansível dos critérios publicados relevantes, informações do próprio perfil consideradas, correspondências, incompatibilidades e dados que impediram conclusão. Não expor outros candidatos, dados internos ou detalhes de acessibilidade desnecessários.
-- Se houver dados insuficientes, não apresentar score final completo, score zero ou compatibilidade presumida. Indicar fatores avaliados e pendências e permitir complementação pelo fluxo existente; score parcial segue OPEN-046.
+- Se houver dados insuficientes, não apresentar score final completo, score zero ou compatibilidade presumida. Indicar fatores avaliados e pendências e permitir complementação pelo fluxo existente; score parcial, score zero ou compatibilidade presumida. Indicar fatores/dimensões avaliáveis e pendências, sinalizar dimensões sem dados como “Dados insuficientes” e permitir complementação pelo fluxo existente. Se faltarem dados para verificar trava crítica, informar que a elegibilidade não foi concluída. Apresentar score final somente após análise completa e válida, conforme OPEN-046.
 - Esta decisão trata apenas da apresentação; cálculo, pesos, parâmetros, travas e critérios permanecem definidos na SPEC-007 e nas decisões próprias
 
 ## 3.1. Telas e evidência de layout
@@ -106,8 +106,8 @@ A lista identifica áreas funcionais, não define quantidade final de páginas o
 5. Após a conclusão da redefinição, o link utilizado é invalidado.
 6. O sistema aplica limitação de frequência às solicitações de recuperação; os limites numéricos permanecem pendentes de definição.
 7. A redefinição de senha invalida as sessões existentes, conforme decisão registrada na OPEN-002.
-3. O sistema valida a solicitação e permite redefinição quando válida.
-4. As novas credenciais podem ser usadas no acesso.
+8. O sistema valida a solicitação e permite redefinição quando válida.
+9. As novas credenciais podem ser usadas no acesso.
 
 A decisão aprovada define o envio por link de e-mail, validade de 30 minutos, uso único e invalidação do link anterior em nova solicitação. O formato técnico do token e o texto exato das mensagens permanecem por definir.
 
@@ -2027,7 +2027,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 - **OPEN-043:** campos do detalhe e regras de visibilidade.
 
 - **OPEN-045 (resolvida):** dados ausentes de faixa salarial, localização ou origem são identificados como não informados, sem inferência; valores de fonte são preservados com origem quando disponível; divergências entre fontes são sinalizadas sem escolha silenciosa ou combinação. Não foi definida hierarquia entre fontes.
-- **OPEN-046:** apresentação do score quando os dados do candidato não estão completos.
+- **OPEN-046 (resolvida):** perfil incompleto não gera score final nem parcial. Mostrar dimensões/fatores avaliáveis e pendências; dados ausentes são “Dados insuficientes”, sem nota zero ou compatibilidade presumida. Se faltar dado para verificar trava crítica, indicar elegibilidade não concluída. Solicitar complementação pelo fluxo existente e apresentar score final somente após nova análise válida. Decisão refletida nesta Spec e na SPEC-010.
 
 ## 14. Definition of Done
 - [ ] Texto aprovado.
