@@ -1666,7 +1666,7 @@ Contratos conceituais, sem endpoints HTTP.
 ## 3. Escopo
 **Incluído:** busca textual em título/cargo da vaga, descrição da vaga e nome da Empresa; normalização para ignorar maiúsculas/minúsculas e acentos; correspondência por palavras ou trechos contidos, sem exigir título completo; todos os termos da consulta devem ser encontrados, podendo estar distribuídos entre os campos pesquisáveis; busca vazia não restringe por texto. Inclui também filtros por cargo, área profissional, modalidade e localização; filtro de acessibilidade conforme opções definidas e validadas na OPEN-023; consulta de vagas ativas e válidas; combinação de filtros de categorias diferentes por AND e valores dentro da mesma categoria por OR; aplicação da trava crítica pela SPEC-007; ordenação dos resultados elegíveis por compatibilidade; e comunicação de ausência de resultados. Não inclui sinônimos automáticos, correção de erros de digitação ou interpretação por IA
 
-**Fora do escopo:** cálculo do score; detalhe completo da vaga; candidatura; edição/publicação; alertas por e-mail, cuja inclusão precisa ser confirmada; inventar filtros ausentes da baseline.
+**Fora do escopo:** cálculo do score; detalhe completo da vaga; candidatura; edição/publicação; alertas por e-mail, cuja inclusão precisa ser confirmada; inventar filtros ausentes da baseline. A consulta limita-se a 100 vagas elegíveis segundo a ordenação selecionada, com 20 vagas por página.
 
 ## 3.1. Telas e evidência de layout
 | Tela/área | Finalidade | Layout |
@@ -1692,9 +1692,11 @@ Protótipos devem seguir a identidade visual e acessibilidade transversal, ser a
 4. Sistema solicita à SPEC-007 a análise de compatibilidade das vagas candidatas.
 5. Vagas que falham na trava crítica não são apresentadas como elegíveis.
 6. Vagas elegíveis são ordenadas por compatibilidade conforme UC-02/UC-13.
-7. Sistema apresenta resultados e informações relevantes de acessibilidade antes da candidatura.
-8. Se nenhuma vaga passar pela trava, informa ausência de oportunidades elegíveis e permite ajustar critérios.
-9. Alterações de status devem respeitar a SPEC-009.
+7. Sistema apresenta até 20 vagas por página, limitado a 100 vagas elegíveis conforme a ordenação selecionada, e informações relevantes de acessibilidade antes da candidatura.
+8. A lista oferece paginação numerada e navegação anterior/próxima; ao navegar, preserva termos, filtros e ordenação. Alterações em busca ou filtros reiniciam na primeira página.
+9. Ordenações disponíveis: maior compatibilidade (padrão, conforme SPEC-007), mais recentes e mais antigas (data de publicação). Empates são resolvidos por identificador interno para estabilidade, sem expor esse identificador
+10. Se nenhuma vaga passar pela trava, informa ausência de oportunidades elegíveis e permite ajustar critérios.
+11. Alterações de status devem respeitar a SPEC-009
 
 ## 6. Regras e invariantes
 1. Busca textual consulta título/cargo da vaga, descrição e nome da Empresa; ignora maiúsculas/minúsculas e acentos; busca palavras/trechos contidos e exige que todos os termos estejam presentes, inclusive quando distribuídos entre os campos. Não aplica sinônimos, correção de digitação nem interpretação por IA. Consulta textual vazia não restringe resultados. Filtros estruturados respeitam o catálogo aprovado: cargo, área profissional, modalidade e localização; acessibilidade somente conforme OPEN-023
@@ -1703,8 +1705,9 @@ Protótipos devem seguir a identidade visual e acessibilidade transversal, ser a
 4. Vagas externas só participam após validação (RB-10, RB-17).
 5. Dados ausentes não significam compatibilidade (RB-16).
 6. Informações relevantes de acessibilidade devem estar disponíveis antes da candidatura (RB-13).
-7. Ordenação usa resultado da SPEC-007, sem duplicar o algoritmo.
-8. Fatores relevantes devem ser apresentados (RB-30).
+7. Ordenação por maior compatibilidade usa resultado da SPEC-007, sem duplicar o algoritmo; ordenações por data usam publicação mais recente ou mais antiga.
+8. Paginação: 20 vagas por página e no máximo 100 vagas elegíveis por consulta, conforme ordenação selecionada. Navegação numerada anterior/próxima preserva busca, filtros e ordenação; alterações em busca/filtros retornam à primeira página. Empates usam identificador interno estável, não exibido.
+9. Fatores relevantes devem ser apresentados (RB-30).
 9. Busca e filtros devem ser utilizáveis por teclado, leitores de tela e diferentes tamanhos de tela.
 10. Salvar alertas por e-mail é citado como sugestão em UC-02, mas não é presumido como parte desta capacidade.
 
@@ -1737,6 +1740,8 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 - [ ] Filtros restringem resultados conforme solicitado.
 - [ ] Vagas com barreira crítica não aparecem como elegíveis.
 - [ ] Resultados seguem o score da SPEC-007.
+- [ ] A consulta apresenta até 100 vagas elegíveis, em páginas de 20; paginação numerada anterior/próxima preserva busca, filtros e ordenação, e alterações em busca/filtros reiniciam na primeira página.
+- [ ] Ordenações alternativas são maior compatibilidade (padrão), mais recentes e mais antigas; empates mantêm ordem estável por identificador interno não exposto.
 - [ ] Vagas externas não validadas são excluídas.
 - [ ] Status atual da vaga é respeitado.
 - [ ] Informações de acessibilidade aparecem antes da candidatura.
