@@ -4,7 +4,7 @@ Documento de detalhamento das Specs do AcessaVagas, baseado na baseline do proje
 
 ## Controle do documento
 
-- Escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. A SPEC-005 — Cadastrar e gerenciar vagas próprias — integra o intervalo SPEC-001 a SPEC-013. As antigas SPEC-014 e SPEC-015 deixaram de existir e não serão restauradas nesta revisão; referências remanescentes a elas são mantidas, sem revisão ou substituição em massa.
+- Escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. A SPEC-005 — Cadastrar e gerenciar vagas próprias — integra o intervalo SPEC-001 a SPEC-013. As antigas SPEC-014 e SPEC-015 foram removidas do escopo e não serão restauradas nesta revisão. Referências a esses IDs devem ser tratadas como históricas somente quando o contexto confirmar que não afetam dependências, rastreabilidade ou comportamento vigente; referências ativas ou ambíguas devem ser conferidas individualmente e corrigidas quando necessário, sem renumerar as Specs posteriores nem fazer substituição em massa.
 - Estado dos textos: especificada, aguardando revisão e aprovação humana.
 - Estado dos layouts: pendente quando aplicável; não se aplica às capacidades sem interface própria.
 - **Layout significa evidência visual/protótipo, não código.** A identidade visual existente é uma referência inicial de estilo; ainda será necessário especificar e aprovar os layouts das telas aplicáveis.
