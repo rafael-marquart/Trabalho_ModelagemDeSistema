@@ -11,6 +11,8 @@ Avaliar a experiência da entrevista quanto ao cumprimento dos recursos de acess
 ## Pré-condições
 
 - Entrevista cadastrada no sistema e concluída.
+- Candidato autenticado com candidatura vinculada à entrevista.
+- Submissão dentro do prazo de até 60 dias corridos após a conclusão da entrevista.
 
 ## Pontos de Inclusão e Extensão
 
@@ -19,10 +21,12 @@ Avaliar a experiência da entrevista quanto ao cumprimento dos recursos de acess
 ## Fluxo Principal
 
 1. O candidato registra uma avaliação sobre o processo seletivo.
-2. O sistema registra a avaliação e preserva os dados necessários à moderação.
-3. Quando houver denúncia ou indício de abuso, o registro segue para análise administrativa.
-4. O Administrador analisa a ocorrência e registra a decisão.
-5. Qualquer alteração de nota ou efeito de moderação ocorre somente após a decisão administrativa.
+2. O sistema valida que o candidato autenticado está vinculado à candidatura e à entrevista concluída e que a submissão ocorre em até 60 dias corridos após a conclusão.
+3. Se o prazo tiver expirado ou o vínculo não for válido, o sistema recusa a submissão.
+4. Se a validação for bem-sucedida, o sistema registra a avaliação e preserva os dados necessários à moderação.
+5. Quando houver denúncia ou indício de abuso, o registro segue para análise administrativa.
+6. O Administrador analisa a ocorrência e registra a decisão.
+7. Qualquer alteração de nota ou efeito de moderação ocorre somente após a decisão administrativa.
 
 ## Exceções e Fluxos Alternativos
 
@@ -53,6 +57,8 @@ Avaliar a experiência da entrevista quanto ao cumprimento dos recursos de acess
 
 ## Critérios de aceitação
 
+- Apenas candidato autenticado vinculado à candidatura e à entrevista concluída pode avaliar; a elegibilidade independe de contratação ou rejeição.
+- Novas submissões são aceitas somente até 60 dias corridos após a conclusão da entrevista; após o prazo, são recusadas.
 - Avaliações submetidas são gravadas para composição da nota pública conforme as regras aplicáveis.
 - Avaliação anônima preserva anonimato enquanto permite a triagem de conteúdo pela equipe de moderação.
 - Denúncias acionam o fluxo de moderação e ficam sujeitas à análise administrativa.
