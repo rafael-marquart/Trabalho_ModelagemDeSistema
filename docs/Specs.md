@@ -2584,7 +2584,7 @@ Consultar OPEN-068 e OPEN-069 em `docs/OPEN.md`. Os eventos obrigatórios e o en
 - **Baseline:** RF-21; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 011, 016.
 - **Caso de uso:** UC-06 — Avaliar Pós-Entrevista.
-- **Questões abertas:** OPEN-070 a OPEN-073.
+- **Questões abertas:** OPEN-071 a OPEN-073.
 
 ## 3. Escopo
 Candidato elegível registra avaliação com campos definidos na baseline; sistema valida associação e conteúdo, armazena e disponibiliza avaliações válidas para nota pública, preservando anonimato na apresentação pública.
@@ -2602,12 +2602,14 @@ O layout funcional é uma evidência visual/protótipo, não código. Deve ser a
 SPEC-001, 011, 016. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
-1. Candidato autenticado acessa avaliação somente se elegível segundo o fluxo aprovado.
-2. Sistema apresenta critérios e escala definidos na baseline.
-3. Candidato preenche e envia a avaliação.
-4. Sistema valida campos e vínculo com entrevista/processo correspondente.
-5. Avaliação válida é registrada e disponibilizada à SPEC-021 sem expor publicamente a identidade do candidato.
-6. Avaliação não altera diretamente a nota pública nesta capacidade.
+1. Somente candidato autenticado com candidatura vinculada a entrevista cadastrada e concluída pode avaliar o processo de que participou; a elegibilidade independe de contratação ou rejeição.
+2. A avaliação deve ser enviada em até 60 dias corridos após a conclusão da entrevista. Após esse prazo, novas submissões para essa entrevista são recusadas.
+3. O sistema valida no backend a associação entre o candidato autenticado, a candidatura e a entrevista, além do prazo de elegibilidade.
+4. Sistema apresenta critérios e escala definidos na baseline.
+5. Candidato preenche e envia a avaliação.
+6. Sistema valida campos e vínculo com entrevista/processo correspondente, incluindo a janela de 60 dias corridos.
+7. Avaliação válida é registrada e disponibilizada à SPEC-021 sem expor publicamente a identidade do candidato.
+8. Avaliação não altera diretamente a nota pública nesta capacidade.
 
 ## 6. Regras e invariantes
 - Só avaliação válida participa da nota; identidade não é pública; avaliação não altera nota diretamente nesta Spec; registrar auditoria.
@@ -2623,7 +2625,7 @@ RF-21; RB-19, RB-20, RB-27, RB-37, RB-41; ENTREVISTA, AVALIACAO_POS_ENTREVISTA, 
 A capacidade mantém separação entre interface, regras de domínio e persistência. A autorização e as validações críticas são feitas no backend. Integrações com outras Specs ocorrem por contratos conceituais, sem impor endpoints, frameworks, banco ou provedores não decididos.
 
 ## 9. Contratos necessários
-- **Consultar elegibilidade:** verifica se o candidato autenticado pode avaliar o processo conforme RF-21 e a janela de elegibilidade que o grupo definir.
+- **Consultar elegibilidade:** verifica se o candidato autenticado possui candidatura vinculada à entrevista cadastrada e concluída e se a submissão ocorre em até 60 dias corridos após a conclusão da entrevista.
 - **Apresentar formulário:** disponibiliza critérios, escala e campos aprovados; não cria perguntas ou escalas não definidas.
 - **Validar submissão:** verifica campos obrigatórios e vínculo com a candidatura/entrevista correspondente.
 - **Registrar avaliação:** persiste avaliação válida com controles de integridade e confidencialidade.
@@ -2654,13 +2656,15 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 |---|---|---|
 | T-018-01 | Candidato elegível envia avaliação completa | Avaliação é registrada e disponibilizada para agregação |
 | T-018-02 | Candidato não elegível tenta avaliar | Submissão é recusada |
+| T-018-07 | Candidato elegível envia avaliação até 60 dias corridos após a conclusão da entrevista | Submissão pode prosseguir, sujeita às demais validações aprovadas |
+| T-018-08 | Candidato tenta enviar avaliação após 60 dias corridos da conclusão da entrevista | Nova submissão para essa entrevista é recusada |
 | T-018-03 | Avaliação não está vinculada ao processo correspondente | Submissão é recusada |
 | T-018-04 | Campos obrigatórios definidos estão ausentes | Sistema indica validação e não registra avaliação inválida |
 | T-018-05 | Avaliação é consultada em contexto público | Identidade do autor e conteúdo individual não são expostos |
 | T-018-06 | Avaliação é editada ou submetida novamente | Sistema aplica a política aprovada; enquanto não definida, não se presume edição ou duplicação |
 
 ## 13. Questões em aberto
-Consultar OPEN-070 a OPEN-073 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado à candidatura/entrevista concluída, com prazo de 60 dias corridos após a conclusão. Consultar OPEN-071 a OPEN-073 em `docs/OPEN.md`; essas questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
