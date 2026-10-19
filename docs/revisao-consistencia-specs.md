@@ -46,7 +46,7 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 5. Plano recomendado de correção
 
-1. Decidir as questões funcionais de compatibilidade e descoberta listadas em OPEN-031 a OPEN-046 (REV-009).
+1. Resolver a pendência funcional remanescente de REV-009, OPEN-088 (método/provedor para determinar distância em quilômetros), sem reabrir OPEN-031 a OPEN-046, já decididas.
 2. Manter as demais questões OPEN pertinentes explicitamente abertas até decisão do grupo.
 3. Manter a aprovação textual separada da aprovação dos layouts. Implementação somente após as aprovações aplicáveis.
 
