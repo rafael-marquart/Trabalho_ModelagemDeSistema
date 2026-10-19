@@ -31,7 +31,7 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 - Dados de acessibilidade ausentes não significam compatibilidade; ausência de informação não pode ser tratada como confirmação positiva nem, sem evidência, como incompatibilidade comprovada.
 - O cálculo deve ter uma única fonte de verdade na SPEC-007. A SPEC-008 usa o resultado para busca/filtros e a SPEC-010 apresenta o resultado ao candidato; nenhuma delas deve criar uma fórmula paralela.
 
-**O que ainda falta decidir (OPEN-031 a OPEN-046):**
+**O que ainda falta decidir:** OPEN-031 a OPEN-035 tratam do cálculo e dos dados; OPEN-036 a OPEN-039, da descoberta de vagas; OPEN-040 a OPEN-042, dos status e encerramento; OPEN-043 a OPEN-045, da apresentação do detalhe. **OPEN-046 foi resolvida**: perfil incompleto não gera score final nem parcial; a SPEC-010 e a apresentação na SPEC-001 devem refletir essa decisão.
 1. **Como calcular o score:** subpontuações, normalização e arredondamento.
 2. **Quais dados são obrigatórios:** campos mínimos por dimensão e o que fazer quando faltarem localização, modalidade ou informações de acessibilidade.
 3. **Como representar resultados incompletos:** se o score final deve ser omitido ou se pode existir um resultado parcial claramente identificado; como explicar ao candidato o que falta.
@@ -39,7 +39,7 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 5. **Como tornar o resultado reproduzível:** quais parâmetros e versão da regra devem ser registrados, respeitando privacidade e retenção.
 6. **Questões associadas à experiência de descoberta:** OPEN-036 a OPEN-039 tratam de filtros, busca textual, paginação/ordenação e alertas/buscas salvas; OPEN-040 a OPEN-042 tratam de status/transições e comunicação de encerramento da vaga; OPEN-043 e OPEN-045 tratam dos campos do detalhe e da apresentação de dados ausentes.
 
-**Status: mantido em aberto por decisão do grupo.** Não foram alteradas as regras de compatibilidade nem as OPEN-031 a OPEN-046. Para fechar esta revisão, o grupo precisa aprovar as regras acima ou apontar decisões já existentes na baseline que respondam a cada questão. Até lá, manter os princípios estabelecidos, não inventar pesos, limiares ou políticas e não iniciar implementação de comportamentos ainda indefinidos.
+**Status: REV-009 permanece aberta** para validação final do cálculo e da descoberta de vagas. As decisões consolidadas nas OPEN-031 a OPEN-046 devem ser refletidas nos artefatos; OPEN-046 já está resolvida e não deve ser tratada como pendência. Não inventar regras adicionais nem iniciar implementação de comportamentos ainda indefinidos.
 
 ## 4. Verificações que passaram
 
