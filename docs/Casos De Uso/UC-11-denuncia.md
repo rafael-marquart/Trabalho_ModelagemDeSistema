@@ -2,17 +2,17 @@
 
 ## Objetivo
 
-Permitir que o candidato reporte uma vaga que seja inadequada, incompatível ou prejudicial ao seu perfil, com base em critérios de acessibilidade, compatibilidade funcional ou regras de inclusão, para que a operação seja revisada e, quando necessário, tratada pela equipe responsável.
+Permitir que um candidato autenticado com acesso à vaga reporte uma possível incompatibilidade relacionada à acessibilidade ou uma possível falsa inclusão associada à vaga, para análise administrativa.
 
 ## Ator principal
 
-- Candidato PcD.
+- Candidato autenticado com acesso à vaga.
 
 ## Pré-condições
 
 - O candidato deve estar autenticado no sistema.
-- A vaga deve estar visível no catálogo ou no detalhe da oportunidade.
-- O candidato deve ter identificado um problema de incompatibilidade, acessibilidade ou inadequação da vaga ao seu perfil.
+- O candidato deve ter acesso à vaga no catálogo ou no detalhe da oportunidade.
+- O candidato deve identificar uma possível incompatibilidade relacionada à acessibilidade ou uma possível falsa inclusão associada à vaga.
 
 ## Pontos de Inclusão e Extensão
 
@@ -21,7 +21,7 @@ Permitir que o candidato reporte uma vaga que seja inadequada, incompatível ou 
 
 ## Fluxo Principal
 
-1. O usuário registra uma denúncia de incompatibilidade.
+1. O candidato registra denúncia sobre possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga.
 2. O sistema registra a denúncia e a encaminha ao Administrador.
 3. O Administrador analisa a denúncia e os dados disponíveis.
 4. O Administrador registra a decisão da apuração.
@@ -58,8 +58,8 @@ Permitir que o candidato reporte uma vaga que seja inadequada, incompatível ou 
 
 ## Critérios de aceitação
 
-- O candidato consegue denunciar uma vaga incompatível ou inadequada ao seu perfil.
-- A denúncia é registrada com motivo, data e vínculo à vaga.
+- Um candidato autenticado com acesso à vaga consegue denunciar possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga.
+- A denúncia é registrada com motivo, data e vínculo à vaga; o registro, por si só, não comprova irregularidade, não bloqueia a vaga nem altera automaticamente a nota.
 - A equipe responsável recebe a ocorrência para revisão.
 - O sistema comunica ao candidato que a denúncia foi registrada e fornece acompanhamento do status da revisão.
 
