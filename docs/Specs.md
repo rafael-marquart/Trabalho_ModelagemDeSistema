@@ -6,12 +6,12 @@ Documento de detalhamento das Specs do AcessaVagas, baseado na baseline do proje
 
 - Escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. A SPEC-005 — Cadastrar e gerenciar vagas próprias — integra o intervalo SPEC-001 a SPEC-013. As antigas SPEC-014 e SPEC-015 foram removidas do escopo e não serão restauradas nesta revisão. Referências a esses IDs devem ser tratadas como históricas somente quando o contexto confirmar que não afetam dependências, rastreabilidade ou comportamento vigente; referências ativas ou ambíguas devem ser conferidas individualmente e corrigidas quando necessário, sem renumerar as Specs posteriores nem fazer substituição em massa.
 - Estado dos textos: especificada, aguardando revisão e aprovação humana.
-- Estado dos layouts: pendente quando aplicável; não se aplica às capacidades sem interface própria.
-- **Layout significa evidência visual/protótipo, não código.** A identidade visual existente é uma referência inicial de estilo; ainda será necessário especificar e aprovar os layouts das telas aplicáveis.
+- Estado dos layouts: **protótipo disponível — aprovação pendente**, **pendente de protótipo** ou **não se aplica**, conforme a cobertura visual de cada tela/área.
+- **Layout significa evidência visual/protótipo, não código.** Os arquivos em `docs/Identidade Visual/` constituem referências visuais existentes. A presença de protótipo não significa aprovação formal do layout nem autorização de implementação.
 - Implementação: não autorizada. A aprovação do texto e a aprovação do layout são etapas separadas.
 - Lacunas e conflitos são registrados em `docs/OPEN.md`, com IDs OPEN associados às Specs; não são resolvidos silenciosamente.
 
-Estados possíveis: especificada, aprovada, em implementação, implementada ou fora de escopo. O estado do layout pode ser pendente, aprovado ou não se aplica. A identidade visual é uma referência de direção visual, mas não equivale à aprovação dos layouts funcionais.
+Estados possíveis do texto: especificada, aprovada, em implementação, implementada ou fora de escopo. Estados de layout: **protótipo disponível — aprovação pendente** (há referência visual correspondente, ainda sem aprovação formal), **pendente de protótipo** (não há referência visual correspondente suficiente) ou **não se aplica** (capacidade sem interface própria). A aprovação do layout permanece separada da aprovação do texto e da implementação.
 
 ---
 
@@ -61,14 +61,16 @@ Estados possíveis: especificada, aprovada, em implementação, implementada ou 
 
 | Tela/área | Finalidade | Layout |
 |---|---|---|
-| Entrada/login | Login, recuperação de senha e opções de cadastro como Usuário ou Empresa | Pendente |
-| Cadastro de Usuário | Iniciar criação de conta de usuário | Pendente |
-| Cadastro de Empresa | Iniciar criação de conta organizacional | Pendente |
-| Recuperação/redefinição de senha | Iniciar e concluir recuperação prevista em RF-02 | Pendente |
-| Configurações da Empresa — Recrutadores | Cadastrar ou associar recrutador à Empresa autenticada | Pendente |
-| Mensagens de autenticação | Informar falha ou bloqueio sem expor dados indevidos | Pendente |
+| Entrada/login e seleção de perfil | Login e escolha entre cadastro como Usuário ou Empresa | Protótipo disponível — aprovação pendente |
+| Login de Candidato | Autenticação de candidato | Protótipo disponível — aprovação pendente |
+| Login de Empresa | Autenticação de empresa | Protótipo disponível — aprovação pendente |
+| Cadastro de Usuário/Candidato | Iniciar criação de conta de candidato | Protótipo disponível — aprovação pendente |
+| Cadastro de Empresa | Iniciar criação de conta organizacional | Protótipo disponível — aprovação pendente |
+| Recuperação de senha | Iniciar recuperação de senha | Protótipo disponível — aprovação pendente |
+| Configurações da Empresa — Recrutadores | Cadastrar ou associar recrutador à Empresa autenticada | Pendente de protótipo |
+| Mensagens de autenticação | Informar falha ou bloqueio sem expor dados indevidos | Pendente de protótipo |
 
-A lista identifica áreas funcionais, não define quantidade final de páginas ou composição visual. Os protótipos devem ser anexados em `docs/layout/` e aprovados separadamente.
+A lista identifica áreas funcionais, não define quantidade final de páginas ou composição visual. Os protótipos existentes estão em `docs/Identidade Visual/`; referências adicionais devem ser registradas junto à Spec correspondente e aprovadas separadamente.
 
 ## 4. Dependências
 
