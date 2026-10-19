@@ -57,6 +57,13 @@ Estados possíveis: especificada, aprovada, em implementação, implementada ou 
 - Escolha de tecnologia específica de autenticação, sessão, banco de dados, framework ou provedor de e-mail.
 - Definição de política de senha, duração de sessão ou mecanismo de bloqueio além do que a baseline determina.
 
+## 3.0. Apresentação da compatibilidade (decisão OPEN-044)
+- Exibir resultado geral e score final somente quando a análise da SPEC-007 estiver completa e o score for válido. Trava crítica prevalece e impede avanço mesmo com score positivo.
+- Apresentar os fatores A (acessibilidade), T (perfil técnico) e D (distância/modalidade), com seus resultados e explicações curtas, sem recalcular nem alterar os fatores da SPEC-007.
+- Oferecer detalhamento expansível dos critérios publicados relevantes, informações do próprio perfil consideradas, correspondências, incompatibilidades e dados que impediram conclusão. Não expor outros candidatos, dados internos ou detalhes de acessibilidade desnecessários.
+- Se houver dados insuficientes, não apresentar score final completo, score zero ou compatibilidade presumida. Indicar fatores avaliados e pendências e permitir complementação pelo fluxo existente; score parcial segue OPEN-046.
+- Esta decisão trata apenas da apresentação; cálculo, pesos, parâmetros, travas e critérios permanecem definidos na SPEC-007 e nas decisões próprias
+
 ## 3.1. Telas e evidência de layout
 
 | Tela/área | Finalidade | Layout |
@@ -2020,7 +2027,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 
 ## 13. Questões em aberto
 - **OPEN-043:** campos do detalhe e regras de visibilidade.
-- **OPEN-044:** formato e granularidade da explicação de compatibilidade.
+
 - **OPEN-045:** apresentação de faixa salarial, localização e origem quando ausentes/variáveis.
 - **OPEN-046:** apresentação do score quando os dados do candidato não estão completos.
 
