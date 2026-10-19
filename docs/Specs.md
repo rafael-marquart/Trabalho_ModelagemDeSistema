@@ -1932,7 +1932,7 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 ## 3. Escopo
 **Incluído:** apresentar título, descrição, requisitos, modalidade, localização, faixa salarial quando disponível, informações de acessibilidade e origem quando aplicável; mostrar status atual e resultado/fatores de compatibilidade; distinguir dados conhecidos dos não informados; permitir continuidade para candidatura somente quando status e elegibilidade permitirem.
 
-**Fora do escopo:** editar vaga; recalcular compatibilidade; realizar candidatura; alterar status; inferir atributos ausentes ou prometer acessibilidade não comprovada.
+**Fora do escopo:** editar vaga; recalcular compatibilidade; realizar candidatura; alterar status; inferir atributos ausentes ou prometer acessibilidade não comprovada. A política de apresentação de dados ausentes/divergentes segue OPEN-045 resolvida
 
 ## 3.1. Telas e evidência de layout
 | Tela/área | Finalidade | Layout |
@@ -1956,7 +1956,7 @@ O layout não deve depender apenas de cor para indicar compatibilidade, deve per
 1. Candidato abre vaga a partir da busca ou acesso autorizado.
 2. Apresenta título/cargo, descrição, requisitos e critérios de elegibilidade publicados; modalidade, localização e faixa salarial quando disponíveis; status atual; origem quando aplicável; e resultado/fatores de compatibilidade fornecidos pela SPEC-007, sem recalcular.
 3. Informações de acessibilidade declaradas para a vaga e para a infraestrutura da Empresa são apresentadas em grupos distintos; não se presume que recursos gerais da Empresa estejam disponíveis na vaga.
-4. Campo sem informação disponível é indicado como “Não informado”; o sistema não infere nem transforma ausência em confirmação positiva ou negativa.
+4. Campo sem informação disponível é indicado como “Não informado” (ou “Não informada” para origem); o sistema não infere nem transforma ausência em confirmação positiva ou negativa. Para faixa salarial ausente, não presumir ausência de remuneração; para localização ausente, não presumir modalidade remota. Quando houver valor registrado por uma fonte, apresentar o valor original e a origem quando disponível. Se fontes divergirem, sinalizar a divergência e identificar as fontes disponíveis, sem selecionar silenciosamente uma delas nem combinar valores. Preservar o significado original e a rastreabilidade, sem expor informações internas
 5. Não são exibidos dados internos administrativos, contatos privados, identificadores internos ou informações de outros candidatos.
 6. Status e elegibilidade governam a continuidade: vaga indisponível ou encerrada não permite candidatura; a operação deve validar o estado atual conforme SPEC-009/SPEC-011.
 2. Sistema recupera detalhes disponíveis e status atual.
@@ -2028,7 +2028,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 ## 13. Questões em aberto
 - **OPEN-043:** campos do detalhe e regras de visibilidade.
 
-- **OPEN-045:** apresentação de faixa salarial, localização e origem quando ausentes/variáveis.
+- **OPEN-045 (resolvida):** dados ausentes de faixa salarial, localização ou origem são identificados como não informados, sem inferência; valores de fonte são preservados com origem quando disponível; divergências entre fontes são sinalizadas sem escolha silenciosa ou combinação. Não foi definida hierarquia entre fontes.
 - **OPEN-046:** apresentação do score quando os dados do candidato não estão completos.
 
 ## 14. Definition of Done
