@@ -19,7 +19,7 @@ Filtrar e visualizar exclusivamente vagas compatíveis com o perfil, ocultando a
 
 ## Fluxo Principal
 
-1. O candidato acessa o painel de busca de vagas e insere termos de interesse ou filtros por cargo, área profissional, modalidade e localização. A busca textual segue as regras da OPEN-037. O filtro de acessibilidade previsto no RF-06 utiliza apenas opções definidas e validadas na OPEN-023, sem expor necessidades funcionais individuais.
+1. O candidato acessa o painel de busca de vagas e pode inserir termos de interesse ou filtros por cargo, área profissional, modalidade e localização. A busca textual consulta título/cargo da vaga, descrição e nome da Empresa; ignora maiúsculas/minúsculas e acentos; considera palavras ou trechos contidos e exige que todos os termos sejam encontrados, podendo estar distribuídos entre os campos. Busca vazia não restringe por texto. Não há expansão automática por sinônimos, correção de erros de digitação ou interpretação por IA. O filtro de acessibilidade previsto no RF-06 utiliza apenas opções definidas e validadas na OPEN-023, sem expor necessidades funcionais individuais.
 2. O sistema combina filtros de categorias diferentes por AND e valores selecionados dentro da mesma categoria por OR. Filtros não selecionados não restringem a busca; ao remover um filtro, os demais permanecem aplicados.
 3. O sistema dispara internamente a execução do UC13 para cruzar o vetor do candidato com o banco de vagas ativas
 4. O sistema aplica a trava crítica eliminatória (filtro booleano), considera somente vagas ativas e válidas e respeita os filtros informados.
