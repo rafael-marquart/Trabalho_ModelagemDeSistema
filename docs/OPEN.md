@@ -125,7 +125,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 
 | ID | Estado | Questão em aberto | Contexto/impacto |
 |---|---|---|---|
-| OPEN-040 | aberta | Qual é o catálogo formal de status e qual a diferença operacional entre “indisponível” e “encerrada”? | UC-12 apresenta exemplos, mas os significados e estados completos precisam ser confirmados. |
+| OPEN-040 | resolvida | Qual é o catálogo formal de status e qual a diferença operacional entre “indisponível” e “encerrada”? | Decisão aprovada: “aberta” permite candidatura após as verificações de elegibilidade; “indisponível” bloqueia candidaturas temporariamente e pode voltar a “aberta” por operação autorizada; “encerrada” finaliza definitivamente o recebimento de candidaturas naquela publicação. Status deve ser consultado no momento da operação. Ausência/falha de informação não cria status nem presume disponibilidade: preservar o status registrado e impedir candidatura quando não for possível confirmar disponibilidade. Reabertura de publicação encerrada não foi autorizada; nova oportunidade exige nova publicação conforme regras aplicáveis. |
 | OPEN-041 | aberta | Quais perfis/operações podem alterar status e quais transições são permitidas? | A Spec trata principalmente de consulta; as permissões de alteração precisam ser rastreadas na baseline. |
 | OPEN-042 | aberta | Qual prazo e canal serão usados para informar candidatos ativos após encerramento da vaga? | RB-42 exige informar candidatos ativos, mas não define prazo/canal. |
 
