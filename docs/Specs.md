@@ -1664,7 +1664,7 @@ Contratos conceituais, sem endpoints HTTP.
 - **Questões:** OPEN-036 a OPEN-039.
 
 ## 3. Escopo
-**Incluído:** buscar por termos de interesse e filtros por cargo, área profissional, modalidade e localização; filtro de acessibilidade conforme opções definidas e validadas na OPEN-023; consultar vagas ativas e válidas; combinar filtros de categorias diferentes por AND e valores dentro da mesma categoria por OR; aplicar a trava crítica pela SPEC-007; ordenar resultados elegíveis por compatibilidade; informar ausência de resultados.
+**Incluído:** busca textual em título/cargo da vaga, descrição da vaga e nome da Empresa; normalização para ignorar maiúsculas/minúsculas e acentos; correspondência por palavras ou trechos contidos, sem exigir título completo; todos os termos da consulta devem ser encontrados, podendo estar distribuídos entre os campos pesquisáveis; busca vazia não restringe por texto. Inclui também filtros por cargo, área profissional, modalidade e localização; filtro de acessibilidade conforme opções definidas e validadas na OPEN-023; consulta de vagas ativas e válidas; combinação de filtros de categorias diferentes por AND e valores dentro da mesma categoria por OR; aplicação da trava crítica pela SPEC-007; ordenação dos resultados elegíveis por compatibilidade; e comunicação de ausência de resultados. Não inclui sinônimos automáticos, correção de erros de digitação ou interpretação por IA
 
 **Fora do escopo:** cálculo do score; detalhe completo da vaga; candidatura; edição/publicação; alertas por e-mail, cuja inclusão precisa ser confirmada; inventar filtros ausentes da baseline.
 
@@ -1697,7 +1697,7 @@ Protótipos devem seguir a identidade visual e acessibilidade transversal, ser a
 9. Alterações de status devem respeitar a SPEC-009.
 
 ## 6. Regras e invariantes
-1. Busca respeita o catálogo aprovado: cargo, área profissional, modalidade e localização; acessibilidade somente conforme OPEN-023.
+1. Busca textual consulta título/cargo da vaga, descrição e nome da Empresa; ignora maiúsculas/minúsculas e acentos; busca palavras/trechos contidos e exige que todos os termos estejam presentes, inclusive quando distribuídos entre os campos. Não aplica sinônimos, correção de digitação nem interpretação por IA. Consulta textual vazia não restringe resultados. Filtros estruturados respeitam o catálogo aprovado: cargo, área profissional, modalidade e localização; acessibilidade somente conforme OPEN-023
 2. Filtros de categorias diferentes são combinados por AND; valores selecionados dentro da mesma categoria são combinados por OR. Filtros não selecionados não restringem resultados e remover um filtro mantém os demais.
 3. Vagas incompatíveis por barreira crítica não aparecem como elegíveis (RF-09, RB-02, RB-15).
 4. Vagas externas só participam após validação (RB-10, RB-17).
@@ -1756,7 +1756,7 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 
 ## 13. Questões em aberto
 - **OPEN-036:** resolvida; catálogo de filtros e combinação AND/OR definidos.
-- **OPEN-037:** campos consultáveis e regras de busca textual.
+- **OPEN-037:** resolvida; campos consultáveis e regras de busca textual definidos.
 - **OPEN-038:** paginação, limites de resultados e ordenações alternativas.
 - **OPEN-039:** se alertas/salvamento de busca fazem parte do escopo ou são apenas sugestão.
 
