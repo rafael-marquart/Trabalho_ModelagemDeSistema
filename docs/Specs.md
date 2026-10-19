@@ -1796,7 +1796,7 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 - **Questões:** OPEN-040 a OPEN-042.
 
 ## 3. Escopo
-**Incluído:** consultar e apresentar status atual; distinguir estados citados na baseline (aberta, encerrada ou indisponível); refletir alterações recentes; bloquear ações incompatíveis; identificar candidatos ativos afetados por encerramento para comunicação, conforme RB-42.
+**Incluído:** consultar e apresentar status atual; aplicar o catálogo aprovado na OPEN-040 (aberta, indisponível ou encerrada); refletir alterações recentes; bloquear ações incompatíveis; identificar candidatos ativos afetados por encerramento para comunicação, conforme RB-42.
 
 **Fora do escopo:** criar estados/transições novos; gerenciar o funil; publicar/editar vaga; implementar todos os tipos de notificação.
 
@@ -1819,19 +1819,21 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 2. Sistema recupera o status atual registrado.
 3. Sistema apresenta o estado de forma clara e acessível.
 4. Se aberta, o candidato pode seguir às verificações de elegibilidade.
-5. Se encerrada ou indisponível, o sistema informa a condição e bloqueia ações incompatíveis, incluindo nova candidatura.
-6. Se o status mudar após a busca, a operação seguinte verifica o estado atual.
-7. Ao encerrar uma vaga, candidatos ativos são identificados para comunicação conforme RB-42 e a Spec de notificação.
-8. Alterações relevantes são rastreáveis.
+5. Se indisponível, o sistema informa a condição e bloqueia candidaturas enquanto durar esse estado; uma operação autorizada pode restabelecer a vaga como aberta, conforme OPEN-041.
+6. Se encerrada, o sistema informa a condição e bloqueia permanentemente novas candidaturas naquela publicação; uma nova oportunidade exige nova publicação conforme regras aplicáveis.
+7. Se o status mudar após a busca, a operação seguinte verifica o estado atual. Se não for possível confirmar disponibilidade por ausência ou falha de informação, não presume disponibilidade e bloqueia a candidatura
+8. Ao encerrar uma vaga, candidatos ativos são identificados para comunicação conforme RB-42 e a Spec de notificação
+9. Alterações relevantes são rastreáveis
 
 ## 6. Regras e invariantes
-1. Candidatura somente em vaga disponível e não bloqueada (RB-01).
-2. Vaga encerrada não aceita novas candidaturas e candidatos ativos são informados (RB-42).
-3. Status relevante deve ser claro antes da candidatura (RB-13, RB-23).
-4. Estado exibido reflete o registro atual.
-5. Estados novos não são criados sem decisão formal.
-6. Esta Spec trata consulta e aplicação de restrições; não concede ao candidato permissão para alterar status.
-7. Consulta de status não substitui verificação de compatibilidade da SPEC-007.
+1. Candidatura somente em vaga aberta e não bloqueada (RB-01).
+2. Vaga indisponível bloqueia candidaturas enquanto permanecer nesse estado; pode voltar a aberta por operação autorizada, conforme OPEN-041.
+3. Vaga encerrada não aceita novas candidaturas naquela publicação; nova oportunidade exige nova publicação conforme regras aplicáveis. Candidatos ativos são identificados para comunicação (RB-42).
+4. Status relevante deve ser claro antes da candidatura (RB-13, RB-23).
+5. Estado exibido reflete o registro atual; ausência/falha de informação não presume disponibilidade e bloqueia candidatura quando não for possível confirmá-la
+6. Estados novos não são criados sem decisão formal
+7. Esta Spec trata consulta e aplicação de restrições; não concede ao candidato permissão para alterar status
+8. Consulta de status não substitui verificação de compatibilidade da SPEC-007
 
 ## 7. Modelo de domínio
 - **VAGA:** contém status_vaga no modelo conceitual.
@@ -1875,7 +1877,7 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 | T-009-06 | Status não definido/indisponível | Comunicar apenas estado registrado |
 
 ## 13. Questões em aberto
-- **OPEN-040:** catálogo formal de status e significado de indisponível versus encerrada.
+- **OPEN-040:** resolvida pela decisão aprovada; catálogo e distinções operacionais registrados nesta Spec.
 - **OPEN-041:** papéis que podem alterar status e transições permitidas.
 - **OPEN-042:** prazo e canal para informar candidatos ativos após encerramento.
 
