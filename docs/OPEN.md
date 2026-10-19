@@ -184,7 +184,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 ### SPEC-018 — Avaliar processo seletivo
 | ID | Estado | Questão em aberto | Contexto/impacto |
 |---|---|---|---|
-| OPEN-070 | aberta | Quem pode avaliar e qual é a janela temporal de elegibilidade? | RF-21 define avaliação pós-processo, mas os critérios de elegibilidade precisam ser confirmados. |
+| OPEN-070 | resolvida | Quem pode avaliar e qual é a janela temporal de elegibilidade? | Decisão aprovada: somente candidato autenticado com candidatura vinculada a entrevista cadastrada e concluída pode avaliar o processo de que participou. O sistema valida no backend o vínculo entre candidato, candidatura e entrevista. A avaliação deve ser enviada em até 60 dias corridos após a conclusão da entrevista; após o prazo, novas submissões para essa entrevista são recusadas. A elegibilidade independe de contratação ou rejeição e deve respeitar as regras existentes de anonimato e auditoria. Quantidade de avaliações, edição/reenvio, campos e controles contra abuso permanecem nas OPEN-071/072. |
 | OPEN-071 | aberta | Quais critérios, escalas, campos obrigatórios e possibilidades de edição compõem a avaliação? | O modelo contém notas de acessibilidade e postura, mas não define a forma completa. |
 | OPEN-072 | aberta | Quantas avaliações podem ser registradas por candidatura/entrevista e quais controles evitam abuso? | Necessário preservar integridade e confiabilidade. |
 | OPEN-073 | aberta | Quais dados da avaliação podem ser publicados anonimamente e por quanto tempo são retidos? | RB-19 exige anonimato público; conteúdo publicado e retenção precisam ser definidos. |
