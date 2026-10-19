@@ -8,7 +8,7 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 2. Resultado executivo
 
-**Status atual:** REV-009 é a revisão ativa neste relatório, por envolver regras centrais de compatibilidade e descoberta de vagas. Isso não significa que o projeto esteja sem questões funcionais em aberto: os estados das OPEN são mantidos em `docs/OPEN.md` e resumidos na seção 4 deste relatório. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
+**Status atual:** REV-009 está encerrada após a confirmação do grupo de que as decisões consolidadas de compatibilidade e descoberta de vagas foram refletidas nas Specs. A única pendência funcional remanescente dentro do escopo da REV-009 é OPEN-088, sobre o método/provedor para determinar distância em quilômetros. As demais OPENs continuam com seus estados próprios em `docs/OPEN.md`, sem serem reabertas ou alteradas por este encerramento. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
 
 - O mapa e o documento de detalhamento cobrem as Specs ativas do escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. SPEC-014 e SPEC-015 foram removidas e não devem ser contadas como Specs vigentes; os IDs posteriores foram preservados.
 - A conferência do cadastro atual de `OPEN.md` identificou 81 linhas de questões com IDs únicos. Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado das pendências é consolidado na seção 4.
@@ -19,7 +19,7 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 3. Achados prioritários
 
-### REV-009 — Definir com precisão o cálculo de compatibilidade entre candidato e vaga
+### REV-009 — Encerrada: cálculo de compatibilidade entre candidato e vaga
 
 **Prioridade:** alta  
 **Artefatos:** SPEC-007 a SPEC-010, RF-07 a RF-10, RF-24/RF-25, RB-02 a RB-07, RB-15/RB-16/RB-30.
@@ -33,7 +33,7 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 **Decisões já consolidadas:** OPEN-031 a OPEN-046 estão resolvidas e devem ser refletidas de forma consistente nas Specs. A regra atual de D usa distância em quilômetros nas vagas presenciais/híbridas e exclui distância para vagas totalmente remotas; não calcula tempo de deslocamento. **Pendência funcional remanescente:** OPEN-088, que define o método/provedor para determinar a distância em quilômetros. Não escolher provedor ou método por inferência.
 
-**Status: REV-009 permanece aberta** para validação final do cálculo e da descoberta de vagas. As decisões consolidadas nas OPEN-031 a OPEN-046 devem ser refletidas nos artefatos; OPEN-046 já está resolvida e não deve ser tratada como pendência. Não inventar regras adicionais nem iniciar implementação de comportamentos ainda indefinidos.
+**Encerramento:** as decisões consolidadas nas OPEN-031 a OPEN-046 foram consideradas refletidas nas Specs, incluindo a trava crítica, tratamento de dados ausentes, fonte única do cálculo na SPEC-007, consumo do resultado pelas SPEC-008/SPEC-010 e regra de distância/modalidade. OPEN-088 permanece aberta como a única pendência funcional da revisão: método/provedor para determinar distância em quilômetros. Não calcular tempo de deslocamento nem reintroduzir o provedor de rotas anteriormente considerado. A revisão documental REV-009 está encerrada; isso não equivale à aprovação geral das Specs nem autoriza implementação..
 
 ## 4. Estado atual das pendências OPEN
 
@@ -58,7 +58,7 @@ As decisões das OPEN-075 a OPEN-085 foram refletidas nas Specs correspondentes,
 
 ## 5. Plano recomendado de correção
 
-1. Resolver a pendência funcional remanescente de REV-009, OPEN-088 (método/provedor para determinar distância em quilômetros), sem reabrir OPEN-031 a OPEN-046, já decididas.
+1. Manter OPEN-088 como pendência funcional isolada do escopo de compatibilidade/distância; não reabrir OPEN-031 a OPEN-046, já decididas.
 2. Manter as demais questões OPEN pertinentes explicitamente abertas até decisão do grupo.
 3. Manter a aprovação textual separada da aprovação dos layouts. Implementação somente após as aprovações aplicáveis.
 
