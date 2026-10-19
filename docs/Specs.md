@@ -24,7 +24,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 | ID | SPEC-001 |
 |
 | Estado do texto | especificada |
-| Estado do layout | pendente |
+| Estado do layout | protótipos disponíveis para parte das telas; aprovação pendente e áreas restantes sem protótipo |
 | Capacidade | Cadastro de usuário/empresa, autenticação, recuperação de senha, autorização por perfil e vínculo organizacional de recrutador |
 
 ## 2. Rastreabilidade
