@@ -386,7 +386,7 @@ As ADRs não originam Specs técnicas independentes:
 
 ## 7. Questões em aberto
 
-**Sem questões em aberto.**
+As questões funcionais em aberto e seus estados são centralizados em `docs/OPEN.md`. Este mapa não mantém um cadastro paralelo de pendências; portanto, a ausência de questões específicas do mapa não significa que o projeto esteja sem questões em aberto.
 
 ## 8. Parada obrigatória
 
