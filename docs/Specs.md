@@ -1666,7 +1666,7 @@ Contratos conceituais, sem endpoints HTTP.
 ## 3. Escopo
 **Incluído:** busca textual em título/cargo da vaga, descrição da vaga e nome da Empresa; normalização para ignorar maiúsculas/minúsculas e acentos; correspondência por palavras ou trechos contidos, sem exigir título completo; todos os termos da consulta devem ser encontrados, podendo estar distribuídos entre os campos pesquisáveis; busca vazia não restringe por texto. Inclui também filtros por cargo, área profissional, modalidade e localização; filtro de acessibilidade conforme opções definidas e validadas na OPEN-023; consulta de vagas ativas e válidas; combinação de filtros de categorias diferentes por AND e valores dentro da mesma categoria por OR; aplicação da trava crítica pela SPEC-007; ordenação dos resultados elegíveis por compatibilidade; e comunicação de ausência de resultados. Não inclui sinônimos automáticos, correção de erros de digitação ou interpretação por IA
 
-**Fora do escopo:** cálculo do score; detalhe completo da vaga; candidatura; edição/publicação; alertas por e-mail, cuja inclusão precisa ser confirmada; inventar filtros ausentes da baseline. A consulta limita-se a 100 vagas elegíveis segundo a ordenação selecionada, com 20 vagas por página.
+**Fora do escopo:** cálculo do score; detalhe completo da vaga; candidatura; edição/publicação; alertas por e-mail e salvamento de buscas, conforme decisão da OPEN-039; inventar filtros ausentes da baseline. A consulta limita-se a 100 vagas elegíveis segundo a ordenação selecionada, com 20 vagas por página.
 
 ## 3.1. Telas e evidência de layout
 | Tela/área | Finalidade | Layout |
