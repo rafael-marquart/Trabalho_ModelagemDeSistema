@@ -1629,9 +1629,9 @@ Contratos conceituais, sem endpoints HTTP.
 - **OPEN-031:** resolvida; pesos gerais A=50%, T=30%, D=20%; parâmetros e pesos internos de A/T/D, score final, precisão e arredondamento estão na seção 6.1. A trava crítica precede o score; dados necessários ausentes seguem OPEN-033/034 e não recebem zero nem compatibilidade presumida.
 - **OPEN-032:** dados mínimos necessários para cada dimensão do cálculo.
 - **OPEN-033:** resolvida; quando faltar informação necessária em qualquer dimensão, indicar “dados insuficientes”, não apresentar score final como completo e informar dimensões avaliadas/dados faltantes; ausência não vira zero nem compatibilidade presumida.
-- **OPEN-034:** resolvida; modalidade e deslocamento, faixas de tempo e regra de exclusão de distância para vagas totalmente remotas estão documentados na seção 6.1
+- **OPEN-034:** resolvida; modalidade e distância em quilômetros, faixas de pontuação e regra de exclusão de distância para vagas totalmente remotas estão documentadas na seção 6.1
 - **OPEN-035:** parâmetros e resultados que devem ser armazenados para rastreabilidade.
-- **OPEN-088:** provedor de mapas/rotas e critérios funcionais/operacionais para a API a integrar.
+- **OPEN-088:** método/provedor para determinar a distância em quilômetros entre candidato e local de trabalho; uso de localização mantido, sem cálculo de tempo de deslocamento.
 
 ## 14. Definition of Done
 - [ ] Texto aprovado.
