@@ -74,7 +74,9 @@ Antes de alterar a etapa da candidatura, o sistema deve validar:
 1. **Autorização:** o Recrutador está autenticado e autorizado a gerenciar a vaga e suas candidaturas.
 2. **Transição permitida:** a mudança solicitada pertence ao conjunto de transições válidas listado acima, conforme RB-39.
 3. **Pendências impeditivas:** não há pendências conhecidas que impeçam o avanço. Se houver, a etapa permanece inalterada e o Recrutador pode solicitar complementação das informações necessárias, conforme UC-09.
-4. **Rastreabilidade:** quando a transição for válida, a etapa é atualizada e a movimentação é registrada conforme RB-27, RB-37 e RB-41.
+4. **Rastreabilidade:** quando a transição for válida, a etapa é atualizada e a movimentação é registrada conforme RB-27, RB-37 e RB-41. O histórico registra etapa anterior e resultante, data e hora, ator responsável e tipo de movimentação/decisão; a justificativa é registrada quando exigida pelo fluxo ou regra aplicável.
+
+O histórico preserva eventos anteriores, sem exclusão silenciosa. Não são permitidas reversões fora das transições previstas na RB-39; alterações futuras do fluxo dependem de aprovação explícita do projeto e atualização dos artefatos afetados. O Recrutador acessa somente os dados necessários à candidatura e à vaga sob sua responsabilidade; informações de acessibilidade são limitadas à necessidade do processo, sem acesso a laudos médicos ou a candidaturas de outras Empresas. A etapa não amplia automaticamente as permissões.
 
 Não são definidos critérios específicos adicionais por etapa, notas mínimas ou documentos obrigatórios sem decisão explícita do projeto.
 
