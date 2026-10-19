@@ -94,9 +94,9 @@ A lista identifica áreas funcionais, não define quantidade final de páginas o
 5. O sistema valida as credenciais.
 6. Se válidas, autentica o usuário e encaminha para a área compatível com seu perfil.
 7. Se inválidas, informa falha e não concede acesso.
-8. A sessão comum expira após 60 minutos sem atividade. Não há limite máximo absoluto de duração enquanto houver atividade.
-9. Logout explícito, troca ou redefinição de senha e bloqueio ou desativação da conta invalidam as sessões existentes.
-10. A opção “manter conectado” permite permanência por 30 dias, com renovação conforme uso; ela não impede a invalidação por nenhum dos eventos acima.
+8. A sessão expira após 60 minutos sem atividade, inclusive quando “manter conectado” estiver habilitado.
+9. A opção “manter conectado” permite recuperar a sessão sem novo login por até 30 dias, conforme condições de uso; não elimina a expiração por inatividade.
+10. Logout explícito, troca ou redefinição de senha e bloqueio ou desativação da conta invalidam as sessões existentes.
 
 ### 5.2 Recuperação de senha
 1. O usuário informa o e-mail na tela de recuperação.
