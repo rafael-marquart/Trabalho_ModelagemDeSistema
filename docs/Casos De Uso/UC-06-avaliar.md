@@ -29,6 +29,7 @@ Avaliar a experiência da entrevista quanto ao cumprimento dos recursos de acess
 7. Eventos relevantes são registrados. Quando houver denúncia ou indício relevante de abuso, o caso segue para análise administrativa, sem bloqueio automático.
 8. O Administrador analisa a ocorrência e registra a decisão conforme o fluxo de moderação existente.
 9. A administração não altera diretamente a avaliação nem a distribuição pública de estrelas; qualquer efeito depende das regras aplicáveis e da decisão administrativa registrada.
+10. A apresentação pública exibe somente a distribuição agregada das avaliações válidas por quantidade de estrelas, sem identidade, identificadores ou comentários individuais. Os registros individuais e comentários opcionais ficam acessíveis somente a pessoas autorizadas para finalidades legítimas da plataforma e são retidos por 1 ano após o envio; ao fim do prazo, são excluídos ou irreversivelmente anonimizados, respeitando obrigações aplicáveis de preservação. A distribuição agregada pode ser mantida por prazo indeterminado apenas se não permitir reconstruir avaliações individuais nem identificar candidatos.
 
 ## Exceções e Fluxos Alternativos
 
@@ -65,8 +66,12 @@ Avaliar a experiência da entrevista quanto ao cumprimento dos recursos de acess
 - O candidato pode revisar a avaliação antes de enviá-la, mas não pode editar, substituir ou registrar uma segunda avaliação para a mesma entrevista após o registro inicial.
 - Novas submissões são aceitas somente até 60 dias corridos após a conclusão da entrevista; após o prazo, são recusadas.
 - Indícios relevantes de abuso são registrados e encaminhados para análise administrativa, sem bloqueio automático.
-- Avaliações submetidas são gravadas para composição da nota pública conforme as regras aplicáveis.
+- Avaliações submetidas são gravadas para composição da nota pública conforme as regras aplicáveis; publicamente, somente a distribuição agregada por quantidade de estrelas é exibida, sem comentários individuais.
+- O acesso aos registros individuais e comentários opcionais é restrito a pessoas autorizadas para finalidades legítimas da plataforma; os registros são retidos por 1 ano após o envio e, ao fim do prazo, excluídos ou irreversivelmente anonimizados, respeitando obrigações aplicáveis de preservação.
 - Avaliação anônima preserva anonimato enquanto permite a triagem de conteúdo pela equipe de moderação.
+- A apresentação pública exibe somente a distribuição agregada por quantidade de estrelas; comentários individuais, identidade e identificadores dos candidatos não são publicados.
+- Registros individuais e comentários opcionais têm acesso restrito a pessoas autorizadas para finalidades legítimas da plataforma e são excluídos ou irreversivelmente anonimizados após 1 ano do envio, respeitando obrigações aplicáveis de preservação.
+- A distribuição agregada só pode ser mantida por prazo indeterminado se não permitir reconstruir avaliações individuais nem identificar candidatos.
 - Denúncias acionam o fluxo de moderação e ficam sujeitas à análise administrativa.
 
 ---
