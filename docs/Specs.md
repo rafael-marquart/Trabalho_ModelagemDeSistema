@@ -2707,10 +2707,10 @@ OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado
 - **Baseline:** RF-14; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 018, 020.
 - **Caso de uso:** UC-11 — Denunciar Vaga Incompatível.
-- **Questões abertas:** OPEN-074 a OPEN-077.
+- **Questões abertas:** OPEN-075 a OPEN-077. OPEN-074 resolvida: elegibilidade e circunstâncias de denúncia definidas.
 
 ## 3. Escopo
-Usuário elegível registra denúncia com descrição e referências previstas; sistema valida e encaminha para moderação, confirmando registro sem antecipar conclusão.
+Candidato autenticado com acesso à vaga pode registrar denúncia sobre possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga. O sistema valida e encaminha para moderação, confirmando o registro sem antecipar conclusão.
 
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
@@ -2725,15 +2725,17 @@ O layout funcional é uma evidência visual/protótipo, não código. Deve ser a
 SPEC-001, 018, 020. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
-1. Candidato autenticado seleciona vaga visível e registra motivo/descrição da incompatibilidade.
-2. Sistema valida justificativa mínima e controles de duplicidade/abuso definidos na baseline.
+1. Candidato autenticado com acesso à vaga seleciona a vaga e registra denúncia sobre possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga.
+2. Sistema valida autenticação, referência válida à vaga e controles antiabuso existentes. Campos/evidências adicionais e limites de frequência permanecem nas OPEN-075 e OPEN-076.
 3. Denúncia é registrada e encaminhada à moderação.
 4. Sistema confirma o registro sem antecipar a decisão.
 5. O registro da denúncia não bloqueia vaga nem altera nota automaticamente.
 6. Estado e informações são expostos apenas conforme política de confidencialidade aprovada.
 
 ## 6. Regras e invariantes
-- Denúncia não bloqueia vaga nem altera nota automaticamente; Administrador analisa antes de consequência; controles antiabuso e auditoria.
+- Somente candidato autenticado com acesso à vaga pode registrar denúncia.
+- As situações elegíveis são possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga.
+- Denúncia não comprova irregularidade, não bloqueia vaga nem altera nota automaticamente; Administrador analisa antes de qualquer consequência; aplicam-se os controles antiabuso existentes.
 - Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
 - Operações protegidas são validadas no backend.
 - Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
@@ -2747,7 +2749,7 @@ A capacidade mantém separação entre interface, regras de domínio e persistê
 
 ## 9. Contratos necessários
 - **Registrar denúncia:** recebe vaga referenciada, motivo e descrição permitidos pela baseline.
-- **Validar solicitação:** verifica autenticação, vínculo/referência válida e controles de abuso definidos, sem inventar limites numéricos.
+- **Validar solicitação:** verifica autenticação do candidato, referência válida à vaga acessível ao candidato e controles antiabuso existentes, sem inventar limites numéricos.
 - **Persistir e encaminhar:** registra a denúncia e disponibiliza-a à fila de moderação.
 - **Confirmar recebimento:** informa que a denúncia foi registrada, sem antecipar o resultado da análise.
 - **Restringir consulta:** expõe andamento e conteúdo somente conforme a política de confidencialidade que o grupo aprovar.
@@ -2775,15 +2777,15 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 | ID | Cenário | Resultado esperado |
 |---|---|---|
-| T-019-01 | Candidato autenticado envia denúncia válida | Denúncia é registrada e encaminhada à moderação |
-| T-019-02 | Usuário não autenticado tenta denunciar | Operação recusada |
+| T-019-01 | Candidato autenticado com acesso à vaga denuncia possível incompatibilidade de acessibilidade ou possível falsa inclusão | Denúncia é registrada e encaminhada à moderação |
+| T-019-02 | Usuário não autenticado tenta denunciar | Operação recusada |\n| T-019-07 | Candidato autenticado tenta denunciar vaga à qual não tem acesso | Operação recusada ou referência não aceita; nenhuma denúncia é associada incorretamente |
 | T-019-03 | Referência à vaga é inválida ou não acessível | Denúncia não é associada incorretamente |
 | T-019-04 | Denúncia é registrada | Confirmação não promete decisão nem sanção |
 | T-019-05 | Denúncia está pendente | Vaga e nota não são alteradas automaticamente |
 | T-019-06 | Usuário sem permissão consulta conteúdo restrito | Conteúdo e identidade protegidos não são expostos |
 
 ## 13. Questões em aberto
-Consultar OPEN-074 a OPEN-077 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+OPEN-074 foi resolvida: somente candidato autenticado com acesso à vaga pode denunciar possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga. Consultar OPEN-075 a OPEN-077 em `docs/OPEN.md`; essas questões permanecem abertas até decisão explícita do grupo.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
