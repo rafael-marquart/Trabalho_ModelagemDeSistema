@@ -8,14 +8,14 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 2. Resultado executivo
 
-**Status atual:** somente REV-009 permanece aberta neste relatório, por envolver regras centrais de compatibilidade e descoberta de vagas. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
+**Status atual:** REV-009 é a revisão ativa neste relatório, por envolver regras centrais de compatibilidade e descoberta de vagas. Isso não significa que o projeto esteja sem questões funcionais em aberto: os estados das OPEN são mantidos em `docs/OPEN.md` e resumidos na seção 4 deste relatório. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
 
-- O mapa e o documento de detalhamento preservam os IDs SPEC-001 a SPEC-021; SPEC-014 e SPEC-015 foram removidas do escopo, sem renumerar as posteriores.
-- O `OPEN.md` contém 83 questões identificadas; não foram detectados IDs duplicados nas linhas de cadastro. Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado atual das pendências finais está consolidado abaixo.
+- O mapa e o documento de detalhamento cobrem as Specs ativas do escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. SPEC-014 e SPEC-015 foram removidas e não devem ser contadas como Specs vigentes; os IDs posteriores foram preservados.
+- A conferência do cadastro atual de `OPEN.md` identificou 81 linhas de questões com IDs únicos. Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado das pendências é consolidado na seção 4.
 - Todas as RBs identificadas na baseline aparecem referenciadas em algum ponto de `Specs.md`; isso não garante, por si só, que cada regra esteja associada à Spec correta.
 - RF-34 e RF-35 estão associados, respectivamente, à SPEC-012 e à SPEC-013.
 - O detalhamento de contratos e testes das SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 foi ampliado e aprovado pelo grupo (REV-002 encerrada).
-- Foram encontrados pontos em que uma dependência, referência de caso de uso ou conteúdo de seção precisa ser corrigido ou confirmado.
+- Nesta rodada, foram corrigidos o texto do mapa que sugeria ausência de pendências, a orientação para tratar referências às Specs removidas e as afirmações de escopo/contagem neste relatório. As correções são documentais e não alteram decisões funcionais..
 
 ## 3. Achados prioritários
 
@@ -50,7 +50,7 @@ A revisão de consistência documental, por si só, não altera esses estados fu
 
 ## 5. Verificações que passaram
 
-- Os IDs SPEC-001 a SPEC-021 aparecem tanto no mapa quanto no documento de detalhamento.
+- As Specs ativas listadas no escopo (SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021) aparecem no mapa e no documento de detalhamento; SPEC-014 e SPEC-015 estão excluídas do escopo.
 - Os títulos das Specs no mapa correspondem aos títulos do documento de detalhamento.
 - As 81 linhas de cadastro de questões em `OPEN.md` têm IDs únicos; a sequência inclui OPEN-086 a OPEN-088 e preserva lacunas históricas.
 - O `OPEN.md` contém seções organizadas por área funcional.
