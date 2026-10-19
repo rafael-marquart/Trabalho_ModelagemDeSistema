@@ -41,7 +41,7 @@ Conforme o cadastro vigente de `docs/OPEN.md`:
 
 - **Abertas:** OPEN-088.
 - **Parcialmente resolvidas:** OPEN-086 e OPEN-087.
-- **Resolvidas:** OPEN-075 a OPEN-085.
+- **Resolvidas:** OPEN-074 a OPEN-085.
 
 OPEN-086 e OPEN-087 dependem de confirmação documentada das condições de acesso/licença do Adzuna e da viabilidade operacional da coleta diária. OPEN-088 continua sem método/provedor aprovado para determinar distância em quilômetros; não calcular tempo de deslocamento nem reintroduzir o provedor de rotas anteriormente considerado.
 
