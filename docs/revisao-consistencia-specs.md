@@ -11,7 +11,7 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 **Status atual:** somente REV-009 permanece aberta neste relatório, por envolver regras centrais de compatibilidade e descoberta de vagas. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
 
 - O mapa e o documento de detalhamento preservam os IDs SPEC-001 a SPEC-021; SPEC-014 e SPEC-015 foram removidas do escopo, sem renumerar as posteriores.
-- O `OPEN.md` contém questões numeradas de OPEN-001 a OPEN-085 sem IDs duplicados detectados.
+- O `OPEN.md` contém 81 questões identificadas, incluindo OPEN-086, OPEN-087 e OPEN-088; não foram detectados IDs duplicados nas linhas de cadastro das questões. Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua.
 - Todas as RBs identificadas na baseline aparecem referenciadas em algum ponto de `Specs.md`; isso não garante, por si só, que cada regra esteja associada à Spec correta.
 - RF-34 e RF-35 estão associados, respectivamente, à SPEC-012 e à SPEC-013.
 - O detalhamento de contratos e testes das SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 foi ampliado e aprovado pelo grupo (REV-002 encerrada).
@@ -39,7 +39,7 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 - Os IDs SPEC-001 a SPEC-021 aparecem tanto no mapa quanto no documento de detalhamento.
 - Os títulos das Specs no mapa correspondem aos títulos do documento de detalhamento.
-- Os IDs OPEN-001 a OPEN-085 não apresentam duplicidade detectada.
+- As 81 linhas de cadastro de questões em `OPEN.md` têm IDs únicos; a sequência inclui OPEN-086 a OPEN-088 e preserva lacunas históricas.
 - O `OPEN.md` contém seções organizadas por área funcional.
 - As decisões consolidadas sobre conta Empresa, perfil Recrutador, Administrador da plataforma, não armazenamento de laudos, análise de denúncia e deduplicação de vagas externas estão registradas no `OPEN.md`.
 - O fluxo consolidado de estados do funil está documentado em `docs/Fluxos e Estados/estados-trilha.md`.
