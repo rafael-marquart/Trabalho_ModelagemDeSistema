@@ -2586,7 +2586,7 @@ Consultar OPEN-068 e OPEN-069 em `docs/OPEN.md`. Os eventos obrigatórios e o en
 - **Baseline:** RF-21; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 011, 016.
 - **Caso de uso:** UC-06 — Avaliar Pós-Entrevista.
-- **Questões abertas:** OPEN-072 e OPEN-073.
+- **Questão aberta:** OPEN-073. OPEN-072 foi resolvida: uma avaliação por candidato por entrevista concluída, sem edição/substituição, com rejeição de duplicatas e registro/encaminhamento administrativo de indícios relevantes de abuso.
 
 ## 3. Escopo
 Candidato elegível registra avaliação com campos definidos na baseline; sistema valida associação e conteúdo, armazena e disponibiliza avaliações válidas para nota pública, preservando anonimato na apresentação pública.
@@ -2606,16 +2606,16 @@ SPEC-001, 011, 016. As dependências fornecem dados e capacidades; esta Spec nã
 ## 5. Comportamento esperado
 1. Somente candidato autenticado com candidatura vinculada a entrevista cadastrada e concluída pode avaliar o processo de que participou; a elegibilidade independe de contratação ou rejeição.
 2. A avaliação deve ser enviada em até 60 dias corridos após a conclusão da entrevista. Após esse prazo, novas submissões para essa entrevista são recusadas.
-3. O sistema valida no backend a associação entre o candidato autenticado, a candidatura e a entrevista, além do prazo de elegibilidade.
+3. O sistema valida no backend a associação entre o candidato autenticado, a candidatura e a entrevista, além do prazo de elegibilidade e da inexistência de avaliação anterior para aquela entrevista pelo mesmo candidato.
 4. Sistema apresenta dois critérios separados: acessibilidade e postura inclusiva, cada um avaliado em escala de 1 a 5 estrelas.
 5. Candidato informa obrigatoriamente uma nota em estrelas para cada critério e pode incluir comentário opcional; antes do envio, pode revisar os dados preenchidos.
 6. Sistema valida presença e faixa das duas notas, valida o comentário quando informado e valida o vínculo com a candidatura/entrevista correspondente, incluindo a janela de 60 dias corridos.
 7. Após o envio bem-sucedido, a avaliação é registrada e disponibilizada à SPEC-021 sem expor publicamente a identidade do candidato.
-8. A avaliação não pode ser editada após o envio. Eventuais denúncias ou problemas seguem o fluxo de moderação existente.
+8. Cada candidato pode registrar uma única avaliação por entrevista concluída, vinculada à candidatura correspondente. Submissões duplicadas são recusadas; a avaliação não pode ser editada nem substituída após o envio. Eventuais denúncias ou indícios relevantes de abuso são registrados e encaminhados para análise administrativa, sem bloqueio automático.
 9. A avaliação não altera diretamente a nota pública nesta capacidade.
 
 ## 6. Regras e invariantes
-- Só avaliação válida participa da nota; identidade não é pública; avaliação não altera nota diretamente nesta Spec; registrar auditoria.
+- Só avaliação válida participa da nota; identidade não é pública; avaliação não altera nota diretamente nesta Spec; registrar auditoria. O limite é uma avaliação por candidato por entrevista concluída; duplicatas são recusadas e a avaliação enviada não pode ser editada ou substituída. Eventos relevantes e indícios pertinentes de abuso são registrados/encaminhados para análise administrativa, sem bloqueio automático.
 - Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
 - Operações protegidas são validadas no backend.
 - Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
@@ -2630,8 +2630,9 @@ A capacidade mantém separação entre interface, regras de domínio e persistê
 ## 9. Contratos necessários
 - **Consultar elegibilidade:** verifica se o candidato autenticado possui candidatura vinculada à entrevista cadastrada e concluída e se a submissão ocorre em até 60 dias corridos após a conclusão da entrevista.
 - **Apresentar formulário:** disponibiliza os critérios separados de acessibilidade e postura inclusiva, cada um com escala de 1 a 5 estrelas, duas notas obrigatórias e comentário opcional.
-- **Validar submissão:** verifica que as duas notas obrigatórias estão presentes e dentro da escala de 1 a 5 estrelas, valida o comentário se informado e confirma o vínculo com a candidatura/entrevista correspondente.
-- **Registrar avaliação:** persiste avaliação válida com controles de integridade e confidencialidade.
+- **Validar submissão:** verifica que as duas notas obrigatórias estão presentes e dentro da escala de 1 a 5 estrelas, valida o comentário se informado, confirma o vínculo com a candidatura/entrevista correspondente e verifica se o mesmo candidato já avaliou aquela entrevista.
+- **Registrar avaliação:** persiste avaliação válida com controles de integridade e confidencialidade; recusa submissão duplicada e não permite edição ou substituição após o registro.
+- **Registrar e encaminhar indícios de abuso:** registra eventos relevantes e encaminha indícios pertinentes para análise administrativa, sem bloqueio automático nem alteração automática da avaliação ou da distribuição pública.
 - **Disponibilizar dados válidos:** entrega os dados necessários à SPEC-021 sem publicar identidade ou avaliação individual.
 
 Contratos conceituais; não definem endpoints HTTP.
@@ -2644,7 +2645,8 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 - [ ] Apenas candidato elegível registra avaliação associada ao processo correspondente.
 - [ ] As notas de acessibilidade e postura inclusiva são campos separados e obrigatórios, cada uma de 1 a 5 estrelas.
 - [ ] O comentário pode ficar vazio; quando informado, é validado.
-- [ ] Após o envio, o candidato não consegue editar nem reenviar a avaliação para alterá-la.
+- [ ] Após o envio, o candidato não consegue editar nem substituir a avaliação; uma segunda avaliação do mesmo candidato para a mesma entrevista é recusada.
+- [ ] Eventos relevantes são registrados e indícios pertinentes de abuso podem ser encaminhados para análise administrativa, sem bloqueio automático nem alteração automática da avaliação/distribuição pública.
 - [ ] A apresentação pública não identifica o autor; avaliação inválida não alimenta a nota pública (RNF-08/RNF-09).
 
 - [ ] Acesso limitado ao ator autorizado.
@@ -2670,9 +2672,11 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-018-06 | Comentário não foi informado | Submissão pode prosseguir se os demais campos e regras forem válidos |
 | T-018-09 | Candidato tenta editar ou reenviar uma avaliação já registrada | Sistema não permite alterar a avaliação enviada |
 | T-018-10 | Avaliação é consultada em contexto público | Identidade do autor e conteúdo individual não são expostos |
+| T-018-11 | Candidato tenta registrar segunda avaliação para a mesma entrevista | Submissão duplicada é recusada sem substituir a avaliação existente |
+| T-018-12 | Há indício relevante de abuso relacionado à avaliação | Evento é registrado e encaminhado para análise administrativa, sem bloqueio automático ou alteração automática da avaliação/distribuição pública |
 
 ## 13. Questões em aberto
-OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado à candidatura/entrevista concluída, com prazo de 60 dias corridos após a conclusão. OPEN-071 foi resolvida: duas notas obrigatórias e separadas (acessibilidade e postura inclusiva), cada uma de 1 a 5 estrelas, comentário opcional e impossibilidade de edição após envio. Consultar OPEN-072 e OPEN-073 em `docs/OPEN.md`; essas questões permanecem abertas.
+OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado à candidatura/entrevista concluída, com prazo de 60 dias corridos após a conclusão. OPEN-071 foi resolvida: duas notas obrigatórias e separadas (acessibilidade e postura inclusiva), cada uma de 1 a 5 estrelas, comentário opcional e impossibilidade de edição após envio. OPEN-072 foi resolvida: uma avaliação por candidato por entrevista concluída, sem edição/substituição, com rejeição de duplicatas e registro/encaminhamento administrativo de indícios relevantes de abuso, sem bloqueio automático. Consultar OPEN-073 em `docs/OPEN.md`, que permanece aberta.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
