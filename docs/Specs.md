@@ -57,13 +57,6 @@ Estados possíveis: especificada, aprovada, em implementação, implementada ou 
 - Escolha de tecnologia específica de autenticação, sessão, banco de dados, framework ou provedor de e-mail.
 - Definição de política de senha, duração de sessão ou mecanismo de bloqueio além do que a baseline determina.
 
-## 3.0. Apresentação da compatibilidade (decisão OPEN-044)
-- Exibir resultado geral e score final somente quando a análise da SPEC-007 estiver completa e o score for válido. Trava crítica prevalece e impede avanço mesmo com score positivo.
-- Apresentar os fatores A (acessibilidade), T (perfil técnico) e D (distância/modalidade), com seus resultados e explicações curtas, sem recalcular nem alterar os fatores da SPEC-007.
-- Oferecer detalhamento expansível dos critérios publicados relevantes, informações do próprio perfil consideradas, correspondências, incompatibilidades e dados que impediram conclusão. Não expor outros candidatos, dados internos ou detalhes de acessibilidade desnecessários.
-- Se houver dados insuficientes, não apresentar score final, score parcial, score zero ou compatibilidade presumida. Indicar fatores/dimensões avaliáveis e pendências, sinalizar dimensões sem dados como “Dados insuficientes” e permitir complementação pelo fluxo existente. Se faltarem dados para verificar trava crítica, informar que a elegibilidade não foi concluída. Apresentar score final somente após análise completa e válida, conforme OPEN-046.
-- Esta decisão trata apenas da apresentação; cálculo, pesos, parâmetros, travas e critérios permanecem definidos na SPEC-007 e nas decisões próprias
-
 ## 3.1. Telas e evidência de layout
 
 | Tela/área | Finalidade | Layout |
