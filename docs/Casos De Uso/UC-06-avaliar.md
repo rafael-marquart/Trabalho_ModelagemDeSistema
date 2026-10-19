@@ -22,13 +22,13 @@ Avaliar a experiência da entrevista quanto ao cumprimento dos recursos de acess
 
 1. O sistema apresenta campos separados para avaliar acessibilidade e postura inclusiva, cada um em escala de 1 a 5 estrelas.
 2. O candidato informa obrigatoriamente as duas notas e, se desejar, um comentário opcional; antes de enviar, pode revisar os dados.
-3. O sistema valida que o candidato autenticado está vinculado à candidatura e à entrevista concluída e que a submissão ocorre em até 60 dias corridos após a conclusão.
+3. O sistema valida que o candidato autenticado está vinculado à candidatura e à entrevista concluída, que a submissão ocorre em até 60 dias corridos após a conclusão e que ainda não existe avaliação desse candidato para a entrevista.
 4. O sistema valida que ambas as notas estão preenchidas e dentro da escala de 1 a 5 estrelas e valida o comentário quando informado.
-5. Se o prazo tiver expirado, o vínculo não for válido ou os campos obrigatórios forem inválidos, o sistema recusa a submissão.
-6. Se a validação for bem-sucedida, o sistema registra a avaliação e preserva os dados necessários à moderação. Após o envio, o candidato não pode editar a avaliação.
-5. Quando houver denúncia ou indício de abuso, o registro segue para análise administrativa.
-6. O Administrador analisa a ocorrência e registra a decisão.
-7. Qualquer alteração de nota ou efeito de moderação ocorre somente após a decisão administrativa.
+5. Se o prazo tiver expirado, o vínculo não for válido, já existir avaliação para a entrevista ou os campos obrigatórios forem inválidos, o sistema recusa a submissão.
+6. Se a validação for bem-sucedida, o sistema registra a avaliação e preserva os dados necessários à moderação. Cada candidato pode registrar uma única avaliação por entrevista; após o envio, não pode editar nem substituir a avaliação.
+7. Eventos relevantes são registrados. Quando houver denúncia ou indício relevante de abuso, o caso segue para análise administrativa, sem bloqueio automático.
+8. O Administrador analisa a ocorrência e registra a decisão conforme o fluxo de moderação existente.
+9. A administração não altera diretamente a avaliação nem a distribuição pública de estrelas; qualquer efeito depende das regras aplicáveis e da decisão administrativa registrada.
 
 ## Exceções e Fluxos Alternativos
 
@@ -62,8 +62,9 @@ Avaliar a experiência da entrevista quanto ao cumprimento dos recursos de acess
 - Apenas candidato autenticado vinculado à candidatura e à entrevista concluída pode avaliar; a elegibilidade independe de contratação ou rejeição.
 - A avaliação contém duas notas obrigatórias e separadas: acessibilidade e postura inclusiva, cada uma de 1 a 5 estrelas.
 - O comentário é opcional; quando informado, é validado.
-- O candidato pode revisar a avaliação antes de enviá-la, mas não pode editar ou reenviar para alterar uma avaliação já registrada.
+- O candidato pode revisar a avaliação antes de enviá-la, mas não pode editar, substituir ou registrar uma segunda avaliação para a mesma entrevista após o registro inicial.
 - Novas submissões são aceitas somente até 60 dias corridos após a conclusão da entrevista; após o prazo, são recusadas.
+- Indícios relevantes de abuso são registrados e encaminhados para análise administrativa, sem bloqueio automático.
 - Avaliações submetidas são gravadas para composição da nota pública conforme as regras aplicáveis.
 - Avaliação anônima preserva anonimato enquanto permite a triagem de conteúdo pela equipe de moderação.
 - Denúncias acionam o fluxo de moderação e ficam sujeitas à análise administrativa.
