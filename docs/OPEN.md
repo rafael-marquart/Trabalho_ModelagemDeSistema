@@ -192,7 +192,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 ### SPEC-019 — Denunciar incompatibilidade ou falsa inclusão
 | ID | Estado | Questão em aberto | Contexto/impacto |
 |---|---|---|---|
-| OPEN-074 | aberta | Quem pode denunciar e em quais circunstâncias? | RF-14 descreve a capacidade sem detalhar toda elegibilidade. |
+| OPEN-074 | resolvida | Quem pode denunciar e em quais circunstâncias? | Decisão aprovada: somente candidato autenticado com acesso à vaga pode denunciar possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga. O sistema valida autenticação e referência válida à vaga, aplica controles antiabuso existentes e encaminha para análise administrativa. A denúncia não comprova irregularidade, não bloqueia a vaga nem altera a nota automaticamente. Campos/evidências, limites de frequência e visibilidade permanecem nas OPEN-075, OPEN-076 e OPEN-077. |
 | OPEN-075 | aberta | Quais campos/evidências são permitidos e como a denúncia se associa à avaliação/empresa? | O modelo prevê descrição e referências, mas não detalha evidências adicionais. |
 | OPEN-076 | aberta | Quais controles antiabuso e limites de frequência serão usados? | RB-24 exige proteção contra abuso, mas os parâmetros não estão definidos. |
 | OPEN-077 | aberta | Qual conteúdo e andamento podem ser vistos pelo denunciante e pelo denunciado? | A política de confidencialidade e comunicação precisa ser delimitada. |
