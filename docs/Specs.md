@@ -1664,7 +1664,7 @@ Contratos conceituais, sem endpoints HTTP.
 - **Questões:** OPEN-036 a OPEN-039.
 
 ## 3. Escopo
-**Incluído:** buscar por termos de interesse e filtros citados nos casos de uso, incluindo cargo/localização e modalidade; consultar vagas ativas; aplicar a trava crítica pela SPEC-007; ordenar resultados elegíveis por compatibilidade; informar ausência de resultados.
+**Incluído:** buscar por termos de interesse e filtros por cargo, área profissional, modalidade e localização; filtro de acessibilidade conforme opções definidas e validadas na OPEN-023; consultar vagas ativas e válidas; combinar filtros de categorias diferentes por AND e valores dentro da mesma categoria por OR; aplicar a trava crítica pela SPEC-007; ordenar resultados elegíveis por compatibilidade; informar ausência de resultados.
 
 **Fora do escopo:** cálculo do score; detalhe completo da vaga; candidatura; edição/publicação; alertas por e-mail, cuja inclusão precisa ser confirmada; inventar filtros ausentes da baseline.
 
@@ -1697,15 +1697,16 @@ Protótipos devem seguir a identidade visual e acessibilidade transversal, ser a
 9. Alterações de status devem respeitar a SPEC-009.
 
 ## 6. Regras e invariantes
-1. Busca respeita os filtros suportados.
-2. Vagas incompatíveis por barreira crítica não aparecem como elegíveis (RF-09, RB-02, RB-15).
-3. Vagas externas só participam após validação (RB-10, RB-17).
-4. Dados ausentes não significam compatibilidade (RB-16).
-5. Informações relevantes de acessibilidade devem estar disponíveis antes da candidatura (RB-13).
-6. Ordenação usa resultado da SPEC-007, sem duplicar o algoritmo.
-7. Fatores relevantes devem ser apresentados (RB-30).
-8. Busca e filtros devem ser utilizáveis por teclado, leitores de tela e diferentes tamanhos de tela.
-9. Salvar alertas por e-mail é citado como sugestão em UC-02, mas não é presumido como parte desta capacidade.
+1. Busca respeita o catálogo aprovado: cargo, área profissional, modalidade e localização; acessibilidade somente conforme OPEN-023.
+2. Filtros de categorias diferentes são combinados por AND; valores selecionados dentro da mesma categoria são combinados por OR. Filtros não selecionados não restringem resultados e remover um filtro mantém os demais.
+3. Vagas incompatíveis por barreira crítica não aparecem como elegíveis (RF-09, RB-02, RB-15).
+4. Vagas externas só participam após validação (RB-10, RB-17).
+5. Dados ausentes não significam compatibilidade (RB-16).
+6. Informações relevantes de acessibilidade devem estar disponíveis antes da candidatura (RB-13).
+7. Ordenação usa resultado da SPEC-007, sem duplicar o algoritmo.
+8. Fatores relevantes devem ser apresentados (RB-30).
+9. Busca e filtros devem ser utilizáveis por teclado, leitores de tela e diferentes tamanhos de tela.
+10. Salvar alertas por e-mail é citado como sugestão em UC-02, mas não é presumido como parte desta capacidade.
 
 ## 7. Modelo de domínio
 - **VAGA:** oportunidade e status.
@@ -1754,7 +1755,7 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 | T-008-08 | Navegar filtros por teclado | Operação sem mouse possível |
 
 ## 13. Questões em aberto
-- **OPEN-036:** filtros definitivos e combinação entre eles.
+- **OPEN-036:** resolvida; catálogo de filtros e combinação AND/OR definidos.
 - **OPEN-037:** campos consultáveis e regras de busca textual.
 - **OPEN-038:** paginação, limites de resultados e ordenações alternativas.
 - **OPEN-039:** se alertas/salvamento de busca fazem parte do escopo ou são apenas sugestão.
