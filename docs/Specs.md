@@ -2734,7 +2734,7 @@ OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado
 - **Baseline:** RF-14; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 018, 020.
 - **Caso de uso:** UC-11 — Denunciar Vaga Incompatível.
-- **Questões abertas:** OPEN-076 e OPEN-077. OPEN-074 e OPEN-075 resolvidas: elegibilidade/circunstâncias e campos/evidências/vínculos da denúncia definidos.
+- **Questões relacionadas:** OPEN-074 a OPEN-077 resolvidas. As decisões sobre elegibilidade, campos/evidências, controles antiabuso, limite de frequência, confidencialidade e andamento estão refletidas nesta Spec e em `docs/OPEN.md`.
 
 ## 3. Escopo
 Candidato autenticado com acesso à vaga pode registrar denúncia sobre possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga. O sistema valida e encaminha para moderação, confirmando o registro sem antecipar conclusão.
@@ -2753,11 +2753,11 @@ SPEC-001, 018, 020. As dependências fornecem dados e capacidades; esta Spec nã
 
 ## 5. Comportamento esperado
 1. Candidato autenticado com acesso à vaga seleciona a vaga e registra denúncia sobre possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga.
-2. Sistema valida autenticação, referência válida à vaga e controles antiabuso existentes. Exige categoria da situação e descrição/justificativa; evidências adicionais são opcionais. Não exige laudo médico ou documento pessoal sensível como condição de registro. Os limites de frequência permanecem na OPEN-076.
+2. Sistema valida autenticação, referência válida à vaga e controles antiabuso existentes. Exige categoria da situação e descrição/justificativa; evidências adicionais são opcionais. Não exige laudo médico ou documento pessoal sensível como condição de registro. Aplicar o limite aprovado de até 3 denúncias por candidato em 24 horas e impedir registro repetido da mesma denúncia para a mesma vaga enquanto estiver registrada e em análise; validar os controles no backend e informar claramente quando o limite for atingido. Denúncias legítimas sobre vagas diferentes continuam permitidas dentro do limite.
 3. Denúncia é registrada e encaminhada à moderação.
 4. Sistema confirma o registro sem antecipar a decisão.
 5. O registro da denúncia não bloqueia vaga nem altera nota automaticamente.
-6. Estado e informações são expostos apenas conforme política de confidencialidade aprovada.
+6. O denunciante pode consultar andamento e resultado, sem acesso à investigação interna. A Empresa denunciada recebe os pontos necessários para responder, sem identidade ou dados pessoais do denunciante. Exibir os estados “Recebida”, “Em análise”, “Aguardando informações” quando necessário e “Concluída”; restringir denúncia e evidências a pessoas autorizadas.
 
 ## 6. Regras e invariantes
 - Somente candidato autenticado com acesso à vaga pode registrar denúncia.
@@ -2776,7 +2776,7 @@ A capacidade mantém separação entre interface, regras de domínio e persistê
 
 ## 9. Contratos necessários
 - **Registrar denúncia:** recebe referência válida à vaga, categoria da situação e descrição/justificativa; evidências adicionais são opcionais. Vincula a denúncia à vaga e à Empresa responsável por meio dessa vaga. Se a denúncia questionar avaliação específica, permite vínculo ao registro correspondente após validar a referência; esse vínculo não é obrigatório para as demais denúncias.
-- **Validar solicitação:** verifica autenticação do candidato, referência válida à vaga acessível ao candidato e controles antiabuso existentes, sem inventar limites numéricos.
+- **Validar solicitação:** verifica autenticação do candidato, referência válida à vaga acessível e os controles aprovados: até 3 denúncias por candidato em 24 horas e bloqueio de repetição da mesma denúncia para a mesma vaga enquanto estiver registrada e em análise.
 - **Persistir e encaminhar:** registra a denúncia e disponibiliza-a à fila de moderação.
 - **Confirmar recebimento:** informa que a denúncia foi registrada, sem antecipar o resultado da análise.
 - **Restringir consulta:** expõe andamento e conteúdo somente conforme a política de confidencialidade que o grupo aprovar.
@@ -2816,7 +2816,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-019-07 | Candidato autenticado tenta denunciar vaga à qual não tem acesso | Operação recusada ou referência não aceita; nenhuma denúncia é associada incorretamente |
 
 ## 13. Questões em aberto
-OPEN-074 foi resolvida: somente candidato autenticado com acesso à vaga pode denunciar possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga. OPEN-075 foi resolvida: campos obrigatórios, evidências opcionais e vínculos à vaga/Empresa e, quando aplicável, à avaliação específica estão definidos. Consultar OPEN-076 e OPEN-077 em `docs/OPEN.md`; essas questões permanecem abertas até decisão explícita do grupo.
+OPEN-074 a OPEN-077 estão resolvidas. As decisões aprovadas sobre elegibilidade, campos obrigatórios e evidências opcionais, vínculo à vaga/Empresa e avaliação quando aplicável, limite de até 3 denúncias por candidato em 24 horas, prevenção de repetição da mesma denúncia para a mesma vaga enquanto estiver em análise, confidencialidade e estados de andamento estão registradas em `docs/OPEN.md` e refletidas nesta Spec.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2843,7 +2843,7 @@ OPEN-074 foi resolvida: somente candidato autenticado com acesso à vaga pode de
 - **Baseline:** RF-22; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-001, 019, 021.
 - **Caso de uso:** UC-11 — Denunciar Vaga Incompatível (fluxo de análise administrativa).
-- **Questões abertas:** OPEN-078 a OPEN-081.
+- **Questões relacionadas:** OPEN-078 a OPEN-081 resolvidas; critérios de análise, catálogo de decisões, prazo/prioridade e comunicação às partes estão refletidos nesta Spec e em `docs/OPEN.md`.
 
 ## 3. Escopo
 Administrador da plataforma consulta fila e contexto autorizado, analisa e registra decisão/fundamento; efeitos autorizados são encaminhados às capacidades correspondentes.
@@ -2866,7 +2866,7 @@ SPEC-001, 019, 021. As dependências fornecem dados e capacidades; esta Spec nã
 2. Sistema verifica o papel de Administrador da plataforma; Recrutadores não recebem essa permissão por vínculo com Empresa.
 3. Administrador consulta denúncia e contexto autorizado, analisa e registra decisão.
 4. Sistema persiste decisão e responsável, mantendo histórico.
-5. Efeito sobre vaga ou nota só ocorre quando explicitamente autorizado pela decisão e pelas regras aplicáveis.
+5. O Administrador verifica a vaga, categoria, descrição e evidências disponíveis, comparando-as aos requisitos de acessibilidade e inclusão. Quando necessário, solicita esclarecimentos à Empresa denunciada. Classifica a denúncia como procedente, parcialmente procedente, improcedente ou inconclusiva; registra conclusão e justificativa. Em casos procedentes ou parcialmente procedentes, aplica somente medidas relativas a irregularidades confirmadas e permitidas pelas regras. Caso inconclusivo, pode solicitar informações ou encerrar sem penalidade. A denúncia não gera bloqueio automático, alteração de avaliação ou distribuição pública de estrelas.
 6. Denúncia sem decisão não altera nota nem bloqueia vaga.
 
 ## 6. Regras e invariantes
@@ -2885,7 +2885,7 @@ A capacidade mantém separação entre interface, regras de domínio e persistê
 ## 9. Contratos necessários
 - **Listar fila de moderação:** permite consulta somente ao Administrador autenticado da plataforma.
 - **Consultar denúncia e contexto:** retorna somente dados pertinentes e autorizados para análise.
-- **Registrar decisão:** guarda decisão e fundamento nos limites do catálogo que o grupo aprovar; o catálogo continua em OPEN-079.
+- **Registrar decisão:** guarda uma das classificações aprovadas — procedente, parcialmente procedente, improcedente ou inconclusiva —, fundamento e responsável. Em caso inconclusivo, registra solicitação de informação adicional ou encerramento sem penalidade.
 - **Aplicar efeito autorizado:** encaminha alterações somente quando a decisão registrada e as regras aplicáveis permitirem.
 - **Consultar histórico de moderação:** permite auditoria das decisões e efeitos, com acesso controlado.
 
@@ -2921,7 +2921,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 | T-020-07 | Usuário sem permissão consulta dados da moderação | Acesso negado ou conteúdo restrito conforme política aprovada |
 
 ## 13. Questões em aberto
-Consultar OPEN-078 a OPEN-081 em `docs/OPEN.md`. As questões permanecem abertas até decisão explícita do grupo.
+OPEN-078 a OPEN-081 estão resolvidas. As decisões sobre critérios/evidências, catálogo de decisões, meta de análise em até 5 dias úteis com extensão justificada quando houver informação adicional, prioridade para riscos relevantes à acessibilidade/segurança e comunicação às partes estão registradas em `docs/OPEN.md` e refletidas nesta Spec.
 
 ## 14. Definition of Done
 - [ ] Texto revisado e aprovado.
@@ -2948,7 +2948,7 @@ Consultar OPEN-078 a OPEN-081 em `docs/OPEN.md`. As questões permanecem abertas
 - **Baseline:** RF-13; requisitos e regras correlatos conforme mapa de Specs.
 - **Dependências:** SPEC-004, 018, 020.
 - **Caso de uso:** Capacidade de nota pública; dependências em SPEC-004, SPEC-018 e SPEC-020.
-- **Questões abertas:** OPEN-082 a OPEN-085.
+- **Questões relacionadas:** OPEN-082 a OPEN-085 resolvidas; apresentação por distribuição de estrelas, suficiência de uma avaliação válida, estado sem dados suficientes e vedação à alteração administrativa direta estão refletidas nesta Spec e em `docs/OPEN.md`.
 
 ## 3. Escopo
 Exibir somente a distribuição agregada da frequência das avaliações válidas por quantidade de estrelas, sem identidade, identificadores ou comentários individuais; quando não houver avaliações válidas, não exibir nota e informar dados insuficientes; refletir decisão de moderação somente após decisão registrada e conforme efeito autorizado. Os registros individuais e comentários opcionais ficam restritos a pessoas autorizadas para finalidades legítimas da plataforma e são retidos por 1 ano após o envio. A distribuição agregada pode ser mantida por prazo indeterminado apenas se não permitir reconstruir avaliações individuais nem identificar candidatos.
