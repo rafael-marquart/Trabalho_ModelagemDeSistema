@@ -26,19 +26,19 @@ Em 20/10/2026, o usuário aprovou os materiais visuais e rascunhos apresentados 
 
 O catálogo e os detalhes de cada SVG estão em [Prototipos.md](Prototipos.md).
 
-## Telas adicionais trabalhadas no Figma
+## Telas adicionais exportadas
 
-Além dos SVGs listados acima, foram trabalhados no Figma rascunhos das seguintes áreas:
+Os seguintes protótipos foram adicionados como SVGs nesta pasta:
 
-- Busca de vagas.
-- Detalhe da vaga.
-- Resultado de candidatura.
-- Minhas candidaturas.
-- Detalhe e histórico de candidatura.
-- Confirmação de cancelamento da candidatura.
-- Resultado do cancelamento da candidatura.
+- [Busca de vagas](Busca-de-Vagas.svg)
+- [Detalhe da vaga](Detalhe-da-Vaga.svg)
+- [Resultado de candidatura](Resultado-Candidatura.svg)
+- [Minhas candidaturas](Minhas-Candidaturas.svg)
+- [Detalhe e histórico de candidatura](Detalhe-Historico-Candidatura.svg)
+- [Confirmação de cancelamento](Confirmacao-Cancelamento.svg)
+- [Resultado do cancelamento](Resultado-Cancelamento.svg)
 
-Esses rascunhos devem ser exportados do Figma para esta pasta quando os arquivos finais estiverem disponíveis. Não são apresentados aqui como arquivos exportados, pois a exportação não foi realizada nesta atualização. O rascunho de resultado do cancelamento ainda tem um ajuste visual pendente no Figma: remover/ocultar o controle de cancelamento e aplicar cinza ao status “Cancelada”. A tentativa de edição do Figma foi impedida pelo limite de uso da ferramenta, portanto essa alteração **não foi aplicada**.
+**Ajuste visual ainda pendente:** o SVG de resultado do cancelamento foi incluído como exportado, mas a tela ainda precisa remover/ocultar o controle de cancelamento e aplicar cinza ao status “Cancelada”. A edição no Figma não foi aplicada por limite de uso da ferramenta; portanto, esse arquivo não deve ser tratado como versão corrigida desse ajuste.
 
 ## Direção visual
 
