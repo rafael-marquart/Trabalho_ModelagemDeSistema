@@ -288,7 +288,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 - Cálculo de compatibilidade, pertencente à SPEC-007.
 - Busca e filtros de vagas.
 - Armazenamento de laudos médicos: o sistema não armazena laudos; necessidades podem ser autodeclaradas.
-- Os limites de tamanho dos campos foram aprovados: nomes, cargos, instituições e títulos — 150 caracteres; descrições de experiências, cursos e certificações — 5.000 caracteres; descrição de competências — 500 caracteres; URLs de links profissionais e de validação de certificações — 2.048 caracteres; códigos e identificadores de certificações — 150 caracteres. O limite é por campo, sem máximo funcional fixo para a quantidade de registros. Datas válidas são armazenadas em AAAA-MM-DD e exibidas em DD/MM/AAAA; datas inexistentes são rejeitadas. URLs profissionais e de validação devem ser válidas e começar com http:// ou https://. Escolaridade, situação da formação, proficiência em idiomas e tipo de link profissional usam opções padronizadas; os valores dos catálogos permanecem pendentes na OPEN-007.2.
+- Os limites de tamanho dos campos foram aprovados: nomes, cargos, instituições e títulos — 150 caracteres; descrições de experiências, cursos e certificações — 5.000 caracteres; descrição de competências — 500 caracteres; URLs de links profissionais e de validação de certificações — 2.048 caracteres; códigos e identificadores de certificações — 150 caracteres. O limite é por campo, sem máximo funcional fixo para a quantidade de registros. Datas válidas são armazenadas em AAAA-MM-DD e exibidas em DD/MM/AAAA; datas inexistentes são rejeitadas. URLs profissionais e de validação devem ser válidas e começar com http:// ou https://. Escolaridade, situação da formação, proficiência em idiomas e tipo de link profissional usam opções padronizadas conforme os catálogos aprovados na OPEN-007.2.
 
 ## 3.1. Telas e evidência de layout
 
@@ -334,10 +334,14 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 
 ### 5.3 Declarar necessidades de acessibilidade
 1. Candidato acessa a área de necessidades.
-2. Declara necessidades funcionais por autodeclaração.
-3. Sistema organiza os dados nas categorias do vetor: necessidades arquitetônicas, de comunicação e tecnológicas.
-4. Sistema valida o preenchimento conforme os requisitos de dados mínimos.
-5. Após confirmação e validação, persiste os dados com controles de acesso compatíveis com sua confidencialidade.
+2. Declara necessidades funcionais por autodeclaração, sem exigir laudo médico.
+3. Sistema apresenta o catálogo inicial por categoria. **Arquitetônicas:** acesso sem escadas/rampa; elevador acessível; espaço adequado para circulação; banheiro acessível; estacionamento acessível. **Comunicação:** Libras; legendas; transcrição de áudio; instruções por escrito; possibilidade de comunicação por texto. **Tecnológicas:** compatibilidade com leitor de tela; navegação por teclado; ampliação de texto; alto contraste; compatibilidade com tecnologia assistiva.
+4. Para cada opção, o candidato pode selecionar “necessária”, “não necessária” ou “não informada”. O sistema não interpreta uma opção sem resposta como “não necessária”.
+5. O candidato pode descrever uma necessidade não contemplada no catálogo. Essa descrição é autodeclarada e não exige laudo médico.
+6. A interface diferencia uma adaptação necessária para participar de uma preferência; não infere obrigatoriedade pela categoria, pela seleção de uma necessidade ou pela ausência de informação. A indicação de obrigatoriedade deve ser explícita e preservada para uso pela SPEC-007 conforme RB-06.
+7. Sistema organiza os dados nas categorias do vetor: necessidades arquitetônicas, de comunicação e tecnológicas.
+8. Sistema valida o preenchimento conforme os requisitos de dados mínimos.
+9. Após confirmação e validação, persiste as opções selecionadas e eventual descrição livre com controles de acesso compatíveis com a confidencialidade das informações.
 
 ### 5.4 Atualizar necessidades
 1. Candidato consulta suas necessidades atuais e altera o que deseja.
@@ -355,7 +359,9 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 6. As categorias aprovadas na OPEN-007 — formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais — não bloqueiam o salvamento por categoria.
 7. Necessidades funcionais e recursos indispensáveis não exigem declaração universal. A interface deve distinguir ausência de informação (“não informado”) de declaração de inexistência de necessidade; necessidades declaradas podem ser autodeclaradas sem exigir ou armazenar laudo.
 8. A ausência de dados necessários à análise de uma vaga deve ser indicada sem presumir compatibilidade, conforme RB-16, e não torna automaticamente esses dados obrigatórios para salvar o perfil.
-9. A distinção de necessidades obrigatórias deve ser preservada quando suportada pela baseline, pois RB-06 determina que sejam consideradas na compatibilidade.
+9. O catálogo de necessidades contém as opções arquitetônicas (acesso sem escadas/rampa, elevador acessível, espaço adequado para circulação, banheiro acessível e estacionamento acessível), de comunicação (Libras, legendas, transcrição de áudio, instruções por escrito e possibilidade de comunicação por texto) e tecnológicas (compatibilidade com leitor de tela, navegação por teclado, ampliação de texto, alto contraste e compatibilidade com tecnologia assistiva). Para cada opção, preservar o estado “necessária”, “não necessária” ou “não informada”; ausência de resposta não significa ausência de necessidade.
+10. O candidato pode descrever necessidades não contempladas no catálogo, sem exigência de laudo médico. Inclusão, alteração ou descontinuação de opções do catálogo depende de decisão explícita do projeto.
+11. Distinguir adaptações necessárias para participação de preferências. Não inferir obrigatoriedade por categoria ou ausência de dados; a obrigatoriedade deve ser explicitamente registrada e preservada para a análise de compatibilidade conforme RB-06.
 10. Alterações relevantes são rastreáveis conforme RB-27 e RNF-14.
 11. O sistema registra necessidades funcionais declaradas; não infere diagnóstico nem exige documento não previsto.
 12. Persistir o perfil não substitui as regras de compatibilidade da SPEC-007.
