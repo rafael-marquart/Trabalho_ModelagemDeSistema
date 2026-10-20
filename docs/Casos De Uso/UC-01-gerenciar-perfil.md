@@ -25,7 +25,7 @@ Cadastrar e atualizar as categorias aprovadas do perfil do candidato — dados p
 12. O sistema indica dados insuficientes quando faltarem informações necessárias à análise de uma vaga, sem presumir compatibilidade conforme RB-16.
 13. Datas válidas são armazenadas em AAAA-MM-DD e exibidas em DD/MM/AAAA; datas inexistentes são rejeitadas.
 14. URLs de links profissionais e de validação de certificações devem ser válidas e começar com http:// ou https://.
-15. Escolaridade, situação da formação, proficiência em idiomas e tipo de link profissional usam opções padronizadas.
+15. Escolaridade usa ensino fundamental, ensino médio, técnico, graduação, especialização, mestrado, doutorado ou outro; situação da formação usa em andamento ou concluída; proficiência em idiomas usa básico, intermediário, avançado ou fluente; tipo de link profissional usa LinkedIn, portfólio, GitHub, site pessoal ou outro. Quando selecionado “outro”, o candidato pode informar o valor correspondente.
 13. O sistema atualiza o perfil.
 14. O sistema registra alterações relevantes para rastreabilidade.
 
