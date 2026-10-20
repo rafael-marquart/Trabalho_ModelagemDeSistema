@@ -1688,12 +1688,10 @@ Contratos conceituais, sem endpoints HTTP.
 | T-007-08 | Vaga externa não validada | Não participa da análise |
 
 ## 13. Questões em aberto
-- **OPEN-031:** resolvida; pesos gerais A=50%, T=30%, D=20%; parâmetros e pesos internos de A/T/D, score final, precisão e arredondamento estão na seção 6.1. A trava crítica precede o score; dados necessários ausentes seguem OPEN-033/034 e não recebem zero nem compatibilidade presumida.
-- **OPEN-032:** referência antiga sem correspondência identificada na tabela atual de `docs/OPEN.md`; confirmar rastreabilidade antes de tratá-la como pendência vigente.
-- **OPEN-033:** resolvida; quando faltar informação necessária em qualquer dimensão, indicar “dados insuficientes”, não apresentar score final como completo e informar dimensões avaliadas/dados faltantes; ausência não vira zero nem compatibilidade presumida.
-- **OPEN-034:** resolvida; modalidade e distância em quilômetros, faixas de pontuação e regra de exclusão de distância para vagas totalmente remotas estão documentadas na seção 6.1
-- **OPEN-035:** referência antiga sem correspondência identificada na tabela atual de `docs/OPEN.md`; confirmar rastreabilidade antes de tratá-la como pendência vigente.
-- **OPEN-088:** resolvida; distância geográfica em linha reta calculada pela fórmula de Haversine, com coordenadas de latitude e longitude e resultado em quilômetros; sem distância por vias ou tempo de deslocamento.
+
+- **Parâmetros e regras de cálculo:** pesos gerais e internos, dados insuficientes, modalidade, distância em quilômetros, faixas de pontuação e arredondamento estão definidos na seção 6.1.
+- **Rastreabilidade do cálculo:** os dados mínimos necessários para explicar e reproduzir cada execução estão definidos na seção 6.2.
+- **OPEN-088:** decisão sobre distância geográfica em linha reta pelo método de Haversine registrada em `docs/OPEN.md`.
 
 ## 14. Definition of Done
 - [ ] Texto aprovado.
