@@ -20,6 +20,7 @@ Cadastrar e atualizar as categorias aprovadas do perfil do candidato — dados p
 8. O sistema remove espaços desnecessários no início e no fim dos campos de texto e rejeita campos obrigatórios preenchidos apenas com espaços.
 9. Quando houver datas de início e término, o término não pode ser anterior ao início; registros em andamento podem ficar sem data de término.
 10. O cadastro de links profissionais é opcional; cada link cadastrado exige tipo e URL em formato válido. Não há limite funcional máximo fixo para a quantidade de experiências, cursos, certificações ou links.
+11. Limites por campo: nomes, cargos, instituições e títulos — 150 caracteres; descrições de experiências, cursos e certificações — 5.000 caracteres; descrição de competências — 500 caracteres; URLs de links profissionais e de validação de certificações — 2.048 caracteres; códigos e identificadores de certificações — 150 caracteres. Esses limites não restringem a quantidade de registros.
 11. Se houver erro, o sistema indica o campo a corrigir, preserva os dados preenchidos e impede o salvamento inválido.
 12. O sistema indica dados insuficientes quando faltarem informações necessárias à análise de uma vaga, sem presumir compatibilidade conforme RB-16.
 13. O sistema atualiza o perfil.
