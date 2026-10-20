@@ -318,9 +318,12 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 ## 5. Comportamento esperado
 
 ### 5.1 Consultar perfil
-1. Candidato autentica-se e abre seu perfil.
-2. Sistema recupera e apresenta dados profissionais e necessidades associados à conta.
-3. Sistema não apresenta dados privados a outro candidato.
+1. O candidato pode consultar e atualizar seu perfil profissional centralizado, que não precisa ser recriado para cada candidatura.
+2. O perfil profissional público pode apresentar formação, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais.
+3. Informações básicas de acessibilidade só aparecem publicamente quando o próprio candidato escolhe explicitamente publicá-las; essa escolha pode ser alterada pelo candidato.
+4. Detalhes adicionais das necessidades de acessibilidade permanecem protegidos e só podem ser consultados por Recrutadores autenticados e autorizados da Empresa responsável, no contexto da candidatura e conforme a finalidade do processo seletivo.
+5. Não expor publicamente por padrão diagnósticos, laudos médicos, CPF, credenciais ou outros dados sem finalidade pública aprovada. O sistema não armazena laudos médicos.
+6. O sistema não apresenta dados privados a outro candidato nem permite acesso a informações restritas de perfis/candidaturas sem autorização.
 
 ### 5.2 Cadastrar/atualizar dados profissionais
 1. Candidato abre a edição.
@@ -365,7 +368,7 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 1. O candidato pode autodeclarar necessidades sem apresentar ou armazenar laudo médico (RB-28 e decisão em OPEN.md).
 2. Necessidades de acessibilidade são informações protegidas (RB-26, RNF-08).
 3. Dados profissionais e vetor devem permanecer associados ao candidato correto (RNF-09).
-4. O candidato só pode consultar/alterar o próprio perfil, salvo permissões explicitamente previstas pela baseline.
+4. O candidato só pode consultar/alterar o próprio perfil, salvo permissões explicitamente previstas pela baseline. O perfil profissional pode ser público; informações básicas de acessibilidade só são públicas por escolha explícita do candidato, enquanto detalhes adicionais permanecem restritos conforme OPEN-011, finalidade e autorização.
 5. O salvamento respeita RB-29 e o cadastro progressivo aprovado na OPEN-007.1. Nome e e-mail são reutilizados da conta, sem preenchimento duplicado no perfil; o cadastro da conta segue a SPEC-001. CPF não é obrigatório para salvar o perfil, pois não há justificativa funcional aprovada na baseline para exigi-lo.
 6. As categorias aprovadas na OPEN-007 — formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais — não bloqueiam o salvamento por categoria.
 7. Necessidades funcionais e recursos indispensáveis não exigem declaração universal. A interface deve distinguir ausência de informação (“não informado”) de declaração de inexistência de necessidade; necessidades declaradas podem ser autodeclaradas sem exigir ou armazenar laudo.
