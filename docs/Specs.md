@@ -702,7 +702,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato | especificada | pendente | aguardando |
 | SPEC-003 — Disponibilizar recursos de acessibilidade da interface | especificada | pendente | aguardando |
 
-**Próxima etapa:** detalhar o Bloco 3. A revisão coletiva das questões em aberto pode ocorrer depois que todas as Specs estiverem detalhadas.
+**Próxima etapa:** concluir a revisão formal individual dos textos e aprovar separadamente os layouts aplicáveis. A revisão coletiva das questões em aberto foi concluída conforme o registro de revisão; pendências remanescentes continuam em `docs/OPEN.md`.
 
 
 # Bloco 2 — Empresa, vagas próprias e ingestão externa
@@ -1540,7 +1540,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 | SPEC-005 — Cadastrar e gerenciar vagas próprias | aprovada | pendente | aprovada |
 | SPEC-006 — Importar, ingerir e normalizar vagas externas | aprovada | não se aplica ao núcleo; interface opcional pendente | aprovada |
 
-**Próxima etapa:** detalhar o Bloco 3 após registrar este bloco no documento. A revisão coletiva das questões em aberto pode ocorrer depois que todas as Specs estiverem detalhadas.
+**Próxima etapa:** concluir a revisão formal individual dos textos e aprovar separadamente os layouts aplicáveis. As decisões e pendências funcionais permanecem rastreadas em `docs/OPEN.md`.
 
 
 # Bloco 3 — Compatibilidade e descoberta de vagas
@@ -2107,7 +2107,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 | SPEC-009 — Consultar status e disponibilidade da vaga | aprovada | pendente | aprovada |
 | SPEC-010 — Visualizar vaga e resultado de compatibilidade | aprovada | pendente | aprovada |
 
-**Próxima etapa:** detalhar o Bloco 4 na ordem do mapa. A revisão coletiva de OPENs fica para depois do detalhamento de todas as Specs.
+**Próxima etapa:** concluir a revisão formal individual dos textos e aprovar separadamente os layouts aplicáveis. As Specs dos blocos seguintes já estão detalhadas; pendências funcionais permanecem em `docs/OPEN.md`.
 
 
 # SPEC-011 — Registrar candidatura
@@ -3099,7 +3099,7 @@ As decisões de apresentação por estrelas, mínimo de uma avaliação válida 
 ---
 
 
-## Registro consolidado de aprovação para implementação
+## Registro consolidado do estado das Specs
 
 | Specs | Estado dos textos | Bloqueio |
 |---|---|---|
