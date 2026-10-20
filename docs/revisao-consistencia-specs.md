@@ -4,7 +4,7 @@
 
 Esta revisão compara `docs/Specs.md`, `docs/mapa-specs.md`, `docs/OPEN.md` e a baseline disponível de RF, RB, RNF, casos de uso, modelo conceitual, drivers, ADRs e estados do funil.
 
-A revisão **não aprova os textos**, não aprova layouts e não autoriza implementação. Quando a baseline não permite resolver uma questão, o relatório registra a lacuna em vez de escolher uma regra por inferência.
+A revisão de consistência não decide questões funcionais por inferência. O estado de aprovação dos textos e a autorização de implementação agora estão registrados na seção 2 e em `docs/Specs.md`; layouts continuam sujeitos a aprovação separada.
 
 ## 2. Resultado executivo
 
