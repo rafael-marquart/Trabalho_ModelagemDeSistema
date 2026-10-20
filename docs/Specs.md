@@ -1242,12 +1242,12 @@ dos em `docs/layout/` e aprovados separadamente.
 - **Drivers:** DA-02, DA-05, DA-06, DA-07, DA-08.
 - **ADRs:** ADR-002, ADR-003, ADR-004.
 - **Dependências:** SPEC-005 para o modelo comum de VAGA; SPEC-007/SPEC-008 para consumo das vagas normalizadas; ADR-003 para integração com LLM por adaptador. A execução automatizada deve usar configuração/credenciais de integração protegidas; eventual interface administrativa continua sujeita à autorização aplicável.
-- **Rastreabilidade das decisões:** OPEN-024 a OPEN-030 e OPEN-086 a OPEN-087 estão registradas em `docs/OPEN.md`. As decisões funcionais dessas OPENs não autorizam uso em produção. No estágio atual, os testes permanecem limitados a 25 chamadas à API; qualquer ampliação deve respeitar autorização explícita, cotas e condições da fonte. A capacidade de configurar volumes maiores descreve uma possibilidade futura, não uma autorização de execução.
+- **Questões relacionadas:** OPEN-025 a OPEN-030 e OPEN-086 a OPEN-087. OPEN-024, OPEN-086 e OPEN-087 estão resolvidas conforme `docs/OPEN.md`; para a etapa atual, a coleta de teste fica limitada a 25 chamadas à API, enquanto a solução deve suportar expansão desse volume por configuração, respeitando cotas e condições da fonte.
 
 ## 3. Escopo
 
 ### Incluído
-- Prever a coleta automatizada diária de vagas a partir de uma fonte externa autorizada, inicialmente considerando o Adzuna somente após confirmação de acesso, cobertura e condições de uso e autorização explícita para esse uso. A descrição do comportamento futuro não autoriza, por si só, coleta diária nem uso em produção.
+- Executar coleta automatizada diária de vagas a partir de uma fonte externa autorizada, começando pelo Adzuna após confirmação de acesso, cobertura e condições de uso.
 - Consultar individualmente uma lista configurável de frases de busca por meio de `what_phrase`, consolidando os resultados.
 - Receber e validar a resposta estruturada da API, incluindo sua estrutura JSON.
 - Identificar registros inválidos, incompletos ou duplicados.
