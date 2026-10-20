@@ -1180,7 +1180,7 @@ dos em `docs/layout/` e aprovados separadamente.
 - **Drivers:** DA-02, DA-05, DA-06, DA-07, DA-08.
 - **ADRs:** ADR-002, ADR-003, ADR-004.
 - **Dependências:** SPEC-005 para o modelo comum de VAGA; SPEC-007/SPEC-008 para consumo das vagas normalizadas; ADR-003 para integração com LLM por adaptador. A execução automatizada deve usar configuração/credenciais de integração protegidas; eventual interface administrativa continua sujeita à autorização aplicável.
-- **Questões relacionadas:** OPEN-025 a OPEN-030 e OPEN-086 a OPEN-087. OPEN-024 foi resolvida e registrada em OPEN.md; a viabilidade da fonte e a capacidade operacional permanecem condicionadas às OPEN-086 e OPEN-087.
+- **Questões relacionadas:** OPEN-025 a OPEN-030 e OPEN-086 a OPEN-087. OPEN-024, OPEN-086 e OPEN-087 estão resolvidas conforme `docs/OPEN.md`; para a etapa atual, a coleta de teste fica limitada a 25 chamadas à API, enquanto a solução deve suportar expansão desse volume por configuração, respeitando cotas e condições da fonte.
 
 ## 3. Escopo
 
@@ -1221,13 +1221,13 @@ A execução principal é automatizada e diária; não exige que um administrado
 - **SPEC-005:** compartilha o modelo conceitual de VAGA, mas mantém o fluxo de cadastro próprio separado.
 - **SPEC-007/SPEC-008:** dependem de vagas externas validadas e normalizadas.
 - **ADR-003:** integração LLM no backend por adaptador, com validação antes do domínio.
-- O uso do Adzuna depende de confirmação de acesso, cobertura, autorização e viabilidade operacional (OPEN-086 e OPEN-087); as frases iniciais ainda precisam ser definidas. Campos obrigatórios e validações de registros são tratados em OPEN-025.
+- O uso da fonte externa segue as condições de acesso, cobertura, autorização, atribuição e uso de conteúdo registradas nas decisões de OPEN-086. Na etapa atual, os testes ficam limitados a 25 chamadas à API; o desenho não deve fixar esse limite como capacidade máxima do programa e deve permitir configurar um volume maior em etapas futuras, observadas as cotas e condições do provedor (OPEN-087). As frases iniciais ainda precisam ser definidas. Campos obrigatórios e validações de registros são tratados em OPEN-025.
 
 ## 5. Comportamento esperado
 
 ### 5.1 Executar coleta automatizada
 1. Uma tarefa agendada inicia a coleta diária, sem exigir ação manual de Administrador para cada execução.
-2. O sistema lê a lista configurável de frases e realiza consultas individuais à API da fonte autorizada, inicialmente o Adzuna, usando `what_phrase`.
+2. O sistema lê a lista configurável de frases e realiza consultas individuais à API da fonte autorizada, inicialmente o Adzuna, usando `what_phrase`. Na etapa de teste atual, o conjunto de consultas deve respeitar o limite de 25 chamadas à API; esse limite é operacional para os testes, não um teto estrutural do programa. A implementação deve permitir ampliar o número de chamadas por configuração/parametrização, sem exigir reestruturação do fluxo, e sempre respeitar cotas e condições do provedor.
 3. O sistema respeita os limites e as condições de uso da fonte, consolida as respostas e registra a origem, a frase consultada e o resultado de cada consulta.
 4. Falhas de uma consulta devem ser registradas; a política detalhada de repetição e recuperação permanece em OPEN-029.
 
@@ -1460,8 +1460,8 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 - **OPEN-028 (resolvida):** deduplicação externa conservadora em camadas por identificador na mesma fonte, URL original normalizada e, quando necessário, atributos normalizados confiáveis; casos incertos permanecem separados e não alteram vagas válidas existentes.
 - **OPEN-029 (resolvida):** processamento independente por registro, persistência consistente, repetição limitada apenas para falhas recuperáveis, reexecução segura com deduplicação aprovada, preservação de vagas válidas e rastreabilidade dos resultados individuais/agregados e das execuções anteriores. Limites e intervalos operacionais ficam para detalhamento, alinhados à OPEN-026; não se impõem tecnologias ou estruturas físicas.
 - **OPEN-030 (resolvida):** preservada a formulação oficial de RNF-16 — interoperabilidade com fontes externas e normalização para o modelo da plataforma. A SPEC-006 verifica contrato/formato, mapeamento documentado, conversões, compatibilidade dos registros normalizados, tratamento rastreável de dados incompatíveis e preservação semântica, com testes por fonte autorizada; sem métricas arbitrárias ou alteração da baseline.
-- **OPEN-086:** confirmar acesso, cobertura, autorização e condições de uso da fonte externa, incluindo atribuição, links e uso de conteúdo com LLM.
-- **OPEN-087:** verificar se as cotas e os limites da API comportam a coleta diária e definir a abordagem para limites excedidos.
+- **OPEN-086 (resolvida):** condições de acesso, cobertura, autorização e uso da fonte externa, incluindo atribuição, links e uso de conteúdo com LLM, devem ser respeitadas conforme decisão registrada em `docs/OPEN.md`; não ampliar o uso para além do que foi autorizado.
+- **OPEN-087 (resolvida para a etapa atual):** executar inicialmente até 25 chamadas de teste à API. O programa deve suportar expansão para mais chamadas por configuração/parametrização; 25 não é limite máximo arquitetural. Ao ampliar o volume, observar cotas, limites e condições do provedor e tratar respostas de limite excedido conforme as regras de falha/repetição já descritas nesta Spec
 
 ## 14. Definition of Done
 
