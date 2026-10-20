@@ -288,7 +288,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 - Cálculo de compatibilidade, pertencente à SPEC-007.
 - Busca e filtros de vagas.
 - Armazenamento de laudos médicos: o sistema não armazena laudos; necessidades podem ser autodeclaradas.
-- Definição de campos internos, formatos, limites, cardinalidades e validações específicas ainda não aprovados; essas lacunas permanecem nas OPEN-007.1/007.2.
+- Definição de campos internos, lista concreta de campos obrigatórios por categoria, limites de tamanho e formatos específicos não definidos nesta decisão; essas lacunas permanecem na OPEN-007.2.
 
 ## 3.1. Telas e evidência de layout
 
@@ -320,9 +320,14 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 3. O formulário reutiliza nome e e-mail mantidos na conta, sem exigir preenchimento duplicado; o cadastro da conta segue as regras próprias da SPEC-001. CPF não é obrigatório para salvar o perfil, pois a baseline não apresenta justificativa funcional aprovada para exigi-lo.
 4. Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais fazem parte do escopo aprovado na OPEN-007, podem ser preenchidos progressivamente e não bloqueiam o salvamento por categoria.
 5. Necessidades funcionais de acessibilidade e recursos indispensáveis não exigem declaração universal. Quando declarados, podem ser informados por autodeclaração, sem exigir ou armazenar laudo; a interface distingue “não informado” de “declarado que não possui necessidade”.
-6. Dados válidos são persistidos, permitindo o preenchimento progressivo das categorias.
-7. Erros de validação definidos são indicados para correção, sem descarte silencioso das informações preenchidas.
-8. A ausência de dados necessários à análise de uma vaga é indicada como insuficiência de informação, sem presumir compatibilidade (RB-16); isso não torna automaticamente o campo obrigatório para salvar o perfil.
+6. A categoria inteira continua opcional. Ao cadastrar um registro, o sistema exige somente os campos que a baseline definir como obrigatórios para esse registro; não se criam campos obrigatórios sem justificativa na baseline.
+7. Nos campos de texto, o sistema remove espaços desnecessários no início e no fim e rejeita campos obrigatórios preenchidos apenas com espaços.
+8. Quando houver datas de início e término, o término não pode ser anterior ao início. Registros em andamento podem ficar sem data de término.
+9. O link profissional é opcional; quando informado, deve ter formato válido de URL.
+10. Não há limite funcional máximo fixo para a quantidade de experiências, cursos, certificações ou links. Cada registro deve passar pelas validações aplicáveis.
+11. Se houver erro de validação, o sistema indica o campo que precisa ser corrigido, preserva os dados preenchidos e impede o salvamento enquanto o erro persistir.
+12. Dados válidos são persistidos, permitindo o preenchimento progressivo das categorias.
+13. A ausência de dados necessários à análise de uma vaga é indicada como insuficiência de informação, sem presumir compatibilidade (RB-16); isso não torna automaticamente o campo obrigatório para salvar o perfil.
 
 ### 5.3 Declarar necessidades de acessibilidade
 1. Candidato acessa a área de necessidades.
@@ -404,6 +409,12 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 - [ ] Alterações relevantes são rastreáveis.
 - [ ] O sistema não exige nem armazena laudo médico como condição para declarar necessidades.
 - [ ] Mensagens de validação são perceptíveis por tecnologias assistivas.
+- [ ] Categorias profissionais podem ficar vazias; quando houver um registro, somente os campos definidos como obrigatórios na baseline são exigidos.
+- [ ] Espaços desnecessários no início e no fim dos campos de texto são removidos; campos obrigatórios preenchidos apenas com espaços são rejeitados.
+- [ ] Data de término anterior à data de início é rejeitada; registros em andamento podem não informar término.
+- [ ] Links profissionais são opcionais e, quando informados, passam por validação de formato de URL.
+- [ ] Não há limite funcional máximo fixo para experiências, cursos, certificações ou links.
+- [ ] Erros indicam os campos a corrigir, preservam os valores preenchidos e impedem o salvamento inválido.
 
 ## 12. Casos de teste derivados
 
@@ -422,6 +433,11 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 | T-002-11 | Consultar perfil com as categorias aprovadas | Categorias do perfil e dados de acessibilidade apresentados ao próprio candidato conforme autorização |
 | T-002-12 | Salvar perfil sem experiências, cursos, certificações ou links profissionais | Salvamento permitido, desde que as demais validações aplicáveis sejam satisfeitas |
 | T-002-13 | Categoria profissional ainda não preenchida é relevante para uma vaga | Insuficiência indicada sem presumir compatibilidade conforme RB-16 |
+| T-002-14 | Campo obrigatório contém apenas espaços | Salvamento bloqueado e campo indicado |
+| T-002-15 | Data de término anterior à data de início | Validação impede o salvamento inválido |
+| T-002-16 | Registro em andamento sem data de término | Registro aceito se os demais campos obrigatórios forem válidos |
+| T-002-17 | Link profissional informado com formato inválido | Campo indicado para correção e salvamento bloqueado |
+| T-002-18 | Erro de validação em um registro | Dados preenchidos são preservados e o campo incorreto é indicado |
 
 ## 13. Questões em aberto
 
@@ -429,7 +445,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 - **OPEN-007 (decisão aprovada; resolvida):** o perfil inclui dados pessoais básicos (nome/e-mail reutilizados da conta), formação/escolaridade, competências, idiomas, necessidades funcionais de acessibilidade, recursos indispensáveis para acessibilidade, experiências profissionais, cursos, certificações e links profissionais. As categorias profissionais são preenchidas progressivamente; os detalhes internos e regras específicas permanecem sujeitos à baseline e às OPEN-007.1/007.2.
 - **OPEN-007.1 (decisão aprovada; resolvida):** nome e e-mail são reutilizados da conta, sem preenchimento duplicado no perfil; o cadastro da conta segue as regras da SPEC-001. CPF não é obrigatório para salvar o perfil. Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria, sem antecipar o escopo de categorias da OPEN-007. Necessidades funcionais e recursos indispensáveis não exigem declaração universal; necessidades podem ser autodeclaradas sem exigir/armazenar laudo, e “não informado” deve ser distinto de “declarado que não possui necessidade”. Dados necessários à análise de uma vaga que estejam ausentes são indicados como insuficiência sem presumir compatibilidade (RB-16).
-- **OPEN-007.2 (decisão aprovada):** validação básica por categoria, respeitando o cadastro progressivo; formatos, limites e critérios específicos permanecem pendentes.
+- **OPEN-007.2 (parcialmente resolvida):** categorias opcionais e regras gerais de validação aprovadas: campos obrigatórios definidos na baseline por registro, remoção de espaços nas extremidades, validação de datas, URL opcional com formato válido, sem limite funcional máximo fixo para experiências/cursos/certificações/links, erros com preservação dos dados e insuficiência conforme RB-16. Permanecem pendentes a lista concreta de campos obrigatórios por categoria e limites de tamanho/formato ainda não definidos.
 - **OPEN-008 (decisão aprovada):** catálogo estruturado e extensível nas categorias arquitetônicas, de comunicação e tecnológicas, com distinção entre necessidades obrigatórias e não obrigatórias; lista inicial, significados operacionais e detalhes de representação permanecem pendentes.
 - **OPEN-009 (decisão aprovada):** histórico de alterações relevantes, sem exigir versionamento completo do perfil a cada modificação; retenção de um ano da OPEN-006 serve como referência para auditoria, enquanto campos definitivos, casos de preservação de valores anteriores/versões completas e aplicação exata ao histórico funcional permanecem pendentes.
 - **OPEN-010 (decisão aprovada):** associação 1:1 opcional para USUARIO e obrigatória para CANDIDATO; cada CANDIDATO pertence a exatamente um USUARIO, e cada USUARIO pode ter zero ou um CANDIDATO. O modelo conceitual deverá explicitar a cardinalidade. Momento de criação do perfil, desativação/exclusão, conversão entre perfis e definição técnica de chave/restrições permanecem pendentes.
