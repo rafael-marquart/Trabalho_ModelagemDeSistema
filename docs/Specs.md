@@ -1499,7 +1499,7 @@ Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN
 |---|---|
 | ID | SPEC-007 |
 |
-| Estado do texto | aprovada; não pronta para implementação — bloqueada pela OPEN-088 |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | não se aplica ao cálculo; apresentação do resultado pertence à SPEC-010 |
 | Capacidade | Aplicar trava crítica e calcular score determinístico de compatibilidade |
 
@@ -1532,7 +1532,7 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 2. Verificar se os dados mínimos definidos na OPEN-032 estão disponíveis; se faltar informação necessária em qualquer dimensão, classificar a análise como “dados insuficientes” e não apresentar o score final como completo. Informar quais dimensões puderam ser avaliadas e quais dados faltam, sem presumir valores.
 3. Para acessibilidade (A), comparar somente necessidades funcionais e recursos indispensáveis explicitamente declarados pelo candidato com recursos, condições e requisitos de acessibilidade explicitamente declarados para a vaga.
 4. Para perfil técnico (T), comparar critérios técnicos definidos para a vaga com competências e conhecimentos declarados pelo candidato; formação, experiência e idiomas só entram quando forem critérios aplicáveis à vaga.
-5. Para distância/modalidade (D), calcular a compatibilidade de modalidade (peso interno 60%) e, em vagas presenciais ou híbridas, a compatibilidade de localização/distância (40%) pelas faixas em quilômetros da seção 6.1. Usar localização para determinar a distância entre candidato e local de trabalho; não calcular tempo de deslocamento até o trabalho. O método/provedor para obter a distância em quilômetros permanece a definir. Em vaga totalmente remota, excluir o componente de localização/distância e calcular D somente pela modalidade; não penalizar distância
+5. Para distância/modalidade (D), calcular a compatibilidade de modalidade (peso interno 60%) e, em vagas presenciais ou híbridas, a compatibilidade de localização/distância (40%) pelas faixas em quilômetros da seção 6.1. Calcular a distância geográfica em linha reta entre as coordenadas de latitude e longitude do candidato e do local de trabalho pela fórmula de Haversine, com resultado em quilômetros. Não calcular distância por vias nem tempo de deslocamento até o trabalho. Em vaga totalmente remota, excluir o componente de localização/distância e calcular D somente pela modalidade; não penalizar distância
 6. Comparar necessidades funcionais obrigatórias com barreiras e recursos eliminatórios registrados para a vaga.
 7. Se houver barreira incompatível com necessidade obrigatória, classificar a vaga como incompatível, independentemente de qualquer score.
 8. Se não houver trava crítica, calcular o score determinístico com os pesos definidos na baseline.
@@ -1564,7 +1564,7 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 
 **D — Distância e modalidade (20% do score final):** pesos internos: compatibilidade com modalidade = 60%; compatibilidade de localização/distância = 40%. Modalidade atende à preferência informada = 100; atende parcialmente = 50; modalidade confirmada não atende = 0. Para vaga presencial ou híbrida, pontuar a distância entre a localização do candidato e o local de trabalho: até 10 km = 100; mais de 10 km até 25 km = 75; mais de 25 km até 50 km = 50; mais de 50 km = 25. Localização desconhecida não pontua e, quando necessária à avaliação, deve ser indicada como dado insuficiente conforme OPEN-033. Para vaga totalmente remota, localização/distância não se aplica: excluir o componente de 40%, não atribuir zero e calcular D somente pela nota de modalidade (D = M), se modalidade for avaliável. Em vagas presenciais/híbridas, D = 0,60 × M + 0,40 × L.
 
-**Aplicabilidade e dados ausentes:** critérios não aplicáveis à vaga são excluídos da composição. Quando faltar informação necessária para avaliar uma dimensão (incluindo preferência de modalidade ou localização, conforme aplicável), indicar “dados insuficientes” e não apresentar score final completo, conforme OPEN-033. A distância é expressa em quilômetros; o método/provedor para determiná-la permanece a definir. Não calcular tempo de deslocamento. Ausência de dados não é nota zero nem compatibilidade presumida. Não calcular score parcial final por esta decisão. Manter precisão intermediária e arredondar somente o score final ao inteiro mais próximo, com meio ponto exato arredondado para cima.
+**Aplicabilidade e dados ausentes:** critérios não aplicáveis à vaga são excluídos da composição. Quando faltar informação necessária para avaliar uma dimensão (incluindo preferência de modalidade ou localização, conforme aplicável), indicar “dados insuficientes” e não apresentar score final completo, conforme OPEN-033. A distância é calculada em linha reta, em quilômetros, pela fórmula de Haversine aplicada às coordenadas de latitude e longitude do candidato e do local de trabalho. Não calcular distância por vias nem tempo de deslocamento. Ausência de dados não é nota zero nem compatibilidade presumida. Não calcular score parcial final por esta decisão. Manter precisão intermediária e arredondar somente o score final ao inteiro mais próximo, com meio ponto exato arredondado para cima.
 
 ## 6.2. Rastreabilidade e reprodução do cálculo (OPEN-035)
 
@@ -1636,7 +1636,7 @@ Contratos conceituais, sem endpoints HTTP.
 - **OPEN-033:** resolvida; quando faltar informação necessária em qualquer dimensão, indicar “dados insuficientes”, não apresentar score final como completo e informar dimensões avaliadas/dados faltantes; ausência não vira zero nem compatibilidade presumida.
 - **OPEN-034:** resolvida; modalidade e distância em quilômetros, faixas de pontuação e regra de exclusão de distância para vagas totalmente remotas estão documentadas na seção 6.1
 - **OPEN-035:** parâmetros e resultados que devem ser armazenados para rastreabilidade.
-- **OPEN-088:** método/provedor para determinar a distância em quilômetros entre candidato e local de trabalho; uso de localização mantido, sem cálculo de tempo de deslocamento.
+- **OPEN-088:** resolvida; distância geográfica em linha reta calculada pela fórmula de Haversine, com coordenadas de latitude e longitude e resultado em quilômetros; sem distância por vias ou tempo de deslocamento.
 
 ## 14. Definition of Done
 - [ ] Texto aprovado.
@@ -1654,7 +1654,7 @@ Contratos conceituais, sem endpoints HTTP.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-008 |
-| Estado do texto | aprovada; não pronta para implementação — bloqueada pela OPEN-088 |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Buscar e filtrar vagas elegíveis e ordená-las por compatibilidade |
 
@@ -1913,7 +1913,7 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 | Campo | Valor |
 |---|---|
 | ID | SPEC-010 |
-| Estado do texto | aprovada; não pronta para implementação — bloqueada pela OPEN-088 |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Apresentar detalhes da vaga, acessibilidade, status e explicação de compatibilidade |
 
@@ -3049,10 +3049,10 @@ As decisões de apresentação por estrelas, mínimo de uma avaliação válida 
 | Specs | Estado dos textos | Bloqueio |
 |---|---|---|
 | SPEC-001 a SPEC-006 | aprovadas; prontas para implementação | Nenhum bloqueio por OPEN-088. Em SPEC-006, a etapa aprovada permanece limitada ao lote de teste de até 25 chamadas; uso contínuo/produção do Adzuna não está autorizado por este registro. |
-| SPEC-007 a SPEC-008 | aprovadas; não prontas para implementação | OPEN-088: método/provedor para determinar distância em quilômetros. |
+| SPEC-007 a SPEC-008 | aprovadas; prontas para implementação | Nenhum bloqueio por OPEN-088; distância em linha reta pela fórmula de Haversine definida na SPEC-007. |
 | SPEC-009 | aprovada; pronta para implementação | Nenhum bloqueio por OPEN-088. |
-| SPEC-010 | aprovada; não pronta para implementação | Depende da SPEC-007; bloqueada pela OPEN-088. |
+| SPEC-010 | aprovada; pronta para implementação | Depende da SPEC-007, agora com método de distância definido. |
 | SPEC-011 a SPEC-013 | aprovadas; prontas para implementação | Nenhum bloqueio por OPEN-088. |
 | SPEC-016 a SPEC-021 | aprovadas; prontas para implementação | Nenhum bloqueio por OPEN-088. |
 
-Esta aprovação se refere aos **textos das Specs** e autoriza a implementação apenas das capacidades marcadas como prontas, respeitando os limites registrados nas OPENs. A aprovação não altera nem aprova layouts: protótipos e layouts aplicáveis continuam sujeitos à aprovação visual própria. SPEC-007, SPEC-008 e SPEC-010 permanecem bloqueadas até a resolução da OPEN-088.
+Esta aprovação se refere aos **textos das Specs** e autoriza a implementação apenas das capacidades marcadas como prontas, respeitando os limites registrados nas OPENs. A aprovação não altera nem aprova layouts: protótipos e layouts aplicáveis continuam sujeitos à aprovação visual própria.
