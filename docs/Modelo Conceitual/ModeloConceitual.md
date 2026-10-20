@@ -29,6 +29,7 @@
 ### CANDIDATO
 
 - `id_candidato` (PK)
+- `id_usuario` (FK, único; obrigatório, referencia USUARIO)
 - `nome`
 - `email`
 - `cpf`
@@ -107,6 +108,7 @@
 | --- | --- | --- |
 | EMPRESA | cadastra e vincula | USUARIO com perfil de RECRUTADOR |
 | USUARIO | possui perfil | RECRUTADOR (perfil de usuário, não entidade independente) |
+| USUARIO | possui perfil de candidato (zero ou um por usuário) | CANDIDATO (cada candidato pertence a exatamente um usuário) |
 | EMPRESA | possui | INFRAESTRUTURA_EMPRESA |
 | EMPRESA | publica | VAGA |
 | EMPRESA | recebe | DENUNCIA_FALSA_INCLUSAO |
