@@ -23,7 +23,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 |---|---|
 | ID | SPEC-001 |
 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | protótipos disponíveis para parte das telas; aprovação pendente e áreas restantes sem protótipo |
 | Capacidade | Cadastro de usuário/empresa, autenticação, recuperação de senha, autorização por perfil e vínculo organizacional de recrutador |
 
@@ -266,7 +266,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | Campo | Valor |
 |---|---|
 | ID | SPEC-002 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Consultar, cadastrar e atualizar dados profissionais e necessidades funcionais de acessibilidade |
 
@@ -489,7 +489,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 ## 14. Definition of Done
 
-- [ ] Texto revisado e aprovado.
+- [ ] Aprovação formal individual do texto registrada.
 - [ ] Campos e validações conferidos com RF-04, RF-19, RB-26 a RB-29 e UC-01.
 - [ ] Questões em aberto decididas ou mantidas como pendências explícitas.
 - [ ] Layouts anexados em docs/layout/ e aprovados separadamente.
@@ -506,7 +506,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | Campo | Valor |
 |---|---|
 | ID | SPEC-003 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Recursos funcionais de acessibilidade para interação com a plataforma |
 
@@ -683,7 +683,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 ## 14. Definition of Done
 
-- [ ] Texto revisado e aprovado.
+- [ ] Aprovação formal individual do texto registrada.
 - [ ] Escopo de RF-16 confirmado, especialmente alto contraste e comandos de voz.
 - [ ] Questões em aberto decididas ou mantidas explicitamente como pendências.
 - [ ] Layouts anexados em docs/layout/ e aprovados separadamente.
@@ -718,7 +718,7 @@ Este bloco detalha SPEC-004, SPEC-005 e SPEC-006. As questões pendentes são re
 | Campo | Valor |
 |---|---|
 | ID | SPEC-004 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Registrar, consultar e atualizar informações de acessibilidade física, digital e atitudinal da Empresa |
 
@@ -905,7 +905,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 
 ## 14. Definition of Done
 
-- [ ] Texto revisado e aprovado.
+- [ ] Aprovação formal individual do texto registrada.
 - [ ] Campos e obrigatoriedades conferidos com a baseline.
 - [ ] Questões em aberto decididas ou mantidas explicitamente.
 - [ ] Layout funcional anexado e aprovado quando aplicável.
@@ -917,7 +917,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 | Campo | Valor |
 |---|---|
 | ID | SPEC-005 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Criar, editar, publicar e gerenciar vagas cadastradas diretamente por uma Empresa |
 
@@ -1199,7 +1199,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 
 ## 14. Definition of Done
 
-- [ ] Texto revisado e aprovado.
+- [ ] Aprovação formal individual do texto registrada.
 - [ ] Campos e regras conferidos com RF-18, RF-25, UC-08, RB e modelo.
 - [ ] Questões em aberto decididas ou mantidas explicitamente.
 - [ ] Layouts anexados em `docs/layout/` e aprovados separadamente.
@@ -1223,7 +1223,7 @@ dos em `docs/layout/` e aprovados separadamente.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-006 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | não se aplica ao núcleo de ingestão; eventual interface administrativa permanece pendente |
 | Capacidade | Receber dados externos estruturados, validar, normalizar, deduplicar e registrar o resultado da ingestão |
 
@@ -1522,7 +1522,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 
 ## 14. Definition of Done
 
-- [ ] Texto revisado e aprovado.
+- [ ] Aprovação formal individual do texto registrada.
 - [ ] Requisitos, regras, UC-14, drivers e ADRs conferidos.
 - [ ] Questões em aberto decididas ou mantidas explicitamente.
 - [ ] Se existir interface administrativa, layout anexado em `docs/layout/` e aprovado; se não existir, registrar formalmente não se aplica.
@@ -1556,7 +1556,7 @@ Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN
 |---|---|
 | ID | SPEC-007 |
 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | não se aplica ao cálculo; apresentação do resultado pertence à SPEC-010 |
 | Capacidade | Aplicar trava crítica e calcular score determinístico de compatibilidade |
 
@@ -1586,7 +1586,7 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 
 ## 5. Comportamento esperado
 1. Receber candidato e vaga preparada para análise.
-2. Verificar se os dados mínimos definidos na OPEN-032 estão disponíveis; se faltar informação necessária em qualquer dimensão, classificar a análise como “dados insuficientes” e não apresentar o score final como completo. Informar quais dimensões puderam ser avaliadas e quais dados faltam, sem presumir valores.
+2. Verificar se os dados mínimos necessários para avaliar cada dimensão, definidos nesta especificação, estão disponíveis; se faltar informação necessária em qualquer dimensão, classificar a análise como “dados insuficientes” e não apresentar o score final como completo. Informar quais dimensões puderam ser avaliadas e quais dados faltam, sem presumir valores.
 3. Para acessibilidade (A), comparar somente necessidades funcionais e recursos indispensáveis explicitamente declarados pelo candidato com recursos, condições e requisitos de acessibilidade explicitamente declarados para a vaga.
 4. Para perfil técnico (T), comparar critérios técnicos definidos para a vaga com competências e conhecimentos declarados pelo candidato; formação, experiência e idiomas só entram quando forem critérios aplicáveis à vaga.
 5. Para distância/modalidade (D), calcular a compatibilidade de modalidade (peso interno 60%) e, em vagas presenciais ou híbridas, a compatibilidade de localização/distância (40%) pelas faixas em quilômetros da seção 6.1. Calcular a distância geográfica em linha reta entre as coordenadas de latitude e longitude do candidato e do local de trabalho pela fórmula de Haversine, com resultado em quilômetros. Não calcular distância por vias nem tempo de deslocamento até o trabalho. Em vaga totalmente remota, excluir o componente de localização/distância e calcular D somente pela modalidade; não penalizar distância
@@ -1623,7 +1623,7 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 
 **Aplicabilidade e dados ausentes:** critérios não aplicáveis à vaga são excluídos da composição. Quando faltar informação necessária para avaliar uma dimensão (incluindo preferência de modalidade ou localização, conforme aplicável), indicar “dados insuficientes” e não apresentar score final completo, conforme OPEN-033. A distância é calculada em linha reta, em quilômetros, pela fórmula de Haversine aplicada às coordenadas de latitude e longitude do candidato e do local de trabalho. Não calcular distância por vias nem tempo de deslocamento. Ausência de dados não é nota zero nem compatibilidade presumida. Não calcular score parcial final por esta decisão. Manter precisão intermediária e arredondar somente o score final ao inteiro mais próximo, com meio ponto exato arredondado para cima.
 
-## 6.2. Rastreabilidade e reprodução do cálculo (OPEN-035)
+## 6.2. Rastreabilidade e reprodução do cálculo
 
 Cada execução do cálculo deve produzir um registro histórico imutável que permita explicar e reproduzir o resultado daquele momento, sem alterar a fórmula ou os critérios de pontuação definidos nesta Spec.
 
@@ -1648,7 +1648,7 @@ Aplicar minimização: não copiar o perfil integral nem dados da vaga que não 
 ## 8. Impacto arquitetural
 A lógica fica concentrada em serviço de domínio independente da interface e da persistência. A trava ocorre antes do score. Dados externos precisam ter passado pela SPEC-006.
 
-**Integração prevista para a etapa de implementação:** em vagas presenciais ou híbridas, usar localização para determinar a distância em quilômetros entre candidato e local de trabalho, aplicando as faixas da seção 6.1. Não calcular tempo de deslocamento até o trabalho. A distância deve ser calculada em linha reta pelo método de Haversine e apresentada em quilômetros, conforme decisão aprovada na OPEN-088. A origem e a validação das coordenadas necessárias ao cálculo devem seguir as regras de dados aplicáveis; não calcular tempo de deslocamento até o trabalho. Em vaga totalmente remota, não calcular localização/distância. Localização ausente ou impossibilidade de determinar a distância, quando necessária à avaliação, não será interpretada como distância zero nem incompatibilidade automática; indicar dados insuficientes conforme OPEN-033.
+**Integração prevista para a etapa de implementação:** em vagas presenciais ou híbridas, usar localização para determinar a distância em quilômetros entre candidato e local de trabalho, aplicando as faixas da seção 6.1. Não calcular tempo de deslocamento até o trabalho. A distância deve ser calculada em linha reta pelo método de Haversine e apresentada em quilômetros, conforme decisão aprovada na OPEN-088. A origem e a validação das coordenadas necessárias ao cálculo devem seguir as regras de dados aplicáveis; não calcular tempo de deslocamento até o trabalho. Em vaga totalmente remota, não calcular localização/distância. Localização ausente ou impossibilidade de determinar a distância, quando necessária à avaliação, não será interpretada como distância zero nem incompatibilidade automática; indicar “dados insuficientes” conforme esta especificação.
 
 ## 9. Contratos necessários
 - **Verificar elegibilidade por barreiras:** compara necessidades obrigatórias e barreiras registradas.
@@ -1711,7 +1711,7 @@ Contratos conceituais, sem endpoints HTTP.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-008 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Buscar e filtrar vagas elegíveis e ordená-las por compatibilidade |
 
@@ -1843,7 +1843,7 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 | Campo | Valor |
 |---|---|
 | ID | SPEC-009 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Exibir o estado atual da vaga e impedir ações incompatíveis com sua disponibilidade |
 
@@ -1970,7 +1970,7 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 | Campo | Valor |
 |---|---|
 | ID | SPEC-010 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Apresentar detalhes da vaga, acessibilidade, status e explicação de compatibilidade |
 
@@ -2119,7 +2119,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 |---|---|
 | ID | SPEC-011 |
 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Registrar candidatura |
 
@@ -2211,7 +2211,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 As OPEN-047, OPEN-048 e OPEN-049 foram resolvidas e registradas em `docs/OPEN.md`. Novas lacunas identificadas para esta SPEC devem ser registradas ali antes de alterar comportamentos não definidos.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
+- [ ] Aprovação formal individual do texto registrada.
 - [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
 - [ ] Questões decididas ou mantidas explicitamente em aberto.
 - [ ] Layout funcional anexado e aprovado quando aplicável.
@@ -2227,7 +2227,7 @@ As OPEN-047, OPEN-048 e OPEN-049 foram resolvidas e registradas em `docs/OPEN.md
 | Campo | Valor |
 |---|---|
 | ID | SPEC-012 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Gerenciar candidatura pelo candidato |
 
@@ -2322,7 +2322,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 OPEN-050, OPEN-051 e OPEN-052 foram resolvidas e registradas em `docs/OPEN.md`.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
+- [ ] Aprovação formal individual do texto registrada.
 - [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
 - [ ] Questões decididas ou mantidas explicitamente em aberto.
 - [ ] Layout funcional anexado e aprovado quando aplicável.
@@ -2338,7 +2338,7 @@ OPEN-050, OPEN-051 e OPEN-052 foram resolvidas e registradas em `docs/OPEN.md`.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-013 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Gerenciar processo seletivo e funil |
 
@@ -2431,7 +2431,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 OPEN-055 e OPEN-056 foram resolvidas e estão registradas em `docs/OPEN.md`. O acesso do Recrutador é limitado pela finalidade e necessidade durante todas as etapas; o histórico de movimentações registra etapa anterior/resultante, data e hora, ator responsável e tipo de movimentação/decisão, com justificativa quando exigida, preservando eventos anteriores e proibindo reversões fora da RB-39. A OPEN-053 definiu UC-09 como referência para gestão do funil pelo Recrutador, enquanto UC-05 cobre o acompanhamento pelo candidato. A OPEN-054 definiu autorização, transição prevista na RB-39 e ausência de pendências impeditivas, sem criar critérios específicos adicionais por etapa.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
+- [ ] Aprovação formal individual do texto registrada.
 - [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
 - [ ] Questões decididas ou mantidas explicitamente em aberto.
 - [ ] Layout funcional anexado e aprovado quando aplicável.
@@ -2450,7 +2450,7 @@ OPEN-055 e OPEN-056 foram resolvidas e estão registradas em `docs/OPEN.md`. O a
 |---|---|
 | ID | SPEC-016 |
 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Acompanhar candidatura e processo seletivo |
 
@@ -2542,7 +2542,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 OPEN-063 a OPEN-065 estão resolvidas conforme `docs/OPEN.md`. A linha do tempo apresenta eventos relevantes da candidatura, em ordem do mais recente para o mais antigo, com data (sem exigir horário), tipo, descrição breve e status/etapa resultante quando aplicável. O histórico funcional fica disponível por 60 dias após cancelamento da candidatura ou encerramento da vaga, conforme o evento ocorrido. Esse prazo não define retenção de auditoria técnica.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
+- [ ] Aprovação formal individual do texto registrada.
 - [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
 - [ ] Questões decididas ou mantidas explicitamente em aberto.
 - [ ] Layout funcional anexado e aprovado quando aplicável.
@@ -2558,7 +2558,7 @@ OPEN-063 a OPEN-065 estão resolvidas conforme `docs/OPEN.md`. A linha do tempo 
 | Campo | Valor |
 |---|---|
 | ID | SPEC-017 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Notificar alterações do processo seletivo |
 
@@ -2647,7 +2647,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 OPEN-066 a OPEN-069 estão resolvidas conforme `docs/OPEN.md`. As notificações obrigatórias são enviadas por e-mail para os eventos definidos; o envio é solicitado após confirmação do evento, com novas tentativas automáticas em falhas temporárias e registro de falha final. Não há central/histórico separado de notificações; o acompanhamento funcional ocorre na linha do tempo da candidatura.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
+- [ ] Aprovação formal individual do texto registrada.
 - [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
 - [ ] Questões decididas ou mantidas explicitamente em aberto.
 - [ ] Layout funcional anexado e aprovado quando aplicável.
@@ -2664,7 +2664,7 @@ OPEN-066 a OPEN-069 estão resolvidas conforme `docs/OPEN.md`. As notificações
 |---|---|
 | ID | SPEC-018 |
 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Avaliar processo seletivo |
 
@@ -2769,7 +2769,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado à candidatura/entrevista concluída, com prazo de 60 dias corridos após a conclusão. OPEN-071 foi resolvida: duas notas obrigatórias e separadas (acessibilidade e postura inclusiva), cada uma de 1 a 5 estrelas, comentário opcional e impossibilidade de edição após envio. OPEN-072 foi resolvida: uma avaliação por candidato por entrevista concluída, sem edição/substituição, com rejeição de duplicatas e registro/encaminhamento administrativo de indícios relevantes de abuso, sem bloqueio automático. OPEN-073 foi resolvida: publicação apenas da distribuição agregada por quantidade de estrelas, sem comentários individuais, acesso restrito aos registros individuais e retenção por 1 ano após o envio; agregados só podem ser mantidos indefinidamente se não permitirem reconstrução ou identificação.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
+- [ ] Aprovação formal individual do texto registrada.
 - [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
 - [ ] Questões decididas ou mantidas explicitamente em aberto.
 - [ ] Layout funcional anexado e aprovado quando aplicável.
@@ -2785,7 +2785,7 @@ OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado
 | Campo | Valor |
 |---|---|
 | ID | SPEC-019 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Denunciar incompatibilidade ou falsa inclusão |
 
@@ -2878,7 +2878,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 OPEN-074 a OPEN-077 estão resolvidas. As decisões aprovadas sobre elegibilidade, campos obrigatórios e evidências opcionais, vínculo à vaga/Empresa e avaliação quando aplicável, limite de até 3 denúncias por candidato em 24 horas, prevenção de repetição da mesma denúncia para a mesma vaga enquanto estiver em análise, confidencialidade e estados de andamento estão registradas em `docs/OPEN.md` e refletidas nesta Spec.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
+- [ ] Aprovação formal individual do texto registrada.
 - [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
 - [ ] Questões decididas ou mantidas explicitamente em aberto.
 - [ ] Layout funcional anexado e aprovado quando aplicável.
@@ -2894,7 +2894,7 @@ OPEN-074 a OPEN-077 estão resolvidas. As decisões aprovadas sobre elegibilidad
 | Campo | Valor |
 |---|---|
 | ID | SPEC-020 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Moderar denúncias de incompatibilidade |
 
@@ -2983,7 +2983,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 OPEN-078 a OPEN-081 estão resolvidas. As decisões sobre critérios/evidências, catálogo de decisões, meta de análise em até 5 dias úteis com extensão justificada quando houver informação adicional, prioridade para riscos relevantes à acessibilidade/segurança e comunicação às partes estão registradas em `docs/OPEN.md` e refletidas nesta Spec.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
+- [ ] Aprovação formal individual do texto registrada.
 - [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
 - [ ] Questões decididas ou mantidas explicitamente em aberto.
 - [ ] Layout funcional anexado e aprovado quando aplicável.
@@ -2999,7 +2999,7 @@ OPEN-078 a OPEN-081 estão resolvidas. As decisões sobre critérios/evidências
 | Campo | Valor |
 |---|---|
 | ID | SPEC-021 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | pendente |
 | Capacidade | Gerenciar nota pública de acessibilidade |
 
@@ -3091,7 +3091,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 As decisões de apresentação por estrelas, mínimo de uma avaliação válida e estado sem dados suficientes estão registradas. A OPEN-085 foi resolvida: administradores tratam denúncias, mas não alteram diretamente avaliações nem a distribuição pública de estrelas.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
+- [ ] Aprovação formal individual do texto registrada.
 - [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
 - [ ] Questões decididas ou mantidas explicitamente em aberto.
 - [ ] Layout funcional anexado e aprovado quando aplicável.
