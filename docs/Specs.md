@@ -288,7 +288,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 - Cálculo de compatibilidade, pertencente à SPEC-007.
 - Busca e filtros de vagas.
 - Armazenamento de laudos médicos: o sistema não armazena laudos; necessidades podem ser autodeclaradas.
-- Definição de campos internos, lista concreta de campos obrigatórios por categoria, limites de tamanho e formatos específicos não definidos nesta decisão; essas lacunas permanecem na OPEN-007.2.
+- Definição de limites de tamanho e formatos específicos além das validações aprovadas; as lacunas restantes permanecem na OPEN-007.2.
 
 ## 3.1. Telas e evidência de layout
 
@@ -320,7 +320,7 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 3. O formulário reutiliza nome e e-mail mantidos na conta, sem exigir preenchimento duplicado; o cadastro da conta segue as regras próprias da SPEC-001. CPF não é obrigatório para salvar o perfil, pois a baseline não apresenta justificativa funcional aprovada para exigi-lo.
 4. Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais fazem parte do escopo aprovado na OPEN-007, podem ser preenchidos progressivamente e não bloqueiam o salvamento por categoria.
 5. Necessidades funcionais de acessibilidade e recursos indispensáveis não exigem declaração universal. Quando declarados, podem ser informados por autodeclaração, sem exigir ou armazenar laudo; a interface distingue “não informado” de “declarado que não possui necessidade”.
-6. A categoria inteira continua opcional. Ao cadastrar um registro, o sistema exige somente os campos que a baseline definir como obrigatórios para esse registro; não se criam campos obrigatórios sem justificativa na baseline.
+6. A categoria inteira continua opcional, mas cada registro exige os seguintes campos aprovados: formação/escolaridade — nível de escolaridade, nome do curso quando aplicável ao nível, situação (em andamento ou concluída) e data de conclusão quando concluída; instituição e data de início são opcionais. Competências — nome obrigatório; nível de domínio e descrição opcionais. Idiomas — idioma e nível de proficiência obrigatórios; certificado opcional. Experiências profissionais — cargo, empresa, data de início e indicação se ainda trabalha no local obrigatórios; descrição opcional; data de término obrigatória quando não estiver em andamento. Cursos — nome obrigatório; instituição, descrição, datas e indicação de andamento opcionais. Certificações — nome e instituição emissora obrigatórios; datas de emissão/validade, código/identificador e link de validação opcionais. Links profissionais — tipo e URL obrigatórios; descrição opcional. Não se criam outros campos obrigatórios sem decisão aprovada.
 7. Nos campos de texto, o sistema remove espaços desnecessários no início e no fim e rejeita campos obrigatórios preenchidos apenas com espaços.
 8. Quando houver datas de início e término, o término não pode ser anterior ao início. Registros em andamento podem ficar sem data de término.
 9. O link profissional é opcional; quando informado, deve ter formato válido de URL.
@@ -438,6 +438,12 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 | T-002-16 | Registro em andamento sem data de término | Registro aceito se os demais campos obrigatórios forem válidos |
 | T-002-17 | Link profissional informado com formato inválido | Campo indicado para correção e salvamento bloqueado |
 | T-002-18 | Erro de validação em um registro | Dados preenchidos são preservados e o campo incorreto é indicado |
+| T-002-19 | Formação concluída sem data de conclusão | Salvamento bloqueado e campo indicado |
+| T-002-20 | Formação em andamento sem data de conclusão | Registro aceito se os demais campos obrigatórios forem válidos |
+| T-002-21 | Competência sem nome ou idioma sem nível de proficiência | Salvamento bloqueado e campo obrigatório indicado |
+| T-002-22 | Experiência profissional em andamento sem data de término | Registro aceito se os demais campos obrigatórios forem válidos |
+| T-002-23 | Certificação sem instituição emissora | Salvamento bloqueado e campo indicado |
+| T-002-24 | Link profissional sem tipo ou URL válida | Salvamento bloqueado e campo indicado |
 
 ## 13. Questões em aberto
 
@@ -445,7 +451,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 - **OPEN-007 (decisão aprovada; resolvida):** o perfil inclui dados pessoais básicos (nome/e-mail reutilizados da conta), formação/escolaridade, competências, idiomas, necessidades funcionais de acessibilidade, recursos indispensáveis para acessibilidade, experiências profissionais, cursos, certificações e links profissionais. As categorias profissionais são preenchidas progressivamente; os detalhes internos e regras específicas permanecem sujeitos à baseline e às OPEN-007.1/007.2.
 - **OPEN-007.1 (decisão aprovada; resolvida):** nome e e-mail são reutilizados da conta, sem preenchimento duplicado no perfil; o cadastro da conta segue as regras da SPEC-001. CPF não é obrigatório para salvar o perfil. Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria, sem antecipar o escopo de categorias da OPEN-007. Necessidades funcionais e recursos indispensáveis não exigem declaração universal; necessidades podem ser autodeclaradas sem exigir/armazenar laudo, e “não informado” deve ser distinto de “declarado que não possui necessidade”. Dados necessários à análise de uma vaga que estejam ausentes são indicados como insuficiência sem presumir compatibilidade (RB-16).
-- **OPEN-007.2 (parcialmente resolvida):** categorias opcionais e regras gerais de validação aprovadas: campos obrigatórios definidos na baseline por registro, remoção de espaços nas extremidades, validação de datas, URL opcional com formato válido, sem limite funcional máximo fixo para experiências/cursos/certificações/links, erros com preservação dos dados e insuficiência conforme RB-16. Permanecem pendentes a lista concreta de campos obrigatórios por categoria e limites de tamanho/formato ainda não definidos.
+- **OPEN-007.2 (parcialmente resolvida):** categorias opcionais e campos obrigatórios por registro definidos para formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais. Também estão aprovadas remoção de espaços nas extremidades, validação de datas, URLs válidas quando informadas, ausência de limite funcional máximo fixo para experiências/cursos/certificações/links, erros com preservação dos dados e insuficiência conforme RB-16. Permanecem pendentes formatos específicos adicionais e limites de tamanho.
 - **OPEN-008 (decisão aprovada):** catálogo estruturado e extensível nas categorias arquitetônicas, de comunicação e tecnológicas, com distinção entre necessidades obrigatórias e não obrigatórias; lista inicial, significados operacionais e detalhes de representação permanecem pendentes.
 - **OPEN-009 (decisão aprovada):** histórico de alterações relevantes, sem exigir versionamento completo do perfil a cada modificação; retenção de um ano da OPEN-006 serve como referência para auditoria, enquanto campos definitivos, casos de preservação de valores anteriores/versões completas e aplicação exata ao histórico funcional permanecem pendentes.
 - **OPEN-010 (decisão aprovada):** associação 1:1 opcional para USUARIO e obrigatória para CANDIDATO; cada CANDIDATO pertence a exatamente um USUARIO, e cada USUARIO pode ter zero ou um CANDIDATO. O modelo conceitual deverá explicitar a cardinalidade. Momento de criação do perfil, desativação/exclusão, conversão entre perfis e definição técnica de chave/restrições permanecem pendentes.
