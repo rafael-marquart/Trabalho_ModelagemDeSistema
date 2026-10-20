@@ -23,7 +23,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 |---|---|
 | ID | SPEC-001 |
 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | protótipos disponíveis para parte das telas; aprovação pendente e áreas restantes sem protótipo |
 | Capacidade | Cadastro de usuário/empresa, autenticação, recuperação de senha, autorização por perfil e vínculo organizacional de recrutador |
 
@@ -253,7 +253,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | Campo | Valor |
 |---|---|
 | ID | SPEC-002 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Consultar, cadastrar e atualizar dados profissionais e necessidades funcionais de acessibilidade |
 
@@ -449,7 +449,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | Campo | Valor |
 |---|---|
 | ID | SPEC-003 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Recursos funcionais de acessibilidade para interação com a plataforma |
 
@@ -661,7 +661,7 @@ Este bloco detalha SPEC-004, SPEC-005 e SPEC-006. As questões pendentes são re
 | Campo | Valor |
 |---|---|
 | ID | SPEC-004 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Registrar, consultar e atualizar informações de acessibilidade física, digital e atitudinal da Empresa |
 
@@ -860,7 +860,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 | Campo | Valor |
 |---|---|
 | ID | SPEC-005 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Criar, editar, publicar e gerenciar vagas cadastradas diretamente por uma Empresa |
 
@@ -1166,7 +1166,7 @@ dos em `docs/layout/` e aprovados separadamente.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-006 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | não se aplica ao núcleo de ingestão; eventual interface administrativa permanece pendente |
 | Capacidade | Receber dados externos estruturados, validar, normalizar, deduplicar e registrar o resultado da ingestão |
 
@@ -1499,7 +1499,7 @@ Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN
 |---|---|
 | ID | SPEC-007 |
 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; não pronta para implementação — bloqueada pela OPEN-088 |
 | Estado do layout | não se aplica ao cálculo; apresentação do resultado pertence à SPEC-010 |
 | Capacidade | Aplicar trava crítica e calcular score determinístico de compatibilidade |
 
@@ -1654,7 +1654,7 @@ Contratos conceituais, sem endpoints HTTP.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-008 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; não pronta para implementação — bloqueada pela OPEN-088 |
 | Estado do layout | pendente |
 | Capacidade | Buscar e filtrar vagas elegíveis e ordená-las por compatibilidade |
 
@@ -1786,7 +1786,7 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 | Campo | Valor |
 |---|---|
 | ID | SPEC-009 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Exibir o estado atual da vaga e impedir ações incompatíveis com sua disponibilidade |
 
@@ -1913,7 +1913,7 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 | Campo | Valor |
 |---|---|
 | ID | SPEC-010 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; não pronta para implementação — bloqueada pela OPEN-088 |
 | Estado do layout | pendente |
 | Capacidade | Apresentar detalhes da vaga, acessibilidade, status e explicação de compatibilidade |
 
@@ -2062,7 +2062,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 |---|---|
 | ID | SPEC-011 |
 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Registrar candidatura |
 
@@ -2170,7 +2170,7 @@ As OPEN-047, OPEN-048 e OPEN-049 foram resolvidas e registradas em `docs/OPEN.md
 | Campo | Valor |
 |---|---|
 | ID | SPEC-012 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Gerenciar candidatura pelo candidato |
 
@@ -2281,7 +2281,7 @@ OPEN-050, OPEN-051 e OPEN-052 foram resolvidas e registradas em `docs/OPEN.md`.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-013 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Gerenciar processo seletivo e funil |
 
@@ -2393,7 +2393,7 @@ OPEN-055 e OPEN-056 foram resolvidas e estão registradas em `docs/OPEN.md`. O a
 |---|---|
 | ID | SPEC-016 |
 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Acompanhar candidatura e processo seletivo |
 
@@ -2501,7 +2501,7 @@ OPEN-063 a OPEN-065 estão resolvidas conforme `docs/OPEN.md`. A linha do tempo 
 | Campo | Valor |
 |---|---|
 | ID | SPEC-017 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Notificar alterações do processo seletivo |
 
@@ -2607,7 +2607,7 @@ OPEN-066 a OPEN-069 estão resolvidas conforme `docs/OPEN.md`. As notificações
 |---|---|
 | ID | SPEC-018 |
 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Avaliar processo seletivo |
 
@@ -2728,7 +2728,7 @@ OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado
 | Campo | Valor |
 |---|---|
 | ID | SPEC-019 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Denunciar incompatibilidade ou falsa inclusão |
 
@@ -2837,7 +2837,7 @@ OPEN-074 a OPEN-077 estão resolvidas. As decisões aprovadas sobre elegibilidad
 | Campo | Valor |
 |---|---|
 | ID | SPEC-020 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Moderar denúncias de incompatibilidade |
 
@@ -2942,7 +2942,7 @@ OPEN-078 a OPEN-081 estão resolvidas. As decisões sobre critérios/evidências
 | Campo | Valor |
 |---|---|
 | ID | SPEC-021 |
-| Estado do texto | especificada |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Gerenciar nota pública de acessibilidade |
 
@@ -3044,15 +3044,15 @@ As decisões de apresentação por estrelas, mínimo de uma avaliação válida 
 ---
 
 
-## Registro consolidado de revisão
+## Registro consolidado de aprovação para implementação
 
-| Specs | Estado dos textos | Estado dos layouts |
+| Specs | Estado dos textos | Bloqueio |
 |---|---|---|
-| SPEC-001 a SPEC-003 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
-| SPEC-004 a SPEC-006 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
-| SPEC-007 a SPEC-010 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
-| SPEC-011 a SPEC-013 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
-| SPEC-016 a SPEC-017 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
-| SPEC-018 a SPEC-021 | especificadas; revisão humana pendente | pendentes conforme aplicabilidade |
+| SPEC-001 a SPEC-006 | aprovadas; prontas para implementação | Nenhum bloqueio por OPEN-088. Em SPEC-006, a etapa aprovada permanece limitada ao lote de teste de até 25 chamadas; uso contínuo/produção do Adzuna não está autorizado por este registro. |
+| SPEC-007 a SPEC-008 | aprovadas; não prontas para implementação | OPEN-088: método/provedor para determinar distância em quilômetros. |
+| SPEC-009 | aprovada; pronta para implementação | Nenhum bloqueio por OPEN-088. |
+| SPEC-010 | aprovada; não pronta para implementação | Depende da SPEC-007; bloqueada pela OPEN-088. |
+| SPEC-011 a SPEC-013 | aprovadas; prontas para implementação | Nenhum bloqueio por OPEN-088. |
+| SPEC-016 a SPEC-021 | aprovadas; prontas para implementação | Nenhum bloqueio por OPEN-088. |
 
-A revisão cruzada dos artefatos está registrada em [revisao-consistencia-specs.md](revisao-consistencia-specs.md). A inclusão no registro não significa aprovação. Implementação permanece bloqueada até aprovação do texto e dos layouts aplicáveis.
+Esta aprovação se refere aos **textos das Specs** e autoriza a implementação apenas das capacidades marcadas como prontas, respeitando os limites registrados nas OPENs. A aprovação não altera nem aprova layouts: protótipos e layouts aplicáveis continuam sujeitos à aprovação visual própria. SPEC-007, SPEC-008 e SPEC-010 permanecem bloqueadas até a resolução da OPEN-088.
