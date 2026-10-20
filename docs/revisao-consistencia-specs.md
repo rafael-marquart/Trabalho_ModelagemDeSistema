@@ -8,15 +8,14 @@ A revisão de consistência não decide questões funcionais por inferência. O 
 
 ## 2. Resultado executivo
 
-**Status atual:** REV-009 está encerrada após a confirmação do grupo de que as decisões consolidadas de compatibilidade e descoberta de vagas foram refletidas nas Specs. A única pendência funcional remanescente dentro do escopo da REV-009 é OPEN-088, sobre o método/provedor para determinar distância em quilômetros. As demais OPENs continuam com seus estados próprios em `docs/OPEN.md`, sem serem reabertas ou alteradas por este encerramento. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
+**Status atual:** REV-009 está encerrada. OPEN-088 permanece como pendência funcional para determinar distância em quilômetros. OPEN-086 e OPEN-087 foram alinhadas ao escopo atual: até 25 chamadas de teste, com expansão arquiteturalmente suportada por configuração, sem autorização presumida para operação contínua/produção. Os textos das Specs foram aprovados para implementação conforme o registro consolidado em `docs/Specs.md`: SPEC-001 a SPEC-006, SPEC-009, SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 estão prontas para implementação; SPEC-007, SPEC-008 e SPEC-010 estão aprovadas, mas bloqueadas pela OPEN-088. A aprovação dos textos não aprova layouts, que permanecem em controle separado. REV-002 e REV-008 seguem encerradas.
 
 - O mapa e o documento de detalhamento cobrem as Specs ativas do escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. SPEC-014 e SPEC-015 foram removidas e não devem ser contadas como Specs vigentes; os IDs posteriores foram preservados.
 - A conferência do cadastro atual de `OPEN.md` identificou 83 entradas de questões com IDs únicos. Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado das pendências é consolidado na seção 4.
 - Todas as RBs identificadas na baseline aparecem referenciadas em algum ponto de `Specs.md`; isso não garante, por si só, que cada regra esteja associada à Spec correta.
 - RF-34 e RF-35 estão associados, respectivamente, à SPEC-012 e à SPEC-013.
 - O detalhamento de contratos e testes das SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 foi ampliado e aprovado pelo grupo (REV-002 encerrada).
-- Nesta rodada, foram corrigidos o texto do mapa que sugeria ausência de pendências, a orientação para tratar referências às Specs removidas e as afirmações de escopo/contagem neste relatório. As correções são documentais e não alteram decisões funcionais.
-
+- A aprovação registrada nesta atualização é dos textos das Specs; layouts continuam sujeitos a aprovação separada.
 ## 3. Achados prioritários
 
 ### REV-009 — Encerrada: cálculo de compatibilidade entre candidato e vaga
@@ -37,16 +36,14 @@ A revisão de consistência não decide questões funcionais por inferência. O 
 
 ## 4. Estado atual das pendências OPEN
 
-Conforme o cadastro vigente de `docs/OPEN.md`:
+Conforme o cadastro atualizado de `docs/OPEN.md`:
 
 - **Abertas:** OPEN-088.
-- **Parcialmente resolvidas:** OPEN-086 e OPEN-087.
-- **Resolvidas:** OPEN-074 a OPEN-085.
+- **Resolvidas:** OPEN-074 a OPEN-087.
 
-OPEN-086 e OPEN-087 dependem de confirmação documentada das condições de acesso/licença do Adzuna e da viabilidade operacional da coleta diária. OPEN-088 continua sem método/provedor aprovado para determinar distância em quilômetros; não calcular tempo de deslocamento nem reintroduzir o provedor de rotas anteriormente considerado.
+OPEN-086 delimita a etapa atual a testes com as credenciais disponíveis e até 25 chamadas; não autoriza operação contínua/produção, armazenamento/exibição contínuos ou envio de conteúdo ao LLM. OPEN-087 define 25 chamadas como limite do lote atual de testes, não como teto arquitetural: o programa deve permitir expansão por configuração/parametrização, condicionada às cotas, condições e autorização da fonte.
 
-As decisões das OPEN-075 a OPEN-085 foram refletidas nas Specs correspondentes, incluindo denúncia, moderação e nota pública (SPEC-019 a SPEC-021). A revisão de consistência documental, por si só, não altera estados funcionais. Não marcar questões como resolvidas sem decisão explícita e atualização dos artefatos correspondentes.
-
+OPEN-088 continua sem método/provedor aprovado para determinar distância em quilômetros; não calcular tempo de deslocamento nem reintroduzir o provedor de rotas anteriormente considerado.
 ## 5. Verificações que passaram
 
 - As Specs ativas listadas no escopo (SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021) aparecem no mapa e no documento de detalhamento; SPEC-014 e SPEC-015 estão excluídas do escopo.
@@ -58,10 +55,9 @@ As decisões das OPEN-075 a OPEN-085 foram refletidas nas Specs correspondentes,
 
 ## 6. Plano recomendado de correção
 
-1. Manter OPEN-088 como pendência funcional isolada do escopo de compatibilidade/distância; não reabrir OPEN-031 a OPEN-046, já decididas.
-2. Manter as demais questões OPEN pertinentes explicitamente abertas até decisão do grupo.
-3. Manter a aprovação textual separada da aprovação dos layouts. Implementação somente após as aprovações aplicáveis.
-
+1. Resolver OPEN-088 e refletir a definição de método/provedor nas SPEC-007, SPEC-008 e SPEC-010 antes de liberar sua implementação.
+2. Preservar o escopo atual de OPEN-086/087: lote de até 25 chamadas de teste, expansão configurável no programa e nenhuma autorização de produção presumida.
+3. Manter aprovação dos textos separada da aprovação dos layouts; somente Specs marcadas como prontas em `docs/Specs.md` podem avançar para implementação.
 ## 7. Limite desta revisão
 
 Esta é uma auditoria de consistência documental. Ela identifica cobertura e problemas verificáveis por comparação dos artefatos, mas não substitui a leitura e validação funcional do grupo. Questões de produto que a baseline não resolve continuam abertas.
