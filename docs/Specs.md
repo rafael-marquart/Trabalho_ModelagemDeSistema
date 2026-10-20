@@ -99,12 +99,13 @@ A lista identifica áreas funcionais, não define quantidade final de páginas o
 3. O link tem validade de 30 minutos e só pode ser utilizado uma vez.
 4. A emissão de uma nova solicitação invalida o link emitido anteriormente.
 5. Após a conclusão da redefinição, o link utilizado é invalidado.
-6. O sistema aplica limitação de frequência às solicitações de recuperação; os limites numéricos permanecem pendentes de definição.
-7. A redefinição de senha invalida as sessões existentes, conforme decisão registrada na OPEN-002.
-8. O sistema valida a solicitação e permite redefinição quando válida.
-9. As novas credenciais podem ser usadas no acesso.
+6. O backend limita as solicitações a, no máximo, 3 por endereço de e-mail por hora e 10 por endereço IP por hora.
+7. Ao atingir qualquer limite, o sistema bloqueia novas solicitações dentro da janela e informa que é necessário aguardar antes de tentar novamente, sem expor dados adicionais da conta.
+8. A redefinição de senha invalida as sessões existentes, conforme decisão registrada na OPEN-002.
+9. O sistema valida a solicitação e permite redefinição quando válida.
+10. As novas credenciais podem ser usadas no acesso.
 
-A decisão aprovada define o envio por link de e-mail, validade de 30 minutos, uso único e invalidação do link anterior em nova solicitação. O formato técnico do token e o texto exato das mensagens permanecem por definir.
+A decisão aprovada define o envio por link de e-mail, validade de 30 minutos, uso único, invalidação do link anterior em nova solicitação e limites de frequência aplicados no backend: 3 solicitações por e-mail por hora e 10 por IP por hora. O formato técnico do token e o texto exato das mensagens permanecem por definir.
 
 ### 5.3 Cadastro e autorização por perfil
 1. O sistema permite iniciar cadastro como Usuário ou Empresa.
@@ -199,6 +200,7 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [ ] Credenciais válidas autenticam e encaminham conforme o perfil.
 - [ ] Credenciais inválidas não autenticam.
 - [ ] Recuperação permite redefinição quando a solicitação é válida.
+- [ ] O backend limita a recuperação a 3 solicitações por e-mail por hora e 10 por IP por hora, bloqueando novas solicitações ao atingir qualquer limite.
 - [ ] Operações protegidas verificam autorização no backend.
 - [ ] Sessão expirada ou invalidada não executa operações protegidas.
 - [ ] Empresa autorizada consegue cadastrar/associar Recrutador.
@@ -222,12 +224,14 @@ Contratos conceituais, sem definir endpoints HTTP:
 | T-001-09 | Empresa tenta alterar vínculo de outra organização | Operação recusada |
 | T-001-10 | Alteração de vínculo é concluída | Evento rastreável |
 | T-001-11 | Erro de autenticação | Mensagem acessível sem exposição indevida |
+| T-001-12 | Solicitações de recuperação excedem 3 por e-mail em uma hora | Novas solicitações para esse e-mail são bloqueadas até a janela permitir nova tentativa |
+| T-001-13 | Solicitações de recuperação excedem 10 por IP em uma hora | Novas solicitações desse IP são bloqueadas até a janela permitir nova tentativa |
 
 ## 13. Questões em aberto
 
 As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decisões tomadas nesta Spec.
 
-- **OPEN-001:** resolvida; recuperação por link de e-mail, validade de 30 minutos, uso único, invalidação do link anterior em nova solicitação, informação quando o e-mail não está cadastrado e limitação de frequência sem limites numéricos definidos.
+- **OPEN-001:** resolvida; recuperação por link de e-mail, validade de 30 minutos, uso único, invalidação do link anterior em nova solicitação, informação quando o e-mail não está cadastrado e limitação no backend a 3 solicitações por e-mail por hora e 10 por IP por hora.
 - **OPEN-002:** resolvida; a sessão expira após 60 minutos sem atividade, inclusive com “manter conectado” habilitado. Essa opção permite recuperar a sessão sem novo login por até 30 dias, conforme condições de uso; não elimina a expiração por inatividade. Logout, troca/redefinição de senha e bloqueio/desativação invalidam as sessões.
 - **OPEN-003:** resolvida; senha com mínimo de 10 caracteres, pelo menos uma letra maiúscula, uma minúscula e um número, sem símbolo obrigatório; bloqueio temporário após 10 tentativas consecutivas incorretas por 15 minutos, com desbloqueio automático ao fim do prazo ou por recuperação de senha válida.
 - **OPEN-004:** resolvida; razão social, identificador oficial e e-mail corporativo de contato obrigatórios; nome fantasia opcional. Validar o identificador oficial e confirmar separadamente o e-mail corporativo; liberar funcionalidades organizacionais somente após ambas as verificações. Impedir cadastro duplicado pelo identificador oficial e orientar recuperação/associação à conta existente. A Empresa cadastra/vincula Recrutadores conforme RF-17/RB-46. Permanecem a especificação dos procedimentos de validação, o tratamento de empresas sem o identificador adotado e os detalhes de associação tratados na OPEN-005.
