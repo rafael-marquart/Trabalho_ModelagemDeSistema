@@ -1192,7 +1192,7 @@ Contratos conceituais; não especificam endpoints HTTP.
 
 As questões estão centralizadas em [OPEN.md](OPEN.md).
 
-- **OPEN-020:** lista completa de campos e obrigatoriedade de vaga própria.
+- **OPEN-020 (resolvida):** campos obrigatórios para publicar vaga própria e faixa salarial opcional, conforme decisão registrada acima e em `docs/OPEN.md`.
 - **OPEN-021:** resolvida; validações por campo e consistência pré-publicação definidas nesta Spec.
 - **OPEN-022:** resolvida; limites de edição por estado e encerramento definidos nesta Spec.
 - **OPEN-023 (resolvida):** separação entre infraestrutura geral da Empresa, declaração específica por vaga e uso de TRAVA_CRITICA_VAGA; dados ausentes não presumem compatibilidade.
@@ -1511,8 +1511,8 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 As questões estão centralizadas em [OPEN.md](OPEN.md).
 
-- **OPEN-025:** campos obrigatórios e validações para considerar um registro externo uma vaga válida.
-- **OPEN-026:** comportamento de contingência quando LLM estiver indisponível ou produzir dados inválidos.
+- **OPEN-025 (resolvida):** critérios de validade de vagas externas definidos em `docs/OPEN.md` e refletidos nesta Spec.
+- **OPEN-026 (resolvida):** contingência para indisponibilidade ou resultado inválido da LLM definida em `docs/OPEN.md`; parâmetros operacionais de repetição são detalhamento técnico, não reabertura da decisão funcional.
 - **OPEN-027 (resolvida):** cada execução possui identificação e resultado agregado rastreável; cada registro recebido está associado à execução e possui resultado individual, com quantitativos consolidados coerentes. A estrutura persistente será detalhada no modelo de dados, sem imposição de entidades/tabelas nesta decisão.
 - **OPEN-028 (resolvida):** deduplicação externa conservadora em camadas por identificador na mesma fonte, URL original normalizada e, quando necessário, atributos normalizados confiáveis; casos incertos permanecem separados e não alteram vagas válidas existentes.
 - **OPEN-029 (resolvida):** processamento independente por registro, persistência consistente, repetição limitada apenas para falhas recuperáveis, reexecução segura com deduplicação aprovada, preservação de vagas válidas e rastreabilidade dos resultados individuais/agregados e das execuções anteriores. Limites e intervalos operacionais ficam para detalhamento, alinhados à OPEN-026; não se impõem tecnologias ou estruturas físicas.
@@ -1689,10 +1689,10 @@ Contratos conceituais, sem endpoints HTTP.
 
 ## 13. Questões em aberto
 - **OPEN-031:** resolvida; pesos gerais A=50%, T=30%, D=20%; parâmetros e pesos internos de A/T/D, score final, precisão e arredondamento estão na seção 6.1. A trava crítica precede o score; dados necessários ausentes seguem OPEN-033/034 e não recebem zero nem compatibilidade presumida.
-- **OPEN-032:** dados mínimos necessários para cada dimensão do cálculo.
+- **OPEN-032:** referência antiga sem correspondência identificada na tabela atual de `docs/OPEN.md`; confirmar rastreabilidade antes de tratá-la como pendência vigente.
 - **OPEN-033:** resolvida; quando faltar informação necessária em qualquer dimensão, indicar “dados insuficientes”, não apresentar score final como completo e informar dimensões avaliadas/dados faltantes; ausência não vira zero nem compatibilidade presumida.
 - **OPEN-034:** resolvida; modalidade e distância em quilômetros, faixas de pontuação e regra de exclusão de distância para vagas totalmente remotas estão documentadas na seção 6.1
-- **OPEN-035:** parâmetros e resultados que devem ser armazenados para rastreabilidade.
+- **OPEN-035:** referência antiga sem correspondência identificada na tabela atual de `docs/OPEN.md`; confirmar rastreabilidade antes de tratá-la como pendência vigente.
 - **OPEN-088:** resolvida; distância geográfica em linha reta calculada pela fórmula de Haversine, com coordenadas de latitude e longitude e resultado em quilômetros; sem distância por vias ou tempo de deslocamento.
 
 ## 14. Definition of Done
@@ -1824,8 +1824,8 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 ## 13. Questões em aberto
 - **OPEN-036:** resolvida; catálogo de filtros e combinação AND/OR definidos.
 - **OPEN-037:** resolvida; campos consultáveis e regras de busca textual definidos.
-- **OPEN-038:** paginação, limites de resultados e ordenações alternativas.
-- **OPEN-039:** se alertas/salvamento de busca fazem parte do escopo ou são apenas sugestão.
+- **OPEN-038 (resolvida):** paginação de 20 itens, máximo de 100 vagas elegíveis, ordenações aprovadas e desempate estável, conforme `docs/OPEN.md`.
+- **OPEN-039 (resolvida):** alertas por e-mail e salvamento de buscas não fazem parte do escopo atual, conforme `docs/OPEN.md`.
 
 ## 14. Definition of Done
 - [ ] Texto aprovado.
@@ -2085,7 +2085,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 | T-010-08 | Resultado é atualizado | Tela reflete resultado atualizado |
 
 ## 13. Questões em aberto
-- **OPEN-043:** campos do detalhe e regras de visibilidade.
+- **OPEN-043 (resolvida):** campos exibidos no detalhe da vaga e regras de visibilidade definidos em `docs/OPEN.md` e refletidos nesta Spec.
 
 - **OPEN-045 (resolvida):** dados ausentes de faixa salarial, localização ou origem são identificados como não informados, sem inferência; valores de fonte são preservados com origem quando disponível; divergências entre fontes são sinalizadas sem escolha silenciosa ou combinação. Não foi definida hierarquia entre fontes.
 - **OPEN-046 (resolvida):** perfil incompleto não gera score final nem parcial. Mostrar dimensões/fatores avaliáveis e pendências; dados ausentes são “Dados insuficientes”, sem nota zero ou compatibilidade presumida. Se faltar dado para verificar trava crítica, indicar elegibilidade não concluída. Solicitar complementação pelo fluxo existente e apresentar score final somente após nova análise válida. Decisão refletida nesta Spec e na SPEC-010.
