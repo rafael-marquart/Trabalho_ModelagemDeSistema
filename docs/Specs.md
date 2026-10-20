@@ -147,10 +147,10 @@ O comportamento deriva de UC-07 e RB-46. Quando o e-mail informado já pertencer
 16. O Recrutador permanece vinculado à Empresa responsável (RB-46).
 17. Uma Empresa só pode administrar vínculos sob sua própria responsabilidade.
 18. Não se introduz o papel de Gestor de Seleção.
-21. Um Recrutador pode manter vínculos com mais de uma Empresa. O aceite de convite efetiva o vínculo com a Empresa solicitante após nova validação de sua autorização, sem remover ou transferir vínculos existentes; cada Empresa administra apenas os próprios vínculos.
 19. Cadastro, perfil e vínculo organizacional devem permanecer íntegros (RNF-09).
 20. Alterações relevantes devem ser rastreáveis conforme RB-27 e RNF-14, respeitando RNF-08.
-21. ADR-002 centraliza a autorização no backend, mas não determina JWT, sessão/cookie ou mecanismo específico.
+21. Um Recrutador pode manter vínculos com mais de uma Empresa. O aceite de convite efetiva o vínculo com a Empresa solicitante após nova validação de sua autorização, sem remover ou transferir vínculos existentes; cada Empresa administra apenas os próprios vínculos.
+22. ADR-002 centraliza a autorização no backend, mas não determina JWT, sessão/cookie ou mecanismo específico.
 
 ## 7. Modelo de domínio envolvido
 
