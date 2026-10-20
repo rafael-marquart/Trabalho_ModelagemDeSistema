@@ -30,7 +30,9 @@ Cadastrar e atualizar as categorias aprovadas do perfil do candidato — dados p
 14. URLs de links profissionais e de validação de certificações devem ser válidas e começar com http:// ou https://.
 15. Escolaridade usa ensino fundamental, ensino médio, técnico, graduação, especialização, mestrado, doutorado ou outro; situação da formação usa em andamento ou concluída; proficiência em idiomas usa básico, intermediário, avançado ou fluente; tipo de link profissional usa LinkedIn, portfólio, GitHub, site pessoal ou outro. Quando selecionado “outro”, o candidato pode informar o valor correspondente.
 13. O sistema atualiza o perfil.
-14. O sistema registra alterações relevantes para rastreabilidade.
+14. O sistema registra criação, edição e exclusão de informações do perfil, incluindo dados profissionais e necessidades de acessibilidade. Cada evento contém data e hora, responsável pela alteração conforme autorização, categoria afetada, tipo de operação e campos afetados, em resumo suficiente para rastreabilidade.
+15. O histórico não mantém cópia completa do perfil nem valores anteriores/novos por padrão, não duplica dados pessoais ou sensíveis sem necessidade aprovada e não armazena laudos médicos.
+16. O histórico fica restrito a pessoas autorizadas, protegido contra alteração/exclusão indevida e é excluído automaticamente após 1 ano da alteração, exceto quando houver obrigação aplicável de preservação.
 
 ## Exceções e Fluxos Alternativos
 
