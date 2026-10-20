@@ -57,6 +57,10 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 - Escolha de tecnologia específica de autenticação, sessão, banco de dados, framework ou provedor de e-mail.
 - Definição de política de senha, duração de sessão ou mecanismo de bloqueio além do que a baseline determina.
 
+## 3.1.1. Status exibidos ao candidato
+
+Na interface de acompanhamento de candidaturas, o estado interno `Recusado` deve ser apresentado ao candidato com o rótulo **“Reprovada”**. Essa é uma convenção de apresentação; não altera o estado de domínio, as transições da RB-39, nem os critérios de cancelamento. O estado interno permanece `Recusado` nas regras, integrações e registros funcionais. Os demais estados são exibidos com seus rótulos correspondentes (`Inscrita`, `Triagem`, `Entrevista`, `Finalista`, `Contratado` e `Cancelada`).
+
 ## 3.1. Telas e evidência de layout
 
 | Tela/área | Finalidade | Layout |
