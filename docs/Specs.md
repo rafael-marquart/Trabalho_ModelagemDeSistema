@@ -122,7 +122,7 @@ A decisão aprovada define o envio por link de e-mail, validade de 30 minutos, u
 5. O sistema registra a alteração conforme as regras aplicáveis.
 6. A Empresa não pode administrar vínculos de Recrutadores pertencentes a outra organização.
 
-O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou tratar um e-mail que já pertença a uma conta precisa ser decidida antes da implementação. O perfil Administrador é exclusivo da plataforma e não participa da administração da conta Empresa.
+O comportamento deriva de UC-07 e RB-46. Quando o e-mail informado já pertencer a uma conta, o vínculo depende do aceite explícito do titular. Após o aceite, o backend deve validar novamente a autorização da Empresa solicitante e efetivar o vínculo com ela. Um Recrutador pode manter vínculos com mais de uma Empresa; aceitar um convite não remove nem transfere vínculos existentes. Cada Empresa administra somente o vínculo sob sua própria responsabilidade. O perfil Administrador é exclusivo da plataforma e não participa da administração da conta Empresa.
 
 
 
@@ -147,6 +147,7 @@ O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou t
 16. O Recrutador permanece vinculado à Empresa responsável (RB-46).
 17. Uma Empresa só pode administrar vínculos sob sua própria responsabilidade.
 18. Não se introduz o papel de Gestor de Seleção.
+21. Um Recrutador pode manter vínculos com mais de uma Empresa. O aceite de convite efetiva o vínculo com a Empresa solicitante após nova validação de sua autorização, sem remover ou transferir vínculos existentes; cada Empresa administra apenas os próprios vínculos.
 19. Cadastro, perfil e vínculo organizacional devem permanecer íntegros (RNF-09).
 20. Alterações relevantes devem ser rastreáveis conforme RB-27 e RNF-14, respeitando RNF-08.
 21. ADR-002 centraliza a autorização no backend, mas não determina JWT, sessão/cookie ou mecanismo específico.
@@ -235,7 +236,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 - **OPEN-002:** resolvida; a sessão expira após 60 minutos sem atividade, inclusive com “manter conectado” habilitado. Essa opção permite recuperar a sessão sem novo login por até 30 dias, conforme condições de uso; não elimina a expiração por inatividade. Logout, troca/redefinição de senha e bloqueio/desativação invalidam as sessões.
 - **OPEN-003:** resolvida; senha com mínimo de 10 caracteres, pelo menos uma letra maiúscula, uma minúscula e um número, sem símbolo obrigatório; bloqueio temporário após 10 tentativas consecutivas incorretas por 15 minutos, com desbloqueio automático ao fim do prazo ou por recuperação de senha válida.
 - **OPEN-004:** resolvida; razão social, identificador oficial e e-mail corporativo de contato obrigatórios; nome fantasia opcional. Validar o identificador oficial e confirmar separadamente o e-mail corporativo; liberar funcionalidades organizacionais somente após ambas as verificações. Impedir cadastro duplicado pelo identificador oficial e orientar recuperação/associação à conta existente. A Empresa cadastra/vincula Recrutadores conforme RF-17/RB-46. Permanecem a especificação dos procedimentos de validação, o tratamento de empresas sem o identificador adotado e os detalhes de associação tratados na OPEN-005.
-- **OPEN-005:** resolvida; se o e-mail já pertencer a uma conta, a Empresa autenticada e autorizada pode solicitar vínculo por convite enviado ao e-mail da conta, exigindo aceite explícito do titular. O vínculo só se efetiva após o aceite e nova validação da autorização da Empresa. Até lá, o convite permanece pendente; a Empresa não recebe dados adicionais da conta. O aceite não autoriza automaticamente transferir ou administrar vínculos de outra Empresa. Prazo, cancelamento/reenvio, recusa/expiração e regras para múltiplos vínculos permanecem sem decisão. Eventos de convite e vínculo são relevantes para auditoria; lista e retenção ficam na OPEN-006.
+- **OPEN-005:** parcialmente resolvida; se o e-mail já pertencer a uma conta, a Empresa autenticada e autorizada pode solicitar vínculo por convite enviado ao e-mail da conta, exigindo aceite explícito do titular. Após o aceite e nova validação da autorização da Empresa, o vínculo com a solicitante é efetivado. Um Recrutador pode manter vínculos com mais de uma Empresa; o aceite não remove nem transfere vínculos existentes, e cada Empresa administra apenas os próprios vínculos. Até o aceite, o convite permanece pendente e a Empresa não recebe dados adicionais da conta. Prazo, cancelamento/reenvio e tratamento de recusa/expiração ainda precisam ser decididos. Eventos de convite e vínculo são relevantes para auditoria; lista e retenção ficam na OPEN-006.
 - **OPEN-006:** eventos de auditoria e prazo de retenção.
 
 ## 14. Definition of Done
