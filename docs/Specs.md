@@ -545,7 +545,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | Cadastro de Usuário/Empresa | Campos, instruções e erros acessíveis | Pendente junto à SPEC-001 |
 | Perfil do candidato | Consulta e edição acessíveis | Pendente junto à SPEC-002 |
 | Necessidades de acessibilidade | Controles identificáveis e operáveis | Pendente junto à SPEC-002 |
-| Alto contraste, se houver controle explícito | Mecanismo de ativação ainda em aberto | Pendente |
+| Alto contraste | Controle próprio para ativar/desativar, com rótulo acessível e estado claramente indicado | Pendente |
 | Interação por voz, se houver controle explícito | Estados e falhas precisam ser definidos | Pendente |
 
 Esta capacidade pode afetar componentes transversais e não exige necessariamente uma tela independente. Protótipos e evidências devem ser anexados em docs/layout/ e aprovados separadamente.
@@ -572,12 +572,14 @@ Esta capacidade pode afetar componentes transversais e não exige necessariament
 4. Erros e alterações de estado relevantes são perceptíveis por tecnologia assistiva.
 
 ### 5.3 Alto contraste
-1. O usuário precisa de contraste visual elevado.
-2. O recurso previsto em RF-16 fica disponível conforme a solução aprovada.
-3. Textos, controles, foco e estados relevantes permanecem distinguíveis.
-4. Informações importantes não dependem somente de cor.
+1. Por padrão, a plataforma respeita a preferência de contraste do sistema operacional ou navegador.
+2. Se o usuário ativar ou desativar o alto contraste pelo controle próprio da plataforma, essa escolha prevalece enquanto o controle estiver ativo.
+3. Quando o controle próprio for desativado, a plataforma volta a respeitar a preferência externa.
+4. A alteração é aplicada imediatamente, sem exigir recarregamento da página.
+5. O controle tem rótulo acessível e indica claramente se o alto contraste está ativado.
+6. Textos, controles, foco e estados relevantes permanecem distinguíveis; informações importantes não dependem somente de cor.
 
-O mecanismo de ativação e persistência da preferência não é definido pela baseline e permanece em aberto.
+A persistência entre sessões e dispositivos é definida na OPEN-013. A estratégia técnica de aplicação não pode alterar o comportamento funcional aprovado.
 
 ### 5.4 Comandos de voz
 1. O usuário inicia uma interação por voz nos fluxos suportados.
@@ -606,7 +608,7 @@ O mecanismo de ativação e persistência da preferência não é definido pela 
 
 Não há entidade de domínio específica; o escopo é a camada de apresentação e seus componentes.
 
-A baseline não determina se preferências de alto contraste serão persistidas por usuário, sessão ou apenas durante a navegação.
+A persistência das preferências de alto contraste entre sessões e dispositivos segue a decisão registrada na OPEN-013.
 
 ## 8. Impacto arquitetural
 
@@ -614,7 +616,7 @@ A baseline não determina se preferências de alto contraste serão persistidas 
 - Acessibilidade deve ser verificada por componente e fluxo, não apenas por inspeção visual.
 - Estados de validação, foco, carregamento e erro devem ser expostos de forma acessível.
 - Se confirmada, a tecnologia de voz deve permanecer desacoplada das regras de domínio.
-- Estratégia de alto contraste e persistência de preferências depende das questões em aberto.
+- A estratégia técnica de alto contraste deve respeitar o comportamento funcional aprovado na OPEN-012; a persistência segue a OPEN-013.
 - Biblioteca de componentes, CSS e tecnologia de voz permanecem abertas conforme ADR-001.
 
 ## 9. Contratos necessários
@@ -622,7 +624,7 @@ A baseline não determina se preferências de alto contraste serão persistidas 
 - **Operar controles por teclado:** controles funcionais devem permitir foco e operação por teclado.
 - **Expor semântica a tecnologias assistivas:** controles, rótulos, instruções e mensagens comunicam propósito e estado.
 - **Apresentar erros e confirmações acessíveis:** resultados são perceptíveis e identificáveis.
-- **Ativar alto contraste:** disponibiliza o recurso conforme mecanismo aprovado.
+- **Controlar alto contraste:** por padrão respeita a preferência externa; permite ativar/desativar um controle próprio que prevalece enquanto ativo, aplica a mudança imediatamente e comunica o estado de forma acessível.
 - **Receber comando de voz:** se confirmado no escopo final, recebe comando e apresenta resultado/falha sem bloquear alternativas.
 - **Adaptar apresentação ao dispositivo:** conteúdo e ações essenciais permanecem utilizáveis nos contextos cobertos por RNF-03.
 
@@ -651,6 +653,7 @@ A referência a WCAG 2.1 AA não determina por si só ferramentas, combinações
 - [ ] Erros e resultados de ações são apresentados de forma acessível.
 - [ ] Informações importantes não dependem exclusivamente de cor.
 - [ ] Alto contraste, conforme RF-16, pode ser utilizado sem ocultar conteúdo necessário.
+- [ ] Por padrão, a preferência de contraste externa é respeitada; o controle próprio prevalece enquanto ativo, aplica a alteração imediatamente e indica seu estado por rótulo acessível.
 - [ ] Se comandos de voz forem confirmados, há alternativa acessível e tratamento de falhas definido.
 - [ ] Fluxos são utilizáveis nos tamanhos de tela contemplados por RNF-03.
 - [ ] Evidências suficientes são registradas para avaliar RNFs aplicáveis.
@@ -665,6 +668,8 @@ A referência a WCAG 2.1 AA não determina por si só ferramentas, combinações
 | T-003-03 | Enviar formulário com erro | Erros associados aos campos e perceptíveis |
 | T-003-04 | Executar ação com confirmação | Resultado comunicado de forma acessível |
 | T-003-05 | Usar alto contraste | Conteúdo e controles continuam distinguíveis |
+| T-003-11 | Controle próprio de alto contraste está desativado | A plataforma respeita a preferência externa de contraste |
+| T-003-12 | Usuário ativa/desativa o alto contraste pelo controle próprio | A escolha própria prevalece enquanto o controle está ativo, a mudança é imediata e o estado é acessível |
 | T-003-06 | Verificar estado comunicado por cor | Estado também indicado por texto, forma ou semântica |
 | T-003-07 | Usar viewport estreita | Conteúdo e ações essenciais permanecem utilizáveis |
 | T-003-08 | Usar voz, se aprovada | Comando suportado produz feedback e falha não bloqueia alternativa |
@@ -675,7 +680,7 @@ A referência a WCAG 2.1 AA não determina por si só ferramentas, combinações
 
 As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decisões tomadas nesta Spec.
 
-- **OPEN-012 (decisão aprovada):** abordagem combinada para alto contraste: respeitar preferências de contraste do sistema operacional/navegador e oferecer controle próprio para ativar/desativar na plataforma. A persistência fica para OPEN-013; divergência entre preferências, estratégia técnica e validação permanecem pendentes.
+- **OPEN-012 (resolvida):** por padrão, respeitar a preferência de contraste do sistema operacional/navegador. A escolha feita no controle próprio prevalece enquanto esse controle estiver ativo; ao desativá-lo, a plataforma volta à preferência externa. Aplicar mudanças imediatamente e indicar o estado por rótulo acessível. Persistência entre sessões/dispositivos é tratada na OPEN-013 e validação na OPEN-016.
 - **OPEN-013 (decisão aprovada):** salvar as preferências de acessibilidade definidas pela plataforma na conta do usuário e reaplicá-las em sessões futuras, inclusive em outro dispositivo. O alto contraste mantém o controle próprio da OPEN-012 e considera preferências externas suportadas. Permanecem pendentes o catálogo de preferências persistidas, divergências entre configurações internas/externas, usuários não autenticados e estratégia técnica de armazenamento/recuperação.
 - **OPEN-014 (decisão aprovada):** interação por voz em português brasileiro (pt-BR), para navegação e operações comuns em formulários nos fluxos suportados, incluindo navegação entre áreas, acionamento de controles, preenchimento de campos e confirmação de ações, sempre respeitando permissões, validações e confirmações exigidas. Deve comunicar resultados/falhas de forma acessível quando aplicável e não substituir alternativas acessíveis. Permanecem pendentes o catálogo e frases exatas, cobertura de fluxos/controles, tratamento detalhado de ambiguidades/falhas/confirmações, tecnologia e compatibilidade dos ambientes e eventual suporte a outros idiomas.
 - **OPEN-015 (decisão aprovada):** estabelecer matriz de ambientes de referência para validar teclado, leitores de tela, contraste, responsividade e fluxos essenciais da SPEC-003, incluindo entrada/autenticação, perfil do candidato e necessidades de acessibilidade. A matriz combinará navegadores, tecnologias assistivas e dispositivos e será referência de teste, não lista exclusiva de suporte. Nomes/versões, cobertura mínima por combinação, frequência de revalidação e evidências específicas por ambiente permanecem pendentes; processo e evidências de avaliação WCAG 2.1 AA ficam na OPEN-016.
@@ -732,7 +737,7 @@ Este bloco detalha SPEC-004, SPEC-005 e SPEC-006. As questões pendentes são re
 - **Drivers:** DA-01, DA-04, DA-07.
 - **ADRs:** ADR-001, ADR-004.
 - **Dependência:** SPEC-001, para autenticação e autorização.
-- **Questões relacionadas:** OPEN-017 a OPEN-019. OPEN-018 e OPEN-019 estão resolvidas conforme `docs/OPEN.md`; detalhes operacionais que ainda não foram definidos devem permanecer explicitados como lacunas de implementação, sem reabrir as decisões aprovadas.
+- **Questões relacionadas:** OPEN-017 a OPEN-019, atualmente parcialmente resolvidas conforme `docs/OPEN.md`. As decisões pendentes sobre os campos e respostas do questionário, histórico das alterações e tratamento de divergências devem ser definidas antes da implementação dessas regras.
 
 ## 3. Escopo
 
