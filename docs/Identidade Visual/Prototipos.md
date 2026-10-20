@@ -18,17 +18,17 @@ A referência editável original está no [Figma do AcessaVagas](https://www.fig
 
 ## Telas adicionais trabalhadas no Figma
 
-As telas abaixo foram elaboradas como rascunhos no Figma, mas ainda não foram exportadas como SVG/PNG adicionais para esta pasta nesta atualização:
+## Telas adicionais exportadas para SVG
 
-- Busca de vagas.
-- Detalhe da vaga.
-- Resultado de candidatura.
-- Minhas candidaturas.
-- Detalhe e histórico de candidatura.
-- Confirmação de cancelamento da candidatura.
-- Resultado do cancelamento da candidatura.
+- [Busca de vagas](Busca-de-Vagas.svg)
+- [Detalhe da vaga](Detalhe-da-Vaga.svg)
+- [Resultado de candidatura](Resultado-Candidatura.svg)
+- [Minhas candidaturas](Minhas-Candidaturas.svg)
+- [Detalhe e histórico de candidatura](Detalhe-Historico-Candidatura.svg)
+- [Confirmação de cancelamento](Confirmacao-Cancelamento.svg)
+- [Resultado do cancelamento](Resultado-Cancelamento.svg)
 
-A aprovação visual global comunicada pelo usuário em 20/10/2026 é registrada no README desta pasta. Essa aprovação não significa que os arquivos acima já tenham sido exportados nem substitui a aprovação formal do texto das Specs ou autorização de implementação.
+Os SVGs foram adicionados ao repositório em 20/10/2026. A aprovação visual global comunicada pelo usuário não substitui aprovação formal do texto das Specs nem autorização de implementação.
 
 ### Ajuste pendente no rascunho de resultado do cancelamento
 
