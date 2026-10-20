@@ -5,7 +5,7 @@ Documento de detalhamento das Specs do AcessaVagas, baseado na baseline do proje
 ## Controle do documento
 
 - Escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. A SPEC-005 — Cadastrar e gerenciar vagas próprias — integra o intervalo SPEC-001 a SPEC-013. As antigas SPEC-014 e SPEC-015 foram removidas do escopo e não serão restauradas nesta revisão. Referências a esses IDs devem ser tratadas como históricas somente quando o contexto confirmar que não afetam dependências, rastreabilidade ou comportamento vigente; referências ativas ou ambíguas devem ser conferidas individualmente e corrigidas quando necessário, sem renumerar as Specs posteriores nem fazer substituição em massa.
-- Estado dos textos: especificada, aguardando revisão e aprovação humana.
+- Estado dos textos: especificados; aprovação formal individual pendente, conforme os registros de revisão.
 - Estado dos layouts: **protótipo disponível — aprovação pendente**, **pendente de protótipo** ou **não se aplica**, conforme a cobertura visual de cada tela/área.
 - **Layout significa evidência visual/protótipo, não código.** Os arquivos em `docs/Identidade Visual/` constituem referências visuais existentes. A presença de protótipo não significa aprovação formal do layout nem autorização de implementação.
 - Implementação: não autorizada. A aprovação do texto e a aprovação do layout são etapas separadas.
@@ -23,7 +23,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 |---|---|
 | ID | SPEC-001 |
 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | especificada; aprovação formal pendente |
 | Estado do layout | protótipos disponíveis para parte das telas; aprovação pendente e áreas restantes sem protótipo |
 | Capacidade | Cadastro de usuário/empresa, autenticação, recuperação de senha, autorização por perfil e vínculo organizacional de recrutador |
 
@@ -489,7 +489,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 ## 14. Definition of Done
 
-- [x] Texto revisado e aprovado.
+- [ ] Aprovação formal individual do texto registrada.
 - [ ] Campos e validações conferidos com RF-04, RF-19, RB-26 a RB-29 e UC-01.
 - [ ] Questões em aberto decididas ou mantidas como pendências explícitas.
 - [ ] Layouts anexados em docs/layout/ e aprovados separadamente.
@@ -698,9 +698,9 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 | Spec | Estado do texto | Estado do layout | Revisão humana |
 |---|---|---|---|
-| SPEC-001 — Acessar a plataforma e identificar perfil organizacional | aprovada | pendente | aprovada |
-| SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato | aprovada | pendente | aprovada |
-| SPEC-003 — Disponibilizar recursos de acessibilidade da interface | aprovada | pendente | aprovada |
+| SPEC-001 — Acessar a plataforma e identificar perfil organizacional | especificada | pendente | aguardando |
+| SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato | especificada | pendente | aguardando |
+| SPEC-003 — Disponibilizar recursos de acessibilidade da interface | especificada | pendente | aguardando |
 
 **Próxima etapa:** detalhar o Bloco 3. A revisão coletiva das questões em aberto pode ocorrer depois que todas as Specs estiverem detalhadas.
 
@@ -3103,11 +3103,11 @@ As decisões de apresentação por estrelas, mínimo de uma avaliação válida 
 
 | Specs | Estado dos textos | Bloqueio |
 |---|---|---|
-| SPEC-001 a SPEC-006 | aprovadas; prontas para implementação | Nenhum bloqueio por OPEN-088. Em SPEC-006, a etapa aprovada permanece limitada ao lote de teste de até 25 chamadas; uso contínuo/produção do Adzuna não está autorizado por este registro. |
-| SPEC-007 a SPEC-008 | aprovadas; prontas para implementação | Nenhum bloqueio por OPEN-088; distância em linha reta pela fórmula de Haversine definida na SPEC-007. |
-| SPEC-009 | aprovada; pronta para implementação | Nenhum bloqueio por OPEN-088. |
-| SPEC-010 | aprovada; pronta para implementação | Depende da SPEC-007, agora com método de distância definido. |
-| SPEC-011 a SPEC-013 | aprovadas; prontas para implementação | Nenhum bloqueio por OPEN-088. |
-| SPEC-016 a SPEC-021 | aprovadas; prontas para implementação | Nenhum bloqueio por OPEN-088. |
+| SPEC-001 a SPEC-006 | especificadas; aprovação formal pendente | Nenhum bloqueio por OPEN-088. Em SPEC-006, a etapa aprovada permanece limitada ao lote de teste de até 25 chamadas; uso contínuo/produção do Adzuna não está autorizado por este registro. |
+| SPEC-007 a SPEC-008 | especificadas; aprovação formal pendente | Nenhum bloqueio por OPEN-088; distância em linha reta pela fórmula de Haversine definida na SPEC-007. |
+| SPEC-009 | especificada; aprovação formal pendente | Nenhum bloqueio por OPEN-088. |
+| SPEC-010 | especificada; aprovação formal pendente | Depende da SPEC-007, agora com método de distância definido. |
+| SPEC-011 a SPEC-013 | especificadas; aprovação formal pendente | Nenhum bloqueio por OPEN-088. |
+| SPEC-016 a SPEC-021 | especificadas; aprovação formal pendente | Nenhum bloqueio por OPEN-088. |
 
-Esta aprovação se refere aos **textos das Specs** e autoriza a implementação apenas das capacidades marcadas como prontas, respeitando os limites registrados nas OPENs. A aprovação não altera nem aprova layouts: protótipos e layouts aplicáveis continuam sujeitos à aprovação visual própria.
+Este registro consolida o estado documental, mas não substitui a aprovação formal individual dos textos nem a aprovação dos layouts. A implementação permanece não autorizada até que as aprovações exigidas sejam registradas. Os limites e condições registrados nas OPENs continuam aplicáveis.
