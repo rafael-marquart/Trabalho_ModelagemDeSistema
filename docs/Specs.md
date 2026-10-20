@@ -23,7 +23,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 |---|---|
 | ID | SPEC-001 |
 |
-| Estado do texto | especificada; aprovação formal pendente |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | protótipos disponíveis para parte das telas; aprovação pendente e áreas restantes sem protótipo |
 | Capacidade | Cadastro de usuário/empresa, autenticação, recuperação de senha, autorização por perfil e vínculo organizacional de recrutador |
 
@@ -489,7 +489,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 ## 14. Definition of Done
 
-- [ ] Aprovação formal individual do texto registrada.
+- [x] Texto revisado e aprovado.
 - [ ] Campos e validações conferidos com RF-04, RF-19, RB-26 a RB-29 e UC-01.
 - [ ] Questões em aberto decididas ou mantidas como pendências explícitas.
 - [ ] Layouts anexados em docs/layout/ e aprovados separadamente.
@@ -698,9 +698,9 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 | Spec | Estado do texto | Estado do layout | Revisão humana |
 |---|---|---|---|
-| SPEC-001 — Acessar a plataforma e identificar perfil organizacional | especificada | pendente | aguardando |
-| SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato | especificada | pendente | aguardando |
-| SPEC-003 — Disponibilizar recursos de acessibilidade da interface | especificada | pendente | aguardando |
+| SPEC-001 — Acessar a plataforma e identificar perfil organizacional | aprovada | pendente | aprovada |
+| SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato | aprovada | pendente | aprovada |
+| SPEC-003 — Disponibilizar recursos de acessibilidade da interface | aprovada | pendente | aprovada |
 
 **Próxima etapa:** detalhar o Bloco 3. A revisão coletiva das questões em aberto pode ocorrer depois que todas as Specs estiverem detalhadas.
 
@@ -1536,9 +1536,9 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 
 | Spec | Estado do texto | Estado do layout | Revisão humana |
 |---|---|---|---|
-| SPEC-004 — Gerenciar infraestrutura de acessibilidade da empresa | especificada | pendente | aguardando |
-| SPEC-005 — Cadastrar e gerenciar vagas próprias | especificada | pendente | aguardando |
-| SPEC-006 — Importar, ingerir e normalizar vagas externas | especificada | não se aplica ao núcleo; interface opcional pendente | aguardando |
+| SPEC-004 — Gerenciar infraestrutura de acessibilidade da empresa | aprovada | pendente | aprovada |
+| SPEC-005 — Cadastrar e gerenciar vagas próprias | aprovada | pendente | aprovada |
+| SPEC-006 — Importar, ingerir e normalizar vagas externas | aprovada | não se aplica ao núcleo; interface opcional pendente | aprovada |
 
 **Próxima etapa:** detalhar o Bloco 3 após registrar este bloco no documento. A revisão coletiva das questões em aberto pode ocorrer depois que todas as Specs estiverem detalhadas.
 
@@ -1568,7 +1568,7 @@ Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN
 - **Modelo:** CANDIDATO, VETOR_ACESSIBILIDADE_CANDIDATO, VAGA, TRAVA_CRITICA_VAGA.
 - **Drivers:** DA-03, DA-04. **ADR:** ADR-004.
 - **Dependências:** SPEC-002, SPEC-004, SPEC-005 e SPEC-006.
-- **Rastreabilidade:** OPEN-031 a OPEN-035. As referências OPEN-032 e OPEN-035 não foram localizadas como linhas ativas na tabela atual de `docs/OPEN.md`; confirmar a rastreabilidade antes de tratá-las como pendências vigentes.
+- **Rastreabilidade:** pesos, dados insuficientes, modalidade, distância e reprodução do cálculo estão definidos nas seções 6.1 e 6.2 desta Spec. Não há questões OPEN-031 a OPEN-035 ativas na tabela atual de `docs/OPEN.md`.
 
 ## 3. Escopo
 **Incluído:** verificar dados mínimos; comparar necessidades obrigatórias com barreiras da vaga; aplicar trava eliminatória; calcular score quando a vaga passar pela trava; produzir fatores que expliquem o resultado.
@@ -1619,9 +1619,9 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 
 **T — Perfil técnico (30% do score final):** comparar critérios da vaga com dados declarados pelo candidato. Pesos internos: competências e conhecimentos = 40%; experiência profissional = 30%; formação e escolaridade = 20%; idiomas = 10%. Só entram critérios aplicáveis à vaga. A nota T é a soma das notas de critério multiplicadas pelos pesos internos aplicáveis, normalizada pela soma desses pesos aplicáveis. As faixas/escala de pontuação por critério técnico devem seguir critérios explícitos da vaga e não são inventadas por esta especificação.
 
-**D — Distância e modalidade (20% do score final):** pesos internos: compatibilidade com modalidade = 60%; compatibilidade de localização/distância = 40%. Modalidade atende à preferência informada = 100; atende parcialmente = 50; modalidade confirmada não atende = 0. Para vaga presencial ou híbrida, pontuar a distância entre a localização do candidato e o local de trabalho: até 10 km = 100; mais de 10 km até 25 km = 75; mais de 25 km até 50 km = 50; mais de 50 km = 25. Localização desconhecida não pontua e, quando necessária à avaliação, deve ser indicada como dado insuficiente conforme OPEN-033. Para vaga totalmente remota, localização/distância não se aplica: excluir o componente de 40%, não atribuir zero e calcular D somente pela nota de modalidade (D = M), se modalidade for avaliável. Em vagas presenciais/híbridas, D = 0,60 × M + 0,40 × L.
+**D — Distância e modalidade (20% do score final):** pesos internos: compatibilidade com modalidade = 60%; compatibilidade de localização/distância = 40%. Modalidade atende à preferência informada = 100; atende parcialmente = 50; modalidade confirmada não atende = 0. Para vaga presencial ou híbrida, pontuar a distância entre a localização do candidato e o local de trabalho: até 10 km = 100; mais de 10 km até 25 km = 75; mais de 25 km até 50 km = 50; mais de 50 km = 25. Localização desconhecida não pontua e, quando necessária à avaliação, deve ser indicada como “dados insuficientes”. Para vaga totalmente remota, localização/distância não se aplica: excluir o componente de 40%, não atribuir zero e calcular D somente pela nota de modalidade (D = M), se modalidade for avaliável. Em vagas presenciais/híbridas, D = 0,60 × M + 0,40 × L.
 
-**Aplicabilidade e dados ausentes:** critérios não aplicáveis à vaga são excluídos da composição. Quando faltar informação necessária para avaliar uma dimensão (incluindo preferência de modalidade ou localização, conforme aplicável), indicar “dados insuficientes” e não apresentar score final completo, conforme OPEN-033. A distância é calculada em linha reta, em quilômetros, pela fórmula de Haversine aplicada às coordenadas de latitude e longitude do candidato e do local de trabalho. Não calcular distância por vias nem tempo de deslocamento. Ausência de dados não é nota zero nem compatibilidade presumida. Não calcular score parcial final por esta decisão. Manter precisão intermediária e arredondar somente o score final ao inteiro mais próximo, com meio ponto exato arredondado para cima.
+**Aplicabilidade e dados ausentes:** critérios não aplicáveis à vaga são excluídos da composição. Quando faltar informação necessária para avaliar uma dimensão (incluindo preferência de modalidade ou localização, conforme aplicável), indicar “dados insuficientes” e não apresentar score final completo. A distância é calculada em linha reta, em quilômetros, pela fórmula de Haversine aplicada às coordenadas de latitude e longitude do candidato e do local de trabalho. Não calcular distância por vias nem tempo de deslocamento. Ausência de dados não é nota zero nem compatibilidade presumida. Não calcular score parcial final por esta decisão. Manter precisão intermediária e arredondar somente o score final ao inteiro mais próximo, com meio ponto exato arredondado para cima.
 
 ## 6.2. Rastreabilidade e reprodução do cálculo
 
@@ -1672,7 +1672,7 @@ Contratos conceituais, sem endpoints HTTP.
 - [ ] Mesmas entradas e regras produzem resultado consistente.
 - [ ] Vaga externa só é analisada depois de validada e normalizada.
 - [ ] Cálculo pode ser testado isoladamente.
-- [ ] Subpontuações e score final seguem a fórmula aprovada na OPEN-031, com arredondamento apenas no resultado final.
+- [ ] Subpontuações e score final seguem a fórmula definida na seção 6.1, com arredondamento apenas no resultado final.
 - [ ] Quando faltar informação necessária em qualquer dimensão, análise sinaliza “dados insuficientes”, sem score final completo; informa dimensões avaliadas e dados faltantes, sem converter ausência em zero ou compatibilidade presumida.
 
 ## 12. Casos de teste derivados
@@ -2104,10 +2104,10 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 
 | Spec | Estado do texto | Estado do layout | Revisão humana |
 |---|---|---|---|
-| SPEC-007 — Calcular compatibilidade entre candidato e vaga | especificada | não se aplica ao cálculo; apresentação na SPEC-010 | aguardando |
-| SPEC-008 — Buscar e filtrar vagas | especificada | pendente | aguardando |
-| SPEC-009 — Consultar status e disponibilidade da vaga | especificada | pendente | aguardando |
-| SPEC-010 — Visualizar vaga e resultado de compatibilidade | especificada | pendente | aguardando |
+| SPEC-007 — Calcular compatibilidade entre candidato e vaga | aprovada | não se aplica ao cálculo; apresentação na SPEC-010 | aprovada |
+| SPEC-008 — Buscar e filtrar vagas | aprovada | pendente | aprovada |
+| SPEC-009 — Consultar status e disponibilidade da vaga | aprovada | pendente | aprovada |
+| SPEC-010 — Visualizar vaga e resultado de compatibilidade | aprovada | pendente | aprovada |
 
 **Próxima etapa:** detalhar o Bloco 4 na ordem do mapa. A revisão coletiva de OPENs fica para depois do detalhamento de todas as Specs.
 
