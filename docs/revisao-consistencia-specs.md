@@ -8,7 +8,7 @@ A revisão de consistência não decide questões funcionais por inferência. O 
 
 ## 2. Resultado executivo
 
-**Status atual:** REV-009 está encerrada. OPEN-088 permanece como pendência funcional para determinar distância em quilômetros. OPEN-086 e OPEN-087 foram alinhadas ao escopo atual: até 25 chamadas de teste, com expansão arquiteturalmente suportada por configuração, sem autorização presumida para operação contínua/produção. Os textos das Specs foram aprovados para implementação conforme o registro consolidado em `docs/Specs.md`: SPEC-001 a SPEC-006, SPEC-009, SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 estão prontas para implementação; SPEC-007, SPEC-008 e SPEC-010 estão aprovadas, mas bloqueadas pela OPEN-088. A aprovação dos textos não aprova layouts, que permanecem em controle separado. REV-002 e REV-008 seguem encerradas.
+**Status atual:** REV-009 está encerrada. OPEN-088 foi resolvida: a distância será calculada em linha reta pela fórmula de Haversine, usando coordenadas de latitude e longitude e resultado em quilômetros. OPEN-086 e OPEN-087 foram alinhadas ao escopo atual: até 25 chamadas de teste, com expansão arquiteturalmente suportada por configuração, sem autorização presumida para operação contínua/produção. Os textos das Specs foram aprovados para implementação conforme o registro consolidado em `docs/Specs.md`: SPEC-001 a SPEC-006, SPEC-009, SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 estão prontas para implementação; SPEC-007, SPEC-008 e SPEC-010 estão aprovadas e prontas para implementação, com o método de distância definido. A aprovação dos textos não aprova layouts, que permanecem em controle separado. REV-002 e REV-008 seguem encerradas.
 
 - O mapa e o documento de detalhamento cobrem as Specs ativas do escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. SPEC-014 e SPEC-015 foram removidas e não devem ser contadas como Specs vigentes; os IDs posteriores foram preservados.
 - A conferência do cadastro atual de `OPEN.md` identificou 83 entradas de questões com IDs únicos. Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado das pendências é consolidado na seção 4.
@@ -30,20 +30,20 @@ A revisão de consistência não decide questões funcionais por inferência. O 
 - Dados de acessibilidade ausentes não significam compatibilidade; ausência de informação não pode ser tratada como confirmação positiva nem, sem evidência, como incompatibilidade comprovada.
 - O cálculo deve ter uma única fonte de verdade na SPEC-007. A SPEC-008 usa o resultado para busca/filtros e a SPEC-010 apresenta o resultado ao candidato; nenhuma delas deve criar uma fórmula paralela.
 
-**Decisões já consolidadas:** OPEN-031 a OPEN-046 estão resolvidas e devem ser refletidas de forma consistente nas Specs. A regra atual de D usa distância em quilômetros nas vagas presenciais/híbridas e exclui distância para vagas totalmente remotas; não calcula tempo de deslocamento. **Pendência funcional remanescente:** OPEN-088, que define o método/provedor para determinar a distância em quilômetros. Não escolher provedor ou método por inferência.
+**Decisões já consolidadas:** OPEN-031 a OPEN-046 e OPEN-088 estão resolvidas e devem ser refletidas de forma consistente nas Specs. A regra atual de D usa distância geográfica em linha reta, calculada pela fórmula de Haversine a partir das coordenadas de latitude e longitude, em quilômetros nas vagas presenciais/híbridas; para vagas totalmente remotas, exclui distância. Não calcula distância por vias nem tempo de deslocamento.
 
-**Encerramento:** as decisões consolidadas nas OPEN-031 a OPEN-046 foram consideradas refletidas nas Specs, incluindo a trava crítica, tratamento de dados ausentes, fonte única do cálculo na SPEC-007, consumo do resultado pelas SPEC-008/SPEC-010 e regra de distância/modalidade. OPEN-088 permanece aberta como a única pendência funcional da revisão: método/provedor para determinar distância em quilômetros. Não calcular tempo de deslocamento nem reintroduzir o provedor de rotas anteriormente considerado. A revisão documental REV-009 está encerrada; isso não equivale à aprovação geral das Specs nem autoriza implementação..
+**Encerramento:** as decisões consolidadas nas OPEN-031 a OPEN-046 e OPEN-088 foram refletidas nas Specs, incluindo a trava crítica, tratamento de dados ausentes, fonte única do cálculo na SPEC-007, consumo do resultado pelas SPEC-008/SPEC-010 e regra de distância/modalidade. A distância é calculada em linha reta pela fórmula de Haversine, sem cálculo por vias ou tempo de deslocamento. A revisão documental REV-009 está encerrada; isso não equivale à aprovação de layouts, que continuam sujeitos à aprovação visual própria.
 
 ## 4. Estado atual das pendências OPEN
 
 Conforme o cadastro atualizado de `docs/OPEN.md`:
 
-- **Abertas:** OPEN-088.
-- **Resolvidas:** OPEN-074 a OPEN-087.
+- **Abertas:** nenhuma entre OPEN-074 e OPEN-088.
+- **Resolvidas:** OPEN-074 a OPEN-088.
 
 OPEN-086 delimita a etapa atual a testes com as credenciais disponíveis e até 25 chamadas; não autoriza operação contínua/produção, armazenamento/exibição contínuos ou envio de conteúdo ao LLM. OPEN-087 define 25 chamadas como limite do lote atual de testes, não como teto arquitetural: o programa deve permitir expansão por configuração/parametrização, condicionada às cotas, condições e autorização da fonte.
 
-OPEN-088 continua sem método/provedor aprovado para determinar distância em quilômetros; não calcular tempo de deslocamento nem reintroduzir o provedor de rotas anteriormente considerado.
+OPEN-088 foi resolvida: a distância em quilômetros é calculada em linha reta pela fórmula de Haversine, usando latitude e longitude. Não calcular distância por vias nem tempo de deslocamento.
 ## 5. Verificações que passaram
 
 - As Specs ativas listadas no escopo (SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021) aparecem no mapa e no documento de detalhamento; SPEC-014 e SPEC-015 estão excluídas do escopo.
