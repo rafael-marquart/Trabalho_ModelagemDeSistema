@@ -10,8 +10,9 @@ Cadastrar e atualizar as categorias aprovadas do perfil do candidato — dados p
 
 ## Fluxo Principal
 
-1. O candidato acessa seu perfil.
-2. O candidato informa necessidades funcionais e recursos indispensáveis.
+1. O candidato acessa seu perfil profissional centralizado, que pode ser consultado publicamente.
+2. O candidato cadastra ou atualiza dados profissionais e informa necessidades funcionais e recursos indispensáveis.
+2.1. O candidato escolhe explicitamente quais informações básicas de acessibilidade deseja exibir publicamente e pode alterar essa escolha. Detalhes adicionais permanecem restritos conforme autorização e finalidade; não se exibem publicamente por padrão diagnósticos, laudos médicos ou outros dados sensíveis.
 3. O candidato pode registrar necessidades por autodeclaração.
 4. O sistema reutiliza nome e e-mail mantidos na conta, sem exigir preenchimento duplicado no perfil; o cadastro da conta segue as regras da SPEC-001. CPF não é obrigatório para salvar o perfil.
 5. O candidato pode cadastrar e atualizar formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais, todas categorias incluídas no escopo pela OPEN-007; podem ser preenchidas progressivamente e não bloqueiam o salvamento por categoria.
