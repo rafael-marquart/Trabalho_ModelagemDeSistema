@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Monitorar em tempo real a evolução de suas candidaturas, visualizar confirmações de acomodações solicitadas e acessar detalhes de agendamentos.
+Permitir ao candidato consultar suas próprias candidaturas, acompanhar etapas, status e histórico disponível do processo seletivo e cancelar a própria candidatura conforme as regras aplicáveis.
 
 ## Ator principal
 
@@ -10,51 +10,59 @@ Monitorar em tempo real a evolução de suas candidaturas, visualizar confirmaç
 
 ## Pré-condições
 
-- Candidato autenticado com pelo menos uma candidatura ativa.
-
-## Pontos de Inclusão e Extensão
-
-- Extensão (<<extend>>): FA01 (Cancelar Candidatura), FA02 (Visualizar Agendamento), EX01 (Alerta de Vaga Encerrada).
+- Candidato autenticado.
+- Existe candidatura registrada.
 
 ## Fluxo Principal
 
-1. O candidato acessa a área "Minhas Candidaturas".
-2. O sistema exibe o painel consolidado com a lista de vagas e a etapa atual de cada processo (Inscrito, Triagem, Entrevista Agendada, Finalizado).
-3. O candidato seleciona um item para visualizar a linha do tempo detalhada e o status do aceite da sua solicitação de acomodação (UC04).
+1. O candidato acessa “Minhas Candidaturas”.
+2. O sistema apresenta as candidaturas e o estado atual de cada processo.
+3. O candidato seleciona uma candidatura para consultar sua linha do tempo.
+4. O sistema apresenta a linha do tempo com os tipos de evento “Candidatura realizada”, “Status” e “Candidatura cancelada”, quando aplicáveis. O tipo “Status” pode representar estados gerais como “Em andamento”, “Entrevista” e “Aprovado”. Cada evento apresenta a data, sem exigir horário, uma descrição breve e compreensível e o status ou etapa resultante, quando aplicável. Os eventos são exibidos do mais recente para o mais antigo. O histórico exibido limita-se à própria candidatura do candidato e não expõe dados de terceiros nem informações internas não destinadas ao acompanhamento.
+5. O sistema permite ao candidato cancelar a própria candidatura após confirmação, somente nos estados `Inscrita`, `Triagem`, `Entrevista` ou `Finalista`, desde que a vaga não esteja encerrada nem bloqueada de forma que impeça o cancelamento.
+6. Após confirmação e validação, o sistema registra o cancelamento, preserva o histórico e notifica o recrutador responsável. Se a candidatura estiver em `Contratado`, `Recusado` ou já cancelada, ou se a vaga estiver encerrada/bloqueada de forma impeditiva, o sistema recusa a operação sem alterar o estado.
 
-## Exceções e Fluxos Alternativos
+## Exceções
 
-- FA01 (Cancelar Candidatura): O candidato opta por desistir do processo seletivo, alterando o status da inscrição e liberando sua participação.
-- FA02 (Visualizar Detalhes do Agendamento): Quando o status for Entrevista Agendada, o candidato acessa local, horário e recursos confirmados (UC10).
-- EX01 (Vaga Cancelada pela Empresa): O sistema sinaliza quando uma oportunidade foi encerrada precocemente pela empresa.
+- EX01: vaga encerrada é apresentada com o novo status e impede novas ações incompatíveis.
+- EX02: candidatura cancelada permanece disponível no histórico por 60 dias após o cancelamento; depois desse prazo, deixa de ser exibida no acompanhamento do candidato.
+- EX03: após o encerramento da vaga, o histórico permanece disponível ao candidato por 60 dias a partir do encerramento; depois desse prazo, deixa de ser exibido no acompanhamento. A retenção dos registros técnicos de auditoria é independente.
+- EX04: tentativa de cancelar candidatura em estado final (`Contratado`, `Recusado` ou já cancelada), ou associada a vaga encerrada/bloqueada de forma impeditiva, é recusada sem alteração.
 
 ## Pós-condições
 
-- Status das candidaturas atualizado no painel do candidato.
-- Notificações geradas para o candidato sobre alterações críticas (cancelamento, reagendamento, resposta à solicitação de acomodação).
+- O candidato visualiza o estado atualizado de suas candidaturas.
+- Alterações relevantes permanecem registradas.
+- O histórico funcional apresentado ao candidato não substitui a auditoria técnica, cuja retenção é independente.
 
 ## Regras de negócio relacionadas
 
-- RB-37: Registro de resposta — recrutador deve registrar aceite, negativa ou contraproposta; resposta gera notificação ao candidato (aplicável também ao UC05).
-- RB-40: Cancelamento de candidatura — candidato pode cancelar sua candidatura até um prazo definido antes de etapas críticas (por exemplo, 24 horas antes da entrevista), dependendo das regras da vaga.
-- RB-41: Estados do funil — o sistema deve padronizar os estados do funil (Inscrito, Triagem, Selecionado para Entrevista, Entrevista Agendada, Finalizado, Rejeitado) e impedir transições inválidas.
-- RB-42: Visibilidade de acomodações — confirmação/recusa de solicitações de acomodação deve ser claramente exibida no funil.
-- RB-43: Auditoria de alterações — mudanças de status e cancelamentos devem ser versionadas e registradas com usuário e timestamp.
-- RB-44: Notificação de vaga encerrada — quando a vaga é encerrada, candidatos em fase ativa recebem aviso e a vaga é removida do painel ativo.
+- RB-23 — Transparência de status.
+- RB-27 — Histórico de alterações.
+- RB-36 — Cancelamento de candidatura.
+- RB-38 — Estados do funil.
+- RB-39 — Transições válidas do funil.
+- RB-41 — Auditoria das alterações.
+- RB-42 — Vaga encerrada.
+
+## Escopo de gestão da candidatura (RF-28)
+
+As operações disponíveis ao candidato são consultar suas próprias candidaturas, acompanhar status/etapas e histórico disponível e cancelar a própria candidatura nas condições definidas neste caso de uso. Editar uma candidatura já enviada, excluir seu registro ou alterar etapas do processo seletivo não fazem parte deste escopo.
 
 ## Requisitos relacionados
 
-- RF-27 — Notificações ao recrutador e candidato (e-mail/SMS/alerta interno).
-- RF-26 — Registro de candidatura (persistência e associação com o funil de seleção).
-- RF-30 — Visibilidade para recrutadores (painel com gestão de solicitações e emissão de respostas).
-- RF-31 — Notificações e rastreamento (notificar candidato sobre decisão e registrar timestamps).
-- RF-12 — Gestão de sessão e tokens (garantir que apenas usuário autenticado veja o funil).
-- RF-35 — Cancelamento de candidatura (função para alterar status por iniciativa do candidato, com regras de bloqueio temporal).
+- RF-11 — Minhas candidaturas.
+- RF-28 — Gestão da candidatura pelo candidato.
+- RF-27 — Notificações do processo seletivo.
+- RF-31 — Acompanhamento do processo seletivo.
+- RF-34 — Cancelamento de candidatura.
 
 ## Critérios de aceitação
 
-- O candidato visualiza sua lista de candidaturas com o estado correto atualizado.
-- O candidato recebe notificação quando uma acomodação é aceita/recusada pelo recrutador.
-- Candidaturas canceladas pelo candidato são registradas e removidas/arquivadas do funil ativo conforme regras.
-
----
+- O candidato visualiza candidaturas e estados atualizados.
+- Alterações relevantes são comunicadas conforme as regras.
+- O candidato pode cancelar a própria candidatura nos estados `Inscrita`, `Triagem`, `Entrevista` ou `Finalista`, após confirmação e se a vaga não estiver encerrada nem bloqueada de forma impeditiva.
+- Candidaturas `Contratado`, `Recusado` ou já canceladas não podem ser canceladas novamente; a recusa não altera o estado.
+- Cancelamento confirmado preserva o histórico e notifica o recrutador responsável.
+- A linha do tempo apresenta eventos aplicáveis com data, descrição breve e status/etapa resultante quando aplicável, em ordem do mais recente para o mais antigo.
+- O histórico apresentado contém somente informações destinadas ao acompanhamento da própria candidatura; a auditoria técnica mantém retenção independente.

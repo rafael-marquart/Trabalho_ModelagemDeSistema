@@ -2,63 +2,59 @@
 
 ## Objetivo
 
-Mapear e declarar os recursos físicos, digitais, tecnológicos e organizacionais de acessibilidade presentes na empresa.
+Permitir à empresa manter suas informações de acessibilidade e administrar os recrutadores vinculados à sua conta.
 
 ## Ator principal
 
-- Recrutador / RH.
+- Empresa.
 
 ## Pré-condições
 
-- Recrutador autenticado e vinculado a um perfil corporativo cadastrado.
-
-## Pontos de Inclusão e Extensão
-
-- Extensão (<<extend>>): FA01 (Importar por Filial), FA02 (Anexar Evidências/Fotos).
+- A empresa deve estar autenticada e possuir uma conta corporativa cadastrada.
 
 ## Fluxo Principal
 
-1. O recrutador acessa "Perfil da Empresa" -> "Mapeamento de Infraestrutura".
-2. O recrutador preenche o questionário estruturado sobre a presença de rampas, elevadores, banheiros adaptados, leitores de tela, sinalização e políticas inclusivas.
-3. O sistema valida as informações e grava o vetor de infraestrutura da empresa no banco de dados.
+1. A empresa acessa "Configurações da Empresa".
+2. A empresa pode acessar o "Mapeamento de Infraestrutura" e preencher o questionário estruturado sobre rampas, elevadores, banheiros adaptados, leitores de tela, sinalização e políticas inclusivas, respeitando as categorias aprovadas na OPEN-017. As respostas são adequadas à natureza de cada item e, quando aplicável, distinguem presença declarada, ausência declarada e informação não informada; não se presume acessibilidade ou inacessibilidade a partir de dado ausente.
+3. A empresa pode acessar a seção "Recrutadores" para cadastrar um novo recrutador.
+4. A empresa informa os dados necessários do recrutador e o sistema cria ou associa uma conta de usuário com perfil de Recrutador à empresa.
+5. O sistema valida as informações e registra o vínculo do recrutador com a empresa.
 
 ## Exceções e Fluxos Alternativos
 
-- FA01 (Importar Mapeamento por Filial): O recrutador clona as configurações de acessibilidade de uma unidade existente para cadastrar uma nova sede.
-- FA02 (Anexar Evidências/Fotos): O recrutador anexa fotos/evidências que serão validadas internamente.
-- EX01 (Alerta de Campos Obrigatórios Pendentes): O sistema impede o salvamento caso os itens de infraestrutura básica não sejam respondidos.
+- EX01 (Alerta de Campos Obrigatórios Pendentes): O sistema impede o salvamento quando itens definidos como obrigatórios estiverem pendentes e identifica os itens a completar. A lista individual de obrigatórios permanece pendente de definição; nem todos os campos são automaticamente obrigatórios.
+
+## Relação entre infraestrutura geral e critérios da vaga — decisão OPEN-023
+
+- O mapeamento representa informações gerais de acessibilidade da Empresa; não garante que todos os recursos sejam aplicáveis ou estejam disponíveis em toda oportunidade.
+- Quando a aplicabilidade de um recurso depender das condições da oportunidade, a vaga mantém sua própria declaração do estado das informações relevantes.
+- Dados gerais são disponibilizados a consumidores autorizados, mas não preenchem automaticamente critérios da vaga nem TRAVA_CRITICA_VAGA.
+- Informação ausente permanece não informada, sem inferir presença, ausência ou compatibilidade.
+- Alterações relevantes da infraestrutura continuam rastreáveis.
 
 ## Pós-condições
 
-- Vetor de infraestrutura da empresa persistido e disponível para uso pelo motor de compatibilidade e para exibição nas vagas.
-- Evidências anexadas vinculadas ao perfil da filial/unidade.
+- Mapeamento estruturado de infraestrutura persistido e associado à empresa correta, disponível para consumidores autorizados conforme a finalidade e as regras aplicáveis. O estado atual é mantido e alterações relevantes são rastreáveis, sem exigir cópia integral a cada modificação.
 
 ## Regras de negócio relacionadas
 
-- RB-50: Evidência obrigatória — determinados itens (por ex., existência de acessos físicos básicos) podem exigir evidências quando marcados como presentes.
-- RB-51: Importação por filial — permitir reutilização de mapeamentos entre filiais com registro de autoria e data.
-- RB-52: Validação por auditoria — dados de infraestrutura podem ser auditados por equipe interna ou parceiros terceiros para garantir veracidade.
-- RB-53: Publicação de informações — informações básicas de acessibilidade devem ser exibidas nas páginas de vaga; detalhes sensíveis ficam restritos.
-- RB-54: Atualização periódica — empresas são solicitadas a revisar mapeamentos a cada período (ex.: 12 meses).
+- RB-08
+- RB-46
+- RB-20
+- RB-27
+- RB-37
 
 ## Requisitos relacionados
 
-- RF-40 — Formulário de mapeamento de infraestrutura (campos padronizados por categoria e unidade).
-- RF-41 — Upload de evidências (armazenamento seguro de imagens/documentos com metadados).
-- RF-42 — Gestão de filiais/unidades (associação de mapeamentos a localidades específicas).
-- RF-43 — Auditoria e verificação (ferramentas para marcar verificado/pendente por equipe de auditoria).
-- RF-44 — Exposição pública (campos que aparecem na visualização da vaga e no perfil da empresa).
-- RF-45 — Histórico de mudanças (registro de alterações com usuário e timestamp).
+- RF-17
+- RF-18
+- RF-38
 
 ## Critérios de aceitação
 
-- Recrutador consegue preencher e salvar o mapeamento por unidade.
+- A empresa consegue preencher e salvar o mapeamento de infraestrutura.
+- Informações gerais da Empresa não são tratadas automaticamente como critérios específicos de toda vaga.
+- Dados de infraestrutura não preenchem automaticamente TRAVA_CRITICA_VAGA nem presumem compatibilidade.
+- A empresa consegue cadastrar recrutadores pela área de configurações.
+- O recrutador cadastrado fica vinculado à empresa responsável.
 - Itens obrigatórios bloqueiam o salvamento quando pendentes.
-- Evidências anexadas são armazenadas com metadados e vinculadas ao mapeamento.
-- Mapeamentos podem ser importados entre filiais e recebem registro de autoria.
-
----
-
-## Observação
-
-Posso criar este arquivo em `docs/casos-de-uso/UC-05-07-funil-infra.md` no repositório e abrir um pull request caso deseje revisão antes do merge.

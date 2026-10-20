@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Permitir que o candidato e a empresa visualizem o estado atual de uma vaga, identificando se ela está aberta, encerrada, em análise, indisponível ou sem oportunidades compatíveis, de forma clara e acessível.
+Permitir que o candidato visualize o estado atual de uma vaga, identificando se ela está aberta, indisponível ou encerrada, de forma clara e acessível.
 
 ## Ator principal
 
@@ -22,44 +22,43 @@ Permitir que o candidato e a empresa visualizem o estado atual de uma vaga, iden
 ## Fluxo Principal
 
 1. O candidato acessa a lista de vagas ou o detalhe de uma oportunidade.
-2. O sistema consulta o status atual da vaga no catálogo e na regra de negócios aplicáveis.
-3. O sistema exibe o estado da vaga, como “Aberta”, “Em análise”, “Encerrada” ou “Sem vagas compatíveis”.
-4. Se a vaga estiver aberta e compatível, o candidato pode seguir para a candidatura ou visualização do detalhamento.
-5. Se a vaga estiver encerrada ou indisponível, o sistema informa a condição e bloqueia ações incompatíveis.
+2. O sistema consulta o status atual da vaga no catálogo e nas regras de negócio aplicáveis.
+3. O sistema exibe o estado atual da vaga: “Aberta”, “Indisponível” ou “Encerrada”.
+4. Se a vaga estiver aberta, o candidato pode consultar o detalhamento e, caso seja elegível, seguir para a candidatura.
+5. Se a vaga estiver indisponível, o sistema informa a condição e bloqueia candidaturas enquanto durar esse estado; uma operação autorizada pode restabelecê-la como aberta, conforme OPEN-041.
+6. Se a vaga estiver encerrada, o sistema informa a condição e bloqueia permanentemente novas candidaturas naquela publicação. Uma nova oportunidade exige nova publicação conforme regras aplicáveis.
+7. Se não for possível confirmar disponibilidade por ausência ou falha de informação, o sistema não presume disponibilidade e bloqueia a candidatura.
 
 ## Exceções e Fluxos Alternativos
 
 - EX01 (Vaga encerrada): Se a vaga foi encerrada após a busca, o sistema mostra mensagem informativa e não permite candidatura.
-- EX02 (Sem vagas compatíveis): Se a busca não retorna resultados devido à trava crítica, o sistema informa que não há vagas elegíveis no momento.
-- EX03 (Status em atualização): Se a vaga estiver em processamento ou com alteração recente de dados, o sistema comunica que o status pode mudar em breve.
+- EX03 (Atualização do status): Se houver alteração recente no status da vaga, o sistema comunica o estado atualmente registrado e aplica as regras correspondentes.
 
 ## Pós-condições
 
-- O status da vaga fica visível para o candidato e para a organização.
+- O status da vaga fica visível para o candidato.
 - Ações futuras (candidatura, busca ou acompanhamento) respeitam o estado informado.
 - O registro do status é mantido para auditoria e rastreio de oportunidades.
 
 ## Regras de negócio relacionadas
 
-- RB-02: Trava de acessibilidade — barreiras incompatíveis tornam a vaga não elegível.
-- RB-06: Status da vaga — a vaga deve expressar corretamente seu estado atual.
-- RB-22: Transparência de status — o sistema deve informar ao usuário quando a vaga não está disponível.
-- RB-31: Transparência do resultado — resultados de compatibilidade devem ser explicados ao candidato.
-- RB-44: Notificação de vaga encerrada — quando a vaga for encerrada, candidatos ativos devem receber aviso.
+- RB-01
+- RB-13
+- RB-23
+- RB-42
 
 ## Requisitos relacionados
 
-- RF-10 — Visualização da vaga.
-- RF-06 — Busca e filtro.
-- RF-07 — Análise de compatibilidade.
-- RF-25 — Transparência de pontuação.
-- RF-27 — Notificações ao recrutador e candidato.
+- RF-10
+- RF-12
+- RF-27
 
 ## Critérios de aceitação
 
 - O sistema informa corretamente o estado atual da vaga.
-- Quando não houver vagas compatíveis, o candidato recebe mensagem clara sobre a ausência de oportunidade.
-- Vagas encerradas ou indisponíveis bloqueiam ações de candidatura.
+- Vagas indisponíveis bloqueiam candidaturas enquanto permanecerem nesse estado; podem voltar a aberta por operação autorizada.
+- Vagas encerradas bloqueiam permanentemente novas candidaturas naquela publicação.
+- Ausência ou falha de informação não presume disponibilidade e bloqueia candidatura quando não for possível confirmá-la
 - O status é atualizado de forma consistente com o estado real da vaga.
 
 ---

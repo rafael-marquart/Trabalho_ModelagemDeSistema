@@ -1,90 +1,108 @@
-# Requisitos
-
 ## Requisitos Funcionais
 
-### **RF-01 Autenticação**
-O sistema permite cadastro e login de candidatos, recrutadores e administradores.
+### RF-01 Autenticação
+O sistema permite cadastro e login de usuários e empresas, além do acesso de administradores. Usuários podem receber o perfil de Recrutador quando forem cadastrados por uma empresa.
 
+### RF-02 Recuperação de senha
+O sistema permite recuperação e redefinição de senha por e-mail.
 
-### **RF-02 Recuperação de senha**
-O sistema permite que o usuário redefina sua senha por meio de e-mail.
-
-
-### **RF-03 Perfis de acesso**
+### RF-03 Perfis de acesso
 O sistema aplica permissões distintas para candidato, recrutador e administrador.
 
+### RF-04 Cadastro de candidato
+O sistema permite cadastrar e atualizar o perfil do candidato com dados pessoais básicos, formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações, links profissionais e necessidades funcionais de acessibilidade, incluindo recursos indispensáveis para acessibilidade. As categorias profissionais podem ser preenchidas progressivamente; a ausência de dados necessários à análise de uma vaga não presume compatibilidade (RB-16).
 
-### **RF-04 Cadastro de candidato**
-O sistema permite cadastrar informações pessoais, formação, competências, idiomas e necessidades funcionais de acessibilidade.
+### RF-05 Importação de vagas externas
+O sistema permite entrada e visualização de vagas provenientes de fontes externas.
 
+### RF-06 Busca e filtro
+O sistema permite buscar e filtrar vagas por área, modalidade, localização e acessibilidade.
 
-### **RF-05 Importação de vagas externas**
-O sistema permite visualizar e processar vagas publicadas fora da plataforma.
+### RF-07 Análise de compatibilidade
+O sistema calcula a compatibilidade entre candidato e vaga.
 
+### RF-08 Identificação de barreiras
+O sistema verifica barreiras de acessibilidade incompatíveis com as necessidades do candidato.
 
-### **RF-06 Busca e filtro**
-O sistema permite buscar e filtrar vagas conforme critérios como área, modalidade, localização e características de acessibilidade.
+### RF-09 Restrição de vaga incompatível
+O sistema impede recomendação ou candidatura a vagas incompatíveis.
 
+### RF-10 Visualização da vaga
+O sistema exibe requisitos técnicos, acessibilidade, modalidade e localização da vaga.
 
-### **RF-07 Análise de compatibilidade**
-O sistema calcula a compatibilidade entre o perfil do candidato e os requisitos da vaga.
+### RF-11 Minhas candidaturas
+O sistema permite ao candidato consultar suas candidaturas.
 
+### RF-12 Notificações
+O sistema informa alterações relevantes em vagas, candidaturas ou etapas.
 
-### **RF-08 Identificação de barreiras**
-O sistema verifica a existência de barreiras de acessibilidade incompatíveis com as necessidades funcionais do candidato.
+### RF-13 Nota de acessibilidade
+O sistema calcula e exibe avaliação pública de acessibilidade da empresa com base em dados válidos registrados.
 
+### RF-14 Denúncia de incompatibilidade
+O sistema permite registrar denúncias sobre divergências de acessibilidade ou incompatibilidade.
 
-### **RF-09 Restrição de vaga incompatível**
-O sistema impede a recomendação ou candidatura a vagas que apresentem barreiras classificadas como incompatíveis.
+### RF-16 Recursos de acessibilidade
+O sistema oferece leitores de tela, navegação por teclado, alto contraste e comandos de voz.
 
+### RF-17 Cadastro de empresa
+O sistema permite cadastrar uma empresa como conta organizacional e, dentro das configurações da empresa, cadastrar usuários com perfil de Recrutador e vinculá-los à empresa.
 
-### **RF-10 Visualização da vaga**
-O sistema exibe ao candidato informações sobre requisitos técnicos, acessibilidade, modalidade e localização da vaga.
+### RF-18 Gestão de vagas
+O sistema permite que recrutadores vinculados à empresa cadastrem, editem, publiquem e gerenciem vagas.
 
+### RF-19 Gestão do perfil e necessidades de acessibilidade
+O sistema permite ao candidato consultar e atualizar as categorias aprovadas para seu perfil: dados pessoais básicos reutilizados da conta, formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações, links profissionais, necessidades funcionais de acessibilidade e recursos indispensáveis. Necessidades podem ser autodeclaradas sem exigir ou armazenar laudo; a interface distingue “não informado” de declaração de inexistência de necessidade. O preenchimento é progressivo e a ausência de dados necessários à análise não presume compatibilidade (RB-16).
 
-### **RF-11 Minhas candidaturas**
-O sistema exibe ao candidato suas candidaturas.
+### RF-20 Gestão de candidaturas pela empresa
+O sistema permite que recrutadores autorizados visualizem e gerenciem candidaturas recebidas para suas vagas.
 
+### RF-21 Avaliação do processo seletivo
+O sistema permite ao candidato registrar avaliação sobre a acessibilidade encontrada no processo seletivo.
 
-### **RF-12 Notificações**
-O sistema informa o candidato sobre alterações relevantes em vagas ou candidaturas.
+### RF-22 Moderação e gestão de denúncias
+O sistema permite ao administrador consultar, analisar e gerenciar denúncias e avaliações relacionadas à acessibilidade.
 
+### RF-24 Transparência do resultado de compatibilidade
+O sistema permite ao candidato visualizar o resultado e os principais fatores considerados.
 
-### **RF-13 Nota de acessibilidade**
-O sistema calcula e exibe uma avaliação pública de acessibilidade da empresa com base nos feedbacks válidos recebidos.
+### RF-25 Transparência da compatibilidade da vaga
+O sistema apresenta informações de acessibilidade e compatibilidade consideradas na análise.
 
+### RF-26 Registro de candidatura
+O sistema permite registrar candidatura em vaga elegível.
 
-### **RF-14 Denúncia de incompatibilidade**
-O sistema permite que candidatos denunciem divergências entre a acessibilidade informada pela empresa e a encontrada durante o processo seletivo.
+### RF-27 Notificações do processo seletivo
+O sistema comunica alterações relevantes no status da candidatura.
 
+### RF-28 Gestão da candidatura pelo candidato
+O sistema permite ao candidato consultar suas próprias candidaturas, acompanhar o status, as etapas e o histórico disponível do processo seletivo e cancelar a própria candidatura conforme as regras do processo. Editar uma candidatura já enviada, excluir seu registro ou alterar etapas do processo seletivo não fazem parte deste requisito.
 
-### **RF-15 Gestão de selos**
-O sistema permite ao administrador conceder, atualizar ou remover selos de acessibilidade das empresas.
+### RF-30 Gestão de candidatos no processo seletivo
+O sistema permite ao recrutador consultar e gerenciar candidatos vinculados às suas vagas.
 
+### RF-31 Acompanhamento do processo seletivo
+O sistema permite ao candidato acompanhar etapas e status de sua candidatura.
 
-### **RF-16 Recursos de acessibilidade**
-O sistema oferece suporte a leitores de tela, navegação por teclado, alto contraste e comandos de voz.
+### RF-34 Cancelamento de candidatura
+O sistema permite cancelar candidatura conforme as regras aplicáveis.
 
+### RF-35 Gestão do funil de seleção
+O sistema permite ao recrutador gerenciar etapas e andamento dos candidatos.
 
-### **RF-17 Cadastro de empresa**
-O sistema permite que empresas realizem seu cadastro, informando dados institucionais e informações necessárias para sua identificação e avaliação de acessibilidade.
+### RF-36 Importação de dados estruturados
+O sistema permite entrada de vagas externas em formato estruturado.
 
+### RF-37 Normalização de dados externos
+O sistema normaliza informações externas para o modelo do AcessaVagas.
 
-### **RF-18 Gestão de vagas**
-O sistema permite que empresas cadastrem, editem, publiquem e gerenciem suas vagas na plataforma.
+### RF-38 Auditoria de operações
+O sistema registra operações relevantes para rastreabilidade.
 
+### RF-39 Tratamento de erros e inconsistências
+O sistema identifica e trata erros ou inconsistências em operações relevantes.
 
-### **RF-19 Gestão do perfil e necessidades de acessibilidade**
-O sistema permite que o candidato consulte e atualize seus dados pessoais, formação, competências, idiomas e necessidades funcionais de acessibilidade.
+### RF-40 Controle de acesso às operações administrativas
+O sistema restringe operações administrativas aos usuários autorizados.
 
-
-### **RF-20 Gestão de candidaturas pela empresa**
-O sistema permite que a empresa visualize e gerencie as candidaturas recebidas para suas vagas, conforme as permissões de seu perfil.
-
-
-### **RF-21 Avaliação do processo seletivo**
-O sistema permite que o candidato registre uma avaliação sobre a acessibilidade encontrada durante o processo seletivo, conforme as condições e critérios definidos pela plataforma.
-
-
-### **RF-22 Moderação e gestão de denúncias**
-O sistema permite que o administrador consulte, analise e gerencie denúncias e avaliações relacionadas à acessibilidade das empresas.
+> RF-23 foi removido por duplicidade com RF-19.

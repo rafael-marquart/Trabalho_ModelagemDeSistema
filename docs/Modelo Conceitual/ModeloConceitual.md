@@ -2,6 +2,14 @@
 
 ## Entidades e Atributos
 
+### USUARIO
+- `id_usuario`
+- `nome`
+- `email`
+- `credenciais`
+- `perfil`
+
+
 ### EMPRESA
 
 - `id_empresa` (PK)
@@ -63,17 +71,9 @@
 - `id_candidatura` (PK)
 - `id_candidato` (FK)
 - `id_vaga` (FK)
-- `data_inscricao`
-- `etapa_funil`
-- `score_match_deterministico`
-
-### SOLICITACAO_ACOMODACAO
-
-- `id_solicitacao` (PK)
-- `id_candidatura` (FK)
-- `recursos_solicitados`
-- `detalhes_tecnicos`
-- `status_confirmacao`
+- `data_inscricao` (gerada pelo sistema no momento do registro)
+- `etapa_funil` (estado inicial: `Inscrita`)
+- `score_match_deterministico` (obrigatório para registrar a candidatura)
 
 ### ENTREVISTA
 
@@ -105,6 +105,8 @@
 
 | Entidade Origem | Relação | Entidade Destino |
 | --- | --- | --- |
+| EMPRESA | cadastra e vincula | USUARIO com perfil de RECRUTADOR |
+| USUARIO | possui perfil | RECRUTADOR (perfil de usuário, não entidade independente) |
 | EMPRESA | possui | INFRAESTRUTURA_EMPRESA |
 | EMPRESA | publica | VAGA |
 | EMPRESA | recebe | DENUNCIA_FALSA_INCLUSAO |
@@ -114,7 +116,6 @@
 | VAGA | define | TRAVA_CRITICA_VAGA |
 | ADMINISTRADOR | gerencia status | VAGA |
 | ADMINISTRADOR | modera | DENUNCIA_FALSA_INCLUSAO |
-| CANDIDATURA | requer | SOLICITACAO_ACOMODACAO |
 | CANDIDATURA | agenda | ENTREVISTA |
 | ENTREVISTA | gera | AVALIACAO_POS_ENTREVISTA |
 | AVALIACAO_POS_ENTREVISTA | pode originar | DENUNCIA_FALSA_INCLUSAO |

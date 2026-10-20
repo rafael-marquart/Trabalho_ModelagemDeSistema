@@ -11,6 +11,8 @@ Avaliar a experiência da entrevista quanto ao cumprimento dos recursos de acess
 ## Pré-condições
 
 - Entrevista cadastrada no sistema e concluída.
+- Candidato autenticado com candidatura vinculada à entrevista.
+- Submissão dentro do prazo de até 60 dias corridos após a conclusão da entrevista.
 
 ## Pontos de Inclusão e Extensão
 
@@ -18,41 +20,58 @@ Avaliar a experiência da entrevista quanto ao cumprimento dos recursos de acess
 
 ## Fluxo Principal
 
-1. Após a data do evento seletivo, o candidato recebe notificação e clica em "Avaliar Entrevista".
-2. O candidato responde ao checklist sobre cumprimento dos recursos solicitados (UC04) e atitude dos entrevistadores.
-3. O sistema grava os dados e atualiza a média de pontuação de acessibilidade da empresa.
+1. O sistema apresenta campos separados para avaliar acessibilidade e postura inclusiva, cada um em escala de 1 a 5 estrelas.
+2. O candidato informa obrigatoriamente as duas notas e, se desejar, um comentário opcional; antes de enviar, pode revisar os dados.
+3. O sistema valida que o candidato autenticado está vinculado à candidatura e à entrevista concluída, que a submissão ocorre em até 60 dias corridos após a conclusão e que ainda não existe avaliação desse candidato para a entrevista.
+4. O sistema valida que ambas as notas estão preenchidas e dentro da escala de 1 a 5 estrelas e valida o comentário quando informado.
+5. Se o prazo tiver expirado, o vínculo não for válido, já existir avaliação para a entrevista ou os campos obrigatórios forem inválidos, o sistema recusa a submissão.
+6. Se a validação for bem-sucedida, o sistema registra a avaliação e preserva os dados necessários à moderação. Cada candidato pode registrar uma única avaliação por entrevista; após o envio, não pode editar nem substituir a avaliação.
+7. Eventos relevantes são registrados. Quando houver denúncia ou indício relevante de abuso, o caso segue para análise administrativa, sem bloqueio automático.
+8. O Administrador analisa a ocorrência e registra a decisão conforme o fluxo de moderação existente.
+9. A administração não altera diretamente a avaliação nem a distribuição pública de estrelas; qualquer efeito depende das regras aplicáveis e da decisão administrativa registrada.
+10. A apresentação pública exibe somente a distribuição agregada das avaliações válidas por quantidade de estrelas, sem identidade, identificadores ou comentários individuais. Os registros individuais e comentários opcionais ficam acessíveis somente a pessoas autorizadas para finalidades legítimas da plataforma e são retidos por 1 ano após o envio; ao fim do prazo, são excluídos ou irreversivelmente anonimizados, respeitando obrigações aplicáveis de preservação. A distribuição agregada pode ser mantida por prazo indeterminado apenas se não permitir reconstruir avaliações individuais nem identificar candidatos.
 
 ## Exceções e Fluxos Alternativos
 
 - FA01 (Optar por Anonymity): O candidato marca a opção de enviar a avaliação de forma 100% anônima.
 - UC11 (Denúncia de Falsa Inclusão): Em caso de conduta preconceituosa ou ausência grave de acessibilidade combinada, o candidato marca a opção de denúncia formal, estendendo para a moderação administrativa.
-- EX01 (Prazo Expirado): Se passarem mais de 30 dias do evento sem avaliação, o formulário é desativado.
-
 ## Pós-condições
 
-- Avaliação persistida e média de pontuação da empresa atualizada.
+- Avaliação persistida para composição da nota pública conforme as regras aplicáveis.
 - Denúncias encaminhadas ao fluxo de moderação quando aplicável.
 
 ## Regras de negócio relacionadas
 
-- RB-45: Avaliação anônima opcional — permitir avaliações anônimas mantendo integridade dos dados para prevenção de abuso.
-- RB-46: Prazo de avaliação — avaliações só podem ser submetidas até 30 dias após a entrevista.
-- RB-47: Impacto na reputação — pontuação agregada de acessibilidade influencia métricas públicas/privadas da empresa (conforme política de transparência).
-- RB-48: Triagem de denúncias — denúncias abertas por avaliações devem seguir um fluxo de moderação com evidências antes de ações punitivas.
-- RB-49: Confidencialidade — conteúdo da avaliação só é visível ao nível adequado (anônimo à empresa quando necessário, detalhado para moderadores internos).
+- RB-19
+- RB-20
+- RB-24
+- RB-25
+- RB-37
+- RB-44
+- RB-45
 
 ## Requisitos relacionados
 
-- RF-36 — Formulário de avaliação pós-entrevista (questões padronizadas e escala de avaliação).
-- RF-37 — Anonimização de respostas (opção para enviar sem identificar o candidato ao recrutador).
-- RF-11 — Autenticação em Dois Fatores (para verificações em casos de disputas/denúncias críticas).
-- RF-38 — Fluxo de moderação (ferramentas para analisar denúncias e tomar ações).
-- RF-39 — Métricas e dashboard (visualização agregada das avaliações por empresa/unidade).
+- RF-21
+- RF-13
+- RF-14
+- RF-22
+- RF-38
 
 ## Critérios de aceitação
 
-- Avaliações submetidas dentro do prazo são gravadas e contabilizadas na média da empresa.
+- Apenas candidato autenticado vinculado à candidatura e à entrevista concluída pode avaliar; a elegibilidade independe de contratação ou rejeição.
+- A avaliação contém duas notas obrigatórias e separadas: acessibilidade e postura inclusiva, cada uma de 1 a 5 estrelas.
+- O comentário é opcional; quando informado, é validado.
+- O candidato pode revisar a avaliação antes de enviá-la, mas não pode editar, substituir ou registrar uma segunda avaliação para a mesma entrevista após o registro inicial.
+- Novas submissões são aceitas somente até 60 dias corridos após a conclusão da entrevista; após o prazo, são recusadas.
+- Indícios relevantes de abuso são registrados e encaminhados para análise administrativa, sem bloqueio automático.
+- Avaliações submetidas são gravadas para composição da nota pública conforme as regras aplicáveis; publicamente, somente a distribuição agregada por quantidade de estrelas é exibida, sem comentários individuais.
+- O acesso aos registros individuais e comentários opcionais é restrito a pessoas autorizadas para finalidades legítimas da plataforma; os registros são retidos por 1 ano após o envio e, ao fim do prazo, excluídos ou irreversivelmente anonimizados, respeitando obrigações aplicáveis de preservação.
 - Avaliação anônima preserva anonimato enquanto permite a triagem de conteúdo pela equipe de moderação.
-- Denúncias acionam o fluxo de moderação com evidências suficientes para investigação.
+- A apresentação pública exibe somente a distribuição agregada por quantidade de estrelas; comentários individuais, identidade e identificadores dos candidatos não são publicados.
+- Registros individuais e comentários opcionais têm acesso restrito a pessoas autorizadas para finalidades legítimas da plataforma e são excluídos ou irreversivelmente anonimizados após 1 ano do envio, respeitando obrigações aplicáveis de preservação.
+- A distribuição agregada só pode ser mantida por prazo indeterminado se não permitir reconstruir avaliações individuais nem identificar candidatos.
+- Denúncias acionam o fluxo de moderação e ficam sujeitas à análise administrativa.
 
 ---

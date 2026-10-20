@@ -2,17 +2,17 @@
 
 ## Objetivo
 
-Permitir que o candidato reporte uma vaga que seja inadequada, incompatível ou prejudicial ao seu perfil, com base em critérios de acessibilidade, compatibilidade funcional ou regras de inclusão, para que a operação seja revisada e, quando necessário, tratada pela equipe responsável.
+Permitir que um candidato autenticado com acesso à vaga reporte uma possível incompatibilidade relacionada à acessibilidade ou uma possível falsa inclusão associada à vaga, para análise administrativa.
 
 ## Ator principal
 
-- Candidato PcD.
+- Candidato autenticado com acesso à vaga.
 
 ## Pré-condições
 
 - O candidato deve estar autenticado no sistema.
-- A vaga deve estar visível no catálogo ou no detalhe da oportunidade.
-- O candidato deve ter identificado um problema de incompatibilidade, acessibilidade ou inadequação da vaga ao seu perfil.
+- O candidato deve ter acesso à vaga no catálogo ou no detalhe da oportunidade.
+- O candidato deve identificar uma possível incompatibilidade relacionada à acessibilidade ou uma possível falsa inclusão associada à vaga.
 
 ## Pontos de Inclusão e Extensão
 
@@ -21,12 +21,13 @@ Permitir que o candidato reporte uma vaga que seja inadequada, incompatível ou 
 
 ## Fluxo Principal
 
-1. O candidato acessa a vaga ou o resultado de busca e seleciona a opção “Denunciar incompatibilidade”.
-2. O sistema exibe um formulário para registrar a razão da denúncia, como barreiras de acessibilidade, requisitos incompatíveis, ausência de recursos esperados ou inconsistência com o perfil informado.
-3. O candidato descreve o problema e, se necessário, anexa evidências ou observações complementares.
-4. O sistema valida os dados da denúncia e registra o relato com data, usuário e vaga relacionada.
-5. O sistema encaminha a denúncia para a equipe responsável por revisão da vaga ou do catálogo.
-6. O sistema informa ao candidato que a denúncia foi registrada e que a situação será analisada.
+1. O candidato seleciona uma vaga válida e informa a categoria da situação: possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga.
+2. O candidato preenche a descrição/justificativa da denúncia; pode anexar evidências adicionais, mas isso não é obrigatório. O sistema não exige laudo médico nem documento pessoal sensível como condição de registro.
+3. O sistema vincula a denúncia à vaga e, por meio dela, à Empresa responsável. Se a denúncia questionar uma avaliação específica, pode ser vinculada ao registro correspondente após validação; esse vínculo não é obrigatório quando nenhuma avaliação específica é questionada.
+4. O sistema registra a denúncia e a encaminha ao Administrador.
+5. O Administrador analisa a denúncia e os dados disponíveis.
+6. O Administrador registra a decisão da apuração.
+7. Eventual bloqueio, correção ou alteração de nota ocorre somente conforme a decisão administrativa e as regras aplicáveis.
 
 ## Exceções e Fluxos Alternativos
 
@@ -36,32 +37,31 @@ Permitir que o candidato reporte uma vaga que seja inadequada, incompatível ou 
 
 ## Pós-condições
 
-- A denúncia é registrada no sistema e vinculada à vaga.
+- A denúncia é registrada no sistema e vinculada à vaga e à Empresa responsável por meio da vaga; quando aplicável, também pode ficar vinculada à avaliação específica questionada.
 - A equipe responsável pode avaliar a incompatibilidade e decidir pela correção, bloqueio ou manutenção da vaga.
 - O candidato recebe confirmação da recepção da denúncia.
 - O histórico da ocorrência fica preservado para auditoria.
 
 ## Regras de negócio relacionadas
 
-- RB-02: Trava de acessibilidade — barreiras incompatíveis tornam a vaga não elegível.
-- RB-06: Status da vaga — a vaga deve manter status consistente após revisão.
-- RB-22: Transparência de status — o usuário deve receber retorno claro sobre a disponibilidade da vaga.
-- RB-23: Denúncia e apuração — ocorrências de incompatibilidade devem ser registradas para análise interna.
-- RB-24: Proteção contra abuso — denúncias repetidas ou falsas podem ser rastreadas e limitar novas submissões.
+- RB-20
+- RB-24
+- RB-25
+- RB-37
+- RB-44
+- RB-45
 
 ## Requisitos relacionados
 
-- RF-06 — Busca e filtro.
-- RF-07 — Análise de compatibilidade.
-- RF-10 — Visualização da vaga.
-- RF-25 — Transparência de pontuação.
-- RF-38 — Registro de logs e auditoria.
-- RF-39 — Tratamento de erros e relatórios de inconsistências.
+- RF-14
+- RF-22
+- RF-38
+- RF-39
 
 ## Critérios de aceitação
 
-- O candidato consegue denunciar uma vaga incompatível ou inadequada ao seu perfil.
-- A denúncia é registrada com motivo, data e vínculo à vaga.
+- Um candidato autenticado com acesso à vaga consegue denunciar possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga.
+- A denúncia é registrada com categoria da situação, descrição/justificativa, data e vínculo à vaga e à Empresa responsável; evidências adicionais são opcionais. Quando a denúncia questiona avaliação específica, pode haver vínculo à avaliação correspondente após validação. O registro e as evidências, por si sós, não comprovam irregularidade, não bloqueiam a vaga nem alteram automaticamente a nota.
 - A equipe responsável recebe a ocorrência para revisão.
 - O sistema comunica ao candidato que a denúncia foi registrada e fornece acompanhamento do status da revisão.
 

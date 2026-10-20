@@ -20,4 +20,4 @@ Repositório para o trabalho de modelagem de sistemas - GRUPO: Gabriella Mansur 
   * **Publicação Nativa:** Painel para empresas parceiras cadastrarem e gerenciarem processos seletivos.
   * **Publicação de Vagas Externas:** Extração e estruturação automática de anúncios públicos (via URL ou texto colado) utilizando IA (LLM) para conversão em formato JSON padronizado.
 * **Acessibilidade por Design (WCAG 2.1 AA):** Desenvolvida em conformidade com Lei Brasileira de Inclusão (LBI nº 13.146/2015), garantindo autonomia total com leitores de tela, navegação por teclado, comandos de voz e modo de alto contraste.
-* **Funil Seletivo Transparente:** Painéis exclusivos para acompanhamento de etapas em tempo real com indicação clara do formato da entrevista (presencial ou online) e das acomodações necessárias.
+* **Funil Seletivo Transparente:** Painéis exclusivos para acompanhamento de etapas em tempo real com indicação clara do formato da entrevista (presencial ou online).

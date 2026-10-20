@@ -1,0 +1,71 @@
+# Revisão de consistência das Specs — AcessaVagas
+
+## 1. Objetivo e escopo da revisão
+
+Esta revisão compara `docs/Specs.md`, `docs/mapa-specs.md`, `docs/OPEN.md` e a baseline disponível de RF, RB, RNF, casos de uso, modelo conceitual, drivers, ADRs e estados do funil.
+
+A revisão **não aprova os textos**, não aprova layouts e não autoriza implementação. Quando a baseline não permite resolver uma questão, o relatório registra a lacuna em vez de escolher uma regra por inferência.
+
+## 2. Resultado executivo
+
+**Status atual:** REV-009 está encerrada após a confirmação do grupo de que as decisões consolidadas de compatibilidade e descoberta de vagas foram refletidas nas Specs. A única pendência funcional remanescente dentro do escopo da REV-009 é OPEN-088, sobre o método/provedor para determinar distância em quilômetros. As demais OPENs continuam com seus estados próprios em `docs/OPEN.md`, sem serem reabertas ou alteradas por este encerramento. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
+
+- O mapa e o documento de detalhamento cobrem as Specs ativas do escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. SPEC-014 e SPEC-015 foram removidas e não devem ser contadas como Specs vigentes; os IDs posteriores foram preservados.
+- A conferência do cadastro atual de `OPEN.md` identificou 83 entradas de questões com IDs únicos. Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado das pendências é consolidado na seção 4.
+- Todas as RBs identificadas na baseline aparecem referenciadas em algum ponto de `Specs.md`; isso não garante, por si só, que cada regra esteja associada à Spec correta.
+- RF-34 e RF-35 estão associados, respectivamente, à SPEC-012 e à SPEC-013.
+- O detalhamento de contratos e testes das SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 foi ampliado e aprovado pelo grupo (REV-002 encerrada).
+- Nesta rodada, foram corrigidos o texto do mapa que sugeria ausência de pendências, a orientação para tratar referências às Specs removidas e as afirmações de escopo/contagem neste relatório. As correções são documentais e não alteram decisões funcionais.
+
+## 3. Achados prioritários
+
+### REV-009 — Encerrada: cálculo de compatibilidade entre candidato e vaga
+
+**Prioridade:** alta  
+**Artefatos:** SPEC-007 a SPEC-010, RF-07 a RF-10, RF-24/RF-25, RB-02 a RB-07, RB-15/RB-16/RB-30.
+
+**Por que esta revisão é importante:** o resultado de compatibilidade influencia o que o candidato vê na busca, como interpreta uma vaga e se pode prosseguir para a candidatura. Uma regra ambígua pode apresentar um resultado enganoso ou permitir que uma incompatibilidade crítica seja escondida por uma pontuação alta. Por isso, essa decisão afeta diretamente o funcionamento central do site e não deve ser preenchida por suposição.
+
+**Princípios já estabelecidos e que devem ser preservados:**
+- A trava crítica de acessibilidade prevalece sobre qualquer score numérico.
+- Dados de acessibilidade ausentes não significam compatibilidade; ausência de informação não pode ser tratada como confirmação positiva nem, sem evidência, como incompatibilidade comprovada.
+- O cálculo deve ter uma única fonte de verdade na SPEC-007. A SPEC-008 usa o resultado para busca/filtros e a SPEC-010 apresenta o resultado ao candidato; nenhuma delas deve criar uma fórmula paralela.
+
+**Decisões já consolidadas:** OPEN-031 a OPEN-046 estão resolvidas e devem ser refletidas de forma consistente nas Specs. A regra atual de D usa distância em quilômetros nas vagas presenciais/híbridas e exclui distância para vagas totalmente remotas; não calcula tempo de deslocamento. **Pendência funcional remanescente:** OPEN-088, que define o método/provedor para determinar a distância em quilômetros. Não escolher provedor ou método por inferência.
+
+**Encerramento:** as decisões consolidadas nas OPEN-031 a OPEN-046 foram consideradas refletidas nas Specs, incluindo a trava crítica, tratamento de dados ausentes, fonte única do cálculo na SPEC-007, consumo do resultado pelas SPEC-008/SPEC-010 e regra de distância/modalidade. OPEN-088 permanece aberta como a única pendência funcional da revisão: método/provedor para determinar distância em quilômetros. Não calcular tempo de deslocamento nem reintroduzir o provedor de rotas anteriormente considerado. A revisão documental REV-009 está encerrada; isso não equivale à aprovação geral das Specs nem autoriza implementação..
+
+## 4. Estado atual das pendências OPEN
+
+Conforme o cadastro vigente de `docs/OPEN.md`:
+
+- **Abertas:** OPEN-088.
+- **Parcialmente resolvidas:** OPEN-086 e OPEN-087.
+- **Resolvidas:** OPEN-074 a OPEN-085.
+
+OPEN-086 e OPEN-087 dependem de confirmação documentada das condições de acesso/licença do Adzuna e da viabilidade operacional da coleta diária. OPEN-088 continua sem método/provedor aprovado para determinar distância em quilômetros; não calcular tempo de deslocamento nem reintroduzir o provedor de rotas anteriormente considerado.
+
+As decisões das OPEN-075 a OPEN-085 foram refletidas nas Specs correspondentes, incluindo denúncia, moderação e nota pública (SPEC-019 a SPEC-021). A revisão de consistência documental, por si só, não altera estados funcionais. Não marcar questões como resolvidas sem decisão explícita e atualização dos artefatos correspondentes.
+
+## 5. Verificações que passaram
+
+- As Specs ativas listadas no escopo (SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021) aparecem no mapa e no documento de detalhamento; SPEC-014 e SPEC-015 estão excluídas do escopo.
+- Os títulos das Specs no mapa correspondem aos títulos do documento de detalhamento.
+- As 83 entradas de cadastro de questões em `OPEN.md` têm IDs únicos; a sequência inclui OPEN-086 a OPEN-088 e preserva lacunas históricas.
+- O `OPEN.md` contém seções organizadas por área funcional.
+- As decisões consolidadas sobre conta Empresa, perfil Recrutador, Administrador da plataforma, não armazenamento de laudos, análise de denúncia e deduplicação de vagas externas estão registradas no `OPEN.md`.
+- O fluxo consolidado de estados do funil está documentado em `docs/Fluxos e Estados/estados-trilha.md`.
+
+## 6. Plano recomendado de correção
+
+1. Manter OPEN-088 como pendência funcional isolada do escopo de compatibilidade/distância; não reabrir OPEN-031 a OPEN-046, já decididas.
+2. Manter as demais questões OPEN pertinentes explicitamente abertas até decisão do grupo.
+3. Manter a aprovação textual separada da aprovação dos layouts. Implementação somente após as aprovações aplicáveis.
+
+## 7. Limite desta revisão
+
+Esta é uma auditoria de consistência documental. Ela identifica cobertura e problemas verificáveis por comparação dos artefatos, mas não substitui a leitura e validação funcional do grupo. Questões de produto que a baseline não resolve continuam abertas.
+
+---
+
+**Nota de rodapé — decisões já tomadas:** os achados REV-001, REV-002, REV-003, REV-004, REV-006, REV-007, REV-008 e REV-010 foram encerrados após correções ou decisões aprovadas pelo grupo. REV-001, REV-003, REV-004, REV-006, REV-007 e REV-010 foram removidos do corpo principal; REV-002 e REV-008 permanecem descritos acima apenas como registro de encerramento. Os registros históricos também podem ser consultados no histórico do Git.

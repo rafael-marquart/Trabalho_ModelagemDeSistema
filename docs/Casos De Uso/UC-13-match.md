@@ -43,22 +43,23 @@ Calcular a compatibilidade entre o perfil do candidato e as vagas elegíveis, co
 
 ## Regras de negócio relacionadas
 
-- RB-02: Trava de acessibilidade — barreiras incompatíveis tornam a vaga não elegível.
-- RB-03: Peso da acessibilidade — acessibilidade compõe parte relevante do cálculo de compatibilidade.
-- RB-04: Peso do perfil técnico — perfil técnico é considerado no cálculo do match.
-- RB-05: Peso de distância e modalidade — distância e modalidade contribuem para o score.
-- RB-10: Vagas externas — vagas importadas devem ser normalizadas antes da análise.
-- RB-11: Validação da IA — dados extraídos por IA de vagas externas devem ser validados antes do uso.
-- RB-31: Transparência do resultado — o sistema deve expor ao candidato os principais fatores que influenciaram a compatibilidade.
+- RB-02
+- RB-03
+- RB-04
+- RB-05
+- RB-06
+- RB-07
+- RB-15
+- RB-16
+- RB-30
 
 ## Requisitos relacionados
 
-- RF-06 — Busca e filtro.
-- RF-07 — Análise de compatibilidade.
-- RF-10 — Visualização da vaga.
-- RF-24 — Paginação e performance.
-- RF-25 — Transparência de pontuação.
-- RF-36 — Importação em JSON.
+- RF-07
+- RF-08
+- RF-09
+- RF-24
+- RF-25
 
 ## Critérios de aceitação
 

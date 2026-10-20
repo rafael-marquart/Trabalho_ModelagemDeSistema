@@ -19,15 +19,16 @@ Filtrar e visualizar exclusivamente vagas compatíveis com o perfil, ocultando a
 
 ## Fluxo Principal
 
-1. O candidato acessa o painel de busca de vagas e insere termos de interesse ou filtros de localização/cargo.
-2. O sistema dispara internamente a execução do UC13 para cruzar o vetor do candidato com o banco de vagas ativas.
-3. O sistema aplica a trava crítica eliminatória (filtro booleano).
-4. O sistema exibe o catálogo de vagas elegíveis ordenadas pelo percentual de compatibilidade.
+1. O candidato acessa o painel de busca de vagas e pode inserir termos de interesse ou filtros por cargo, área profissional, modalidade e localização. A busca textual consulta título/cargo da vaga, descrição e nome da Empresa; ignora maiúsculas/minúsculas e acentos; considera palavras ou trechos contidos e exige que todos os termos sejam encontrados, podendo estar distribuídos entre os campos. Busca vazia não restringe por texto. Não há expansão automática por sinônimos, correção de erros de digitação ou interpretação por IA. O filtro de acessibilidade previsto no RF-06 utiliza apenas opções definidas e validadas na OPEN-023, sem expor necessidades funcionais individuais.
+2. O sistema combina filtros de categorias diferentes por AND e valores selecionados dentro da mesma categoria por OR. Filtros não selecionados não restringem a busca; ao remover um filtro, os demais permanecem aplicados.
+3. O sistema dispara internamente a execução do UC13 para cruzar o vetor do candidato com o banco de vagas ativas
+4. O sistema aplica a trava crítica eliminatória (filtro booleano), considera somente vagas ativas e válidas e respeita os filtros informados.
+5. O sistema exibe até 100 vagas elegíveis, em páginas de 20, ordenadas pela opção selecionada: maior compatibilidade (padrão, conforme SPEC-007), mais recentes ou mais antigas (data de publicação). A paginação é numerada, com navegação anterior/próxima, preservando busca, filtros e ordenação; alterações em busca/filtros reiniciam na primeira página. Empates usam identificador interno para estabilidade, sem expô-lo
 
 ## Exceções e Fluxos Alternativos
 
-- EX01 (Nenhuma Vaga Compatível Encontrada): Se o motor de match descartar todas as vagas por incompatibilidade na trava crítica, o sistema exibe mensagem informativa e sugere ajuste nos filtros de localização/cargo.
-- FA01 (Filtro Manual por Categoria de Acessibilidade): O candidato aplica filtros adicionais refinando os resultados apenas por tipo de regime (remoto, híbrido, presencial).
+- EX01 (Nenhuma Vaga Compatível Encontrada): Se o motor de match descartar todas as vagas por incompatibilidade na trava crítica, o sistema exibe mensagem informativa e sugere revisar os filtros aplicados.
+- FA01 (Filtros adicionais): O candidato pode refinar os resultados por cargo, área profissional, modalidade e localização, conforme as regras de combinação definidas. Filtro de acessibilidade só é disponibilizado conforme critérios validados na OPEN-023.
 
 ## Pós-condições
 
@@ -35,29 +36,29 @@ Filtrar e visualizar exclusivamente vagas compatíveis com o perfil, ocultando a
 - Logs de pesquisa e parâmetros armazenados para análise e melhoria do motor.
 
 ## Regras de negócio relacionadas
-
-- RB-02: Trava de acessibilidade — barreiras incompatíveis tornam a vaga não elegível.
-- RB-03: Peso da acessibilidade — acessibilidade compõe parte relevante do cálculo de compatibilidade (ex.: 50% do score, conforme UC-01-gerar-trilha).
-- RB-04: Peso do perfil técnico — perfil técnico é considerado no cálculo do match.
-- RB-05: Peso de distância e modalidade — distância e modalidade contribuem para o score de compatibilidade.
-- RB-10: Vagas externas — vagas importadas devem ser normalizadas antes da análise.
-- RB-11: Validação da IA — dados extraídos por IA de vagas externas devem ser validados antes do uso.
-- RB-31: Transparência do resultado — o sistema deve expor ao candidato os principais fatores que influenciaram a compatibilidade (quais requisitos foram decisivos).
-- RB-32: Cache de resultados — para performance, resultados de busca podem ser cacheados por conjunto de parâmetros por período curto.
+\n- RB-02: Existência de incompatibilidade de acessibilidade — incompatibilidades podem tornar a vaga não elegível.
+- RB-03: Peso da acessibilidade — acessibilidade representa 50% da compatibilidade.
+- RB-04: Peso do perfil técnico — perfil técnico representa 30% da compatibilidade.
+- RB-05: Peso de distância e modalidade — distância e modalidade representam 20% da compatibilidade.
+- RB-10: Vagas externas — vagas externas seguem as regras de ingestão e validação.
+- RB-11: Validação da IA — dados extraídos por IA devem ser validados antes do uso.
+- RB-13: Transparência — o resultado de compatibilidade deve ser apresentado de forma compreensível.
+- RB-16: Dados de acessibilidade não informados — ausência de informação deve ser tratada conforme as regras de compatibilidade.
+- RB-17: Validação de vaga externa — vaga externa deve ser validada antes de disponibilização.
+- RB-30: Transparência do resultado — o candidato deve conhecer os fatores relevantes do resultado.
 
 ## Requisitos relacionados
-
-- RF-06 — Busca e filtro (filtros por localização, cargo, modalidade, categoria de acessibilidade).
-- RF-07 — Análise de compatibilidade (integração com UC13 e aplicação da trava crítica).
-- RF-10 — Visualização da vaga (detalhes de acessibilidade visíveis antes da candidatura).
-- RF-05 — Interface acessível (resultados e filtros acessíveis).
-- RF-24 — Paginação e performance (retorno rápido em grandes volumes de vagas).
-- RF-25 — Transparência de pontuação (exibir breakdown do score para cada vaga).
+\n- RF-06 — Busca e filtro.
+- RF-07 — Análise de compatibilidade.
+- RF-09 — Restrição de vaga incompatível.
+- RF-10 — Visualização da vaga.
+- RF-24 — Transparência do resultado de compatibilidade.
+- RF-25 — Transparência da compatibilidade da vaga.
 
 ## Critérios de aceitação
 
 - Busca retorna apenas vagas que passaram pela trava crítica.
-- Resultados são ordenados pelo percentual de compatibilidade calculado.
-- Quando nenhuma vaga compatível for encontrada, o sistema sugere ações ao candidato (ajustar filtros, salvar alerta por e-mail).
+- Resultados respeitam o limite de 100 vagas elegíveis e 20 por página, com paginação e ordenações alternativas conforme SPEC-008.
+- Quando nenhuma vaga compatível for encontrada, o sistema informa o estado sem resultados e permite revisar os filtros aplicados. Alertas por e-mail e salvamento de buscas permanecem fora do escopo atual, conforme decisão da OPEN-039.
 
 ---

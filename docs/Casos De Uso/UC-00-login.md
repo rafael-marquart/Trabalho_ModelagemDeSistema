@@ -2,34 +2,29 @@
 
 ## Objetivo
 
-Permitir que o usuário acesse o sistema de forma segura e autenticada, validando suas credenciais e garantindo o acesso às funcionalidades compatíveis com seu perfil e papel dentro da plataforma.
+Permitir que o usuário acesse o sistema de forma segura e autenticada, validando suas credenciais e garantindo o acesso às funcionalidades compatíveis com seu perfil e papel dentro da plataforma. A tela inicial de acesso oferece apenas as opções de criação de conta como usuário ou como empresa.
 
 ## Ator principal
 
 - Candidato PcD.
-- Recrutador.
+- Usuário.
 - Administrador.
 
 ## Pré-condições
 
-- O usuário deve possuir cadastro no sistema.
+- O usuário deve possuir cadastro no sistema, ou escolher uma das opções de criação de conta disponíveis.
 - O usuário deve ter acesso à plataforma por meio de credenciais válidas.
 - O sistema deve estar disponível e operacional.
-
-## Pontos de Inclusão e Extensão
-
-- Inclusão (<<include>>): UC-01 (Gerenciar Perfil).
-- Inclusão (<<include>>): UC-02 (Buscar Vagas).
-- Extensão (<<extend>>): UC-03 (Candidatar-se a Vaga).
 
 ## Fluxo Principal
 
 1. O usuário acessa a página inicial da plataforma.
-2. O sistema apresenta o formulário de login com campos para e-mail e senha.
-3. O usuário informa suas credenciais e confirma a autenticação.
-4. O sistema valida os dados informados.
-5. Se as credenciais forem válidas, o sistema autentica o usuário e redireciona para a área correspondente ao seu perfil.
-6. O sistema mantém a sessão ativa conforme a política de segurança definida.
+2. O sistema apresenta o formulário de login com campos para e-mail e senha e as opções de criação de conta como usuário ou empresa.
+3. Se o usuário escolher criar uma conta, o sistema direciona para o fluxo correspondente.
+4. Se o usuário já possuir uma conta, informa suas credenciais e confirma a autenticação.
+5. O sistema valida os dados informados.
+6. Se as credenciais forem válidas, o sistema autentica o usuário e redireciona para a área correspondente ao seu perfil.
+7. O sistema mantém a sessão ativa conforme a política de segurança definida.
 
 ## Exceções e Fluxos Alternativos
 
@@ -40,23 +35,21 @@ Permitir que o usuário acesse o sistema de forma segura e autenticada, validand
 ## Pós-condições
 
 - O usuário fica autenticado no sistema.
+- Contas de recrutador não são criadas diretamente na tela inicial; o recrutador deve ser cadastrado pela empresa em suas configurações.
 - A sessão é iniciada com permissões compatíveis com o papel do usuário.
 - O usuário pode acessar as funcionalidades disponíveis conforme seu perfil.
 
 ## Regras de negócio relacionadas
 
-- RB-19: Segurança de autenticação — credenciais devem ser validadas antes de autorizar acesso.
-- RB-20: Bloqueio por tentativas — múltiplas tentativas inválidas podem resultar em bloqueio temporário ou permanente.
-- RB-21: Sessão segura — a sessão deve expirar ou invalidar quando houver inatividade ou logout.
-- RB-22: Transparência de status — o sistema deve informar corretamente quando o acesso foi negado.
+- RB-21: Segurança de autenticação — credenciais devem ser validadas antes de autorizar acesso.
+- RB-22: Controle de sessão — a sessão deve expirar ou invalidar conforme as condições definidas pelo sistema.
+- RB-12: Controle de acesso — operações protegidas devem respeitar o perfil autorizado.
 
 ## Requisitos relacionados
 
-- RF-01 — Login e autenticação.
+- RF-01 — Autenticação.
 - RF-02 — Recuperação de senha.
-- RF-03 — Proteção contra brute force.
-- RF-04 — Sessão e controle de acesso.
-- RF-05 — Interface acessível.
+- RF-03 — Perfis de acesso.
 
 ## Critérios de aceitação
 

@@ -15,8 +15,7 @@ instrutura, autonomia e real acessibilidade.
 
 4) Proposta do Projeto:
    -
-Eliminar a questão de "falsa inclusão" e desenvolver uma plataforma que ofereça funcionalidades importantes para assegurar a manutenção
-da acessibilidade ao longo do processo de recrutamento.
+Eliminar a questão de "falsa inclusão" e desenvolver uma plataforma que ofereça informações e verificações de acessibilidade para apoiar decisões durante o processo de recrutamento.
 
 5) O que a plataforma entrega na prática:
    -
@@ -35,7 +34,7 @@ indicador coletivo de confiabilidade, autenticando a infraestrutura prometida pe
 - Candidato PCD: Profissionais com deficiências físicas, auditivas, visuais ou neurodivergências que buscam confiança, inclusão e
 acessibilidade em processos de recrutamento;
 - Recrutador/Empresa: Equipes de RH que almejam encontrar novos talentos, garantindo a manutenção da inclusão;
-- Administrador: Responsáveis por moderar denúncias de incompatibilidade, gerenciar selos de acessibilidade e manter a integridade
+- Administrador: Responsáveis por moderar denúncias de incompatibilidade, manter a integridade
 dos dados na plataforma.
 
 7) Escopo:
