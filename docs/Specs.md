@@ -1237,12 +1237,12 @@ dos em `docs/layout/` e aprovados separadamente.
 - **Drivers:** DA-02, DA-05, DA-06, DA-07, DA-08.
 - **ADRs:** ADR-002, ADR-003, ADR-004.
 - **Dependências:** SPEC-005 para o modelo comum de VAGA; SPEC-007/SPEC-008 para consumo das vagas normalizadas; ADR-003 para integração com LLM por adaptador. A execução automatizada deve usar configuração/credenciais de integração protegidas; eventual interface administrativa continua sujeita à autorização aplicável.
-- **Questões relacionadas:** OPEN-025 a OPEN-030 e OPEN-086 a OPEN-087. OPEN-024, OPEN-086 e OPEN-087 estão resolvidas conforme `docs/OPEN.md`; para a etapa atual, a coleta de teste fica limitada a 25 chamadas à API, enquanto a solução deve suportar expansão desse volume por configuração, respeitando cotas e condições da fonte.
+- **Rastreabilidade das decisões:** OPEN-024 a OPEN-030 e OPEN-086 a OPEN-087 estão registradas em `docs/OPEN.md`. As decisões funcionais dessas OPENs não autorizam uso em produção. No estágio atual, os testes permanecem limitados a 25 chamadas à API; qualquer ampliação deve respeitar autorização explícita, cotas e condições da fonte. A capacidade de configurar volumes maiores descreve uma possibilidade futura, não uma autorização de execução.
 
 ## 3. Escopo
 
 ### Incluído
-- Executar coleta automatizada diária de vagas a partir de uma fonte externa autorizada, começando pelo Adzuna após confirmação de acesso, cobertura e condições de uso.
+- Prever a coleta automatizada diária de vagas a partir de uma fonte externa autorizada, inicialmente considerando o Adzuna somente após confirmação de acesso, cobertura e condições de uso e autorização explícita para esse uso. A descrição do comportamento futuro não autoriza, por si só, coleta diária nem uso em produção.
 - Consultar individualmente uma lista configurável de frases de busca por meio de `what_phrase`, consolidando os resultados.
 - Receber e validar a resposta estruturada da API, incluindo sua estrutura JSON.
 - Identificar registros inválidos, incompletos ou duplicados.
@@ -1568,7 +1568,7 @@ Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN
 - **Modelo:** CANDIDATO, VETOR_ACESSIBILIDADE_CANDIDATO, VAGA, TRAVA_CRITICA_VAGA.
 - **Drivers:** DA-03, DA-04. **ADR:** ADR-004.
 - **Dependências:** SPEC-002, SPEC-004, SPEC-005 e SPEC-006.
-- **Questões:** OPEN-031 a OPEN-035.
+- **Rastreabilidade:** OPEN-031 a OPEN-035. As referências OPEN-032 e OPEN-035 não foram localizadas como linhas ativas na tabela atual de `docs/OPEN.md`; confirmar a rastreabilidade antes de tratá-las como pendências vigentes.
 
 ## 3. Escopo
 **Incluído:** verificar dados mínimos; comparar necessidades obrigatórias com barreiras da vaga; aplicar trava eliminatória; calcular score quando a vaga passar pela trava; produzir fatores que expliquem o resultado.
@@ -1648,7 +1648,7 @@ Aplicar minimização: não copiar o perfil integral nem dados da vaga que não 
 ## 8. Impacto arquitetural
 A lógica fica concentrada em serviço de domínio independente da interface e da persistência. A trava ocorre antes do score. Dados externos precisam ter passado pela SPEC-006.
 
-**Integração prevista para a etapa de implementação:** em vagas presenciais ou híbridas, usar localização para determinar a distância em quilômetros entre candidato e local de trabalho, aplicando as faixas da seção 6.1. Não calcular tempo de deslocamento até o trabalho. O método/provedor para obter a distância permanece a definir. Em vaga totalmente remota, não calcular localização/distância. Localização ausente ou impossibilidade de determinar a distância, quando necessária à avaliação, não será interpretada como distância zero nem incompatibilidade automática; indicar dados insuficientes conforme OPEN-033.
+**Integração prevista para a etapa de implementação:** em vagas presenciais ou híbridas, usar localização para determinar a distância em quilômetros entre candidato e local de trabalho, aplicando as faixas da seção 6.1. Não calcular tempo de deslocamento até o trabalho. A distância deve ser calculada em linha reta pelo método de Haversine e apresentada em quilômetros, conforme decisão aprovada na OPEN-088. A origem e a validação das coordenadas necessárias ao cálculo devem seguir as regras de dados aplicáveis; não calcular tempo de deslocamento até o trabalho. Em vaga totalmente remota, não calcular localização/distância. Localização ausente ou impossibilidade de determinar a distância, quando necessária à avaliação, não será interpretada como distância zero nem incompatibilidade automática; indicar dados insuficientes conforme OPEN-033.
 
 ## 9. Contratos necessários
 - **Verificar elegibilidade por barreiras:** compara necessidades obrigatórias e barreiras registradas.
@@ -1723,7 +1723,7 @@ Contratos conceituais, sem endpoints HTTP.
 - **Modelo:** VAGA, EMPRESA, INFRAESTRUTURA_EMPRESA, TRAVA_CRITICA_VAGA.
 - **Drivers:** DA-01, DA-03, DA-04, DA-06, DA-08. **ADRs:** ADR-001, ADR-004.
 - **Dependências:** SPEC-002, SPEC-005, SPEC-006, SPEC-007.
-- **Questões:** OPEN-036 a OPEN-039.
+- **Decisões relacionadas:** OPEN-036 a OPEN-039 estão resolvidas conforme `docs/OPEN.md`; busca, filtros, paginação/ordenação e exclusão de alertas por e-mail e buscas salvas seguem essas decisões.
 
 ## 3. Escopo
 **Incluído:** busca textual em título/cargo da vaga, descrição da vaga e nome da Empresa; normalização para ignorar maiúsculas/minúsculas e acentos; correspondência por palavras ou trechos contidos, sem exigir título completo; todos os termos da consulta devem ser encontrados, podendo estar distribuídos entre os campos pesquisáveis; busca vazia não restringe por texto. Inclui também filtros por cargo, área profissional, modalidade e localização; filtro de acessibilidade conforme opções definidas e validadas na OPEN-023; consulta de vagas ativas e válidas; combinação de filtros de categorias diferentes por AND e valores dentro da mesma categoria por OR; aplicação da trava crítica pela SPEC-007; ordenação dos resultados elegíveis por compatibilidade; e comunicação de ausência de resultados. Não inclui sinônimos automáticos, correção de erros de digitação ou interpretação por IA
@@ -1982,7 +1982,7 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 - **Modelo:** VAGA, EMPRESA, INFRAESTRUTURA_EMPRESA, TRAVA_CRITICA_VAGA.
 - **Drivers:** DA-01, DA-03, DA-04. **ADRs:** ADR-001, ADR-004.
 - **Dependências:** SPEC-004 a SPEC-009, especialmente SPEC-007 e SPEC-009.
-- **Questões:** OPEN-043 a OPEN-046.
+- **Decisões relacionadas:** OPEN-043 a OPEN-046 estão resolvidas conforme `docs/OPEN.md`; apresentação dos campos, explicação da compatibilidade, tratamento de dados ausentes/divergentes e resultado para perfil incompleto seguem essas decisões.
 
 ## 3. Escopo
 **Incluído:** apresentar título, descrição, requisitos, modalidade, localização, faixa salarial quando disponível, informações de acessibilidade e origem quando aplicável; mostrar status atual e resultado/fatores de compatibilidade; distinguir dados conhecidos dos não informados; permitir continuidade para candidatura somente quando status e elegibilidade permitirem.
