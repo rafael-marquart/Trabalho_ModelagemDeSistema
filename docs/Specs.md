@@ -109,10 +109,14 @@ A decisão aprovada define o envio por link de e-mail, validade de 30 minutos, u
 
 ### 5.3 Cadastro e autorização por perfil
 1. O sistema permite iniciar cadastro como Usuário ou Empresa.
-2. Após autenticação, o perfil determina as operações permitidas.
-3. O backend verifica permissões em toda operação protegida; ocultar controles na interface não é suficiente.
-4. Operações administrativas são protegidas conforme RF-40.
-5. Sessão inválida ou expirada não autoriza operações protegidas.
+2. Quando a pessoa escolhe explicitamente o cadastro como Usuário/Candidato, o sistema cria a conta USUARIO e o perfil CANDIDATO associado, mantendo a relação íntegra.
+3. Após autenticação, o perfil determina as operações permitidas.
+4. O backend verifica permissões em toda operação protegida; ocultar controles na interface não é suficiente.
+5. Operações administrativas são protegidas conforme RF-40.
+6. Sessão inválida ou expirada não autoriza operações protegidas.
+7. Enquanto uma conta estiver desativada, não permitir login, alteração do perfil nem novas candidaturas. Preservar os registros históricos que precisem ser mantidos.
+8. A exclusão de uma conta não deve apagar automaticamente candidaturas ou outros registros sujeitos a retenção. Excluir ou anonimizar dados pessoais quando permitido e após os prazos aplicáveis.
+9. A inclusão de outro perfil autorizado não apaga nem converte automaticamente o perfil CANDIDATO e não remove vínculos organizacionais existentes; aplicar as permissões correspondentes a cada perfil.
 
 ### 5.4 Cadastro de Recrutador
 1. Uma Empresa autenticada e autorizada acessa as próprias configurações. **Não existe papel de Administrador associado à Empresa**; o perfil Administrador é reservado à moderação/gestão da plataforma.
@@ -149,6 +153,10 @@ O comportamento deriva de UC-07 e RB-46. Quando o e-mail informado já pertencer
 18. Não se introduz o papel de Gestor de Seleção.
 19. Cadastro, perfil e vínculo organizacional devem permanecer íntegros (RNF-09).
 20. Alterações relevantes devem ser rastreáveis conforme RB-27 e RNF-14, respeitando RNF-08.
+21. Cada perfil CANDIDATO deve estar associado a exatamente um USUARIO; um USUARIO pode ter zero ou um perfil CANDIDATO. O modelo de dados deve impor a associação por chave estrangeira e unicidade.
+22. A desativação bloqueia login, alteração do perfil e novas candidaturas, sem apagar automaticamente o histórico que precise ser mantido.
+23. A exclusão de conta não remove automaticamente candidaturas ou registros sujeitos a retenção; dados pessoais são excluídos ou anonimizados quando permitido e após os prazos aplicáveis.
+24. Adicionar outro perfil não apaga nem converte automaticamente o perfil CANDIDATO nem remove vínculos organizacionais existentes.
 21. Um Recrutador pode manter vínculos com mais de uma Empresa. O aceite de convite efetiva o vínculo com a Empresa solicitante após nova validação de sua autorização, sem remover ou transferir vínculos existentes; cada Empresa administra apenas os próprios vínculos.
 22. ADR-002 centraliza a autorização no backend, mas não determina JWT, sessão/cookie ou mecanismo específico.
 
