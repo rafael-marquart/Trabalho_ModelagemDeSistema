@@ -346,8 +346,11 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 ### 5.4 Atualizar necessidades
 1. Candidato consulta suas necessidades atuais e altera o que deseja.
 2. Sistema valida e salva a atualização.
-3. A alteração relevante é rastreável conforme RB-27/RNF-14.
-4. Os dados atualizados ficam disponíveis para usos autorizados, incluindo análise de compatibilidade.
+3. O sistema registra a criação, edição ou exclusão de informações do perfil, incluindo dados profissionais e necessidades de acessibilidade. Cada evento guarda data e hora, responsável pela alteração conforme autorização, categoria afetada, tipo de operação e campos afetados, em resumo suficiente para rastreabilidade.
+4. O histórico não mantém uma cópia completa do perfil a cada alteração nem registra valores anteriores/novos por padrão; evita duplicar dados pessoais ou sensíveis sem necessidade aprovada e nunca armazena laudos médicos.
+5. O histórico é acessível somente a pessoas autorizadas e protegido contra alteração/exclusão indevida.
+6. Cada registro é mantido por 1 ano a partir da alteração e excluído automaticamente ao fim do prazo, exceto quando houver obrigação aplicável de preservação.
+7. Os dados atualizados ficam disponíveis para usos autorizados, incluindo análise de compatibilidade.
 
 ## 6. Regras e invariantes
 
@@ -362,7 +365,10 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 9. O catálogo de necessidades contém as opções arquitetônicas (acesso sem escadas/rampa, elevador acessível, espaço adequado para circulação, banheiro acessível e estacionamento acessível), de comunicação (Libras, legendas, transcrição de áudio, instruções por escrito e possibilidade de comunicação por texto) e tecnológicas (compatibilidade com leitor de tela, navegação por teclado, ampliação de texto, alto contraste e compatibilidade com tecnologia assistiva). Para cada opção, preservar o estado “necessária”, “não necessária” ou “não informada”; ausência de resposta não significa ausência de necessidade.
 10. O candidato pode descrever necessidades não contempladas no catálogo, sem exigência de laudo médico. Inclusão, alteração ou descontinuação de opções do catálogo depende de decisão explícita do projeto.
 11. Distinguir adaptações necessárias para participação de preferências. Não inferir obrigatoriedade por categoria ou ausência de dados; a obrigatoriedade deve ser explicitamente registrada e preservada para a análise de compatibilidade conforme RB-06.
-10. Alterações relevantes são rastreáveis conforme RB-27 e RNF-14.
+12. Registrar criação, edição e exclusão de informações do perfil, incluindo dados profissionais e necessidades de acessibilidade. Cada evento contém data e hora, responsável conforme autorização, categoria afetada, tipo de operação e campos afetados, em resumo suficiente para rastreabilidade.
+13. Não manter cópia completa do perfil a cada alteração nem valores anteriores/novos por padrão; minimizar duplicação de dados pessoais e sensíveis e nunca armazenar laudos médicos.
+14. O histórico é restrito a pessoas autorizadas, protegido contra alteração/exclusão indevida e mantido por 1 ano a partir de cada alteração, com exclusão automática ao fim do prazo, exceto quando houver obrigação aplicável de preservação.
+15. Alterações relevantes são rastreáveis conforme RB-27 e RNF-14.
 11. O sistema registra necessidades funcionais declaradas; não infere diagnóstico nem exige documento não previsto.
 12. Persistir o perfil não substitui as regras de compatibilidade da SPEC-007.
 
@@ -453,6 +459,10 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 | T-002-22 | Experiência profissional em andamento sem data de término | Registro aceito se os demais campos obrigatórios forem válidos |
 | T-002-23 | Certificação sem instituição emissora | Salvamento bloqueado e campo indicado |
 | T-002-24 | Link profissional sem tipo ou URL válida | Salvamento bloqueado e campo indicado |
+| T-002-25 | Criar, editar ou excluir informação do perfil | Histórico registra data/hora, responsável, categoria, operação e campos afetados |
+| T-002-26 | Consultar histórico sem autorização | Acesso negado |
+| T-002-27 | Registro de histórico completa 1 ano sem obrigação de preservação | Registro é excluído automaticamente |
+| T-002-28 | Alteração de perfil | Histórico não armazena cópia completa nem valores anteriores/novos por padrão e não inclui laudo médico |
 
 ## 13. Questões em aberto
 
@@ -462,7 +472,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 - **OPEN-007.1 (decisão aprovada; resolvida):** nome e e-mail são reutilizados da conta, sem preenchimento duplicado no perfil; o cadastro da conta segue as regras da SPEC-001. CPF não é obrigatório para salvar o perfil. Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria, sem antecipar o escopo de categorias da OPEN-007. Necessidades funcionais e recursos indispensáveis não exigem declaração universal; necessidades podem ser autodeclaradas sem exigir/armazenar laudo, e “não informado” deve ser distinto de “declarado que não possui necessidade”. Dados necessários à análise de uma vaga que estejam ausentes são indicados como insuficiência sem presumir compatibilidade (RB-16).
 - **OPEN-007.2 (resolvida):** categorias opcionais e campos obrigatórios por registro definidos para formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais. Estão aprovadas as regras de remoção de espaços nas extremidades, validação de datas, URLs válidas com http:// ou https://, limites de tamanho, ausência de limite funcional máximo fixo para experiências/cursos/certificações/links, erros com preservação dos dados e insuficiência conforme RB-16. Datas usam AAAA-MM-DD para armazenamento e DD/MM/AAAA para exibição. Catálogos aprovados: escolaridade (ensino fundamental, ensino médio, técnico, graduação, especialização, mestrado, doutorado e outro), situação da formação (em andamento/concluída), proficiência em idiomas (básico/intermediário/avançado/fluente) e tipo de link (LinkedIn, portfólio, GitHub, site pessoal e outro). Ao selecionar “outro”, é possível informar o valor correspondente. Decisão refletida nesta Spec e no UC-01.
 - **OPEN-008 (decisão aprovada):** catálogo estruturado e extensível nas categorias arquitetônicas, de comunicação e tecnológicas, com distinção entre necessidades obrigatórias e não obrigatórias; lista inicial, significados operacionais e detalhes de representação permanecem pendentes.
-- **OPEN-009 (decisão aprovada):** histórico de alterações relevantes, sem exigir versionamento completo do perfil a cada modificação; retenção de um ano da OPEN-006 serve como referência para auditoria, enquanto campos definitivos, casos de preservação de valores anteriores/versões completas e aplicação exata ao histórico funcional permanecem pendentes.
+- **OPEN-009 (resolvida):** registrar criação, edição e exclusão de dados profissionais e necessidades de acessibilidade, com data/hora, responsável, categoria, tipo de operação e campos afetados. Não manter cópia completa do perfil nem valores anteriores/novos por padrão; não armazenar laudos médicos. Histórico restrito a pessoas autorizadas, protegido contra alteração/exclusão indevida e retido por 1 ano a partir da alteração, com exclusão automática salvo obrigação aplicável de preservação.
 - **OPEN-010 (decisão aprovada):** associação 1:1 opcional para USUARIO e obrigatória para CANDIDATO; cada CANDIDATO pertence a exatamente um USUARIO, e cada USUARIO pode ter zero ou um CANDIDATO. O modelo conceitual deverá explicitar a cardinalidade. Momento de criação do perfil, desativação/exclusão, conversão entre perfis e definição técnica de chave/restrições permanecem pendentes.
 - **OPEN-011 (decisão aprovada):** após candidatura, Recrutador autenticado e autorizado da Empresa responsável pode consultar perfil profissional e necessidades de acessibilidade no contexto daquela candidatura, respeitando RB-26, RB-28, RF-30 e RB-46. A candidatura não concede acesso a perfis sem relação com a vaga ou de outras Empresas, nem implica exposição indiscriminada de todos os campos. Matriz definitiva de campos, distinções por categoria/etapa, restrições adicionais e eventual auditoria específica de acessos permanecem pendentes.
 
