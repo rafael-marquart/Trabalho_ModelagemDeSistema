@@ -43,4 +43,4 @@ O usuário solicitou que o botão de cancelar candidatura não apareça nessa te
 
 ## Limites
 
-Estes arquivos são representações estáticas. Autenticação, validação de CPF/CNPJ, envio de e-mail, persistência e regras de negócio não são implementados pelas imagens. Os dados exibidos são ilustrativos. A aprovação visual não altera o estado das Specs nem resolve pendências funcionais. A OPEN-088 permanece parcialmente resolvida: tempo estimado de deslocamento e faixas/pontuações foram aprovados; catálogo de meios de transporte, método/provedor/endpoints e tratamento de indisponibilidade/horário-trânsito continuam pendentes
+Estes arquivos são representações estáticas. Autenticação, validação de CPF/CNPJ, envio de e-mail, persistência e regras de negócio não são implementados pelas imagens. Os dados exibidos são ilustrativos. A aprovação visual não altera o estado das Specs nem resolve pendências funcionais. A OPEN-088 permanece parcialmente resolvida: tempo estimado, faixas/pontuações e meios de transporte (caminhada, bicicleta, carro, ônibus e metrô/trem) foram aprovados; método/provedor/endpoints e tratamento de indisponibilidade/horário-trânsito continuam pendentes
