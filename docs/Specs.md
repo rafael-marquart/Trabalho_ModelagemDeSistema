@@ -1521,6 +1521,11 @@ Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN
 ## 3.1. Telas e evidência de layout
 O cálculo é uma capacidade de domínio e não exige tela própria. A visualização do percentual, fatores e explicação pertence à SPEC-010; o layout dessa apresentação permanece pendente.
 
+### Contexto aprovado de execução e validação (OPEN-088)
+- Esta capacidade será exercitada somente em ambiente local/restrito ao repositório privado, sem publicação em domínio público e com dados exclusivamente fictícios; não usar dados reais de candidatos ou empresas.
+- O uso do HERE fica limitado ao plano gratuito, sem contratação de plano pago. Testes de transporte público ficam limitados a São Paulo, com rotas fictícias ou pontos públicos.
+- A ressalva contratual do plano gratuito deve ser mantida: ambiente restrito e dados fictícios não constituem, por si só, confirmação de autorização contratual. No escopo de planejamento aprovado, isso não cria bloqueio adicional; ampliar o uso exige nova avaliação.
+
 ## 4. Dependências
 - SPEC-002 fornece perfil e necessidades.
 - SPEC-004, SPEC-005 e SPEC-006 fornecem informações de acessibilidade e vagas próprias/externas válidas.
@@ -1687,6 +1692,11 @@ Contratos conceituais, sem endpoints HTTP.
 | Estado sem resultados | Informar ausência de vagas compatíveis | Pendente |
 
 Protótipos devem seguir a identidade visual e acessibilidade transversal, ser anexados em docs/layout/ e aprovados separadamente.
+
+### Contexto aprovado de execução e validação (OPEN-088)
+- Esta capacidade será exercitada somente em ambiente local/restrito ao repositório privado, sem publicação em domínio público e com dados exclusivamente fictícios; não usar dados reais de candidatos ou empresas.
+- O uso do HERE fica limitado ao plano gratuito, sem contratação de plano pago. Testes de transporte público ficam limitados a São Paulo, com rotas fictícias ou pontos públicos.
+- A ressalva contratual do plano gratuito deve ser mantida: ambiente restrito e dados fictícios não constituem, por si só, confirmação de autorização contratual. No escopo de planejamento aprovado, isso não cria bloqueio adicional; ampliar o uso exige nova avaliação.
 
 ## 4. Dependências
 - SPEC-002: dados do candidato.
@@ -1954,6 +1964,11 @@ O layout não deve depender apenas de cor para indicar compatibilidade, deve per
 - Oferecer detalhamento expansível dos critérios publicados relevantes, informações do próprio perfil consideradas, correspondências, incompatibilidades e dados que impediram conclusão. Não expor outros candidatos, dados internos ou detalhes de acessibilidade desnecessários.
 - Se houver dados insuficientes, não apresentar score final, score parcial, score zero ou compatibilidade presumida. Indicar fatores/dimensões avaliáveis e pendências, sinalizar dimensões sem dados como “Dados insuficientes” e permitir complementação pelo fluxo existente. Se faltarem dados para verificar trava crítica, informar que a elegibilidade não foi concluída. Apresentar score final somente após análise completa e válida, conforme OPEN-046.
 - Esta decisão trata apenas da apresentação; cálculo, pesos, parâmetros, travas e critérios permanecem definidos na SPEC-007
+
+### Contexto aprovado de execução e validação (OPEN-088)
+- Esta capacidade será exercitada somente em ambiente local/restrito ao repositório privado, sem publicação em domínio público e com dados exclusivamente fictícios; não usar dados reais de candidatos ou empresas.
+- O uso do HERE fica limitado ao plano gratuito, sem contratação de plano pago. Testes de transporte público ficam limitados a São Paulo, com rotas fictícias ou pontos públicos.
+- A ressalva contratual do plano gratuito deve ser mantida: ambiente restrito e dados fictícios não constituem, por si só, confirmação de autorização contratual. No escopo de planejamento aprovado, isso não cria bloqueio adicional; ampliar o uso exige nova avaliação.
 
 ## 4. Dependências
 - SPEC-004/005/006 fornecem dados de vaga e acessibilidade.
