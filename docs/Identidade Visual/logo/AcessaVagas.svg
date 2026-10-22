@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="260" viewBox="0 0 900 260" role="img" aria-labelledby="title desc">
+  <title id="title">Logotipo AcessaVagas</title>
+  <desc id="desc">Logotipo roxo e lilás com símbolo de acessibilidade e o slogan Acesso que transforma.</desc>
+  <rect width="900" height="260" rx="24" fill="#FCFBFE"/>
+  <g transform="translate(45 38)" fill="none" stroke="#6B2DBD" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="78" cy="24" r="18" fill="#6B2DBD" stroke="none"/>
+    <path d="M75 58 L75 112 L124 112"/>
+    <path d="M75 76 L117 76 L140 105"/>
+    <path d="M75 112 L50 151"/>
+    <path d="M75 112 A45 45 0 1 1 36 136"/>
+    <path d="M116 77 L116 112"/>
+  </g>
+  <text x="230" y="126" font-family="Inter, Arial, sans-serif" font-size="68" font-weight="750" fill="#4A148C">Acessa<tspan fill="#6B2DBD">Vagas</tspan></text>
+  <text x="234" y="171" font-family="Inter, Arial, sans-serif" font-size="25" font-weight="500" fill="#20133F">Acesso que transforma.</text>
+  <rect x="234" y="192" width="120" height="6" rx="3" fill="#C6A7F2"/>
+</svg>
