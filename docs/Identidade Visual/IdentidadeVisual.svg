@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1000" viewBox="0 0 1440 1000" role="img" aria-labelledby="title desc">
+<title id="title">Guia visual AcessaVagas</title>
+<desc id="desc">Prancha de identidade visual do AcessaVagas com logotipo, paleta roxa e lilás, tipografia, ícones e princípios de acessibilidade.</desc>
+<rect width="1440" height="1000" fill="#FCFBFE"/>
+<rect x="0" y="0" width="1440" height="18" fill="#6B2DBD"/>
+<text x="70" y="90" font-family="Inter,Arial,sans-serif" font-size="18" font-weight="700" fill="#6B2DBD" letter-spacing="3">GUIA DE IDENTIDADE VISUAL</text>
+<text x="70" y="158" font-family="Inter,Arial,sans-serif" font-size="52" font-weight="750" fill="#20133F">Acessa<tspan fill="#6B2DBD">Vagas</tspan></text>
+<text x="73" y="203" font-family="Inter,Arial,sans-serif" font-size="24" fill="#6B647C">Acesso que transforma.</text>
+<g transform="translate(70 250)">
+ <rect width="1300" height="250" rx="22" fill="#F5F0FC"/>
+ <text x="35" y="45" font-family="Inter,Arial,sans-serif" font-size="18" font-weight="700" fill="#4A148C">IDEIA CENTRAL</text>
+ <text x="35" y="94" font-family="Inter,Arial,sans-serif" font-size="29" font-weight="700" fill="#20133F">Inclusão com informação e autonomia.</text>
+ <text x="35" y="135" font-family="Inter,Arial,sans-serif" font-size="18" fill="#6B647C">Uma plataforma de oportunidades que valoriza competências e deixa a</text>
+ <text x="35" y="163" font-family="Inter,Arial,sans-serif" font-size="18" fill="#6B647C">acessibilidade dos ambientes de trabalho mais clara antes da candidatura.</text>
+ <g transform="translate(890 45)">
+  <circle cx="90" cy="48" r="27" fill="#6B2DBD"/>
+  <path d="M88 82 L88 126 L133 126 M88 96 L127 96 L147 121 M88 126 L68 158 M88 126 A42 42 0 1 1 52 147" fill="none" stroke="#4A148C" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="190" cy="85" r="42" fill="#C6A7F2" opacity=".65"/>
+  <circle cx="230" cy="120" r="25" fill="#E5D9F6"/>
+ </g>
+</g>
+<text x="70" y="565" font-family="Inter,Arial,sans-serif" font-size="22" font-weight="700" fill="#20133F">PALETA DE CORES</text>
+<g transform="translate(70 590)">
+ <rect width="270" height="125" rx="14" fill="#4A148C"/><text x="20" y="82" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="700" fill="#FFFFFF">Roxo profundo</text><text x="20" y="108" font-family="Inter,Arial,sans-serif" font-size="16" fill="#FFFFFF">#4A148C</text>
+ <rect x="290" width="270" height="125" rx="14" fill="#6B2DBD"/><text x="310" y="82" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="700" fill="#FFFFFF">Roxo principal</text><text x="310" y="108" font-family="Inter,Arial,sans-serif" font-size="16" fill="#FFFFFF">#6B2DBD</text>
+ <rect x="580" width="270" height="125" rx="14" fill="#C6A7F2"/><text x="600" y="82" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="700" fill="#20133F">Lilás</text><text x="600" y="108" font-family="Inter,Arial,sans-serif" font-size="16" fill="#20133F">#C6A7F2</text>
+ <rect x="870" width="270" height="125" rx="14" fill="#F5F0FC" stroke="#E3DDED"/><text x="890" y="82" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="700" fill="#20133F">Fundo suave</text><text x="890" y="108" font-family="Inter,Arial,sans-serif" font-size="16" fill="#20133F">#F5F0FC</text>
+ <rect x="1160" width="70" height="125" rx="14" fill="#20133F"/><text x="1170" y="150" font-family="Inter,Arial,sans-serif" font-size="14" fill="#6B647C">#20133F</text>
+</g>
+<text x="70" y="785" font-family="Inter,Arial,sans-serif" font-size="22" font-weight="700" fill="#20133F">TIPOGRAFIA E COMPONENTES</text>
+<g transform="translate(70 810)">
+ <rect width="390" height="125" rx="14" fill="#FFFFFF" stroke="#E3DDED"/><text x="24" y="42" font-family="Inter,Arial,sans-serif" font-size="28" font-weight="700" fill="#20133F">Inter / Arial</text><text x="24" y="72" font-family="Inter,Arial,sans-serif" font-size="16" fill="#6B647C">Títulos claros e textos legíveis</text><text x="24" y="100" font-family="Inter,Arial,sans-serif" font-size="15" fill="#6B2DBD">Hierarquia simples e consistente</text>
+ <rect x="410" width="390" height="125" rx="14" fill="#FFFFFF" stroke="#E3DDED"/><rect x="434" y="24" width="342" height="42" rx="11" fill="#6B2DBD"/><text x="605" y="51" font-family="Inter,Arial,sans-serif" font-size="16" font-weight="700" fill="#FFFFFF" text-anchor="middle">Ação principal</text><rect x="434" y="78" width="342" height="30" rx="10" fill="#FFFFFF" stroke="#6B2DBD" stroke-width="2"/><text x="605" y="98" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="700" fill="#6B2DBD" text-anchor="middle">Ação secundária</text>
+ <rect x="820" width="410" height="125" rx="14" fill="#FFFFFF" stroke="#E3DDED"/><circle cx="855" cy="43" r="12" fill="#6B2DBD"/><path d="M850 43 L854 47 L862 37" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/><text x="880" y="48" font-family="Inter,Arial,sans-serif" font-size="16" font-weight="700" fill="#20133F">Estados sempre identificados</text><text x="845" y="81" font-family="Inter,Arial,sans-serif" font-size="15" fill="#6B647C">Não depender apenas da cor.</text><text x="845" y="104" font-family="Inter,Arial,sans-serif" font-size="15" fill="#6B647C">Contraste, foco e navegação clara.</text>
+</g>
+<text x="70" y="973" font-family="Inter,Arial,sans-serif" font-size="14" fill="#6B647C">AcessaVagas • Direção visual de referência • Protótipo estático, não representa interface funcional</text>
+</svg>
