@@ -55,4 +55,4 @@ Os seguintes protótipos foram adicionados como SVGs nesta pasta:
 - Dados presentes nos protótipos são ilustrativos.
 - Aprovação de uma tela não significa aprovação automática de todas as telas ainda não revisadas separadamente.
 - A aprovação visual não modifica o estado das Specs nem resolve pendências funcionais documentadas em `docs/OPEN.md`.
-- A OPEN-088 permanece parcialmente resolvida: tempo estimado de deslocamento e faixas/pontuações foram aprovados; catálogo de meios de transporte, método/provedor/endpoints e tratamento de indisponibilidade/horário-trânsito continuam pendentes
+- A OPEN-088 permanece parcialmente resolvida: tempo estimado, faixas/pontuações e meios de transporte (caminhada, bicicleta, carro, ônibus e metrô/trem) foram aprovados; método/provedor/endpoints e tratamento de indisponibilidade/horário-trânsito continuam pendentes
