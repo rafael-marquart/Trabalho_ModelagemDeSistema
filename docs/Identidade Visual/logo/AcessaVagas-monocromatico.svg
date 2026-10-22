@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="260" viewBox="0 0 900 260" role="img" aria-labelledby="title desc">
+  <title id="title">Logotipo monocromático AcessaVagas</title>
+  <desc id="desc">Versão monocromática do logotipo AcessaVagas para aplicações de uma única cor.</desc>
+  <rect width="900" height="260" rx="24" fill="#FFFFFF"/>
+  <g transform="translate(45 38)" fill="none" stroke="#20133F" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="78" cy="24" r="18" fill="#20133F" stroke="none"/>
+    <path d="M75 58 L75 112 L124 112"/>
+    <path d="M75 76 L117 76 L140 105"/>
+    <path d="M75 112 L50 151"/>
+    <path d="M75 112 A45 45 0 1 1 36 136"/>
+    <path d="M116 77 L116 112"/>
+  </g>
+  <text x="230" y="126" font-family="Inter, Arial, sans-serif" font-size="68" font-weight="750" fill="#20133F">AcessaVagas</text>
+  <text x="234" y="171" font-family="Inter, Arial, sans-serif" font-size="25" font-weight="500" fill="#20133F">Acesso que transforma.</text>
+  <rect x="234" y="192" width="120" height="6" rx="3" fill="#6B647C"/>
+</svg>
