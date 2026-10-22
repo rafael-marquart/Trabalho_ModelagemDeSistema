@@ -11,8 +11,9 @@ Em 20/10/2026, o usuário aprovou os materiais visuais e rascunhos apresentados 
 ## Conteúdo
 
 ### Identidade visual
-- [IdentidadeVisual.png](IdentidadeVisual.png) — imagem de referência visual.
-- A pasta [logo/](logo/) contém variantes do logotipo para diferentes usos, incluindo versão para tema escuro.
+- [IdentidadeVisual.svg](IdentidadeVisual.svg) — prancha de referência com logotipo, paleta, tipografia e princípios visuais.
+- [Logo principal](logo/AcessaVagas.svg) — logotipo vetorial em roxo e lilás.
+- [Logo monocromático](logo/AcessaVagas-monocromatico.svg) — variante para aplicações de uma única cor.
 
 ### Protótipos em SVG
 - [Login — escolha de perfil](Login-Escolha-de-Perfil.svg)
@@ -43,7 +44,7 @@ Os seguintes protótipos foram adicionados como SVGs nesta pasta:
 ## Direção visual
 
 - **Estilo:** profissional, acolhedor e minimalista, sem aparência hospitalar.
-- **Marca:** símbolo de acessibilidade integrado à letra “A”.
+- **Marca:** símbolo de acessibilidade integrado à identidade do produto.
 - **Slogan:** “Acesso que transforma.”
 - **Cores de referência:** roxo e lilás, com fundos claros e contrastes legíveis.
 - **Princípios:** interface acessível, navegação clara, cartões simples, indicadores de compatibilidade e apresentação explícita dos estados.
