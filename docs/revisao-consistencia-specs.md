@@ -8,7 +8,7 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 2. Resultado executivo
 
-**Status atual:** REV-009 está encerrada após a confirmação do grupo de que as decisões consolidadas de compatibilidade e descoberta de vagas foram refletidas nas Specs. A OPEN-088 permanece parcialmente resolvida: o grupo aprovou o uso de tempo estimado de deslocamento e as faixas/pontuações; ainda faltam catálogo de meios de transporte, método/provedor/endpoints e regras de indisponibilidade/horário-trânsito. As demais OPENs continuam com seus estados próprios em `docs/OPEN.md`, sem serem reabertas ou alteradas por este encerramento. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
+**Status atual:** REV-009 está encerrada após a confirmação do grupo de que as decisões consolidadas de compatibilidade e descoberta de vagas foram refletidas nas Specs. A OPEN-088 permanece parcialmente resolvida: o grupo aprovou o uso de tempo estimado de deslocamento e as faixas/pontuações; ainda faltam método/provedor/endpoints e regras de indisponibilidade/horário-trânsito; os meios aprovados são caminhada, bicicleta, carro, ônibus e metrô/trem, com ônibus e metrô/trem como opções separadas. As demais OPENs continuam com seus estados próprios em `docs/OPEN.md`, sem serem reabertas ou alteradas por este encerramento. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
 
 - O mapa e o documento de detalhamento cobrem as Specs ativas do escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. SPEC-014 e SPEC-015 foram removidas e não devem ser contadas como Specs vigentes; os IDs posteriores foram preservados.
 - A conferência do cadastro atual de `OPEN.md` identificou 83 entradas de questões com IDs únicos. Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado das pendências é consolidado na seção 4.
@@ -31,9 +31,9 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 - Dados de acessibilidade ausentes não significam compatibilidade; ausência de informação não pode ser tratada como confirmação positiva nem, sem evidência, como incompatibilidade comprovada.
 - O cálculo deve ter uma única fonte de verdade na SPEC-007. A SPEC-008 usa o resultado para busca/filtros e a SPEC-010 apresenta o resultado ao candidato; nenhuma delas deve criar uma fórmula paralela.
 
-**Decisões já consolidadas:** OPEN-031 a OPEN-046 estão resolvidas e devem ser refletidas de forma consistente nas Specs. A regra atual de D usa distância em quilômetros nas vagas presenciais/híbridas e exclui distância para vagas totalmente remotas; não calcula tempo de deslocamento. **Pendência funcional remanescente:** OPEN-088, que define o método/provedor para determinar a distância em quilômetros. Não escolher provedor ou método por inferência.
+**Decisões já consolidadas:** OPEN-031 a OPEN-046 estão resolvidas e devem ser refletidas de forma consistente nas Specs. A regra posterior aprovada na OPEN-088 substitui a distância em quilômetros por tempo estimado de deslocamento para vagas presenciais/híbridas e exclui o deslocamento para vagas totalmente remotas. **Pendência funcional remanescente:** OPEN-088, que ainda precisa definir método/provedor/endpoints e tratamento de falhas/dados ausentes e de horário/trânsito. Não escolher provedor ou método por inferência
 
-**Encerramento:** as decisões consolidadas nas OPEN-031 a OPEN-046 foram consideradas refletidas nas Specs, incluindo a trava crítica, tratamento de dados ausentes, fonte única do cálculo na SPEC-007, consumo do resultado pelas SPEC-008/SPEC-010 e regra de distância/modalidade. OPEN-088 permanece aberta como a única pendência funcional da revisão: método/provedor para determinar distância em quilômetros. Não calcular tempo de deslocamento nem reintroduzir o provedor de rotas anteriormente considerado. A revisão documental REV-009 está encerrada; isso não equivale à aprovação geral das Specs nem autoriza implementação..
+**Encerramento:** as decisões consolidadas nas OPEN-031 a OPEN-046 foram consideradas refletidas nas Specs, incluindo a trava crítica, tratamento de dados ausentes e fonte única do cálculo na SPEC-007. A regra posterior aprovada na OPEN-088 substitui distância em quilômetros por tempo estimado de deslocamento, com pesos, faixas e meios de transporte já definidos; SPEC-008/SPEC-010 consomem esse resultado. OPEN-088 permanece parcialmente resolvida quanto ao método/provedor/endpoints e às regras para falhas/dados ausentes e horário/trânsito. A revisão documental REV-009 está encerrada; isso não equivale à aprovação geral das Specs nem autoriza implementação.
 
 ## 4. Estado atual das pendências OPEN
 
@@ -43,7 +43,7 @@ Conforme o cadastro vigente de `docs/OPEN.md`:
 - **Parcialmente resolvidas:** OPEN-086 e OPEN-087.
 - **Resolvidas:** OPEN-074 a OPEN-085.
 
-OPEN-086 e OPEN-087 dependem de confirmação documentada das condições de acesso/licença do Adzuna e da viabilidade operacional da coleta diária. OPEN-088 continua sem método/provedor aprovado para determinar distância em quilômetros; não calcular tempo de deslocamento nem reintroduzir o provedor de rotas anteriormente considerado.
+OPEN-086 e OPEN-087 dependem de confirmação documentada das condições de acesso/licença do Adzuna e da viabilidade operacional da coleta diária. OPEN-088 ainda não tem método/provedor/endpoints aprovado para estimar tempo de deslocamento; faixas, pontuações e meios de transporte já foram definidos. Não inferir provedor nem comportamento para falhas ou horário/trânsito.
 
 As decisões das OPEN-075 a OPEN-085 foram refletidas nas Specs correspondentes, incluindo denúncia, moderação e nota pública (SPEC-019 a SPEC-021). A revisão de consistência documental, por si só, não altera estados funcionais. Não marcar questões como resolvidas sem decisão explícita e atualização dos artefatos correspondentes.
 
@@ -58,7 +58,7 @@ As decisões das OPEN-075 a OPEN-085 foram refletidas nas Specs correspondentes,
 
 ## 6. Plano recomendado de correção
 
-1. Manter OPEN-088 como pendência funcional isolada do escopo de compatibilidade/distância; não reabrir OPEN-031 a OPEN-046, já decididas.
+1. Manter OPEN-088 como pendência funcional isolada do escopo de compatibilidade/deslocamento; não reabrir OPEN-031 a OPEN-046, já decididas.
 2. Manter as demais questões OPEN pertinentes explicitamente abertas até decisão do grupo.
 3. Manter a aprovação textual separada da aprovação dos layouts. Implementação somente após as aprovações aplicáveis.
 
