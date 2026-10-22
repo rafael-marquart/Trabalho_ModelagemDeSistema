@@ -1511,7 +1511,7 @@ Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN
 - **Modelo:** CANDIDATO, VETOR_ACESSIBILIDADE_CANDIDATO, VAGA, TRAVA_CRITICA_VAGA.
 - **Drivers:** DA-03, DA-04. **ADR:** ADR-004.
 - **Dependências:** SPEC-002, SPEC-004, SPEC-005 e SPEC-006.
-- **Questões:** OPEN-031 a OPEN-035.
+- **Questões:** OPEN-031 a OPEN-035, OPEN-088.
 
 ## 3. Escopo
 **Incluído:** verificar dados mínimos; comparar necessidades obrigatórias com barreiras da vaga; aplicar trava eliminatória; calcular score quando a vaga passar pela trava; produzir fatores que expliquem o resultado.
