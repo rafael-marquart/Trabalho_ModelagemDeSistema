@@ -158,3 +158,18 @@ Esta é uma auditoria de consistência documental. Ela identifica cobertura e pr
 - A decisão define a sequência e o escopo dos dados usados, mas não autoriza coleta diária, operação de produção ou armazenamento/exibição contínuos do Adzuna; esses usos continuam condicionados à autorização documentada da fonte.
 
 **Resultado:** atualizadas OPEN-086 e SPEC-007 para refletir a decisão. A revisão registra a decisão sem alterar pesos, faixas de deslocamento ou regras de confirmação de endereço
+
+## REV-017 — Encerrada: nomenclatura e fluxo de cancelamento de candidatura
+
+**Decisões do usuário:**
+- O estado inicial canônico da candidatura é `Inscrito`.
+- O candidato acessa **Minhas candidaturas**, seleciona uma candidatura para analisar e, na tela de detalhe/análise, aciona **Cancelar candidatura** quando permitido.
+- O sistema pede confirmação. Após confirmação e validação, a candidatura passa ao estado terminal `Cancelada` e aparece como cancelada em Minhas candidaturas.
+- A tela de resultado do cancelamento não apresenta botão para cancelar novamente.
+
+**Correções documentais aplicadas:**
+- Alinhados SPEC-011, SPEC-012, UC-03, OPEN-049 e o fluxo de estados para usar `Inscrito` como estado inicial.
+- Detalhado em SPEC-012 o ponto de entrada do cancelamento, a confirmação, o estado resultante e a apresentação em Minhas candidaturas.
+- Atualizado o catálogo de protótipos para distinguir tela de detalhe/análise e tela de resultado. A cor de `Cancelada` (cinza) e `Recusada` (vermelho) continua registrada como ajuste visual pendente no Figma, sem afirmar que foi aplicada.
+
+**Resultado:** as duas decisões funcionais deixam de constar como lacunas da revisão REV-015. A atualização documental não comprova a edição do Figma nem autoriza implementação além dos controles de aprovação já existentes.
