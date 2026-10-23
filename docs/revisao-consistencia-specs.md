@@ -8,10 +8,10 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 2. Resultado executivo
 
-**Status atual:** REV-009 permanece encerrada. Na revisão atual (REV-011), OPEN-089 foi resolvida com regra de evidência oficial específica do local de trabalho; OPEN-088 permanece parcialmente resolvida, com método/provedor/endpoints de rota, falhas/dados ausentes e efeito de horário/trânsito ainda pendentes. Os meios aprovados são caminhada, bicicleta, carro, ônibus e metrô/trem (opções distintas). OPEN-086 e OPEN-087 estão resolvidas conforme `docs/OPEN.md`. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
+**Status atual:** REV-009 e REV-011 permanecem encerradas. Nesta atualização, OPEN-088 foi resolvida: HERE Routing API no plano gratuito aprovado, duração padrão da rota sem ajuste por horário/trânsito em tempo real e tratamento de falhas/dados ausentes conforme OPEN-033. OPEN-089, OPEN-086 e OPEN-087 também estão resolvidas conforme `docs/OPEN.md`. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
 
 - O mapa e o documento de detalhamento cobrem as Specs ativas do escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. SPEC-014 e SPEC-015 foram removidas e não devem ser contadas como Specs vigentes; os IDs posteriores foram preservados.
-- A conferência atual de `OPEN.md` identificou 84 entradas de questões com IDs únicos (83 resolvidas e 1 parcialmente resolvida). Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado das pendências é consolidado na seção 4.
+- A conferência atual de `OPEN.md` identificou 84 entradas de questões com IDs únicos, todas resolvidas. Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado está consolidado na seção 4.
 - Todas as RBs identificadas na baseline aparecem referenciadas em algum ponto de `Specs.md`; isso não garante, por si só, que cada regra esteja associada à Spec correta.
 - RF-34 e RF-35 estão associados, respectivamente, à SPEC-012 e à SPEC-013.
 - O detalhamento de contratos e testes das SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 foi ampliado e aprovado pelo grupo (REV-002 encerrada).
@@ -26,9 +26,9 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 **Correções documentais aplicadas em `docs/Specs.md`:**
 - corrigida a numeração duplicada dos itens de comportamento na SPEC-008 e SPEC-016;
 - corrigida a dependência da SPEC-016, removendo a referência operacional a SPEC-014/015, substituídas por SPEC-011 a SPEC-013;
-- refletida a resolução da OPEN-089 na SPEC-007 e removido seu bloqueio de implementação. A SPEC-007 continua bloqueada pela OPEN-088.
+- refletida a resolução da OPEN-089 na SPEC-007 e removido seu bloqueio de implementação. A SPEC-007 não tem mais bloqueio por OPEN-088.
 
-**Verificações:** 19 Specs ativas correspondem aos 19 IDs do mapa; 84 entradas OPEN têm IDs únicos; não foram encontradas referências a OPENs inexistentes em `Specs.md`. A OPEN-088 é a única questão parcialmente resolvida no cadastro atual. A auditoria estrutural não substitui aprovação funcional geral, revisão de cada requisito contra a baseline nem aprovação dos layouts.
+**Verificações:** 19 Specs ativas correspondem aos 19 IDs do mapa; 84 entradas OPEN têm IDs únicos; não foram encontradas referências a OPENs inexistentes em `Specs.md`. A OPEN-088 foi resolvida nesta atualização; não há questões parcialmente resolvidas no cadastro. A auditoria estrutural não substitui aprovação funcional geral, revisão de cada requisito contra a baseline nem aprovação dos layouts.
 
 ---
 
@@ -52,13 +52,13 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 4. Estado atual das pendências OPEN
 
-Conforme o cadastro vigente de `docs/OPEN.md`:
+Conforme o cadastro atualizado de `docs/OPEN.md`:
 
 - **Abertas:** nenhuma.
-- **Parcialmente resolvidas:** OPEN-088.
-- **Resolvidas:** as demais 83 entradas, incluindo OPEN-086, OPEN-087 e OPEN-089.
+- **Parcialmente resolvidas:** nenhuma.
+- **Resolvidas:** 84 entradas, incluindo OPEN-086, OPEN-087, OPEN-088 e OPEN-089.
 
-OPEN-088 ainda não tem método/provedor/endpoints aprovado para estimar tempo de deslocamento; tratamento de falhas/dados ausentes e de horário/trânsito também permanece pendente. Faixas, pontuações e meios de transporte já foram definidos. Não inferir provedor nem comportamento para as pendências remanescentes
+OPEN-088 foi encerrada com HERE Routing API no plano gratuito aprovado, duração padrão sem ajuste por horário/trânsito em tempo real e falhas/ausência de rota tratadas como dados insuficientes conforme OPEN-033. A implementação de SPEC-007, SPEC-008 e SPEC-010 não está mais bloqueada por OPEN-088.
 
 As decisões das OPEN-075 a OPEN-085 foram refletidas nas Specs correspondentes, incluindo denúncia, moderação e nota pública (SPEC-019 a SPEC-021). A revisão de consistência documental, por si só, não altera estados funcionais. Não marcar questões como resolvidas sem decisão explícita e atualização dos artefatos correspondentes.
 
@@ -73,7 +73,7 @@ As decisões das OPEN-075 a OPEN-085 foram refletidas nas Specs correspondentes,
 
 ## 6. Plano recomendado de correção
 
-1. Manter OPEN-088 como pendência funcional isolada do cálculo de deslocamento; não reabrir OPEN-031 a OPEN-046 nem OPEN-089, já decididas.
+1. Registrar OPEN-088 como resolvida e remover o bloqueio de implementação por essa questão; preservar as decisões de OPEN-031 a OPEN-046 e OPEN-089.
 2. Preservar a aprovação textual separada da aprovação dos layouts. Implementação somente após as aprovações aplicáveis.
 
 ## 7. Limite desta revisão
@@ -83,3 +83,10 @@ Esta é uma auditoria de consistência documental. Ela identifica cobertura e pr
 ---
 
 **Nota de rodapé — decisões já tomadas:** os achados REV-001, REV-002, REV-003, REV-004, REV-006, REV-007, REV-008 e REV-010 foram encerrados após correções ou decisões aprovadas pelo grupo. REV-001, REV-003, REV-004, REV-006, REV-007 e REV-010 foram removidos do corpo principal; REV-002 e REV-008 permanecem descritos acima apenas como registro de encerramento. REV-011 foi encerrada nesta revisão e está descrita acima. Os registros históricos também podem ser consultados no histórico do Git.
+
+
+## REV-012 — Encerrada: resolução da OPEN-088 e liberação de implementação
+
+**Decisão registrada:** OPEN-088 foi marcada como resolvida. A estimativa de deslocamento usa HERE Routing API no escopo do plano gratuito aprovado, com duração padrão da rota e sem ajuste por horário de partida ou trânsito em tempo real. Falha, limite do plano, meio não suportado ou ausência de rota não gera fallback por distância ou destino presumido; quando o deslocamento for necessário, aplicar OPEN-033 e sinalizar dados insuficientes, sem score final completo.
+
+**Efeito:** removido o bloqueio de implementação por OPEN-088 para SPEC-007, SPEC-008 e SPEC-010. Permanecem válidos os limites do plano gratuito, a exigência de revisar termos/limites antes de uso real ou produção e a aprovação visual separada dos layouts. Endpoint/versão e mapeamento técnico dos meios ficam como detalhes de implementação a confirmar na documentação vigente do HERE
