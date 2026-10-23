@@ -146,3 +146,15 @@ Esta é uma auditoria de consistência documental. Ela identifica cobertura e pr
 - As regras de OPEN-088 e o fluxo aprovado da OPEN-089 aparecem na SPEC-007; a busca alternativa por endereço não deve ser confundida com autorização de uso contínuo do Adzuna ou de envio de dados a LLM.
 
 **Resultado:** a revisão permanece aberta para resolver as quatro lacunas acima. Nenhuma alteração funcional foi inferida nesta etapa; as decisões de autorização, dados enviados ao LLM, nomenclatura canônica e ponto de entrada do cancelamento exigem validação do projeto.
+
+## REV-016 — Registro da decisão sobre enriquecimento pós-publicação de localização
+
+**Decisão do usuário:** aprovada a separação entre publicação/importação da vaga externa e verificação posterior de localização para compatibilidade.
+
+- A vaga externa deve ser validada, persistida e publicada no Acessa Vagas antes da etapa de enriquecimento de localização.
+- A etapa posterior consulta os dados publicados no próprio Acessa Vagas. Se não houver endereço concreto, a busca assistida por LLM/internet da OPEN-089 usa somente nome da empresa e cidade anunciada como dados de consulta; não encaminha a descrição integral do anúncio ao LLM.
+- A etapa de localização é separada da coleta Adzuna e não consome nem amplia o limite de 25 chamadas de teste da OPEN-086. Esse limite permanece aplicável à API do Adzuna.
+- O cálculo/consulta de rota continua condicionado à localização `CONFIRMADO`, conforme OPEN-088/089. Endereço divergente ou não confirmado não gera rota nem distância presumida.
+- A decisão define a sequência e o escopo dos dados usados, mas não autoriza coleta diária, operação de produção ou armazenamento/exibição contínuos do Adzuna; esses usos continuam condicionados à autorização documentada da fonte.
+
+**Resultado:** atualizadas OPEN-086 e SPEC-007 para refletir a decisão. A revisão registra a decisão sem alterar pesos, faixas de deslocamento ou regras de confirmação de endereço
