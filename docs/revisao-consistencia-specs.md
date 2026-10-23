@@ -125,3 +125,24 @@ Esta é uma auditoria de consistência documental. Ela identifica cobertura e pr
 
 **Resultado:** corrigidas as contradições documentais claras sobre OPEN-088/089 e o escopo atual de ingestão. As três lacunas acima permanecem registradas para decisão/aprovação; nenhuma fórmula, regra funcional ou layout foi inventado nesta revisão
 4. A subseção 6.3 de validação da localização (OPEN-089) estava posicionada indevidamente dentro da SPEC-001, embora fosse referenciada pela SPEC-007. Ela foi movida para a SPEC-007, após as regras de cálculo e antes do modelo de domínio, preservando o texto aprovado e corrigindo a referência interna da etapa 6.
+
+## REV-015 — Continuação da revisão transversal: autorização e limites operacionais
+
+**Escopo adicional:** conferência do cabeçalho de controle de `docs/Specs.md`, do quadro final de aprovação, da execução de SPEC-006 e das dependências de endereço/LLM da SPEC-007.
+
+### Inconsistências e lacunas encontradas
+
+1. **Autorização de implementação conflitante em `docs/Specs.md`.** O cabeçalho de controle ainda declara “Estado dos textos: especificada, aguardando revisão e aprovação humana” e “Implementação: não autorizada”. No final, porém, o “Registro consolidado de aprovação para implementação” marca as Specs como aprovadas/prontas e diz que a aprovação autoriza implementação das capacidades marcadas como prontas. Isso é uma contradição de governança que afeta diretamente o início do trabalho. Não alterei o cabeçalho nem interpretei qual trecho prevalece.
+
+2. **Limite de envio de dados do Adzuna para LLM versus busca de endereço (OPEN-086/OPEN-089).** A OPEN-086 limita a etapa atual a 25 chamadas de teste e declara que ela não autoriza envio de conteúdo ao LLM; já a SPEC-007/OPEN-089 prevê, quando faltar endereço, pesquisa assistida por LLM na internet com nome da empresa e cidade da vaga provenientes do anúncio. A regra funcional de buscar endereço foi aprovada, mas os documentos ainda precisam explicitar em qual etapa/condição essa busca pode ser executada e quais dados do anúncio podem ser enviados. Até essa delimitação, não habilitar essa etapa no lote de teste Adzuna.
+
+3. **Estado inicial da candidatura com nomes divergentes.** `Inscrita` permanece no modelo conceitual e em Specs de candidatura, enquanto `Inscrito` aparece no fluxo de estados e na SPEC-013. Os dois identificam o mesmo estado inicial, mas não está definido se um é o valor canônico de domínio e o outro apenas uma legenda. Não normalizei automaticamente.
+
+4. **Cancelamento funcional versus botão ausente no protótipo.** RF-28/RF-34, RB-36 e SPEC-012 mantêm a capacidade de cancelar candidatura sob regras; `Prototipos.md` registra que o botão não deve aparecer na tela de resultado do cancelamento. Isso pode ser consistente se a decisão for apenas sobre aquela tela, mas falta identificar a tela/estado em que o candidato inicia o cancelamento e validar o protótipo atualizado. A capacidade funcional não foi removida.
+
+### Checagens confirmadas nesta continuação
+- `docs/OPEN.md` contém 84 entradas de OPEN e todas estão marcadas como resolvidas.
+- `Specs.md` e `mapa-specs.md` contêm as mesmas 19 Specs ativas, com IDs e títulos correspondentes.
+- As regras de OPEN-088 e o fluxo aprovado da OPEN-089 aparecem na SPEC-007; a busca alternativa por endereço não deve ser confundida com autorização de uso contínuo do Adzuna ou de envio de dados a LLM.
+
+**Resultado:** a revisão permanece aberta para resolver as quatro lacunas acima. Nenhuma alteração funcional foi inferida nesta etapa; as decisões de autorização, dados enviados ao LLM, nomenclatura canônica e ponto de entrada do cancelamento exigem validação do projeto.
