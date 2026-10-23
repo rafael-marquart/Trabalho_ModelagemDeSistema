@@ -150,25 +150,23 @@ O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou t
 20. Alterações relevantes devem ser rastreáveis conforme RB-27 e RNF-14, respeitando RNF-08.
 21. ADR-002 centraliza a autorização no backend, mas não determina JWT, sessão/cookie ou mecanismo específico.
 
-## 6.3. Validação da localização da vaga externa (OPEN-089)
+## 6.3. Validação da localização da vaga externa (OPEN-089 — resolvida)
 
 **Objetivo:** garantir que a estimativa de deslocamento da dimensão D utilize um destino relacionado ao local efetivo de trabalho e compatível com a cidade declarada no anúncio.
 
-**VL-01 — Fonte de dados:** considerar o nome da empresa e a localização retornados pelo Adzuna como dados de origem, não como prova automática do endereço exato da unidade. Pesquisar o endereço em fontes confiáveis, priorizando fontes oficiais da empresa e informações que identifiquem a unidade ou local de trabalho.
+**VL-01 — Fonte e evidência:** usar o Adzuna como fonte de origem dos dados do anúncio. Para confirmar o destino, exigir endereço/local de trabalho específico da vaga em fonte oficial: anúncio oficial da própria vaga ou página oficial da empresa que identifique inequivocamente a unidade/local de exercício. Não será integrado provedor/API adicional de pesquisa ou geocodificação nesta decisão. Nome da empresa, sede ou escritório genérico não comprovam o local da vaga.
 
-**VL-02 — Comparação:** normalizar diferenças de maiúsculas/minúsculas, acentuação, espaços e abreviações conhecidas antes de comparar a cidade do endereço encontrado com a cidade anunciada. A normalização não pode eliminar divergências geográficas reais.
+**VL-02 — Comparação:** comparar a cidade do local oficial com a cidade anunciada, normalizando apenas diferenças de maiúsculas/minúsculas, acentuação, espaços e abreviações conhecidas. A normalização não pode eliminar divergências geográficas reais.
 
-**VL-03 — Evidência de local de trabalho:** só classificar como `CONFIRMADO` quando houver evidência suficiente de que o endereço corresponde ao local de exercício da vaga e é compatível com a cidade anunciada. Encontrar somente a sede ou um escritório da empresa não é suficiente.
+**VL-03 — Estados da validação:** registrar `CONFIRMADO` somente quando o local de trabalho específico e a cidade forem sustentados por evidência oficial e compatíveis; `DIVERGENTE` quando houver conflito entre o local oficial e a cidade anunciada; ou `NAO_CONFIRMADO` quando faltar evidência, houver fontes conflitantes ou só for encontrada sede/escritório sem vínculo com a vaga.
 
-**VL-04 — Estados da validação:** registrar um dos seguintes estados: `CONFIRMADO` (endereço do local de trabalho sustentado por evidência e cidade compatível), `DIVERGENTE` (evidência de divergência entre local de trabalho e cidade anunciada) ou `NAO_CONFIRMADO` (evidência insuficiente, endereço não encontrado ou fontes conflitantes).
+**VL-04 — Uso no deslocamento e falhas:** para vagas presenciais ou híbridas, solicitar/usar rota somente quando o destino estiver `CONFIRMADO`. Para `DIVERGENTE` ou `NAO_CONFIRMADO`, não consultar rota, inventar destino ou usar fallback para endereço presumido. Ausência/indisponibilidade de fonte oficial resulta em `NAO_CONFIRMADO`; aplicar OPEN-033 e indicar dados insuficientes quando a localização for necessária à avaliação.
 
-**VL-05 — Uso no deslocamento:** para vagas presenciais ou híbridas, só solicitar/usar rota de deslocamento quando o destino estiver `CONFIRMADO`. Para `DIVERGENTE` ou `NAO_CONFIRMADO`, não inventar destino nem tempo de viagem; registrar a razão e aplicar OPEN-033 quando a localização for necessária à avaliação.
+**VL-05 — Efeito sobre a pontuação:** a validação é pré-condição para estimar deslocamento; não constitui dimensão adicional nem altera os pesos gerais A=50%, T=30%, D=20% e os pesos internos de D aprovados na OPEN-088. Para vagas remotas, não calcular deslocamento diário.
 
-**VL-06 — Efeito sobre a pontuação:** a validação do endereço é uma verificação de qualidade dos dados e uma pré-condição para estimar o deslocamento; não constitui uma quarta dimensão nem adiciona peso separado ao score. Permanecem inalterados os pesos gerais A=50%, T=30%, D=20% e os pesos internos de D definidos na OPEN-088 (modalidade=60%, deslocamento=40% para vagas presenciais/híbridas). Para vagas remotas, aplicam-se as regras já aprovadas: não calcular deslocamento diário.
+**VL-06 — Rastreabilidade e privacidade:** registrar somente o necessário para explicar/reproduzir a validação: empresa, cidade anunciada, local oficial encontrado quando necessário, fonte, data, estado e motivo de divergência/ausência de confirmação. Minimizar dados da localização do candidato e não expor endereço residencial completo no resultado público.
 
-**VL-07 — Rastreabilidade e privacidade:** registrar o nome da empresa pesquisada, a cidade declarada no anúncio, o endereço/local de trabalho encontrado quando necessário, a fonte e a data da consulta, o estado da validação e o motivo de divergência ou ausência de confirmação. Registrar apenas o necessário à explicação e reprodução do cálculo; minimizar dados da localização do candidato e não expor endereço residencial completo no resultado público.
-
-**Limites ainda pendentes:** OPEN-089 permanece aberta para decisão do provedor/fonte de pesquisa, nível de evidência exigido e política final para divergências. Esta seção formaliza o comportamento de segurança e integridade que deve ser respeitado enquanto esses detalhes não forem decididos; não autoriza implementar a integração externa antes de resolver as dependências aplicáveis.
+A decisão fecha a OPEN-089. A integração de cálculo de rota continua sujeita à OPEN-088 e às demais dependências aplicáveis.
 
 ## 7. Modelo de domínio envolvido
 
@@ -1519,7 +1517,7 @@ Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN
 |---|---|
 | ID | SPEC-007 |
 |
-| Estado do texto | aprovada; não pronta para implementação — bloqueada pela OPEN-088 e OPEN-089 |
+| Estado do texto | aprovada; não pronta para implementação — bloqueada pela OPEN-088 |
 | Estado do layout | não se aplica ao cálculo; apresentação do resultado pertence à SPEC-010 |
 | Capacidade | Aplicar trava crítica e calcular score determinístico de compatibilidade |
 
@@ -1531,7 +1529,7 @@ Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN
 - **Modelo:** CANDIDATO, VETOR_ACESSIBILIDADE_CANDIDATO, VAGA, TRAVA_CRITICA_VAGA.
 - **Drivers:** DA-03, DA-04. **ADR:** ADR-004.
 - **Dependências:** SPEC-002, SPEC-004, SPEC-005 e SPEC-006.
-- **Questões:** OPEN-031 a OPEN-035, OPEN-088 e OPEN-089.
+- **Questões:** OPEN-031 a OPEN-035 e OPEN-088; OPEN-089 resolvida.
 
 ## 3. Escopo
 **Incluído:** verificar dados mínimos; comparar necessidades obrigatórias com barreiras da vaga; aplicar trava eliminatória; calcular score quando a vaga passar pela trava; produzir fatores que expliquem o resultado.
@@ -1558,12 +1556,12 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 3. Para acessibilidade (A), comparar somente necessidades funcionais e recursos indispensáveis explicitamente declarados pelo candidato com recursos, condições e requisitos de acessibilidade explicitamente declarados para a vaga.
 4. Para perfil técnico (T), comparar critérios técnicos definidos para a vaga com competências e conhecimentos declarados pelo candidato; formação, experiência e idiomas só entram quando forem critérios aplicáveis à vaga.
 5. Para deslocamento/modalidade (D), calcular a compatibilidade de modalidade (peso interno 60%) e, em vagas presenciais ou híbridas, a compatibilidade de deslocamento (40%) com base no tempo estimado de viagem até o local de trabalho e nas faixas/pontuações aprovadas na OPEN-088. Usar o meio de transporte padrão informado no perfil do candidato, permitindo sobrescrita específica por vaga. Em vaga totalmente remota, excluir o componente de deslocamento e calcular D somente pela modalidade; não penalizar deslocamento.
-6. Para vagas externas, usar o nome da empresa e os dados de localização retornados pelo Adzuna para pesquisar e validar o local de trabalho conforme OPEN-089. Comparar a cidade do endereço associado à vaga com a cidade anunciada. Não tratar automaticamente a sede da empresa como local de trabalho. Se o endereço for divergente ou não puder ser confirmado, registrar o estado e a fonte da validação; não estimar deslocamento usando um destino não confirmado. Quando a localização for necessária ao cálculo e permanecer desconhecida, aplicar OPEN-033: dados insuficientes, sem score final completo.
+6. Para vagas externas, usar o Adzuna como fonte de origem e confirmar o local de trabalho específico somente por anúncio oficial da vaga ou página oficial que identifique inequivocamente a unidade. Nome da empresa, sede ou escritório genérico não comprovam o destino. Classificar localização como `CONFIRMADO`, `DIVERGENTE` ou `NAO_CONFIRMADO` conforme a seção 6.3; só estimar deslocamento com destino `CONFIRMADO`. Para divergência, ausência de evidência ou falha da fonte, não consultar rota nem presumir endereço; aplicar OPEN-033 quando a localização for necessária
 7. Comparar necessidades funcionais obrigatórias com barreiras e recursos eliminatórios registrados para a vaga.
-7. Se houver barreira incompatível com necessidade obrigatória, classificar a vaga como incompatível, independentemente de qualquer score.
-8. Se não houver trava crítica, calcular o score determinístico com os pesos definidos na baseline.
-9. Produzir resultado e fatores considerados, preservando transparência.
-10. Ao analisar várias vagas, permitir que a capacidade consumidora ordene os resultados por score.
+8. Se houver barreira incompatível com necessidade obrigatória, classificar a vaga como incompatível, independentemente de qualquer score.
+9. Se não houver trava crítica, calcular o score determinístico com os pesos definidos na baseline.
+10. Produzir resultado e fatores considerados, preservando transparência.
+11. Ao analisar várias vagas, permitir que a capacidade consumidora ordene os resultados por score.
 
 ## 6. Regras e invariantes
 1. Barreira incompatível com necessidade obrigatória torna a vaga incompatível (RB-02).
@@ -1677,7 +1675,7 @@ Contratos conceituais, sem endpoints HTTP.
 - **OPEN-034:** resolvida na decisão original; a regra anterior de distância em quilômetros foi substituída pela decisão posterior da OPEN-088, que usa tempo estimado de deslocamento e faixas/pontuações próprias. A modalidade e a exclusão do componente de deslocamento para vagas totalmente remotas permanecem
 - **OPEN-035:** parâmetros e resultados que devem ser armazenados para rastreabilidade.
 - **OPEN-088:** parcialmente resolvida. Decisões aprovadas: tempo estimado em vez de quilômetros; pesos internos de modalidade/deslocamento 60%/40%; preferência de transporte no perfil com sobrescrita por vaga; meios suportados: caminhada, bicicleta, carro, ônibus e metrô/trem (ônibus e metrô/trem são opções separadas); faixas de tempo e pontuações (até 30 min = 100; >30 min a 1h = 75; >1h a 1h30 = 50; >1h30 = 25). Permanecem pendentes método/provedor/endpoints e tratamento de indisponibilidade/dados ausentes e de horário/trânsito.
-- **OPEN-089:** aberta. Define a pesquisa e validação do endereço efetivo de trabalho de uma vaga externa, a comparação com a cidade anunciada e o tratamento de endereço divergente ou não confirmado. A validação é pré-condição para calcular deslocamento, não cria peso adicional e não altera a fórmula D já aprovada. Permanecem pendentes fonte/provedor de pesquisa, nível de evidência e política final para divergências.
+- **OPEN-089:** resolvida. O destino de deslocamento de vaga externa exige evidência oficial específica da vaga/unidade; Adzuna é fonte de origem, sem provedor/API adicional de pesquisa/geocodificação. Divergência, evidência insuficiente ou falha de fonte impedem estimativa de rota e seguem OPEN-033 quando localização for necessária. Não altera fórmula nem pesos.
 
 ## 14. Definition of Done
 - [ ] Texto aprovado.
