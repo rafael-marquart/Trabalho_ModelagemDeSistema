@@ -2125,7 +2125,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 - **Questões abertas:** nenhuma pendente desta SPEC entre OPEN-047 e OPEN-049; as três foram resolvidas em `docs/OPEN.md`.
 
 ## 3. Escopo
-Validar autenticação, status atual da vaga, compatibilidade/trava crítica, existência de candidatura ativa e disponibilidade do score determinístico. Se válido, registrar candidato, vaga, score obrigatório, data gerada pelo sistema no momento do registro e estado inicial `Inscrita`. Não permitir candidatura duplicada ativa nem criar registro parcial.
+Validar autenticação, status atual da vaga, compatibilidade/trava crítica, existência de candidatura ativa e disponibilidade do score determinístico. Se válido, registrar candidato, vaga, score obrigatório, data gerada pelo sistema no momento do registro e estado inicial `Inscrito`. Não permitir candidatura duplicada ativa nem criar registro parcial.
 
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
@@ -2145,7 +2145,7 @@ SPEC-001, 002, 007, 009, 010. As dependências fornecem dados e capacidades; est
 3. Sistema verifica se já existe candidatura ativa do candidato para a vaga.
 4. Sistema confirma que o score determinístico de compatibilidade está calculado; o score é obrigatório para registrar a candidatura.
 5. Se alguma condição falhar ou o score não estiver disponível, recusa o registro e informa o motivo; nenhuma candidatura parcial é criada.
-6. Se todas as condições forem satisfeitas, registra a candidatura com estado inicial `Inscrita`, gera `data_inscricao` no momento do registro e disponibiliza o resultado ao candidato.
+6. Se todas as condições forem satisfeitas, registra a candidatura com estado inicial `Inscrito`, gera `data_inscricao` no momento do registro e disponibiliza o resultado ao candidato.
 7. Sistema registra o evento e aciona a capacidade de notificação quando aplicável.
 
 ## 6. Regras e invariantes
@@ -2193,7 +2193,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 | ID | Cenário | Resultado esperado |
 |---|---|---|
-| T-011-01 | Candidato autenticado envia candidatura a vaga disponível, sem duplicidade, sem trava crítica e com score calculado | Candidatura única é registrada com estado `Inscrita`, data gerada pelo sistema e score associado; confirmação é apresentada |
+| T-011-01 | Candidato autenticado envia candidatura a vaga disponível, sem duplicidade, sem trava crítica e com score calculado | Candidatura única é registrada com estado `Inscrito`, data gerada pelo sistema e score associado; confirmação é apresentada |
 | T-011-02 | Visitante ou usuário não candidato tenta candidatar-se | Operação recusada sem registro |
 | T-011-03 | Vaga encerrada, indisponível ou bloqueada | Operação recusada sem registro parcial |
 | T-011-04 | Existe candidatura ativa para o mesmo candidato e vaga | Nova candidatura é recusada |
@@ -2233,7 +2233,7 @@ As OPEN-047, OPEN-048 e OPEN-049 foram resolvidas e registradas em `docs/OPEN.md
 - **Questões abertas:** OPEN-050, OPEN-051 e OPEN-052 foram resolvidas e registradas em `docs/OPEN.md`.
 
 ## 3. Escopo
-Escopo de RF-28: (1) consultar somente candidaturas próprias; (2) acompanhar status, etapas e histórico disponível; e (3) cancelar a própria candidatura nos estados ativos `Inscrita`, `Triagem`, `Entrevista` e `Finalista`, desde que a vaga não esteja encerrada nem bloqueada de forma que impeça o cancelamento; preservar histórico após cancelamento. Editar uma candidatura já enviada, excluir seu registro ou alterar etapas do processo seletivo não fazem parte deste escopo.
+Escopo de RF-28: (1) consultar somente candidaturas próprias; (2) acompanhar status, etapas e histórico disponível; e (3) cancelar a própria candidatura nos estados ativos `Inscrito`, `Triagem`, `Entrevista` e `Finalista`, desde que a vaga não esteja encerrada nem bloqueada de forma que impeça o cancelamento; preservar histórico após cancelamento. Editar uma candidatura já enviada, excluir seu registro ou alterar etapas do processo seletivo não fazem parte deste escopo.
 
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
@@ -2253,13 +2253,13 @@ SPEC-001, 011, 013, 016, 017. As dependências fornecem dados e capacidades; est
 3. Ao selecionar uma candidatura, apresenta estado atual, vaga e histórico disponível.
 4. A linha do tempo inclui, quando aplicáveis, os eventos “Candidatura realizada”, “Status” e “Candidatura cancelada”. Cada evento apresenta a data, sem exigir horário, uma descrição breve e compreensível e o status ou etapa resultante quando aplicável. Os eventos são exibidos do mais recente para o mais antigo.
 5. O histórico exibido é limitado à própria candidatura do candidato autenticado e não expõe dados de terceiros nem informações internas não destinadas ao acompanhamento.
-6. Ao solicitar cancelamento, o sistema confirma a intenção do candidato e verifica que a candidatura pertence ao candidato autenticado, está em estado `Inscrita`, `Triagem`, `Entrevista` ou `Finalista`, e que a vaga não está encerrada nem bloqueada de forma que impeça o cancelamento.
+6. Ao solicitar cancelamento, o sistema confirma a intenção do candidato e verifica que a candidatura pertence ao candidato autenticado, está em estado `Inscrito`, `Triagem`, `Entrevista` ou `Finalista`, e que a vaga não está encerrada nem bloqueada de forma que impeça o cancelamento.
 7. Se permitido, registra o cancelamento como estado final, preserva o registro e o histórico; se não, informa o motivo e não altera o estado.
 8. Uma candidatura `Contratado`, `Recusado` ou já cancelada não pode ser cancelada novamente.
 9. Sistema disponibiliza o estado atualizado para acompanhamento e notifica o recrutador responsável conforme SPEC-017.
 
 ## 6. Regras e invariantes
-- Candidato só acessa seus processos. Pode cancelar candidatura nos estados `Inscrita`, `Triagem`, `Entrevista` e `Finalista`, se a vaga não estiver encerrada nem bloqueada de forma que impeça a operação. `Contratado`, `Recusado` e `Cancelada` não permitem novo cancelamento. O cancelamento exige confirmação, respeita RB-36, preserva o registro/histórico e não pode ser repetido.
+- Candidato só acessa seus processos. A ação `Cancelar candidatura` fica na tela de detalhe/análise da candidatura e só é oferecida nos estados `Inscrito`, `Triagem`, `Entrevista` e `Finalista`, se a vaga não estiver encerrada nem bloqueada de forma que impeça a operação. Ao acioná-la, o sistema exige confirmação; após confirmação e validação, muda o estado para `Cancelada`, preserva registro/histórico e apresenta a candidatura como cancelada em Minhas candidaturas. O botão não aparece na tela de resultado do cancelamento. `Contratado`, `Recusado` e `Cancelada` não permitem novo cancelamento.
 - Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
 - Operações protegidas são validadas no backend.
 - Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
@@ -2303,7 +2303,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 |---|---|---|
 | T-012-01 | Candidato consulta suas candidaturas | Somente registros próprios são apresentados |
 | T-012-02 | Candidato tenta consultar candidatura de outra pessoa | Acesso negado sem revelar os dados |
-| T-012-03 | Candidatura em `Inscrita`, `Triagem`, `Entrevista` ou `Finalista`, com vaga não encerrada/bloqueada | Após confirmação, cancelamento é registrado e histórico preservado |
+| T-012-03 | Candidatura em `Inscrito`, `Triagem`, `Entrevista` ou `Finalista`, com vaga não encerrada/bloqueada | Na tela de detalhe, ação de cancelamento é oferecida; após confirmação, estado `Cancelada` é registrado, candidatura aparece como cancelada e histórico é preservado |
 | T-012-04 | Candidatura em `Contratado`, `Recusado` ou já cancelada | Operação recusada e estado mantido |
 | T-012-08 | Vaga encerrada ou bloqueada de forma que impeça cancelamento | Operação recusada sem alteração de estado |
 | T-012-05 | Duas solicitações de cancelamento concorrentes | Não ocorre duplicação nem corrupção do estado |
