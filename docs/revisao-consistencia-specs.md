@@ -90,3 +90,16 @@ Esta é uma auditoria de consistência documental. Ela identifica cobertura e pr
 **Decisão registrada:** OPEN-088 foi marcada como resolvida. A estimativa de deslocamento usa HERE Routing API no escopo do plano gratuito aprovado, com duração padrão da rota e sem ajuste por horário de partida ou trânsito em tempo real. Falha, limite do plano, meio não suportado ou ausência de rota não gera fallback por distância ou destino presumido; quando o deslocamento for necessário, aplicar OPEN-033 e sinalizar dados insuficientes, sem score final completo.
 
 **Efeito:** removido o bloqueio de implementação por OPEN-088 para SPEC-007, SPEC-008 e SPEC-010. Permanecem válidos os limites do plano gratuito, a exigência de revisar termos/limites antes de uso real ou produção e a aprovação visual separada dos layouts. Endpoint/versão e mapeamento técnico dos meios ficam como detalhes de implementação a confirmar na documentação vigente do HERE
+
+
+## REV-013 — Encerrada: atualização da validação de endereço de vagas externas (OPEN-089)
+
+**Aprovação:** o grupo aprovou a revisão da OPEN-089 para permitir uma busca alternativa de endereço quando o anúncio do Adzuna não trouxer endereço concreto.
+
+**Regra consolidada refletida em `docs/OPEN.md` e `docs/Specs.md` (SPEC-007, seção 6.3):**
+- Primeiro analisar campos e descrição do Adzuna para identificar endereço concreto e validar sua correspondência com a empresa e a cidade/local anunciados.
+- Se não houver endereço concreto, executar verificação assistida por LLM com pesquisa na internet pelo nome da empresa e cidade da vaga. O LLM auxilia a localizar e avaliar evidências; sua resposta isolada não confirma endereço.
+- Usar no cálculo somente endereço `CONFIRMADO` com evidência suficiente de correspondência. Sede ou filial genérica não comprova automaticamente o local da vaga; divergência ou falta de evidência impede consulta de rota e segue OPEN-033.
+- Para vagas totalmente remotas, não buscar endereço nem calcular deslocamento.
+
+**Rastreabilidade:** esta atualização substitui a restrição anterior registrada na REV-011 de exigir apenas endereço específico publicado em fonte oficial e de não adotar pesquisa adicional. A decisão não altera pesos ou fórmulas da OPEN-088, nem cria fallback para destino presumido. A OPEN-089 permanece resolvida com o fluxo atualizado; SPEC-008 e SPEC-010 consomem o resultado da SPEC-007, sem duplicar a validação.
