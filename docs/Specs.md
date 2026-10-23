@@ -2238,9 +2238,9 @@ Escopo de RF-28: (1) consultar somente candidaturas próprias; (2) acompanhar st
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Minhas candidaturas | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
-| Detalhe e histórico | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
-| Confirmação de cancelamento | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Minhas candidaturas | Listar candidaturas próprias e apresentar estado atualizado, inclusive Cancelada | Protótipo disponível; aprovação visual pendente |
+| Detalhe e histórico da candidatura | Analisar candidatura e iniciar cancelamento quando permitido | Protótipo disponível; aprovação visual pendente |
+| Confirmação e resultado do cancelamento | Confirmar a ação e informar o resultado; a tela de resultado não oferece novo botão de cancelamento | Protótipo disponível; aprovação visual pendente |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -2248,15 +2248,15 @@ O layout funcional é uma evidência visual/protótipo, não código. Deve ser a
 SPEC-001, 011, 013, 016, 017. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
-1. Candidato autenticado abre a lista de candidaturas próprias.
+1. Candidato autenticado abre a área **Minhas candidaturas**.
 2. Sistema retorna apenas candidaturas associadas ao candidato autenticado.
-3. Ao selecionar uma candidatura, apresenta estado atual, vaga e histórico disponível.
+3. Candidato seleciona uma candidatura para analisar; o sistema apresenta estado atual, vaga e histórico disponível na tela de detalhe/análise.
 4. A linha do tempo inclui, quando aplicáveis, os eventos “Candidatura realizada”, “Status” e “Candidatura cancelada”. Cada evento apresenta a data, sem exigir horário, uma descrição breve e compreensível e o status ou etapa resultante quando aplicável. Os eventos são exibidos do mais recente para o mais antigo.
 5. O histórico exibido é limitado à própria candidatura do candidato autenticado e não expõe dados de terceiros nem informações internas não destinadas ao acompanhamento.
-6. Ao solicitar cancelamento, o sistema confirma a intenção do candidato e verifica que a candidatura pertence ao candidato autenticado, está em estado `Inscrito`, `Triagem`, `Entrevista` ou `Finalista`, e que a vaga não está encerrada nem bloqueada de forma que impeça o cancelamento.
-7. Se permitido, registra o cancelamento como estado final, preserva o registro e o histórico; se não, informa o motivo e não altera o estado.
-8. Uma candidatura `Contratado`, `Recusado` ou já cancelada não pode ser cancelada novamente.
-9. Sistema disponibiliza o estado atualizado para acompanhamento e notifica o recrutador responsável conforme SPEC-017.
+6. Na tela de detalhe/análise, se a candidatura estiver em estado `Inscrito`, `Triagem`, `Entrevista` ou `Finalista` e a vaga não estiver encerrada nem bloqueada de forma que impeça o cancelamento, o sistema disponibiliza a ação **Cancelar candidatura**. O botão não aparece na tela de resultado do cancelamento.
+7. Ao acionar **Cancelar candidatura**, o sistema solicita confirmação explícita. Se o candidato confirmar, valida novamente a titularidade e as condições de cancelamento e registra o estado final `Cancelada`; se cancelar a confirmação ou se a validação falhar, não altera o estado.
+8. Após cancelamento confirmado, a candidatura permanece no histórico e aparece como **Cancelada** na área Minhas candidaturas. O sistema registra o evento “Candidatura cancelada” e disponibiliza o estado atualizado para acompanhamento/notificação conforme SPEC-017.
+9. Uma candidatura `Contratado`, `Recusado` ou já `Cancelada` não pode ser cancelada novamente.
 
 ## 6. Regras e invariantes
 - Candidato só acessa seus processos. A ação `Cancelar candidatura` fica na tela de detalhe/análise da candidatura e só é oferecida nos estados `Inscrito`, `Triagem`, `Entrevista` e `Finalista`, se a vaga não estiver encerrada nem bloqueada de forma que impeça a operação. Ao acioná-la, o sistema exige confirmação; após confirmação e validação, muda o estado para `Cancelada`, preserva registro/histórico e apresenta a candidatura como cancelada em Minhas candidaturas. O botão não aparece na tela de resultado do cancelamento. `Contratado`, `Recusado` e `Cancelada` não permitem novo cancelamento.
