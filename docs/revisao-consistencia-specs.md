@@ -8,7 +8,7 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 2. Resultado executivo
 
-**Status atual:** REV-009 e REV-011 permanecem encerradas. Nesta atualização, OPEN-088 foi resolvida: HERE Routing API no plano gratuito aprovado, duração padrão da rota sem ajuste por horário/trânsito em tempo real e tratamento de falhas/dados ausentes conforme OPEN-033. OPEN-089, OPEN-086 e OPEN-087 também estão resolvidas conforme `docs/OPEN.md`. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
+**Status atual:** REV-009, REV-011 e REV-013 permanecem encerradas. OPEN-088 foi resolvida: HERE Routing API no plano gratuito aprovado, duração padrão da rota sem ajuste por horário/trânsito em tempo real e tratamento de falhas/dados ausentes conforme OPEN-033. OPEN-089, OPEN-086 e OPEN-087 também estão resolvidas conforme `docs/OPEN.md`. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas. A REV-014 registra a revisão de consistência atual, correções documentais e lacunas de cobertura que não foram resolvidas por inferência.
 
 - O mapa e o documento de detalhamento cobrem as Specs ativas do escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. SPEC-014 e SPEC-015 foram removidas e não devem ser contadas como Specs vigentes; os IDs posteriores foram preservados.
 - A conferência atual de `OPEN.md` identificou 84 entradas de questões com IDs únicos, todas resolvidas. Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado está consolidado na seção 4.
@@ -103,3 +103,24 @@ Esta é uma auditoria de consistência documental. Ela identifica cobertura e pr
 - Para vagas totalmente remotas, não buscar endereço nem calcular deslocamento.
 
 **Rastreabilidade:** esta atualização substitui a restrição anterior registrada na REV-011 de exigir apenas endereço específico publicado em fonte oficial e de não adotar pesquisa adicional. A decisão não altera pesos ou fórmulas da OPEN-088, nem cria fallback para destino presumido. A OPEN-089 permanece resolvida com o fluxo atualizado; SPEC-008 e SPEC-010 consomem o resultado da SPEC-007, sem duplicar a validação.
+
+## REV-014 — Revisão transversal de consistência das Specs
+
+**Escopo:** `docs/Specs.md`, `docs/mapa-specs.md`, `docs/OPEN.md`, requisitos RF/RB/RNF, modelo conceitual, estados do funil e decisões relacionadas. A revisão foi realizada após as decisões de OPEN-088 e OPEN-089.
+
+### Verificações estruturais
+- As 19 Specs vigentes (SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021) aparecem tanto em `Specs.md` quanto em `mapa-specs.md`, com títulos correspondentes. SPEC-014 e SPEC-015 permanecem removidas do escopo.
+- Os RFs e RBs citados em `Specs.md` existem na baseline. RF-23 e RB-35 são exceções intencionais: foram removidos por duplicidade e não devem ser restaurados.
+- As 84 entradas de OPEN no cadastro estão marcadas como resolvidas. Há lacunas históricas de numeração; isso não significa pendências abertas.
+
+### Correções documentais aplicadas
+1. SPEC-007, SPEC-008 e SPEC-010 tinham metadados de implementação ainda bloqueados por OPEN-088, apesar da decisão consolidada e do quadro final de liberação. Os estados foram alinhados para “aprovada; pronta para implementação”, mantendo a aprovação de layout separada.
+2. A seção 6.3 e o resumo de questões da SPEC-007 continham versões antigas da OPEN-089 (exigência exclusiva de fonte oficial e ausência de pesquisa alternativa) e da OPEN-088 (método ainda pendente). Foram alinhados ao fluxo aprovado: Adzuna primeiro; busca assistida por LLM/internet se faltar endereço; só endereço confirmado para vagas presenciais/híbridas; vagas remotas dispensam endereço/rota; HERE Routing API e regras de falha conforme OPEN-088.
+3. A SPEC-006 descrevia coleta diária como execução ativa, em tensão com OPEN-086, que limita a etapa atual a testes. O texto agora distingue capacidade-alvo futura de coleta diária autorizada do lote atual de até 25 chamadas, sem ativar produção/armazenamento contínuo antes de autorização documentada.
+
+### Lacunas identificadas — não resolvidas por inferência
+- **Cobertura de RNFs:** RNF-06 (disponibilidade), RNF-11 (escalabilidade) e RNF-12 (manutenibilidade) existem na baseline, mas não aparecem nas referências de RNF de `Specs.md` nem no mapa. É necessário decidir e registrar sua cobertura transversal (por exemplo, em quais Specs/artefatos e critérios verificáveis), sem criar requisitos numéricos não aprovados.
+- **Nomenclatura do estado inicial da candidatura:** `OPEN-049`, `SPEC-011`, `SPEC-012`, `UC-03` e o modelo conceitual usam `Inscrita`; `estados-trilha.md` e `SPEC-013` usam `Inscrito` para o mesmo início do funil. A decisão deve definir um nome canônico para o estado de domínio e, se necessário, separar explicitamente o valor interno da legenda de interface.
+- **Cancelamento e protótipo:** o cancelamento da candidatura permanece previsto em RF-28/RF-34, OPEN-050 e SPEC-012/UC-05. A anotação em `Identidade Visual/Prototipos.md` diz que o botão de cancelar não deve aparecer naquela tela e que o ajuste visual de “Cancelada” para cinza/“Recusada” para vermelho ainda está pendente no Figma. Isso é uma decisão de apresentação localizada, não uma remoção automática da capacidade de cancelar; o protótipo precisa ser atualizado/aprovado separadamente e a legenda “Recusada” deve ser distinguida do estado de domínio `Recusado`, se essa for a intenção.
+
+**Resultado:** corrigidas as contradições documentais claras sobre OPEN-088/089 e o escopo atual de ingestão. As três lacunas acima permanecem registradas para decisão/aprovação; nenhuma fórmula, regra funcional ou layout foi inventado nesta revisão
