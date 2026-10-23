@@ -30,9 +30,13 @@ A referência editável original está no [Figma do AcessaVagas](https://www.fig
 
 Os SVGs foram adicionados ao repositório em 20/10/2026. A aprovação visual global comunicada pelo usuário não substitui aprovação formal do texto das Specs nem autorização de implementação.
 
-### Ajuste pendente no rascunho de resultado do cancelamento
+### Fluxo de cancelamento de candidatura — ajuste funcional aprovado
 
-O usuário solicitou que o botão de cancelar candidatura não apareça nessa tela e que a cor do estado “Cancelada” seja alterada de verde para cinza. A tentativa de editar o Figma não foi concluída por limite de uso da ferramenta; portanto, as alterações visuais continuam pendentes e não devem ser consideradas aplicadas.
+- O candidato acessa **Minhas candidaturas**, seleciona uma candidatura e abre a tela de detalhe/análise.
+- A ação **Cancelar candidatura** fica na tela de detalhe/análise, quando o estado e as condições da vaga permitem o cancelamento.
+- Ao acionar a ação, o sistema solicita confirmação. Confirmado o cancelamento, a candidatura passa ao estado final **Cancelada** e aparece como cancelada em Minhas candidaturas.
+- A tela de resultado do cancelamento é apenas informativa e **não exibe botão para cancelar candidatura**.
+- Direção visual já solicitada: **Cancelada** em cinza e **Recusada** em vermelho. A edição correspondente no Figma ainda não foi concluída; não considerar as cores aplicadas até atualização e conferência do arquivo editável.
 
 ## Direção visual
 
