@@ -8,10 +8,10 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 2. Resultado executivo
 
-**Status atual:** REV-009 permanece encerrada. Na revisão atual (REV-011), OPEN-089 foi resolvida com regra de evidência oficial específica do local de trabalho; OPEN-088 permanece parcialmente resolvida, com método/provedor/endpoints de rota, falhas/dados ausentes e efeito de horário/trânsito ainda pendentes. Os meios aprovados são caminhada, bicicleta, carro, ônibus e metrô/trem (opções distintas). OPEN-086 e OPEN-087 estão resolvidas conforme `docs/OPEN.md`. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas..
+**Status atual:** REV-009 permanece encerrada. Na revisão atual (REV-011), OPEN-089 foi resolvida com regra de evidência oficial específica do local de trabalho; OPEN-088 permanece parcialmente resolvida, com método/provedor/endpoints de rota, falhas/dados ausentes e efeito de horário/trânsito ainda pendentes. Os meios aprovados são caminhada, bicicleta, carro, ônibus e metrô/trem (opções distintas). OPEN-086 e OPEN-087 estão resolvidas conforme `docs/OPEN.md`. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
 
 - O mapa e o documento de detalhamento cobrem as Specs ativas do escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. SPEC-014 e SPEC-015 foram removidas e não devem ser contadas como Specs vigentes; os IDs posteriores foram preservados.
-- A conferência atual de `OPEN.md` identificou 84 entradas de questões com IDs únicos (83 resolvidas e 1 parcialmente resolvida). Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado das pendências é consolidado na seção 4
+- A conferência atual de `OPEN.md` identificou 84 entradas de questões com IDs únicos (83 resolvidas e 1 parcialmente resolvida). Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado das pendências é consolidado na seção 4.
 - Todas as RBs identificadas na baseline aparecem referenciadas em algum ponto de `Specs.md`; isso não garante, por si só, que cada regra esteja associada à Spec correta.
 - RF-34 e RF-35 estão associados, respectivamente, à SPEC-012 e à SPEC-013.
 - O detalhamento de contratos e testes das SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 foi ampliado e aprovado pelo grupo (REV-002 encerrada).
@@ -82,4 +82,4 @@ Esta é uma auditoria de consistência documental. Ela identifica cobertura e pr
 
 ---
 
-**Nota de rodapé — decisões já tomadas:** os achados REV-001, REV-002, REV-003, REV-004, REV-006, REV-007, REV-008 e REV-010 foram encerrados após correções ou decisões aprovadas pelo grupo. REV-001, REV-003, REV-004, REV-006, REV-007 e REV-010 foram removidos do corpo principal; REV-002 e REV-008 permanecem descritos acima apenas como registro de encerramento. Os registros históricos também podem ser consultados no histórico do Git.
+**Nota de rodapé — decisões já tomadas:** os achados REV-001, REV-002, REV-003, REV-004, REV-006, REV-007, REV-008 e REV-010 foram encerrados após correções ou decisões aprovadas pelo grupo. REV-001, REV-003, REV-004, REV-006, REV-007 e REV-010 foram removidos do corpo principal; REV-002 e REV-008 permanecem descritos acima apenas como registro de encerramento. REV-011 foi encerrada nesta revisão e está descrita acima. Os registros históricos também podem ser consultados no histórico do Git.
