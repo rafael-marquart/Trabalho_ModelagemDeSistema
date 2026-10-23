@@ -152,21 +152,23 @@ O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou t
 
 ## 6.3. Validação da localização da vaga externa (OPEN-089 — resolvida)
 
-**Objetivo:** garantir que a estimativa de deslocamento da dimensão D utilize um destino relacionado ao local efetivo de trabalho e compatível com a cidade declarada no anúncio.
+**Objetivo:** garantir que a estimativa de deslocamento da dimensão D use um destino concreto, relacionado ao local de trabalho da vaga e compatível com a cidade anunciada.
 
-**VL-01 — Fonte e evidência:** usar o Adzuna como fonte de origem dos dados do anúncio. Para confirmar o destino, exigir endereço/local de trabalho específico da vaga em fonte oficial: anúncio oficial da própria vaga ou página oficial da empresa que identifique inequivocamente a unidade/local de exercício. Não será integrado provedor/API adicional de pesquisa ou geocodificação nesta decisão. Nome da empresa, sede ou escritório genérico não comprovam o local da vaga.
+**VL-01 — Análise inicial do Adzuna:** analisar os campos e a descrição da vaga recebidos do Adzuna para identificar endereço concreto do local de trabalho. Quando houver endereço, validar sua correspondência com a empresa e a cidade/local anunciados antes de usá-lo. A cidade de origem do anúncio, isoladamente, não é endereço.
 
-**VL-02 — Comparação:** comparar a cidade do local oficial com a cidade anunciada, normalizando apenas diferenças de maiúsculas/minúsculas, acentuação, espaços e abreviações conhecidas. A normalização não pode eliminar divergências geográficas reais.
+**VL-02 — Busca alternativa assistida por LLM:** se o Adzuna não fornecer endereço concreto, executar uma verificação assistida por LLM que pesquise na internet usando o nome da empresa e a cidade da vaga. A pesquisa deve buscar evidências de endereço e de correspondência com a empresa e a localidade anunciada. A sede ou uma filial encontrada não comprova, por si só, que seja o local de trabalho da vaga; não usar endereço genérico ou de outra cidade sem evidência de vínculo suficiente. Registrar as fontes consultadas e a justificativa da validação.
 
-**VL-03 — Estados da validação:** registrar `CONFIRMADO` somente quando o local de trabalho específico e a cidade forem sustentados por evidência oficial e compatíveis; `DIVERGENTE` quando houver conflito entre o local oficial e a cidade anunciada; ou `NAO_CONFIRMADO` quando faltar evidência, houver fontes conflitantes ou só for encontrada sede/escritório sem vínculo com a vaga.
+**VL-03 — Estados da validação:** registrar `CONFIRMADO` quando endereço e correspondência com empresa/cidade/local de trabalho forem sustentados por evidências; `DIVERGENTE` quando houver conflito relevante entre anúncio, endereço ou fontes; e `NAO_CONFIRMADO` quando não houver endereço concreto ou evidência suficiente, ou quando a pesquisa não conseguir resolver a divergência. A saída do LLM é uma hipótese de busca/verificação, não confirmação automática: a decisão deve se apoiar nas evidências encontradas.
 
-**VL-04 — Uso no deslocamento e falhas:** para vagas presenciais ou híbridas, solicitar/usar rota somente quando o destino estiver `CONFIRMADO`. Para `DIVERGENTE` ou `NAO_CONFIRMADO`, não consultar rota, inventar destino ou usar fallback para endereço presumido. Ausência/indisponibilidade de fonte oficial resulta em `NAO_CONFIRMADO`; aplicar OPEN-033 e indicar dados insuficientes quando a localização for necessária à avaliação.
+**VL-04 — Uso no deslocamento e falhas:** para vagas presenciais ou híbridas, solicitar/usar rota somente quando o endereço estiver `CONFIRMADO`. Para `DIVERGENTE` ou `NAO_CONFIRMADO`, não consultar rota nem presumir destino; aplicar OPEN-033 e indicar dados insuficientes quando a localização for necessária à avaliação. Falha de pesquisa, indisponibilidade de fonte ou resposta inconclusiva resulta em `NAO_CONFIRMADO`.
 
-**VL-05 — Efeito sobre a pontuação:** a validação é pré-condição para estimar deslocamento; não constitui dimensão adicional nem altera os pesos gerais A=50%, T=30%, D=20% e os pesos internos de D aprovados na OPEN-088. Para vagas remotas, não calcular deslocamento diário.
+**VL-05 — Vagas remotas:** quando a vaga for totalmente remota, não executar busca de endereço nem cálculo de deslocamento diário.
 
-**VL-06 — Rastreabilidade e privacidade:** registrar somente o necessário para explicar/reproduzir a validação: empresa, cidade anunciada, local oficial encontrado quando necessário, fonte, data, estado e motivo de divergência/ausência de confirmação. Minimizar dados da localização do candidato e não expor endereço residencial completo no resultado público.
+**VL-06 — Efeito sobre a pontuação:** a validação é pré-condição para estimar deslocamento; não constitui dimensão adicional nem altera os pesos gerais A=50%, T=30%, D=20% e os pesos internos de D aprovados na OPEN-088.
 
-A decisão fecha a OPEN-089. A integração de cálculo de rota continua sujeita à OPEN-088 e às demais dependências aplicáveis.
+**VL-07 — Rastreabilidade e privacidade:** registrar somente o necessário para explicar/reproduzir a validação: empresa, cidade anunciada, endereço considerado, fontes consultadas, data, estado e motivo de divergência/ausência de confirmação. Minimizar dados da localização do candidato e não expor endereço residencial completo no resultado público.
+
+A decisão fecha a OPEN-089 sob este fluxo atualizado. A integração de cálculo de rota continua sujeita à OPEN-088 e às demais dependências aplicáveis.
 
 ## 7. Modelo de domínio envolvido
 
