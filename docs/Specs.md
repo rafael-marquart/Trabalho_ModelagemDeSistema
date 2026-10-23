@@ -1757,8 +1757,8 @@ Protótipos devem seguir a identidade visual e acessibilidade transversal, ser a
 7. Ordenação por maior compatibilidade usa resultado da SPEC-007, sem duplicar o algoritmo; ordenações por data usam publicação mais recente ou mais antiga.
 8. Paginação: 20 vagas por página e no máximo 100 vagas elegíveis por consulta, conforme ordenação selecionada. Navegação numerada anterior/próxima preserva busca, filtros e ordenação; alterações em busca/filtros retornam à primeira página. Empates usam identificador interno estável, não exibido.
 9. Fatores relevantes devem ser apresentados (RB-30).
-9. Busca e filtros devem ser utilizáveis por teclado, leitores de tela e diferentes tamanhos de tela.
-10. Salvar alertas por e-mail é citado como sugestão em UC-02, mas não é presumido como parte desta capacidade.
+10. Busca e filtros devem ser utilizáveis por teclado, leitores de tela e diferentes tamanhos de tela.
+11. Salvar alertas por e-mail é citado como sugestão em UC-02, mas não é presumido como parte desta capacidade.
 
 ## 7. Modelo de domínio
 - **VAGA:** oportunidade e status.
@@ -2466,19 +2466,19 @@ Listar candidaturas próprias; apresentar status/etapa atual e linha do tempo; r
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
 ## 4. Dependências
-SPEC-011 a 015. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
+SPEC-011 a SPEC-013. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.
 
 ## 5. Comportamento esperado
 1. Candidato autenticado consulta somente candidaturas próprias.
 2. Sistema apresenta etapa/status atual e a vaga correspondente.
 3. Após cancelamento da candidatura ou encerramento da vaga, o histórico funcional permanece disponível ao candidato por 60 dias, contados do evento aplicável; depois desse prazo, deixa de ser exibido no acompanhamento. A regra não altera a retenção dos registros técnicos de auditoria.
-3. Sistema apresenta a linha do tempo com os eventos históricos e suas datas, distinguindo histórico de estado atual.
-4. Os tipos de evento exibidos são “Candidatura realizada”, “Status” e “Candidatura cancelada”, quando aplicáveis.
-5. O tipo “Status” pode representar estados gerais do processo, como “Em andamento”, “Entrevista” e “Aprovado”.
-6. Cada evento apresenta data (sem exigir horário na interface), tipo de evento, descrição breve e compreensível e status ou etapa resultante, quando aplicável. Os eventos são ordenados do mais recente para o mais antigo.
-7. Se não houver evento histórico disponível, o sistema informa a ausência de histórico sem inventar eventos.
-5. Cancelamento ou encerramento da vaga é refletido no acompanhamento conforme registro oficial.
-6. O fluxo é somente de consulta; não altera etapa ou decisão do processo.
+4. Sistema apresenta a linha do tempo com os eventos históricos e suas datas, distinguindo histórico de estado atual.
+5. Os tipos de evento exibidos são “Candidatura realizada”, “Status” e “Candidatura cancelada”, quando aplicáveis.
+6. O tipo “Status” pode representar estados gerais do processo, como “Em andamento”, “Entrevista” e “Aprovado”.
+7. Cada evento apresenta data (sem exigir horário na interface), tipo de evento, descrição breve e compreensível e status ou etapa resultante, quando aplicável. Os eventos são ordenados do mais recente para o mais antigo.
+8. Se não houver evento histórico disponível, o sistema informa a ausência de histórico sem inventar eventos.
+9. Cancelamento ou encerramento da vaga é refletido no acompanhamento conforme registro oficial.
+10. O fluxo é somente de consulta; não altera etapa ou decisão do processo.
 
 ## 6. Regras e invariantes
 - Apenas processos próprios; histórico preservado; não altera etapas nem decisões.
