@@ -168,7 +168,7 @@ O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou t
 
 **VL-07 — Rastreabilidade e privacidade:** registrar somente o necessário para explicar/reproduzir a validação: empresa, cidade anunciada, endereço considerado, fontes consultadas, data, estado e motivo de divergência/ausência de confirmação. Minimizar dados da localização do candidato e não expor endereço residencial completo no resultado público.
 
-A decisão fecha a OPEN-089 sob este fluxo atualizado. A integração de cálculo de rota continua sujeita à OPEN-088 e às demais dependências aplicáveis.
+A OPEN-089 permanece resolvida sob este fluxo atualizado. A estimativa de rota segue os critérios já aprovados na OPEN-088; seus limites de uso e o tratamento de falhas continuam obrigatórios.
 
 ## 7. Modelo de domínio envolvido
 
@@ -1205,7 +1205,7 @@ dos em `docs/layout/` e aprovados separadamente.
 ## 3. Escopo
 
 ### Incluído
-- Executar coleta automatizada diária de vagas a partir de uma fonte externa autorizada, começando pelo Adzuna após confirmação de acesso, cobertura e condições de uso.
+- Preparar a capacidade de coleta automatizada diária de vagas a partir de fonte externa autorizada, começando pelo Adzuna somente após confirmação de acesso, cobertura e condições de uso. Na etapa atual, não habilitar coleta diária/produção: executar apenas o lote de teste autorizado, limitado a 25 chamadas, conforme OPEN-086/087.
 - Consultar individualmente uma lista configurável de frases de busca por meio de `what_phrase`, consolidando os resultados.
 - Receber e validar a resposta estruturada da API, incluindo sua estrutura JSON.
 - Identificar registros inválidos, incompletos ou duplicados.
@@ -1233,7 +1233,7 @@ dos em `docs/layout/` e aprovados separadamente.
 | Resumo da execução | Exibir resultado agregado da ingestão | Pendente, se houver interface |
 | Detalhe de falhas/validação | Consultar registros rejeitados ou inconsistentes | Pendente, se houver interface |
 
-A execução principal é automatizada e diária; não exige que um administrador inicie cada coleta. Uma eventual interface de configuração ou acompanhamento não é presumida como obrigatória e, se adotada, terá layout especificado e aprovado separadamente. A configuração de fonte e frases deve ser protegida.
+A capacidade-alvo é automatizada e diária após autorização documentada para uso contínuo/produção da fonte. Na etapa atual, a execução fica restrita ao lote de teste autorizado de até 25 chamadas; não iniciar coleta diária nem armazenamento/exibição contínuos do Adzuna. Isso não exige que um administrador inicie cada execução quando a coleta diária vier a ser autorizada. Uma eventual interface de configuração ou acompanhamento não é presumida como obrigatória e, se adotada, terá layout especificado e aprovado separadamente. A configuração de fonte e frases deve ser protegida
 
 ## 4. Dependências
 
@@ -1246,7 +1246,7 @@ A execução principal é automatizada e diária; não exige que um administrado
 ## 5. Comportamento esperado
 
 ### 5.1 Executar coleta automatizada
-1. Uma tarefa agendada inicia a coleta diária, sem exigir ação manual de Administrador para cada execução.
+1. Após confirmação documentada de autorização para uso contínuo/produção, uma tarefa agendada poderá iniciar a coleta diária, sem exigir ação manual de Administrador para cada execução. Na etapa atual, executar somente o lote de teste autorizado, limitado a 25 chamadas, e não ativar o agendamento diário
 2. O sistema lê a lista configurável de frases e realiza consultas individuais à API da fonte autorizada, inicialmente o Adzuna, usando `what_phrase`. Na etapa de teste atual, o conjunto de consultas deve respeitar o limite de 25 chamadas à API; esse limite é operacional para os testes, não um teto estrutural do programa. A implementação deve permitir ampliar o número de chamadas por configuração/parametrização, sem exigir reestruturação do fluxo, e sempre respeitar cotas e condições do provedor.
 3. O sistema respeita os limites e as condições de uso da fonte, consolida as respostas e registra a origem, a frase consultada e o resultado de cada consulta.
 4. Falhas de uma consulta devem ser registradas; a política detalhada de repetição e recuperação permanece em OPEN-029.
@@ -1519,7 +1519,7 @@ Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN
 |---|---|
 | ID | SPEC-007 |
 |
-| Estado do texto | aprovada; não pronta para implementação — bloqueada pela OPEN-088 |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | não se aplica ao cálculo; apresentação do resultado pertence à SPEC-010 |
 | Capacidade | Aplicar trava crítica e calcular score determinístico de compatibilidade |
 
@@ -1558,7 +1558,7 @@ O cálculo é uma capacidade de domínio e não exige tela própria. A visualiza
 3. Para acessibilidade (A), comparar somente necessidades funcionais e recursos indispensáveis explicitamente declarados pelo candidato com recursos, condições e requisitos de acessibilidade explicitamente declarados para a vaga.
 4. Para perfil técnico (T), comparar critérios técnicos definidos para a vaga com competências e conhecimentos declarados pelo candidato; formação, experiência e idiomas só entram quando forem critérios aplicáveis à vaga.
 5. Para deslocamento/modalidade (D), calcular a compatibilidade de modalidade (peso interno 60%) e, em vagas presenciais ou híbridas, a compatibilidade de deslocamento (40%) com base no tempo estimado de viagem até o local de trabalho e nas faixas/pontuações aprovadas na OPEN-088. Usar o meio de transporte padrão informado no perfil do candidato, permitindo sobrescrita específica por vaga. Em vaga totalmente remota, excluir o componente de deslocamento e calcular D somente pela modalidade; não penalizar deslocamento.
-6. Para vagas externas, usar o Adzuna como fonte de origem e confirmar o local de trabalho específico somente por anúncio oficial da vaga ou página oficial que identifique inequivocamente a unidade. Nome da empresa, sede ou escritório genérico não comprovam o destino. Classificar localização como `CONFIRMADO`, `DIVERGENTE` ou `NAO_CONFIRMADO` conforme a seção 6.3; só estimar deslocamento com destino `CONFIRMADO`. Para divergência, ausência de evidência ou falha da fonte, não consultar rota nem presumir endereço; aplicar OPEN-033 quando a localização for necessária
+6. Para vagas externas presenciais ou híbridas, usar o Adzuna como fonte de origem e analisar primeiro os campos e a descrição para identificar endereço concreto. Se não houver endereço, executar a busca assistida por LLM e internet prevista na seção 6.3, usando nome da empresa e cidade anunciada. Classificar localização como `CONFIRMADO`, `DIVERGENTE` ou `NAO_CONFIRMADO` conforme a seção 6.3; só estimar deslocamento com destino `CONFIRMADO`. Para divergência, ausência de evidência ou falha da pesquisa, não consultar rota nem presumir endereço; aplicar OPEN-033 quando a localização for necessária. Para vagas totalmente remotas, não buscar endereço nem calcular deslocamento
 7. Comparar necessidades funcionais obrigatórias com barreiras e recursos eliminatórios registrados para a vaga.
 8. Se houver barreira incompatível com necessidade obrigatória, classificar a vaga como incompatível, independentemente de qualquer score.
 9. Se não houver trava crítica, calcular o score determinístico com os pesos definidos na baseline.
@@ -1676,8 +1676,8 @@ Contratos conceituais, sem endpoints HTTP.
 - **OPEN-033:** resolvida; quando faltar informação necessária em qualquer dimensão, indicar “dados insuficientes”, não apresentar score final como completo e informar dimensões avaliadas/dados faltantes; ausência não vira zero nem compatibilidade presumida.
 - **OPEN-034:** resolvida na decisão original; a regra anterior de distância em quilômetros foi substituída pela decisão posterior da OPEN-088, que usa tempo estimado de deslocamento e faixas/pontuações próprias. A modalidade e a exclusão do componente de deslocamento para vagas totalmente remotas permanecem
 - **OPEN-035:** parâmetros e resultados que devem ser armazenados para rastreabilidade.
-- **OPEN-088:** parcialmente resolvida. Decisões aprovadas: tempo estimado em vez de quilômetros; pesos internos de modalidade/deslocamento 60%/40%; preferência de transporte no perfil com sobrescrita por vaga; meios suportados: caminhada, bicicleta, carro, ônibus e metrô/trem (ônibus e metrô/trem são opções separadas); faixas de tempo e pontuações (até 30 min = 100; >30 min a 1h = 75; >1h a 1h30 = 50; >1h30 = 25). Permanecem pendentes método/provedor/endpoints e tratamento de indisponibilidade/dados ausentes e de horário/trânsito.
-- **OPEN-089:** resolvida. O destino de deslocamento de vaga externa exige evidência oficial específica da vaga/unidade; Adzuna é fonte de origem, sem provedor/API adicional de pesquisa/geocodificação. Divergência, evidência insuficiente ou falha de fonte impedem estimativa de rota e seguem OPEN-033 quando localização for necessária. Não altera fórmula nem pesos.
+- **OPEN-088:** resolvida. Usar tempo estimado de deslocamento (HERE Routing API, plano gratuito aprovado), duração padrão sem ajuste por horário/trânsito, pesos internos modalidade/deslocamento 60%/40%, preferência de transporte no perfil com sobrescrita por vaga, meios aprovados e faixas/pontuações registradas em `docs/OPEN.md`. Falha, meio não suportado, limite do plano ou ausência de rota não gera fallback; aplicar OPEN-033 e não apresentar score final completo quando o deslocamento for necessário. Antes de uso real/produção, reavaliar termos e limites do provedor.
+- **OPEN-089:** resolvida sob o fluxo atualizado da seção 6.3: analisar primeiro o anúncio do Adzuna; sem endereço concreto, buscar evidências na internet com LLM usando empresa e cidade da vaga. Só usar endereço confirmado para vagas presenciais/híbridas. Vagas remotas não exigem busca de endereço nem cálculo de deslocamento. Divergência ou falta de evidência segue OPEN-033; não presumir destino.
 
 ## 14. Definition of Done
 - [ ] Texto aprovado.
@@ -1695,7 +1695,7 @@ Contratos conceituais, sem endpoints HTTP.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-008 |
-| Estado do texto | aprovada; não pronta para implementação — bloqueada pela OPEN-088 |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Buscar e filtrar vagas elegíveis e ordená-las por compatibilidade |
 
@@ -1959,7 +1959,7 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 | Campo | Valor |
 |---|---|
 | ID | SPEC-010 |
-| Estado do texto | aprovada; não pronta para implementação — bloqueada pela OPEN-088 |
+| Estado do texto | aprovada; pronta para implementação |
 | Estado do layout | pendente |
 | Capacidade | Apresentar detalhes da vaga, acessibilidade, status e explicação de compatibilidade |
 
