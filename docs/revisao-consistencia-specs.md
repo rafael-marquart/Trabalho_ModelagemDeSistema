@@ -8,14 +8,29 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 ## 2. Resultado executivo
 
-**Status atual:** REV-009 está encerrada após a confirmação do grupo de que as decisões consolidadas de compatibilidade e descoberta de vagas foram refletidas nas Specs. A OPEN-088 permanece parcialmente resolvida: o grupo aprovou o uso de tempo estimado de deslocamento e as faixas/pontuações; ainda faltam método/provedor/endpoints e regras de indisponibilidade/horário-trânsito; os meios aprovados são caminhada, bicicleta, carro, ônibus e metrô/trem, com ônibus e metrô/trem como opções separadas. As demais OPENs continuam com seus estados próprios em `docs/OPEN.md`, sem serem reabertas ou alteradas por este encerramento. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas.
+**Status atual:** REV-009 permanece encerrada. Na revisão atual (REV-011), OPEN-089 foi resolvida com regra de evidência oficial específica do local de trabalho; OPEN-088 permanece parcialmente resolvida, com método/provedor/endpoints de rota, falhas/dados ausentes e efeito de horário/trânsito ainda pendentes. Os meios aprovados são caminhada, bicicleta, carro, ônibus e metrô/trem (opções distintas). OPEN-086 e OPEN-087 estão resolvidas conforme `docs/OPEN.md`. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas..
 
 - O mapa e o documento de detalhamento cobrem as Specs ativas do escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. SPEC-014 e SPEC-015 foram removidas e não devem ser contadas como Specs vigentes; os IDs posteriores foram preservados.
-- A conferência do cadastro atual de `OPEN.md` identificou 83 entradas de questões com IDs únicos. Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado das pendências é consolidado na seção 4.
+- A conferência atual de `OPEN.md` identificou 84 entradas de questões com IDs únicos (83 resolvidas e 1 parcialmente resolvida). Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado das pendências é consolidado na seção 4
 - Todas as RBs identificadas na baseline aparecem referenciadas em algum ponto de `Specs.md`; isso não garante, por si só, que cada regra esteja associada à Spec correta.
 - RF-34 e RF-35 estão associados, respectivamente, à SPEC-012 e à SPEC-013.
 - O detalhamento de contratos e testes das SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 foi ampliado e aprovado pelo grupo (REV-002 encerrada).
 - Nesta rodada, foram corrigidos o texto do mapa que sugeria ausência de pendências, a orientação para tratar referências às Specs removidas e as afirmações de escopo/contagem neste relatório. As correções são documentais e não alteram decisões funcionais.
+
+## REV-011 — Encerrada: validação de localização externa e consistência estrutural
+
+**Escopo:** OPEN-089, SPEC-007, SPEC-008, SPEC-016, mapa de Specs e cadastro de OPENs.
+
+**Decisão registrada:** OPEN-089 foi encerrada. O local de trabalho de vaga externa só pode ser confirmado por anúncio oficial da vaga ou página oficial que identifique inequivocamente a unidade/local. Adzuna permanece fonte de origem do anúncio; não foi escolhido provedor/API adicional de pesquisa ou geocodificação. Divergência, falta de evidência ou indisponibilidade de fonte oficial impedem consulta de rota e seguem OPEN-033 quando a localização for necessária.
+
+**Correções documentais aplicadas em `docs/Specs.md`:**
+- corrigida a numeração duplicada dos itens de comportamento na SPEC-008 e SPEC-016;
+- corrigida a dependência da SPEC-016, removendo a referência operacional a SPEC-014/015, substituídas por SPEC-011 a SPEC-013;
+- refletida a resolução da OPEN-089 na SPEC-007 e removido seu bloqueio de implementação. A SPEC-007 continua bloqueada pela OPEN-088.
+
+**Verificações:** 19 Specs ativas correspondem aos 19 IDs do mapa; 84 entradas OPEN têm IDs únicos; não foram encontradas referências a OPENs inexistentes em `Specs.md`. A OPEN-088 é a única questão parcialmente resolvida no cadastro atual. A auditoria estrutural não substitui aprovação funcional geral, revisão de cada requisito contra a baseline nem aprovação dos layouts.
+
+---
 
 ## 3. Achados prioritários
 
@@ -39,11 +54,11 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 
 Conforme o cadastro vigente de `docs/OPEN.md`:
 
-- **Abertas:** OPEN-088.
-- **Parcialmente resolvidas:** OPEN-086 e OPEN-087.
-- **Resolvidas:** OPEN-074 a OPEN-085.
+- **Abertas:** nenhuma.
+- **Parcialmente resolvidas:** OPEN-088.
+- **Resolvidas:** as demais 83 entradas, incluindo OPEN-086, OPEN-087 e OPEN-089.
 
-OPEN-086 e OPEN-087 dependem de confirmação documentada das condições de acesso/licença do Adzuna e da viabilidade operacional da coleta diária. OPEN-088 ainda não tem método/provedor/endpoints aprovado para estimar tempo de deslocamento; faixas, pontuações e meios de transporte já foram definidos. Não inferir provedor nem comportamento para falhas ou horário/trânsito.
+OPEN-088 ainda não tem método/provedor/endpoints aprovado para estimar tempo de deslocamento; tratamento de falhas/dados ausentes e de horário/trânsito também permanece pendente. Faixas, pontuações e meios de transporte já foram definidos. Não inferir provedor nem comportamento para as pendências remanescentes
 
 As decisões das OPEN-075 a OPEN-085 foram refletidas nas Specs correspondentes, incluindo denúncia, moderação e nota pública (SPEC-019 a SPEC-021). A revisão de consistência documental, por si só, não altera estados funcionais. Não marcar questões como resolvidas sem decisão explícita e atualização dos artefatos correspondentes.
 
@@ -51,16 +66,15 @@ As decisões das OPEN-075 a OPEN-085 foram refletidas nas Specs correspondentes,
 
 - As Specs ativas listadas no escopo (SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021) aparecem no mapa e no documento de detalhamento; SPEC-014 e SPEC-015 estão excluídas do escopo.
 - Os títulos das Specs no mapa correspondem aos títulos do documento de detalhamento.
-- As 83 entradas de cadastro de questões em `OPEN.md` têm IDs únicos; a sequência inclui OPEN-086 a OPEN-088 e preserva lacunas históricas.
+- As 84 entradas de cadastro de questões em `OPEN.md` têm IDs únicos; a sequência inclui OPEN-086 a OPEN-089 e preserva lacunas históricas.
 - O `OPEN.md` contém seções organizadas por área funcional.
 - As decisões consolidadas sobre conta Empresa, perfil Recrutador, Administrador da plataforma, não armazenamento de laudos, análise de denúncia e deduplicação de vagas externas estão registradas no `OPEN.md`.
 - O fluxo consolidado de estados do funil está documentado em `docs/Fluxos e Estados/estados-trilha.md`.
 
 ## 6. Plano recomendado de correção
 
-1. Manter OPEN-088 como pendência funcional isolada do escopo de compatibilidade/deslocamento; não reabrir OPEN-031 a OPEN-046, já decididas.
-2. Manter as demais questões OPEN pertinentes explicitamente abertas até decisão do grupo.
-3. Manter a aprovação textual separada da aprovação dos layouts. Implementação somente após as aprovações aplicáveis.
+1. Manter OPEN-088 como pendência funcional isolada do cálculo de deslocamento; não reabrir OPEN-031 a OPEN-046 nem OPEN-089, já decididas.
+2. Preservar a aprovação textual separada da aprovação dos layouts. Implementação somente após as aprovações aplicáveis.
 
 ## 7. Limite desta revisão
 
