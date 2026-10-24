@@ -96,13 +96,13 @@ A lista identifica áreas funcionais, não define quantidade final de páginas o
 ### 5.2 Recuperação de senha
 1. O candidato informa e-mail ou CPF na tela de recuperação; a recuperação de contas de Empresa usa o e-mail cadastrado.
 2. O sistema processa a solicitação sem revelar se o e-mail ou CPF informado corresponde a uma conta. Para uma conta existente, envia um link de recuperação ao e-mail cadastrado.
-3. O link tem validade de 30 minutos e só pode ser utilizado uma vez
-4. A emissão de uma nova solicitação invalida o link emitido anteriormente
-5. Após a conclusão da redefinição, o link utilizado é invalidado
-6. O sistema permite até 3 solicitações de recuperação por conta e por IP em uma janela de 15 minutos. Ao atingir o limite, bloqueia novas solicitações por 15 minutos
-7. A redefinição de senha invalida as sessões existentes, conforme decisão registrada na OPEN-002
-8. O sistema valida a solicitação e permite redefinição quando válida
-9. As novas credenciais podem ser usadas no acesso
+3. O link tem validade de 30 minutos e só pode ser utilizado uma vez.
+4. A emissão de uma nova solicitação invalida o link emitido anteriormente.
+5. Após a conclusão da redefinição, o link utilizado é invalidado.
+6. O sistema permite até 3 solicitações de recuperação por conta e por IP em uma janela de 15 minutos. Ao atingir o limite, bloqueia novas solicitações por 15 minutos.
+7. A redefinição de senha invalida as sessões existentes, conforme decisão registrada na OPEN-002.
+8. O sistema valida a solicitação e permite redefinição quando válida.
+9. As novas credenciais podem ser usadas no acesso.
 
 A decisão aprovada define recuperação de candidato por e-mail ou CPF e recuperação de Empresa por e-mail; envio de link ao e-mail cadastrado, validade de 30 minutos, uso único, invalidação do link anterior em nova solicitação e mensagens que não confirmam a existência da conta. O limite é de 3 solicitações por conta e por IP em 15 minutos, com bloqueio de 15 minutos ao atingir o limite. O formato técnico do token permanece por definir.
 
