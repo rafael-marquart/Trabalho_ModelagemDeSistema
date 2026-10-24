@@ -22,7 +22,7 @@ Permitir que o recrutador acompanhe, avalie e gerencie candidaturas dentro do fu
 ## Fluxo Principal
 
 1. O recrutador acessa o painel do funil da vaga.
-2. O sistema exibe as candidaturas agrupadas por etapa (Inscrito, Triagem, Entrevista, Finalista, Contratado, Recusado).
+2. O sistema exibe as candidaturas agrupadas por etapa (Inscrito, Triagem, Entrevista, Finalista, Contratado, Recusada).
 3. O recrutador seleciona uma candidatura para avaliar os dados do candidato e o histórico do processo.
 4. O sistema apresenta somente os dados da candidatura necessários à vaga e ao processo sob responsabilidade do Recrutador, conforme RB-26. Informações de acessibilidade são exibidas apenas na medida necessária à avaliação de compatibilidade e à viabilização da acessibilidade; laudos médicos e candidaturas de outras Empresas não são disponibilizados. A etapa do processo não amplia automaticamente as permissões.
 5. O recrutador decide a próxima etapa ou a decisão final e solicita a alteração.
