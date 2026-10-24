@@ -34,6 +34,8 @@
 - `cpf`
 - `dados_profissionais`
 
+O candidato pode autenticar e iniciar recuperação de senha usando e-mail ou CPF; o CPF é identificador do perfil de candidato, enquanto o envio do link de recuperação ocorre para o e-mail cadastrado.
+
 ### VETOR_ACESSIBILIDADE_CANDIDATO
 
 - `id_vetor` (PK)
@@ -72,7 +74,7 @@
 - `id_candidato` (FK)
 - `id_vaga` (FK)
 - `data_inscricao` (gerada pelo sistema no momento do registro)
-- `etapa_funil` (estado inicial: `Inscrita`)
+- `etapa_funil` (estado inicial: `Inscrito`)
 - `score_match_deterministico` (obrigatório para registrar a candidatura)
 
 ### ENTREVISTA
@@ -105,8 +107,8 @@
 
 | Entidade Origem | Relação | Entidade Destino |
 | --- | --- | --- |
-| EMPRESA | cadastra e vincula | USUARIO com perfil de RECRUTADOR |
-| USUARIO | possui perfil | RECRUTADOR (perfil de usuário, não entidade independente) |
+| EMPRESA | cadastra e vincula | um ou mais USUARIO com perfil de RECRUTADOR |
+| USUARIO | possui perfil | RECRUTADOR (perfil de usuário, não entidade independente; vinculado à Empresa responsável) |
 | EMPRESA | possui | INFRAESTRUTURA_EMPRESA |
 | EMPRESA | publica | VAGA |
 | EMPRESA | recebe | DENUNCIA_FALSA_INCLUSAO |
