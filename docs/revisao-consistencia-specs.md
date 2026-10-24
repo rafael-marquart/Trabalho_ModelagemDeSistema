@@ -173,3 +173,15 @@ Esta é uma auditoria de consistência documental. Ela identifica cobertura e pr
 - Atualizado o catálogo de protótipos para distinguir tela de detalhe/análise e tela de resultado. A cor de `Cancelada` (cinza) e `Recusada` (vermelho) continua registrada como ajuste visual pendente no Figma, sem afirmar que foi aplicada.
 
 **Resultado:** as duas decisões funcionais deixam de constar como lacunas da revisão REV-015. A atualização documental não comprova a edição do Figma nem autoriza implementação além dos controles de aprovação já existentes.
+
+
+## REV-018 — Encerrada: decisão atual de prontidão para implementação controlada
+
+**Decisão atual do usuário (substitui conclusões anteriores de auditoria que conflitem com esta decisão):**
+- A auditoria anterior não será usada como veto geral à implementação; a prontidão foi reavaliada agora com as definições do grupo.
+- O diagrama já apresenta as cores de estado corretas. Considerar concluída a verificação visual de cores: **Inscrito = verde, Cancelada = cinza e Recusada = vermelho**. Não manter esse item como bloqueio nem solicitar alteração de cores no Figma.
+- O escopo de integração com Adzuna fica limitado a **até 25 chamadas de teste**. Isso não autoriza coleta contínua, rotina diária, operação de produção ou ampliação do limite.
+
+**Resultado de prontidão:** o projeto está liberado para implementação controlada das capacidades e fluxos aprovados nas Specs, observando dependências e limites específicos. A integração Adzuna só pode ser exercitada dentro do lote de até 25 chamadas de teste. Aprovações visuais que não foram explicitamente concluídas continuam separadas e não são declaradas aprovadas por esta decisão; a confirmação acima cobre as cores do diagrama.
+
+**Rastreabilidade:** esta decisão atual prevalece sobre as conclusões de REV-014/REV-015 que indicavam veto geral à implementação ou mantinham as cores do diagrama como pendência. Não altera regras funcionais já aprovadas, estados canônicos do funil, limites da API ou demais requisitos de segurança e autorização.
