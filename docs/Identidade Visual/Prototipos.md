@@ -12,7 +12,7 @@ A referência editável original está no [Figma do AcessaVagas](https://www.fig
 - [Login — Empresa](Login-Empresa.svg): acesso corporativo, recuperação de senha e cadastro.
 - [Cadastro — Candidato](Cadastro-Candidato.svg): nome, e-mail, CPF, data de nascimento e senha.
 - [Cadastro — Empresa](Cadastro-Empresa.svg): empresa, CNPJ, e-mail corporativo, responsável e senha.
-- [Recuperação de senha](Recuperacao-de-Senha.svg): formulário de recuperação.
+- [Recuperação de senha](Recuperacao-de-Senha.svg): formulário para candidato iniciar recuperação por e-mail ou CPF; contas de Empresa usam e-mail cadastrado.
 - [Página inicial — Candidato](Pagina-Inicial-Candidato.svg): painel com navegação lateral, banner, vagas em destaque e status de candidaturas.
 - [Página inicial — Empresa](Pagina-Inicial-Empresa.svg): painel de gestão de vagas e candidaturas.
 
@@ -29,6 +29,14 @@ A referência editável original está no [Figma do AcessaVagas](https://www.fig
 - [Resultado do cancelamento](Resultado-Cancelamento.svg)
 
 Os SVGs foram adicionados ao repositório em 20/10/2026. A aprovação visual global comunicada pelo usuário não substitui aprovação formal do texto das Specs nem autorização de implementação.
+
+### Ajustes funcionais aprovados nesta revisão
+
+- Login de Candidato aceita e-mail ou CPF; login de Empresa aceita e-mail.
+- Recuperação de senha de Candidato aceita e-mail ou CPF, com envio do link ao e-mail cadastrado; contas de Empresa usam e-mail.
+- Limite de recuperação: 3 solicitações por conta e por IP em 15 minutos; bloqueio de 15 minutos ao atingir o limite. Mensagens não confirmam existência da conta.
+- Uma Empresa pode cadastrar/vincular vários Recrutadores, mantendo cada perfil associado à Empresa responsável.
+- Estado inicial da candidatura: `Inscrito`. O candidato pode cancelar a própria candidatura, após confirmação, nos estados ativos permitidos; `Cancelada` é terminal..
 
 ### Fluxo de cancelamento de candidatura — ajuste funcional aprovado
 
