@@ -59,12 +59,16 @@ Os estados padronizados do funil de seleção são:
 ### Transições válidas
 
 - Inscrito → Triagem.
+- Inscrito → Cancelada (por solicitação do candidato, após confirmação).
 - Triagem → Entrevista.
+- Triagem → Cancelada (por solicitação do candidato, após confirmação).
 - Triagem → Recusado.
 - Entrevista → Finalista.
 - Entrevista → Recusado.
+- Entrevista → Cancelada (por solicitação do candidato, após confirmação).
 - Finalista → Contratado.
 - Finalista → Recusado.
+- Finalista → Cancelada (por solicitação do candidato, após confirmação).
 
 O sistema deve impedir transições que não estejam previstas nesse conjunto.
 
