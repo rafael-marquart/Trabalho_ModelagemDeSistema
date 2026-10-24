@@ -83,9 +83,9 @@ A lista identifica áreas funcionais, não define quantidade final de páginas o
 
 ### 5.1 Entrada e autenticação
 1. O visitante acessa a página de entrada.
-2. O sistema apresenta e-mail, senha e opções de criação de conta como Usuário ou Empresa.
+2. No login de Candidato, o sistema aceita e-mail ou CPF e senha; no login de Empresa, aceita e-mail e senha. A entrada também oferece opções de criação de conta como Usuário ou Empresa.
 3. Se escolher cadastro, segue para o fluxo correspondente. Não existe cadastro independente de Recrutador.
-4. O usuário existente informa as credenciais.
+4. O usuário existente informa o identificador de acesso e a senha.
 5. O sistema valida as credenciais.
 6. Se válidas, autentica o usuário e encaminha para a área compatível com seu perfil.
 7. Se inválidas, informa falha e não concede acesso.
@@ -94,17 +94,17 @@ A lista identifica áreas funcionais, não define quantidade final de páginas o
 10. Logout explícito, troca ou redefinição de senha e bloqueio ou desativação da conta invalidam as sessões existentes.
 
 ### 5.2 Recuperação de senha
-1. O usuário informa o e-mail na tela de recuperação.
-2. O sistema informa quando o e-mail não estiver cadastrado; para uma conta existente, envia um link de recuperação por e-mail.
-3. O link tem validade de 30 minutos e só pode ser utilizado uma vez.
-4. A emissão de uma nova solicitação invalida o link emitido anteriormente.
-5. Após a conclusão da redefinição, o link utilizado é invalidado.
-6. O sistema aplica limitação de frequência às solicitações de recuperação; os limites numéricos permanecem pendentes de definição.
-7. A redefinição de senha invalida as sessões existentes, conforme decisão registrada na OPEN-002.
-8. O sistema valida a solicitação e permite redefinição quando válida.
-9. As novas credenciais podem ser usadas no acesso.
+1. O candidato informa e-mail ou CPF na tela de recuperação; a recuperação de contas de Empresa usa o e-mail cadastrado.
+2. O sistema processa a solicitação sem revelar se o e-mail ou CPF informado corresponde a uma conta. Para uma conta existente, envia um link de recuperação ao e-mail cadastrado.
+3. O link tem validade de 30 minutos e só pode ser utilizado uma vez
+4. A emissão de uma nova solicitação invalida o link emitido anteriormente
+5. Após a conclusão da redefinição, o link utilizado é invalidado
+6. O sistema permite até 3 solicitações de recuperação por conta e por IP em uma janela de 15 minutos. Ao atingir o limite, bloqueia novas solicitações por 15 minutos
+7. A redefinição de senha invalida as sessões existentes, conforme decisão registrada na OPEN-002
+8. O sistema valida a solicitação e permite redefinição quando válida
+9. As novas credenciais podem ser usadas no acesso
 
-A decisão aprovada define o envio por link de e-mail, validade de 30 minutos, uso único e invalidação do link anterior em nova solicitação. O formato técnico do token e o texto exato das mensagens permanecem por definir.
+A decisão aprovada define recuperação de candidato por e-mail ou CPF e recuperação de Empresa por e-mail; envio de link ao e-mail cadastrado, validade de 30 minutos, uso único, invalidação do link anterior em nova solicitação e mensagens que não confirmam a existência da conta. O limite é de 3 solicitações por conta e por IP em 15 minutos, com bloqueio de 15 minutos ao atingir o limite. O formato técnico do token permanece por definir.
 
 ### 5.3 Cadastro e autorização por perfil
 1. O sistema permite iniciar cadastro como Usuário ou Empresa.
@@ -227,7 +227,7 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decisões tomadas nesta Spec.
 
-- **OPEN-001:** resolvida; recuperação por link de e-mail, validade de 30 minutos, uso único, invalidação do link anterior em nova solicitação, informação quando o e-mail não está cadastrado e limitação de frequência sem limites numéricos definidos.
+- **OPEN-001:** resolvida; candidatos podem iniciar recuperação por e-mail ou CPF, e contas de Empresa por e-mail. O sistema envia link ao e-mail cadastrado, válido por 30 minutos e de uso único; uma nova solicitação invalida o link anterior. As mensagens não confirmam se o identificador existe. Limite de 3 solicitações por conta e por IP em 15 minutos; ao atingir o limite, bloqueio por 15 minutos.
 - **OPEN-002:** resolvida; a sessão expira após 60 minutos sem atividade, inclusive com “manter conectado” habilitado. Essa opção permite recuperar a sessão sem novo login por até 30 dias, conforme condições de uso; não elimina a expiração por inatividade. Logout, troca/redefinição de senha e bloqueio/desativação invalidam as sessões.
 - **OPEN-003:** resolvida; senha com mínimo de 10 caracteres, pelo menos uma letra maiúscula, uma minúscula e um número, sem símbolo obrigatório; bloqueio temporário após 10 tentativas consecutivas incorretas por 15 minutos, com desbloqueio automático ao fim do prazo ou por recuperação de senha válida.
 - **OPEN-004:** resolvida; razão social, identificador oficial e e-mail corporativo de contato obrigatórios; nome fantasia opcional. Validar o identificador oficial e confirmar separadamente o e-mail corporativo; liberar funcionalidades organizacionais somente após ambas as verificações. Impedir cadastro duplicado pelo identificador oficial e orientar recuperação/associação à conta existente. A Empresa cadastra/vincula Recrutadores conforme RF-17/RB-46. Permanecem a especificação dos procedimentos de validação, o tratamento de empresas sem o identificador adotado e os detalhes de associação tratados na OPEN-005.
