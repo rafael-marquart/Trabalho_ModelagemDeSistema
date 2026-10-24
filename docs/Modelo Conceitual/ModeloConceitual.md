@@ -16,7 +16,7 @@
 - `cnpj`
 - `razao_social`
 - `nome_fantasia`
-- `nota_reputacao_acessibilidade`
+- `distribuicao_estrelas_acessibilidade` (quantidade agregada de avaliações válidas por número de estrelas; não representa média geral)
 
 ### INFRAESTRUTURA_EMPRESA
 
