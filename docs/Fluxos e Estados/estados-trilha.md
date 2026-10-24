@@ -53,7 +53,7 @@ Os estados padronizados do funil de seleção são:
 3. **Entrevista** — candidato em etapa de entrevista.
 4. **Finalista** — candidato selecionado para a etapa final do processo.
 5. **Contratado** — decisão final de contratação registrada.
-6. **Recusado** — candidatura encerrada sem contratação
+6. **Recusada** — candidatura encerrada sem contratação
 7. **Cancelada** — candidatura encerrada por solicitação do candidato após confirmação; estado terminal separado das transições do funil de recrutamento.
 
 ### Transições válidas
@@ -62,12 +62,12 @@ Os estados padronizados do funil de seleção são:
 - Inscrito → Cancelada (por solicitação do candidato, após confirmação).
 - Triagem → Entrevista.
 - Triagem → Cancelada (por solicitação do candidato, após confirmação).
-- Triagem → Recusado.
+- Triagem → Recusada.
 - Entrevista → Finalista.
-- Entrevista → Recusado.
+- Entrevista → Recusada.
 - Entrevista → Cancelada (por solicitação do candidato, após confirmação).
 - Finalista → Contratado.
-- Finalista → Recusado.
+- Finalista → Recusada.
 - Finalista → Cancelada (por solicitação do candidato, após confirmação).
 
 O sistema deve impedir transições que não estejam previstas nesse conjunto.
