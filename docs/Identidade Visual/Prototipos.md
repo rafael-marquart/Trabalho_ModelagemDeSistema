@@ -36,7 +36,7 @@ Os SVGs foram adicionados ao repositório em 20/10/2026. A aprovação visual gl
 - Recuperação de senha de Candidato aceita e-mail ou CPF, com envio do link ao e-mail cadastrado; contas de Empresa usam e-mail.
 - Limite de recuperação: 3 solicitações por conta e por IP em 15 minutos; bloqueio de 15 minutos ao atingir o limite. Mensagens não confirmam existência da conta.
 - Uma Empresa pode cadastrar/vincular vários Recrutadores, mantendo cada perfil associado à Empresa responsável.
-- Estado inicial da candidatura: `Inscrito`. O candidato pode cancelar a própria candidatura, após confirmação, nos estados ativos permitidos; `Cancelada` é terminal..
+- Estado inicial da candidatura: `Inscrito`. O candidato pode cancelar a própria candidatura, após confirmação, nos estados ativos permitidos; `Cancelada` é terminal.
 
 ### Fluxo de cancelamento de candidatura — ajuste funcional aprovado
 
