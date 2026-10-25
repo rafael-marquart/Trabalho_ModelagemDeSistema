@@ -35,10 +35,10 @@ button, input, select { font: inherit; }
 .brand-accent { color: #c9b7ff; }
 .welcome-copy { position: relative; z-index: 1; max-width: 480px; margin: auto 0; padding: 72px 0 90px; }
 .eyebrow { margin: 0 0 12px; color: var(--purple); font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
-.welcome-panel .eyebrow { color: #d8c9ff; }
+.welcome-panel .eyebrow { color: #fff; }
 .welcome-copy h1, .auth-card h1 { margin: 0; font-family: "Manrope", sans-serif; font-size: clamp(34px, 4.3vw, 56px); font-weight: 800; letter-spacing: -2px; line-height: 1.12; }
-.welcome-copy p:not(.eyebrow) { max-width: 420px; margin: 24px 0 0; color: #e9e2f8; font-size: 16px; line-height: 1.8; }
-.welcome-footnote { position: relative; z-index: 1; margin: 0; color: #ded2f5; font-size: 13px; }
+.welcome-copy p:not(.eyebrow) { max-width: 420px; margin: 24px 0 0; color: #fff; font-size: 16px; line-height: 1.8; }
+.welcome-footnote { position: relative; z-index: 1; margin: 0; color: #fff; font-size: 13px; }
 .welcome-decoration { position: absolute; z-index: -1; right: -170px; bottom: 12%; width: 480px; height: 480px; opacity: .65; }
 .decoration-orbit { position: absolute; display: block; border: 1px solid rgba(255,255,255,.25); border-radius: 50%; }
 .orbit-one { inset: 0; }
@@ -57,10 +57,10 @@ button, input, select { font: inherit; }
 .choice-copy strong { color: var(--ink); font-size: 15px; }
 .choice-copy span { color: var(--muted); font-size: 13px; line-height: 1.5; }
 .choice-arrow { margin-left: auto; color: var(--purple); font-size: 22px; }
-.entry-divider { display: flex; align-items: center; gap: 16px; margin: 30px 0 20px; color: #8a8498; font-size: 12px; white-space: nowrap; }
+.entry-divider { display: flex; align-items: center; gap: 16px; margin: 30px 0 20px; color: var(--muted); font-size: 12px; white-space: nowrap; }
 .entry-divider::before, .entry-divider::after { height: 1px; flex: 1; background: var(--line); content: ""; }
 .signup-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px 22px; font-size: 13px; font-weight: 600; }
-.legal-note { margin: 38px 0 0; color: #9892a5; font-size: 11px; line-height: 1.7; text-align: center; }
+.legal-note { margin: 38px 0 0; color: var(--muted); font-size: 11px; line-height: 1.7; text-align: center; }
 .auth-page { min-height: 100vh; padding: 30px clamp(22px, 5vw, 64px) 60px; background: radial-gradient(circle at 0% 100%, #eee8fb 0, transparent 36%), var(--background); }
 .auth-brand { color: var(--ink); }
 .auth-brand .brand-mark { color: white; background: var(--purple); }
@@ -70,8 +70,8 @@ button, input, select { font: inherit; }
 .auth-card h1 { font-size: clamp(29px, 4vw, 37px); letter-spacing: -1.2px; }
 .auth-form { display: grid; gap: 10px; margin-top: 28px; }
 .auth-form > label { margin-top: 8px; color: #403a51; font-size: 13px; font-weight: 600; }
-.auth-form input:not([type="checkbox"]), .auth-form select { width: 100%; min-height: 48px; padding: 12px 14px; border: 1px solid #dcd6e7; border-radius: 10px; color: var(--ink); background: #fff; }
-.auth-form input::placeholder { color: #a39cad; }
+.auth-form input:not([type="checkbox"]), .auth-form select { width: 100%; min-height: 48px; padding: 12px 14px; border: 1px solid #8b8499; border-radius: 10px; color: var(--ink); background: #fff; }
+.auth-form input::placeholder { color: var(--muted); }
 .form-options { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0 12px; font-size: 12px; }
 .checkbox-label { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
 .checkbox-label input { accent-color: var(--purple); }
@@ -96,8 +96,8 @@ button, input, select { font: inherit; }
   .signup-links { flex-direction: column; align-items: center; }
 }
 
-.secondary-button { min-height: 42px; padding: 0 14px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); background: var(--surface); font-weight: 600; cursor: pointer; }
-.secondary-button:hover { border-color: #b7a3e9; background: var(--purple-soft); }
+.secondary-button { min-height: 42px; padding: 0 14px; border: 1px solid #8b8499; border-radius: 10px; color: var(--ink); background: var(--surface); font-weight: 600; cursor: pointer; }
+.secondary-button:hover { border-color: var(--purple); background: var(--purple-soft); }
 .secondary-button:disabled { cursor: wait; opacity: .7; }
 .section-heading { margin: 32px 0 14px; font-family: "Manrope", sans-serif; font-size: 18px; }
 .invitation-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
@@ -107,12 +107,13 @@ button, input, select { font: inherit; }
 
 /* Shared theme controls and token-driven surfaces; SVG prototypes remain the visual source of truth. */
 .theme-control-host { display: flex; justify-content: flex-end; margin: 0 0 14px; }
+.entry-panel > .theme-control-host { width: min(100%, 470px); justify-self: center; }
 .theme-toggle {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  min-height: 40px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px;
+  min-height: 40px; padding: 8px 12px; border: 1px solid #8b8499; border-radius: 999px;
   color: var(--ink); background: var(--surface); cursor: pointer; font-size: 13px; font-weight: 600;
 }
-.theme-toggle:hover { border-color: #b7a3e9; }
+.theme-toggle:hover { border-color: var(--purple); }
 .theme-toggle:focus-visible { outline: 3px solid #9d83e5; outline-offset: 3px; }
 :root[data-theme="dark"] {
   color-scheme: dark;
@@ -134,14 +135,15 @@ button, input, select { font: inherit; }
 :root[data-theme="dark"] .auth-page { background: radial-gradient(circle at 0% 100%, #302342 0, transparent 36%), var(--background); }
 :root[data-theme="dark"] .auth-card { border-color: var(--line); background: var(--surface); box-shadow: 0 22px 60px rgba(0,0,0,.25); }
 :root[data-theme="dark"] .primary-button { color: #211d32; }
+:root[data-theme="dark"] .theme-toggle { border-color: #847394; }
 :root[data-theme="dark"] .auth-brand { color: var(--ink); }
 :root[data-theme="dark"] .auth-form > label { color: var(--ink); }
 :root[data-theme="dark"] .auth-form input:not([type="checkbox"]),
 :root[data-theme="dark"] .auth-form select {
-  border-color: #615572; color: var(--ink); background: #2b2238;
+  border-color: #847394; color: var(--ink); background: #2b2238;
 }
 :root[data-theme="dark"] .auth-form input::placeholder { color: #b7abc8; }
-:root[data-theme="dark"] .secondary-button { color: var(--ink); background: var(--surface); }
+:root[data-theme="dark"] .secondary-button { color: var(--ink); background: var(--surface); border-color: #847394; }
 :root[data-theme="dark"] .choice-copy strong { color: var(--ink); }
 :root[data-theme="dark"] .choice-copy span,
 :root[data-theme="dark"] .muted,
