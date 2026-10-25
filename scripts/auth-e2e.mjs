@@ -679,6 +679,11 @@ async function main() {
     await expectStatus(logout, 303, "company logout");
     const companySessionsAfterLogout = await prisma.session.count({ where: { userId: companyAccount.id } });
     assert.equal(companySessionsAfterLogout, 0, "logout must revoke the server-side session");
+    const protectedAfterLogout = await fetch(`${BASE_URL}/api/company/recruiter-invitations`, {
+      headers: { cookie: companyCookie },
+      redirect: "manual"
+    });
+    await expectStatus(protectedAfterLogout, 401, "revoked session must not access protected company API");
 
     // Exercise the approved ten-consecutive-failure account lockout using an isolated IP
     // so the IP-level progressive throttling does not mask the account-level behavior.
