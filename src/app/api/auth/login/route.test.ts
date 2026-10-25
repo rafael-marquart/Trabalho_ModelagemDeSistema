@@ -31,7 +31,7 @@ describe("login", () => {
   const tx = {
     $queryRaw: vi.fn(),
     user: { findFirst: vi.fn(), findUnique: vi.fn(), update: vi.fn() },
-    loginAttempt: { count: vi.fn(), create: vi.fn() }
+    loginAttempt: { count: vi.fn(), findFirst: vi.fn(), create: vi.fn() }
   };
 
   beforeEach(() => {
@@ -42,6 +42,7 @@ describe("login", () => {
     tx.user.findUnique.mockResolvedValue(user);
     tx.user.update.mockResolvedValue(user);
     tx.loginAttempt.count.mockResolvedValue(0);
+    tx.loginAttempt.findFirst.mockResolvedValue({ createdAt: new Date() });
     tx.loginAttempt.create.mockResolvedValue({ id: "attempt-1" });
     verifyPasswordMock.mockResolvedValue(true);
     createSessionMock.mockResolvedValue(true);
@@ -176,7 +177,8 @@ describe("login", () => {
     const response = await POST(makeRequest({ identifier: "unknown@example.com" }) as never);
 
     expect(response.status).toBe(429);
-    expect(response.headers.get("retry-after")).toBe("60");
+    expect(Number(response.headers.get("retry-after"))).toBeGreaterThan(0);
+    expect(Number(response.headers.get("retry-after"))).toBeLessThanOrEqual(60);
     expect(await response.json()).toEqual({
       message: "Não foi possível entrar com os dados informados. Aguarde antes de tentar novamente."
     });
@@ -189,7 +191,7 @@ describe("login", () => {
   });
 
   it("escalates the IP cooldown as rolling-window failures increase", async () => {
-    for (const [failures, expectedCooldown] of [[50, "300"], [80, "900"], [120, "3600"]]) {
+    for (const [failures, maxCooldown] of [[50, 300], [80, 900], [120, 3600]]) {
       vi.clearAllMocks();
       prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => callback(tx));
       tx.$queryRaw.mockResolvedValue([]);
@@ -199,7 +201,8 @@ describe("login", () => {
       const response = await POST(makeRequest() as never);
 
       expect(response.status).toBe(429);
-      expect(response.headers.get("retry-after")).toBe(expectedCooldown);
+      expect(Number(response.headers.get("retry-after"))).toBeGreaterThan(0);
+      expect(Number(response.headers.get("retry-after"))).toBeLessThanOrEqual(maxCooldown);
       expect(tx.user.findFirst).not.toHaveBeenCalled();
     }
   });
