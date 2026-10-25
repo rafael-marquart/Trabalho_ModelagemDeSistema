@@ -89,6 +89,25 @@ describe("recruiter invitation response", () => {
     });
   });
 
+
+  it("activates a pending first-time recruiter when they set a password and accept", async () => {
+    getCurrentUserMock.mockResolvedValueOnce(null);
+    prismaMock.user.findUnique.mockResolvedValueOnce({ id: "recruiter-1", role: "RECRUITER", isActive: false, pendingActivation: true });
+
+    const response = await POST(new Request("https://acessavagas.example/api/recruiter/invitations/respond", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: "https://acessavagas.example" },
+      body: JSON.stringify({ token: "a-valid-invitation-token", action: "accept", password: "StrongPassword123" })
+    }));
+
+    expect(response.status).toBe(200);
+    expect(tx.user.updateMany).toHaveBeenCalledWith({
+      where: { id: "recruiter-1", role: "RECRUITER", isActive: false, pendingActivation: true },
+      data: expect.objectContaining({ passwordHash: expect.any(String), isActive: true, pendingActivation: false, passwordChangedAt: expect.any(Date) })
+    });
+    expect(tx.recruiterLink.create).toHaveBeenCalledWith({ data: { companyId: "company-1", recruiterId: "recruiter-1" } });
+  });
+
   it("uses serializable isolation when claiming and accepting an invitation", async () => {
     await POST(makeRequest());
 
