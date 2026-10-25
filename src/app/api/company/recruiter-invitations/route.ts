@@ -26,15 +26,19 @@ export async function GET() {
       expiresAt: true,
       createdAt: true,
       respondedAt: true,
-      recipient: { select: { fullName: true, email: true } }
+      recipientName: true,
+      recipientEmail: true
     },
     orderBy: { createdAt: "desc" }
   });
   // GET is read-only: expose expired pending invitations as EXPIRED in the
   // response without mutating state or writing audit events during a read.
   // State transitions and their audit events happen in explicit write flows.
-  const invitations = records.map(invitation => ({
+  // Return the name/email snapshot entered by the inviting company, not live
+  // personal data from the recipient account.
+  const invitations = records.map(({ recipientName, recipientEmail, ...invitation }) => ({
     ...invitation,
+    recipient: { fullName: recipientName, email: recipientEmail },
     status: invitation.status === "PENDING" && invitation.expiresAt <= now
       ? "EXPIRED"
       : invitation.status
@@ -140,8 +144,8 @@ export async function POST(request: NextRequest) {
       orderBy: { createdAt: "desc" }
     });
     const invitation = pending
-      ? await tx.recruiterInvitation.update({ where: { id: pending.id }, data: { tokenHash, expiresAt, sentByUserId: user.id, respondedAt: null }, select: { id: true } })
-      : await tx.recruiterInvitation.create({ data: { companyId: company.id, recipientUserId: recipient.id, sentByUserId: user.id, tokenHash, expiresAt }, select: { id: true } });
+      ? await tx.recruiterInvitation.update({ where: { id: pending.id }, data: { tokenHash, expiresAt, sentByUserId: user.id, respondedAt: null, recipientName: parsed.data.fullName, recipientEmail: email }, select: { id: true } })
+      : await tx.recruiterInvitation.create({ data: { companyId: company.id, recipientUserId: recipient.id, recipientName: parsed.data.fullName, recipientEmail: email, sentByUserId: user.id, tokenHash, expiresAt }, select: { id: true } });
 
     await tx.auditEvent.create({
       data: { actorUserId: user.id, eventType: pending ? "RECRUITER_INVITATION_RESENT" : "RECRUITER_INVITATION_SENT", subjectType: "RecruiterInvitation", subjectId: invitation.id }
