@@ -1,11 +1,10 @@
 "use client";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function RecruiterLoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -18,8 +17,9 @@ export default function RecruiterLoginPage() {
       const result = await response.json();
       if (!response.ok) { setError(result.message || "Não foi possível entrar."); return; }
 
-      const token = searchParams.get("token") || "";
-      const action = searchParams.get("action");
+      const currentParams = new URLSearchParams(window.location.search);
+      const token = currentParams.get("token") || "";
+      const action = currentParams.get("action");
       if (token.length >= 20 && token.length <= 200 && (action === "accept" || action === "refuse")) {
         const invitationUrl = new URLSearchParams({ token, action });
         router.push("/recrutador/convite?" + invitationUrl.toString());
