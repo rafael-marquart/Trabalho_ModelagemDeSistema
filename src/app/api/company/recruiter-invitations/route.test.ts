@@ -68,6 +68,26 @@ describe("send recruiter invitation", () => {
       body: JSON.stringify({ email })
     });
 
+  it("does not audit an expiration if another request already changed the invitation", async () => {
+    prismaMock.recruiterInvitation.findMany
+      .mockResolvedValueOnce([{ id: "expired-invitation-1" }])
+      .mockResolvedValueOnce([]);
+    tx.recruiterInvitation.updateMany.mockResolvedValueOnce({ count: 0 });
+
+    const response = await GET();
+
+    expect(response.status).toBe(200);
+    expect(tx.recruiterInvitation.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "expired-invitation-1",
+        status: "PENDING",
+        expiresAt: expect.objectContaining({ lte: expect.any(Date) })
+      },
+      data: { status: "EXPIRED", respondedAt: expect.any(Date) }
+    });
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
   it("normalizes the recipient, serializes invitation creation, and sends a one-time link", async () => {
     const response = await POST(makeRequest() as never);
 
