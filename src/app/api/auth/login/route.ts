@@ -13,7 +13,7 @@ function key(value: string): string {
 }
 
 function getClientIp(request: NextRequest): string {
-  // Only trust forwarded headers when the deployment proxy is configured to overwrite them.
+  // The production proxy must overwrite this header; arbitrary client values are not trustworthy.
   return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 }
 
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
   const user = await prisma.user.findFirst({
     where: input.profile === "candidate"
       ? { OR: [{ email: identifier }, ...(normalizedCpf ? [{ cpf: normalizedCpf }] : [])] }
-      : { email: identifier },
+      : { email: identifier }
   });
 
   const expectedRole = input.profile === "candidate" ? "CANDIDATE" : "COMPANY";
@@ -61,12 +61,10 @@ export async function POST(request: NextRequest) {
     await verifyPassword(user.passwordHash, input.password)
   );
 
-  await prisma.loginAttempt.create({
-    data: { identifierKey, ipKey, succeeded: valid }
-  });
+  await prisma.loginAttempt.create({ data: { identifierKey, ipKey, succeeded: valid } });
 
   if (!valid || !user) {
-    if (user && user.role === expectedRole) {
+    if (user && user.role === expectedRole && user.isActive) {
       const failedLoginCount = user.failedLoginCount + 1;
       const shouldLock = failedLoginCount >= MAX_ATTEMPTS;
       await prisma.user.update({
@@ -77,7 +75,6 @@ export async function POST(request: NextRequest) {
         }
       });
     }
-
     return NextResponse.json(
       { message: "Não foi possível entrar com os dados informados." },
       { status: 401 }
@@ -88,16 +85,9 @@ export async function POST(request: NextRequest) {
     where: { id: user.id },
     data: { failedLoginCount: 0, lockedUntil: null }
   });
-
   await createSession(user.id, input.rememberMe);
-
   await prisma.auditEvent.create({
-    data: {
-      actorUserId: user.id,
-      eventType: "AUTH_LOGIN_SUCCEEDED",
-      subjectType: "User",
-      subjectId: user.id
-    }
+    data: { actorUserId: user.id, eventType: "AUTH_LOGIN_SUCCEEDED", subjectType: "User", subjectId: user.id }
   });
 
   return NextResponse.json({
