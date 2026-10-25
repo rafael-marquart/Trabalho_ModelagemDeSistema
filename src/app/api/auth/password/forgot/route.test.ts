@@ -6,6 +6,7 @@ const { prismaMock, sendEmailMock } = vi.hoisted(() => ({
     user: { findFirst: vi.fn() },
     $transaction: vi.fn(),
     recoveryAttempt: { count: vi.fn(), create: vi.fn() },
+    recoveryBlock: { findFirst: vi.fn(), upsert: vi.fn() },
     passwordResetToken: { deleteMany: vi.fn(), create: vi.fn() },
     auditEvent: { create: vi.fn() }
   },
@@ -32,6 +33,8 @@ describe("password recovery request", () => {
     tx.$queryRaw.mockResolvedValue([]);
     tx.recoveryAttempt.count.mockResolvedValue(0);
     tx.recoveryAttempt.create.mockResolvedValue({ id: "attempt-1" });
+    tx.recoveryBlock.findFirst.mockResolvedValue(null);
+    tx.recoveryBlock.upsert.mockResolvedValue({ scopeKey: "scope", blockedUntil: new Date(Date.now() + 15 * 60 * 1000) });
     tx.passwordResetToken.deleteMany.mockResolvedValue({ count: 0 });
     tx.passwordResetToken.create.mockResolvedValue({ id: "token-1" });
     sendEmailMock.mockResolvedValue(undefined);
@@ -110,6 +113,11 @@ describe("password recovery request", () => {
 
     expect(response.status).toBe(429);
     expect(tx.recoveryAttempt.create).not.toHaveBeenCalled();
+    expect(tx.recoveryBlock.upsert).toHaveBeenCalledWith({
+      where: { scopeKey: expect.stringMatching(/^ip:/) },
+      create: { scopeKey: expect.stringMatching(/^ip:/), blockedUntil: expect.any(Date) },
+      update: { blockedUntil: expect.any(Date) }
+    });
     expect(tx.passwordResetToken.deleteMany).not.toHaveBeenCalled();
     expect(sendEmailMock).not.toHaveBeenCalled();
   });
@@ -125,7 +133,32 @@ describe("password recovery request", () => {
     const response = await POST(request as never);
 
     expect(response.status).toBe(429);
+    expect(tx.recoveryBlock.upsert).toHaveBeenCalledWith({
+      where: { scopeKey: expect.stringMatching(/^identifier:/) },
+      create: { scopeKey: expect.stringMatching(/^identifier:/), blockedUntil: expect.any(Date) },
+      update: { blockedUntil: expect.any(Date) }
+    });
     expect(tx.passwordResetToken.create).not.toHaveBeenCalled();
+    expect(sendEmailMock).not.toHaveBeenCalled();
+  });
+
+  it("keeps rejecting recovery requests during the full cooldown", async () => {
+    tx.recoveryBlock.findFirst.mockResolvedValueOnce({
+      scopeKey: "ip:already-blocked",
+      blockedUntil: new Date(Date.now() + 60_000)
+    });
+    const request = new Request("https://acessavagas.example/api/auth/password/forgot", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-forwarded-for": "192.0.2.10" },
+      body: JSON.stringify({ profile: "candidate", identifier: "person@example.com" })
+    });
+
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(429);
+    expect(tx.recoveryAttempt.count).not.toHaveBeenCalled();
+    expect(tx.recoveryBlock.upsert).not.toHaveBeenCalled();
+    expect(tx.passwordResetToken.deleteMany).not.toHaveBeenCalled();
     expect(sendEmailMock).not.toHaveBeenCalled();
   });
 });
