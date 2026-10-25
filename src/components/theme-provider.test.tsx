@@ -39,6 +39,19 @@ describe("accessible theme preference", () => {
     expect(screen.getByRole("button", { name: "Alternar tema claro e escuro" }).getAttribute("aria-pressed")).toBe("true");
   });
 
+  it("uses the operating system dark preference when no preference is saved", async () => {
+    const matchMediaMock = vi.fn().mockReturnValue({ matches: true });
+    vi.stubGlobal("matchMedia", matchMediaMock);
+
+    render(<ThemeProvider><ThemeProbe /><ThemeToggle /></ThemeProvider>);
+    await act(async () => {});
+
+    expect(matchMediaMock).toHaveBeenCalledWith("(prefers-color-scheme: dark)");
+    expect(screen.getByTestId("theme").textContent).toBe("dark");
+    expect(document.documentElement.dataset.theme).toBe("dark");
+    expect(screen.getByRole("button", { name: "Alternar tema claro e escuro" }).getAttribute("aria-pressed")).toBe("true");
+  });
+
   it("persists theme changes when the user activates the control", async () => {
     render(<ThemeProvider><ThemeProbe /><ThemeToggle /></ThemeProvider>);
     await act(async () => {});
