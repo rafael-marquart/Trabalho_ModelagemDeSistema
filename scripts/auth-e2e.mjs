@@ -47,7 +47,7 @@ function extractEmailToken(previousMessageCount, expectedPath) {
   assert.equal(
     tokenMatches.length,
     1,
-    \`test SMTP message must contain exactly one 43-character token for \${expectedPath}\`
+    `test SMTP message must contain exactly one 43-character token for ${expectedPath}`
   );
   return tokenMatches[0][1];
 }
@@ -163,7 +163,7 @@ async function cleanupTestData() {
   const userIds = users.map(user => user.id);
   const companyIds = users.flatMap(user => user.company ? [user.company.id] : []);
   const ipKey = digest(TEST_IP);
-  const recoveryKeys = userIds.map(id => digest(\`user:\${id}\`));
+  const recoveryKeys = userIds.map(id => digest(`user:${id}`));
   const auditSubjectIds = [...userIds, ...companyIds];
 
   await prisma.$transaction(async tx => {
@@ -179,7 +179,7 @@ async function cleanupTestData() {
     await tx.loginAttempt.deleteMany({ where: { ipKey } });
     await tx.recoveryAttempt.deleteMany({ where: { ipKey } });
     await tx.recoveryBlock.deleteMany({
-      where: { scopeKey: { in: [...recoveryKeys.map(key => \`identifier:\${key}\`), \`ip:\${ipKey}\`] } }
+      where: { scopeKey: { in: [...recoveryKeys.map(key => `identifier:${key}`), `ip:${ipKey}`] } }
     });
     await tx.auditEvent.deleteMany({
       where: { OR: [{ actorUserId: { in: userIds } }, { subjectId: { in: auditSubjectIds } }] }
@@ -378,7 +378,7 @@ async function main() {
     assert.equal(JSON.parse(companyLoginBody).redirectTo, "/empresa");
     const companyCookieMatch = (companyLogin.headers.get("set-cookie") || "").match(/(?:^|,\s*)acessa_session=([^;]+)/);
     assert.ok(companyCookieMatch?.[1], "company login must issue a session cookie");
-    const companyCookie = \`acessa_session=\${companyCookieMatch[1]}\`;
+    const companyCookie = `acessa_session=${companyCookieMatch[1]}`;
 
     // Invite a new recruiter, resend to invalidate the previous link, and accept the latest link.
     emailCount = SMTP_MESSAGES.length;
@@ -436,7 +436,7 @@ async function main() {
     });
     assert.ok(activeLink, "accepting the invitation must create an active company link");
 
-    const listedLinks = await fetch(\`\${BASE_URL}/api/company/recruiter-links\`, {
+    const listedLinks = await fetch(`${BASE_URL}/api/company/recruiter-links`, {
       headers: { cookie: companyCookie },
       redirect: "manual"
     });
@@ -459,7 +459,7 @@ async function main() {
     });
     await expectStatus(reusedInvitation, 400, "accepted recruiter invitation token reuse");
 
-    process.stdout.write("Auth E2E passed: candidate registration/login/recovery/reset/session revocation; company registration/email verification; recruiter invitation/resend/acceptance/link termination.\\n");
+    process.stdout.write("Auth E2E passed: candidate registration/login/recovery/reset/session revocation; company registration/email verification; recruiter invitation/resend/acceptance/link termination.\n");
   } finally {
     try {
       await cleanupTestData();
