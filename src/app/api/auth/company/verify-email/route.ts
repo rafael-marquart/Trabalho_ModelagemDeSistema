@@ -63,7 +63,10 @@ export async function POST(request: Request) {
       return true;
     });
   } catch (error) {
-    if (!(error instanceof Error) || error.message !== "COMPANY_EMAIL_ALREADY_CONFIRMED") throw error;
+    if (
+      !(error instanceof Error) ||
+      !["COMPANY_EMAIL_ALREADY_CONFIRMED", "COMPANY_ACCOUNT_ACTIVATION_RACE"].includes(error.message)
+    ) throw error;
   }
 
   if (!confirmed) {
