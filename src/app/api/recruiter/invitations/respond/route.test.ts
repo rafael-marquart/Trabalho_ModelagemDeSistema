@@ -82,6 +82,15 @@ describe("recruiter invitation response", () => {
     });
   });
 
+  it("uses serializable isolation when claiming and accepting an invitation", async () => {
+    await POST(makeRequest());
+
+    expect(prismaMock.$transaction).toHaveBeenCalledWith(
+      expect.any(Function),
+      { isolationLevel: "Serializable" }
+    );
+  });
+
   it("refuses an invitation without creating a recruiter link", async () => {
     const response = await POST(makeRequest("refuse"));
 
