@@ -21,6 +21,9 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ message: "Convite inválido ou expirado. Confira os dados e a senha." }, { status: 400 });
 
   const user = await getCurrentUser();
+  if (user && user.role !== "RECRUITER") {
+    return NextResponse.json({ message: "Entre na conta de recrutador destinatária do convite." }, { status: 401 });
+  }
   const now = new Date();
   const tokenHash = hashOneTimeToken(parsed.data.token);
   const invitation = await prisma.recruiterInvitation.findUnique({ where: { tokenHash } });
