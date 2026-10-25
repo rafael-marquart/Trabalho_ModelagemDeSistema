@@ -45,10 +45,13 @@ export async function POST(request: Request) {
       await tx.companyEmailVerificationToken.deleteMany({
         where: { companyId: tokenRecord.company.id, id: { not: tokenRecord.id } }
       });
-      await tx.user.updateMany({
+      const activatedUser = await tx.user.updateMany({
         where: { id: tokenRecord.company.accountUserId, role: "COMPANY", isActive: false },
         data: { isActive: true }
       });
+      // Do not consume the verification token or audit a successful activation
+      // if the account state changed between the initial read and this transaction.
+      if (activatedUser.count !== 1) throw new Error("COMPANY_ACCOUNT_ACTIVATION_RACE");
       await tx.auditEvent.create({
         data: {
           actorUserId: tokenRecord.company.accountUserId,
