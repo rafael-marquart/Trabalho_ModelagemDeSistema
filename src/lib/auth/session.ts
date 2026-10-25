@@ -13,7 +13,7 @@ function digest(token: string): string {
 export async function createSession(userId: string, rememberMe: boolean) {
   const token = randomBytes(32).toString("base64url");
   const now = new Date();
-  const absoluteExpiresAt = new Date(now.getTime() + (rememberMe ? REMEMBERED_SESSION_MS : IDLE_TIMEOUT_MS));
+  const absoluteExpiresAt = new Date(now.getTime() + REMEMBERED_SESSION_MS);
   const expiresAt = new Date(Math.min(now.getTime() + IDLE_TIMEOUT_MS, absoluteExpiresAt.getTime()));
 
   await prisma.session.create({
