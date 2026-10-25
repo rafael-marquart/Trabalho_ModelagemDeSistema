@@ -30,6 +30,7 @@ model User {
   passwordHash      String
   role              UserRole
   isActive          Boolean               @default(true)
+  pendingActivation Boolean               @default(false)
   failedLoginCount  Int                   @default(0)
   lockedUntil       DateTime?
   passwordChangedAt DateTime              @default(now())
@@ -53,6 +54,8 @@ model Company {
   officialId       String                @unique
   contactEmail     String
   emailConfirmedAt DateTime?
+  officialIdValidatedAt DateTime?
+  officialIdValidatedBy String?
   accountUserId    String                @unique
   accountUser      User                  @relation("CompanyAccount", fields: [accountUserId], references: [id], onDelete: Restrict)
   recruiterLinks   RecruiterLink[]
