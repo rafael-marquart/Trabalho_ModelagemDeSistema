@@ -18,25 +18,20 @@ export async function GET() {
   const company = await prisma.company.findUnique({ where: { accountUserId: user.id }, select: { id: true } });
   if (!company || !user.isActive) return NextResponse.json({ message: "A empresa não está habilitada para gerenciar recrutadores." }, { status: 403 });
   const now = new Date();
-  const expired = await prisma.recruiterInvitation.findMany({ where: { companyId: company.id, status: "PENDING", expiresAt: { lte: now } }, select: { id: true } });
-  for (const invitation of expired) {
-    await prisma.$transaction(async tx => {
-      const changed = await tx.recruiterInvitation.updateMany({
-        where: { id: invitation.id, companyId: company.id, status: "PENDING", expiresAt: { lte: now } },
-        data: { status: "EXPIRED", respondedAt: now }
-      });
-      if (changed.count === 1) {
-        await tx.auditEvent.create({
-          data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_EXPIRED", subjectType: "RecruiterInvitation", subjectId: invitation.id }
-        });
-      }
-    });
-  }
-  const invitations = await prisma.recruiterInvitation.findMany({
+  const records = await prisma.recruiterInvitation.findMany({
     where: { companyId: company.id },
     select: { id: true, status: true, expiresAt: true, createdAt: true, respondedAt: true },
     orderBy: { createdAt: "desc" }
   });
+  // GET is read-only: expose expired pending invitations as EXPIRED in the
+  // response without mutating state or writing audit events during a read.
+  // State transitions and their audit events happen in explicit write flows.
+  const invitations = records.map(invitation => ({
+    ...invitation,
+    status: invitation.status === "PENDING" && invitation.expiresAt <= now
+      ? "EXPIRED"
+      : invitation.status
+  }));
   return NextResponse.json({ invitations });
 }
 
