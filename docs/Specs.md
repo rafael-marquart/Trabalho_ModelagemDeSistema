@@ -135,7 +135,7 @@ O comportamento deriva de UC-07 e RB-46. Quando o e-mail já pertencer a uma con
 2. A senha deve conter no mínimo 10 caracteres, incluindo pelo menos uma letra maiúscula, uma letra minúscula e um número; símbolo não é obrigatório.
 3. Após 10 tentativas consecutivas incorretas de login, a conta é bloqueada temporariamente por 15 minutos; o desbloqueio ocorre automaticamente ao fim do prazo ou por recuperação de senha válida.
 4. O cadastro de Empresa exige razão social, identificador oficial e e-mail corporativo de contato; nome fantasia é opcional.
-5. A liberação das funcionalidades organizacionais depende da validação do identificador oficial e da confirmação do e-mail corporativo.
+5. A liberação das funcionalidades organizacionais depende da confirmação do e-mail corporativo; o CNPJ é aceito quando contém exatamente 14 dígitos, sem verificação de existência ou dígitos verificadores.
 6. Não permitir novo cadastro de Empresa com identificador oficial já associado a outra Empresa; orientar recuperação ou associação à conta existente.
 7. A Empresa cadastra e vincula Recrutadores nas próprias configurações, conforme RF-17 e RB-46.
 8. Quando o e-mail informado já pertencer a uma conta, a Empresa autenticada e autorizada pode solicitar o vínculo por convite enviado ao e-mail da conta; o titular deve dar aceite explícito antes da efetivação.
