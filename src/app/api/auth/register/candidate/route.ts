@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { hashPassword } from "@/lib/auth/password";
 import { passwordSchema } from "@/lib/auth/password-policy";
-import { normalizeCpf, normalizeIdentifier } from "@/lib/auth/login-schema";
+import { isValidCpf, normalizeCpf, normalizeIdentifier } from "@/lib/auth/login-schema";
 import { prisma } from "@/lib/prisma";
 
 const schema = z.object({
@@ -18,15 +18,26 @@ export async function POST(request: Request) {
   const input = parsed.data;
   const email = normalizeIdentifier(input.email);
   const cpf = normalizeCpf(input.cpf);
-  if (cpf.length !== 11) return NextResponse.json({ message: "Informe um CPF válido." }, { status: 400 });
+  if (!isValidCpf(cpf)) return NextResponse.json({ message: "Informe um CPF válido." }, { status: 400 });
 
-  const existing = await prisma.user.findFirst({ where: { OR: [{ email }, { cpf }] }, select: { id: true } });
-  if (existing) return NextResponse.json({ message: "Não foi possível criar a conta com os dados informados." }, { status: 409 });
-
-  const user = await prisma.user.create({
-    data: { fullName: input.fullName, email, cpf, passwordHash: await hashPassword(input.password), role: "CANDIDATE" },
-    select: { id: true }
-  });
-  await prisma.auditEvent.create({ data: { actorUserId: user.id, eventType: "AUTH_CANDIDATE_REGISTERED", subjectType: "User", subjectId: user.id } });
-  return NextResponse.json({ ok: true, message: "Conta criada. Você já pode entrar." }, { status: 201 });
+  const passwordHash = await hashPassword(input.password);
+  try {
+    const user = await prisma.$transaction(async (tx) => {
+      const created = await tx.user.create({
+        data: { fullName: input.fullName, email, cpf, passwordHash, role: "CANDIDATE" },
+        select: { id: true }
+      });
+      await tx.auditEvent.create({
+        data: { actorUserId: created.id, eventType: "AUTH_CANDIDATE_REGISTERED", subjectType: "User", subjectId: created.id }
+      });
+      return created;
+    });
+    return NextResponse.json({ ok: true, message: "Conta criada. Você já pode entrar." }, { status: 201 });
+  } catch (error) {
+    // Unique constraints also protect against simultaneous registrations.
+    if (typeof error === "object" && error !== null && "code" in error && error.code === "P2002") {
+      return NextResponse.json({ message: "Não foi possível criar a conta com os dados informados." }, { status: 409 });
+    }
+    throw error;
+  }
 }
