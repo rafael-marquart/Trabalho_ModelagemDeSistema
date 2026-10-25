@@ -30,7 +30,7 @@ describe("login", () => {
     passwordChangedAt: new Date("2026-01-01T00:00:00.000Z")
   };
   const tx = {
-    $queryRaw: vi.fn(),
+    $executeRaw: vi.fn(),
     user: { findFirst: vi.fn(), findUnique: vi.fn(), update: vi.fn() },
     loginAttempt: { count: vi.fn(), findFirst: vi.fn(), create: vi.fn() }
   };
@@ -39,7 +39,7 @@ describe("login", () => {
     vi.clearAllMocks();
     tx.user.findFirst.mockResolvedValue(user);
     prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => callback(tx));
-    tx.$queryRaw.mockResolvedValue([]);
+    tx.$executeRaw.mockResolvedValue([]);
     tx.user.findUnique.mockResolvedValue(user);
     tx.user.update.mockResolvedValue(user);
     tx.loginAttempt.count.mockResolvedValue(0);
@@ -67,7 +67,7 @@ describe("login", () => {
     const response = await POST(makeRequest() as never);
 
     expect(response.status).toBe(200);
-    expect(tx.$queryRaw).toHaveBeenCalled();
+    expect(tx.$executeRaw).toHaveBeenCalled();
     expect(tx.user.findUnique).toHaveBeenCalledWith({ where: { id: "candidate-1" } });
     expect(verifyPasswordMock).toHaveBeenCalledWith("stored-hash", "StrongPassword123");
     expect(tx.user.update).toHaveBeenCalledWith({
@@ -212,7 +212,7 @@ describe("login", () => {
     for (const [failures, maxCooldown] of [[50, 300], [80, 900], [120, 3600]]) {
       vi.clearAllMocks();
       prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => callback(tx));
-      tx.$queryRaw.mockResolvedValue([]);
+      tx.$executeRaw.mockResolvedValue([]);
       tx.loginAttempt.count.mockResolvedValueOnce(failures);
       tx.loginAttempt.create.mockResolvedValue({ id: "blocked-attempt" });
 
