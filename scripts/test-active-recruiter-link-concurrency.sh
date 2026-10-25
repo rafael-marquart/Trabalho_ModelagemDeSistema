@@ -6,17 +6,26 @@ set -euo pipefail
 PSQL_DATABASE_URL="${DATABASE_URL%%\?*}"
 
 # The preceding SQL smoke test creates this company and recruiter.
-# Competing inserts use distinct link IDs but the same recruiter, so the
-# partial unique index must allow exactly one active link.
-psql "$PSQL_DATABASE_URL" -v ON_ERROR_STOP=1 -c \
-  'DELETE FROM "RecruiterLink" WHERE "id" IN ('"'"'ci-concurrent-link-a'"'"', '"'"'ci-concurrent-link-b'"'"');'
+# Clean up prior test rows, then race two inserts for the same recruiter.
+psql "$PSQL_DATABASE_URL" -v ON_ERROR_STOP=1 <<'SQL'
+DELETE FROM "RecruiterLink"
+WHERE "id" IN ('ci-concurrent-link-a', 'ci-concurrent-link-b');
+SQL
 
 set +e
-psql "$PSQL_DATABASE_URL" -v ON_ERROR_STOP=1 -c \
-  'INSERT INTO "RecruiterLink" ("id", "companyId", "recruiterId") VALUES ('"'"'\''ci-concurrent-link-a'\'', '\''ci-company'\'', '\''ci-recruiter-user'\'');' >/tmp/link-a.log 2>&1 &
+(
+  psql "$PSQL_DATABASE_URL" -v ON_ERROR_STOP=1 <<'SQL'
+INSERT INTO "RecruiterLink" ("id", "companyId", "recruiterId")
+VALUES ('ci-concurrent-link-a', 'ci-company', 'ci-recruiter-user');
+SQL
+) >/tmp/link-a.log 2>&1 &
 pid_a=$!
-psql "$PSQL_DATABASE_URL" -v ON_ERROR_STOP=1 -c \
-  'INSERT INTO "RecruiterLink" ("id", "companyId", "recruiterId") VALUES ('"'"'\''ci-concurrent-link-b'\'', '\''ci-company'\'', '\''ci-recruiter-user'\'');' >/tmp/link-b.log 2>&1 &
+(
+  psql "$PSQL_DATABASE_URL" -v ON_ERROR_STOP=1 <<'SQL'
+INSERT INTO "RecruiterLink" ("id", "companyId", "recruiterId")
+VALUES ('ci-concurrent-link-b', 'ci-company', 'ci-recruiter-user');
+SQL
+) >/tmp/link-b.log 2>&1 &
 pid_b=$!
 wait "$pid_a"
 status_a=$?
