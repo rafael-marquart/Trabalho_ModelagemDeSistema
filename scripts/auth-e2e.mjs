@@ -360,6 +360,23 @@ async function main() {
     });
     await expectStatus(newPage, 200, "candidate page after new login");
 
+    // Force the persisted idle expiry and prove the real protected page rejects the stale cookie.
+    await prisma.session.updateMany({
+      where: { tokenHash: digest(newCookieMatch[1]) },
+      data: { expiresAt: new Date(Date.now() - 1000) }
+    });
+    const expiredSessionPage = await fetch(`${BASE_URL}/candidato`, {
+      headers: { cookie: `acessa_session=${newCookieMatch[1]}` },
+      redirect: "manual"
+    });
+    assert.ok(
+      [307, 308].includes(expiredSessionPage.status) &&
+        (expiredSessionPage.headers.get("location") || "").includes("/candidato/login"),
+      `expired session must not access the candidate page; received HTTP ${expiredSessionPage.status}`
+    );
+    const expiredSessionCount = await prisma.session.count({ where: { tokenHash: digest(newCookieMatch[1]) } });
+    assert.equal(expiredSessionCount, 0, "expired session must be removed from persistent storage");
+
     // Company registration and email verification exercise the inactive-to-active transition.
     const companyEmailCount = SMTP_MESSAGES.length;
     const companyRegistration = await postJson("/api/auth/register/company", {
