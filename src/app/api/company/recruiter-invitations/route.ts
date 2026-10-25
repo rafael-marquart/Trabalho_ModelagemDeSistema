@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
     await sendEmail({
       to: recipient.email,
       subject: "Convite para se vincular a uma empresa — Acessa Vagas",
-      text: `A empresa ${company.legalName} convidou você para se vincular à organização. Aceite ou recuse em até 7 dias: ${baseUrl}/recrutador/convite?token=${token}\n\nSe você não esperava este convite, pode recusá-lo ou ignorar esta mensagem.`
+      text: `A empresa ${company.legalName} convidou você para se vincular à organização. Aceite ou recuse em até 7 dias: ${baseUrl}/recrutador/convite?token=${token}\n\nSe você ainda não tem uma conta ativa, poderá definir sua senha antes de aceitar o vínculo. Se não esperava este convite, pode recusá-lo ou ignorar esta mensagem.`
     });
   } catch {
     const failedAt = new Date();
