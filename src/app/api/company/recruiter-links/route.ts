@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
+import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 
 export async function GET() {
   const user = await getCurrentUser();
@@ -27,4 +28,15 @@ export async function GET() {
   });
 
   return NextResponse.json({ links });
+}
+
+/**
+ * Compatibility endpoint guard: this resource is read-only for GET.
+ * Reject unexpected mutations explicitly so future handlers cannot accidentally
+ * bypass the origin check used on all existing POST endpoints.
+ */
+export async function POST(request: NextRequest) {
+  const originRejection = rejectCrossOriginRequest(request);
+  if (originRejection) return originRejection;
+  return NextResponse.json({ message: "Método não permitido." }, { status: 405, headers: { Allow: "GET" } });
 }
