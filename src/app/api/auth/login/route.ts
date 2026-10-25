@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     // Serialize attempts from the same IP so concurrent requests cannot all pass
     // the threshold check before any of them is recorded.
     const ipLockKey = `login-ip:${ipKey}`;
-    await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${ipLockKey}, 0))`;
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${ipLockKey}, 0))`;
 
     const now = new Date();
     const windowStart = new Date(now.getTime() - WINDOW_MS);
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     let currentUser = null;
     if (user) {
       const accountLockKey = `login-account:${user.id}`;
-      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${accountLockKey}, 0))`;
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${accountLockKey}, 0))`;
       currentUser = await tx.user.findUnique({ where: { id: user.id } });
     }
 
