@@ -2,18 +2,19 @@
 
 **Revisão:** 25/10/2026  
 **Branch:** `feat/initial-app-foundation`  
-**HEAD verificado:** `19faa072cef983eb72cb50920294956c7f0d0c1d`  
+**HEAD verificado:** `0878c5c5c20cac6cc6186f9422fee98885454bdb`  
 **Pull request:** [#36](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/pull/36) — permanece Draft  
 **Objetivo:** separar implementação existente, evidência automatizada disponível e validações ainda necessárias. Esta matriz não substitui os critérios de aceite da `docs/Specs.md` nem declara a SPEC-001 concluída.
 
 ## Estado de CI observado
 
-- O CI de push (run [40211093545](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40211093545)) e o CI de pull request (run [40211097393](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40211097393)) concluíram com sucesso para o HEAD `19faa072cef983eb72cb50920294956c7f0d0c1d`.
+- O CI de push (run [40211998010](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40211998010)) e o CI de pull request (run [40212002918](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40212002918)) concluíram com sucesso para o HEAD `0878c5c5c20cac6cc6186f9422fee98885454bdb`.
 - A etapa `validate` passou nas duas execuções. A pipeline cobre validação/geração Prisma, migrações PostgreSQL, restrições de integridade e concorrência, TypeScript, lint, testes unitários e build de produção.
 - O HEAD mantém a serialização por bloqueio de linha no reset de senha, teste para usuário que deixa de estar elegível antes da transação e proteção contra corrida na ativação de empresa durante a confirmação de e-mail. A ordem das operações foi ajustada para não consumir tokens secundários se a ativação não for confirmada.
 - A recuperação de senha mantém resposta HTTP 200 e mensagem genérica quando há throttling, para reduzir risco de enumeração de contas.
 - A listagem `GET /api/company/recruiter-invitations` é somente leitura: convites pendentes cujo prazo já passou são apresentados como `EXPIRED` na resposta, sem atualizar o banco nem gravar auditoria durante a consulta. O status persistido pode permanecer `PENDING` até um fluxo explícito de escrita tratar o convite.
-- CI não comprova configuração real de SMTP, proxy, domínio público, agendador de retenção nem experiência de acessibilidade em navegadores/dispositivos. O bloqueio de login é por conta; a proteção por IP no fluxo de login permanece uma decisão/pendência de segurança, diferente do throttling por conta/IP já implementado na recuperação de senha.
+- A rota de logout não deriva mais o destino do redirecionamento do host da requisição: usa a origem canônica `APP_BASE_URL`, e retorna `503` em produção se ela estiver ausente. Testes cobrem host não confiável, ausência de configuração e rejeição de origem cruzada.
+- CI não comprova configuração real de SMTP, proxy, domínio público, agendador de retenção nem experiência de acessibilidade em navegadores/dispositivos. Os dois workflows de CI para o HEAD atual passaram. O bloqueio de login é por conta; a proteção por IP no fluxo de login permanece uma decisão/pendência de segurança, diferente do throttling por conta/IP já implementado na recuperação de senha.
 
 ## Matriz dos critérios de aceitação
 
@@ -46,4 +47,4 @@
 
 ## Decisão atual
 
-**SPEC-001 permanece em implementação/validação.** O CI de push e pull request passou no HEAD `19faa072cef983eb72cb50920294956c7f0d0c1d`, com testes unitários, migrações/restrições de banco e build de produção. Ainda não há evidência suficiente para afirmar que todos os critérios passaram por validação ponta a ponta ou operacional. Nenhum merge para `main`, publicação em produção ou início da SPEC-002 está autorizado por este relatório.
+**SPEC-001 permanece em implementação/validação.** O CI de push e pull request passou no HEAD `0878c5c5c20cac6cc6186f9422fee98885454bdb`, com testes unitários, migrações/restrições de banco e build de produção. Ainda não há evidência suficiente para afirmar que todos os critérios passaram por validação ponta a ponta ou operacional. Nenhum merge para `main`, publicação em produção ou início da SPEC-002 está autorizado por este relatório.
