@@ -33,8 +33,9 @@ describe("createSession", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    const auditCreate = vi.fn().mockResolvedValue({ id: "audit-1" });
     prismaMock.$transaction.mockImplementation(async (callback: (tx: unknown) => unknown) =>
-      callback({ $queryRaw: queryRaw, session: { create: sessionCreate } })
+      callback({ $queryRaw: queryRaw, session: { create: sessionCreate }, auditEvent: { create: auditCreate } })
     );
     queryRaw.mockResolvedValue([{ id: "user-1" }]);
     sessionCreate.mockResolvedValue({ id: "session-1" });
@@ -74,6 +75,25 @@ describe("createSession", () => {
     const storedHash = sessionCreate.mock.calls[0][0].data.tokenHash as string;
     expect(storedHash).toBe(createHash("sha256").update(rawToken).digest("hex"));
     expect(storedHash).not.toBe(rawToken);
+  });
+
+  it("does not issue a session cookie when successful-login auditing fails", async () => {
+    const auditCreate = vi.fn().mockRejectedValue(new Error("audit database unavailable"));
+    prismaMock.$transaction.mockImplementationOnce(async (callback: (tx: unknown) => unknown) =>
+      callback({ $queryRaw: queryRaw, session: { create: sessionCreate }, auditEvent: { create: auditCreate } })
+    );
+
+    await expect(createSession("user-1", false, passwordChangedAt)).rejects.toThrow("audit database unavailable");
+    expect(sessionCreate).toHaveBeenCalled();
+    expect(auditCreate).toHaveBeenCalledWith({
+      data: {
+        actorUserId: "user-1",
+        eventType: "AUTH_LOGIN_SUCCEEDED",
+        subjectType: "User",
+        subjectId: "user-1"
+      }
+    });
+    expect(cookieSet).not.toHaveBeenCalled();
   });
 
   it("sets an expiration on the persistent cookie for the remember-me option", async () => {
