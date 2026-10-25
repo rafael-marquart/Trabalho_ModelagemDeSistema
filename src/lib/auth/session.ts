@@ -10,15 +10,28 @@ function digest(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
 
-export async function createSession(userId: string, rememberMe: boolean) {
+export async function createSession(userId: string, rememberMe: boolean, expectedPasswordChangedAt: Date): Promise<boolean> {
   const token = randomBytes(32).toString("base64url");
   const now = new Date();
   const absoluteExpiresAt = new Date(now.getTime() + REMEMBERED_SESSION_MS);
   const expiresAt = new Date(Math.min(now.getTime() + IDLE_TIMEOUT_MS, absoluteExpiresAt.getTime()));
 
-  await prisma.session.create({
-    data: { tokenHash: digest(token), userId, rememberMe, expiresAt, absoluteExpiresAt, lastSeenAt: now }
+  // Coordinate with password reset: if the password changed after credentials
+  // were verified, do not create a session from stale credentials. The check and
+  // insert are atomic relative to the reset transaction's user update/session delete.
+  const created = await prisma.$transaction(async (tx) => {
+    const eligible = await tx.user.findFirst({
+      where: { id: userId, isActive: true, passwordChangedAt: expectedPasswordChangedAt },
+      select: { id: true }
+    });
+    if (!eligible) return false;
+
+    await tx.session.create({
+      data: { tokenHash: digest(token), userId, rememberMe, expiresAt, absoluteExpiresAt, lastSeenAt: now }
+    });
+    return true;
   });
+  if (!created) return false;
 
   const cookieStore = await cookies();
   cookieStore.set(COOKIE_NAME, token, {
