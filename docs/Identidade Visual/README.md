@@ -22,8 +22,8 @@ Em 20/10/2026, o usuário aprovou os materiais visuais e rascunhos apresentados 
 - [Cadastro — Candidato](Cadastro-Candidato.svg)
 - [Cadastro — Empresa](Cadastro-Empresa.svg)
 - [Recuperação de senha](Recuperacao-de-Senha.svg)
-- [Gestão de recrutadores](Gestao-Recrutadores.svg) — proposta estática para revisão.
-- [Mensagens de autenticação](Mensagens-Autenticacao.svg) — proposta estática para revisão.
+- [Gestão de recrutadores](Gestao-Recrutadores.svg) — referência estática aprovada em 25/10/2026.
+- [Mensagens de autenticação](Mensagens-Autenticacao.svg) — referência estática aprovada em 25/10/2026.
 - [Página inicial — Candidato](Pagina-Inicial-Candidato.svg)
 - [Página inicial — Empresa](Pagina-Inicial-Empresa.svg)
 
