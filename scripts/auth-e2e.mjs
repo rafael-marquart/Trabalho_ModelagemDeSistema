@@ -119,7 +119,7 @@ async function expectStatus(response, expected, description) {
   assert.equal(
     response.status,
     expected,
-    `${description}: expected HTTP ${expected}, got ${response.status}. Response: ${body.slice(0, 1200)}`
+    `${description}: expected HTTP ${expected}, got ${response.status}. Response: ${body.slice(0, 1200)}. Next.js output: ${appOutput.slice(-5000)}`
   );
   return body;
 }
