@@ -65,6 +65,4 @@ describe("list active recruiter links", () => {
     expect(response.status).toBe(403);
     expect(prismaMock.recruiterLink.findMany).not.toHaveBeenCalled();
   });
-
-
 });
