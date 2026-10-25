@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/session";
+import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 import { prisma } from "@/lib/prisma";
 
 const schema = z.object({ invitationId: z.string().min(1).max(100) });
 
 export async function POST(request: Request) {
+  const originRejection = rejectCrossOriginRequest(request);
+  if (originRejection) return originRejection;
+
   const user = await getCurrentUser();
   if (!user || user.role !== "COMPANY") return NextResponse.json({ message: "Acesso não autorizado." }, { status: 401 });
   const parsed = schema.safeParse(await request.json().catch(() => null));
