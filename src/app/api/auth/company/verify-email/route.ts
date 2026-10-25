@@ -21,7 +21,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "O link é inválido, expirou ou já foi utilizado." }, { status: 400 });
   }
 
-  const confirmed = await prisma.$transaction(async (tx) => {
+  let confirmed = false;
+  try {
+    confirmed = await prisma.$transaction(async (tx) => {
     const claimed = await tx.companyEmailVerificationToken.updateMany({
       where: { id: tokenRecord.id, usedAt: null, expiresAt: { gt: now } },
       data: { usedAt: now }
@@ -32,7 +34,9 @@ export async function POST(request: Request) {
       where: { id: tokenRecord.company.id, emailConfirmedAt: null },
       data: { emailConfirmedAt: now }
     });
-    if (updated.count !== 1) return false;
+    // Throwing aborts the interactive transaction so the token claim is rolled
+    // back if another request confirmed the company after the initial read.
+    if (updated.count !== 1) throw new Error("COMPANY_EMAIL_ALREADY_CONFIRMED");
 
     await tx.companyEmailVerificationToken.deleteMany({
       where: { companyId: tokenRecord.company.id, id: { not: tokenRecord.id } }
@@ -45,8 +49,11 @@ export async function POST(request: Request) {
         subjectId: tokenRecord.company.id
       }
     });
-    return true;
-  });
+      return true;
+    });
+  } catch (error) {
+    if (!(error instanceof Error) || error.message !== "COMPANY_EMAIL_ALREADY_CONFIRMED") throw error;
+  }
 
   if (!confirmed) {
     return NextResponse.json({ message: "O link é inválido, expirou ou já foi utilizado." }, { status: 400 });
