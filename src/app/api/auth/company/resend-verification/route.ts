@@ -112,6 +112,14 @@ export async function POST(request: NextRequest) {
     await tx.companyEmailVerificationToken.create({
       data: { companyId: stillEligible.id, tokenHash: token.tokenHash, expiresAt }
     });
+    await tx.auditEvent.create({
+      data: {
+        actorUserId: null,
+        eventType: "AUTH_COMPANY_EMAIL_VERIFICATION_RESEND_REQUESTED",
+        subjectType: "User",
+        subjectId: eligible.id
+      }
+    });
     return {
       allowed: true,
       token: token.token,
