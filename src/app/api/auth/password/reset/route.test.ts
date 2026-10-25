@@ -23,6 +23,7 @@ describe("password reset", () => {
     user: { id: "user-1", isActive: true }
   };
   const tx = {
+    $queryRaw: vi.fn(),
     passwordResetToken: { updateMany: vi.fn(), deleteMany: vi.fn() },
     user: { update: vi.fn() },
     session: { deleteMany: vi.fn() },
@@ -33,6 +34,7 @@ describe("password reset", () => {
     vi.clearAllMocks();
     prismaMock.passwordResetToken.findUnique.mockResolvedValue(tokenRecord);
     prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => callback(tx));
+    tx.$queryRaw.mockResolvedValue([{ id: "user-1" }]);
     tx.passwordResetToken.updateMany.mockResolvedValue({ count: 1 });
     tx.passwordResetToken.deleteMany.mockResolvedValue({ count: 1 });
     tx.user.update.mockResolvedValue({ id: "user-1" });
@@ -52,6 +54,7 @@ describe("password reset", () => {
     const response = await POST(makeRequest() as never);
 
     expect(response.status).toBe(200);
+    expect(tx.$queryRaw).toHaveBeenCalled();
     expect(tx.passwordResetToken.updateMany).toHaveBeenCalledWith({
       where: { id: "reset-token-1", usedAt: null, expiresAt: expect.objectContaining({ gt: expect.any(Date) }) },
       data: { usedAt: expect.any(Date) }
@@ -124,6 +127,18 @@ describe("password reset", () => {
 
     expect(response.status).toBe(400);
     expect(tx.passwordResetToken.deleteMany).not.toHaveBeenCalled();
+    expect(tx.user.update).not.toHaveBeenCalled();
+    expect(tx.session.deleteMany).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it("rejects a reset if the account becomes inactive before the transaction locks it", async () => {
+    tx.$queryRaw.mockResolvedValueOnce([]);
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(400);
+    expect(tx.passwordResetToken.updateMany).not.toHaveBeenCalled();
     expect(tx.user.update).not.toHaveBeenCalled();
     expect(tx.session.deleteMany).not.toHaveBeenCalled();
     expect(tx.auditEvent.create).not.toHaveBeenCalled();
