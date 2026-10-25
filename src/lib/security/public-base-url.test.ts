@@ -22,6 +22,13 @@ describe("getPublicBaseUrl", () => {
     expect(getPublicBaseUrl(request)).toBeNull();
   });
 
+  it("rejects cleartext HTTP for production email links", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    process.env.APP_BASE_URL = "http://acessavagas.example";
+
+    expect(getPublicBaseUrl(request)).toBeNull();
+  });
+
   it("does not accept invalid or non-http configured URLs", () => {
     vi.stubEnv("NODE_ENV", "production");
     process.env.APP_BASE_URL = "javascript:alert(1)";
