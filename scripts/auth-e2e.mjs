@@ -12,8 +12,12 @@ const BASE_URL = `http://127.0.0.1:${PORT}`;
 const PUBLIC_URL = `https://127.0.0.1:${PORT}`;
 const TEST_IP = "192.0.2.77";
 const EMAIL = `spec001-e2e-${randomUUID()}@example.test`;
+const COMPANY_EMAIL = `spec001-company-${randomUUID()}@example.test`;
+const RECRUITER_EMAIL = `spec001-recruiter-${randomUUID()}@example.test`;
 const OLD_PASSWORD = "InitialPassword123";
 const NEW_PASSWORD = "ChangedPassword456";
+const COMPANY_PASSWORD = "CompanyPassword123";
+const RECRUITER_PASSWORD = "RecruiterPassword123";
 const SMTP_MESSAGES = [];
 const SMTP_SOCKETS = new Set();
 let app;
@@ -22,6 +26,30 @@ let appOutput = "";
 
 function digest(value) {
   return createHash("sha256").update(value).digest("hex");
+}
+
+function extractEmailToken(previousMessageCount, expectedPath) {
+  const mail = SMTP_MESSAGES.slice(previousMessageCount).join("\n");
+  // Decode the SMTP message's transfer encoding before parsing the URL.
+  // This keeps the assertion aligned with the token a real recipient receives.
+  const transferEncoding = mail.match(/content-transfer-encoding:\s*([\w-]+)/i)?.[1]?.toLowerCase();
+  let decodedMail = mail;
+  if (transferEncoding === "base64") {
+    const body = mail.split(/\r?\n\r?\n/, 2)[1] || "";
+    decodedMail = Buffer.from(body.replace(/\s/g, ""), "base64").toString("utf8");
+  } else if (transferEncoding === "quoted-printable") {
+    decodedMail = mail
+      .replace(/=\r?\n/g, "")
+      .replace(/=([0-9A-F]{2})/gi, (_match, hex) => String.fromCharCode(Number.parseInt(hex, 16)));
+  }
+  const tokenMatches = [...decodedMail.matchAll(/(?:\?|&)token=([A-Za-z0-9_-]{43})(?=[\s&"'<>]|$)/g)]
+    .filter(match => decodedMail.slice(Math.max(0, match.index - expectedPath.length - 16), match.index).includes(expectedPath));
+  assert.equal(
+    tokenMatches.length,
+    1,
+    \`test SMTP message must contain exactly one 43-character token for \${expectedPath}\`
+  );
+  return tokenMatches[0][1];
 }
 
 function startTestSmtp() {
@@ -102,12 +130,13 @@ async function waitForApp(child) {
   throw new Error(`Timed out waiting for Next.js.\n${appOutput}`);
 }
 
-async function postJson(path, payload) {
+async function postJson(path, payload, extraHeaders = {}) {
   return fetch(`${BASE_URL}${path}`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "x-forwarded-for": TEST_IP
+      "x-forwarded-for": TEST_IP,
+      ...extraHeaders
     },
     body: JSON.stringify(payload),
     redirect: "manual"
@@ -125,26 +154,38 @@ async function expectStatus(response, expected, description) {
 }
 
 async function cleanupTestData() {
-  const user = await prisma.user.findUnique({
-    where: { email: EMAIL },
-    select: { id: true }
+  const users = await prisma.user.findMany({
+    where: { email: { in: [EMAIL, COMPANY_EMAIL, RECRUITER_EMAIL] } },
+    select: { id: true, company: { select: { id: true } } }
   });
-  if (!user) return;
+  if (!users.length) return;
 
+  const userIds = users.map(user => user.id);
+  const companyIds = users.flatMap(user => user.company ? [user.company.id] : []);
   const ipKey = digest(TEST_IP);
-  const identifierKey = digest(EMAIL.toLowerCase());
-  const recoveryKey = digest(`user:${user.id}`);
+  const recoveryKeys = userIds.map(id => digest(\`user:\${id}\`));
+  const auditSubjectIds = [...userIds, ...companyIds];
 
   await prisma.$transaction(async tx => {
-    await tx.loginAttempt.deleteMany({ where: { identifierKey, ipKey } });
-    await tx.recoveryAttempt.deleteMany({ where: { identifierKey: recoveryKey, ipKey } });
+    await tx.recruiterLink.deleteMany({
+      where: { OR: [{ companyId: { in: companyIds } }, { recruiterId: { in: userIds } }] }
+    });
+    await tx.recruiterInvitation.deleteMany({
+      where: { OR: [{ companyId: { in: companyIds } }, { recipientUserId: { in: userIds } }, { sentByUserId: { in: userIds } }] }
+    });
+    await tx.companyEmailVerificationToken.deleteMany({ where: { companyId: { in: companyIds } } });
+    await tx.passwordResetToken.deleteMany({ where: { userId: { in: userIds } } });
+    await tx.session.deleteMany({ where: { userId: { in: userIds } } });
+    await tx.loginAttempt.deleteMany({ where: { ipKey } });
+    await tx.recoveryAttempt.deleteMany({ where: { ipKey } });
     await tx.recoveryBlock.deleteMany({
-      where: { scopeKey: { in: [`identifier:${recoveryKey}`, `ip:${ipKey}`] } }
+      where: { scopeKey: { in: [...recoveryKeys.map(key => \`identifier:\${key}\`), \`ip:\${ipKey}\`] } }
     });
     await tx.auditEvent.deleteMany({
-      where: { OR: [{ actorUserId: user.id }, { subjectId: user.id }] }
+      where: { OR: [{ actorUserId: { in: userIds } }, { subjectId: { in: auditSubjectIds } }] }
     });
-    await tx.user.delete({ where: { id: user.id } });
+    await tx.company.deleteMany({ where: { id: { in: companyIds } } });
+    await tx.user.deleteMany({ where: { id: { in: userIds } } });
   });
 }
 
@@ -233,22 +274,7 @@ async function main() {
     assert.match(recoveryBody, /Se os dados corresponderem a uma conta elegível/);
     assert.ok(SMTP_MESSAGES.length > previousMessageCount, "password recovery must send an email to the test SMTP server");
 
-    const mail = SMTP_MESSAGES.slice(previousMessageCount).join("\n");
-    // Decode the SMTP message's transfer encoding before parsing the URL.
-    // This keeps the assertion aligned with the token a real recipient receives.
-    const transferEncoding = mail.match(/content-transfer-encoding:\s*([\w-]+)/i)?.[1]?.toLowerCase();
-    let decodedMail = mail;
-    if (transferEncoding === "base64") {
-      const body = mail.split(/\r?\n\r?\n/, 2)[1] || "";
-      decodedMail = Buffer.from(body.replace(/\s/g, ""), "base64").toString("utf8");
-    } else if (transferEncoding === "quoted-printable") {
-      decodedMail = mail
-        .replace(/=\r?\n/g, "")
-        .replace(/=([0-9A-F]{2})/gi, (_match, hex) => String.fromCharCode(Number.parseInt(hex, 16)));
-    }
-    const tokenMatches = [...decodedMail.matchAll(/(?:\?|&)token=([A-Za-z0-9_-]{43})(?=[\s&"'<>]|$)/g)];
-    assert.equal(tokenMatches.length, 1, "test SMTP message must contain exactly one 43-character recovery token URL parameter");
-    const rawToken = tokenMatches[0][1];
+    const rawToken = extractEmailToken(previousMessageCount, "/recuperar-senha");
 
     const storedToken = await prisma.passwordResetToken.findFirst({
       where: { userId: account.id },
@@ -307,7 +333,133 @@ async function main() {
     });
     await expectStatus(newPage, 200, "candidate page after new login");
 
-    process.stdout.write("Auth E2E passed: registration, login/session, SMTP recovery, one-time reset, session revocation and re-login.\n");
+    // Company registration and email verification exercise the inactive-to-active transition.
+    const companyRegistration = await postJson("/api/auth/register/company", {
+      legalName: "Empresa de Teste E2E",
+      tradeName: "Empresa E2E",
+      officialId: "12345678000195",
+      contactEmail: COMPANY_EMAIL,
+      password: COMPANY_PASSWORD
+    });
+    await expectStatus(companyRegistration, 201, "company registration");
+    const companyAccount = await prisma.user.findUnique({
+      where: { email: COMPANY_EMAIL },
+      select: { id: true, role: true, isActive: true, company: { select: { id: true, emailConfirmedAt: true } } }
+    });
+    assert.ok(companyAccount?.company && companyAccount.role === "COMPANY" && !companyAccount.isActive, "company must remain inactive before email verification");
+    assert.equal(companyAccount.company.emailConfirmedAt, null);
+
+    let emailCount = SMTP_MESSAGES.length - 1;
+    const companyVerificationToken = extractEmailToken(emailCount, "/empresa/confirmar-email");
+    const storedVerification = await prisma.companyEmailVerificationToken.findFirst({
+      where: { companyId: companyAccount.company.id },
+      select: { tokenHash: true }
+    });
+    assert.ok(storedVerification, "company verification token must be stored");
+    assert.equal(storedVerification.tokenHash, digest(companyVerificationToken), "database must store only the SHA-256 digest of the company verification token");
+
+    const verifyCompany = await postJson("/api/auth/company/verify-email", { token: companyVerificationToken });
+    await expectStatus(verifyCompany, 200, "company email verification");
+    const reusedVerification = await postJson("/api/auth/company/verify-email", { token: companyVerificationToken });
+    await expectStatus(reusedVerification, 400, "company verification token reuse");
+    const activatedCompany = await prisma.user.findUnique({
+      where: { id: companyAccount.id },
+      select: { isActive: true, company: { select: { emailConfirmedAt: true } } }
+    });
+    assert.ok(activatedCompany?.isActive && activatedCompany.company?.emailConfirmedAt, "email verification must activate the company account");
+
+    const companyLogin = await postJson("/api/auth/login", {
+      profile: "company",
+      identifier: COMPANY_EMAIL,
+      password: COMPANY_PASSWORD,
+      rememberMe: false
+    });
+    const companyLoginBody = await expectStatus(companyLogin, 200, "company login after verification");
+    assert.equal(JSON.parse(companyLoginBody).redirectTo, "/empresa");
+    const companyCookieMatch = (companyLogin.headers.get("set-cookie") || "").match(/(?:^|,\s*)acessa_session=([^;]+)/);
+    assert.ok(companyCookieMatch?.[1], "company login must issue a session cookie");
+    const companyCookie = \`acessa_session=\${companyCookieMatch[1]}\`;
+
+    // Invite a new recruiter, resend to invalidate the previous link, and accept the latest link.
+    emailCount = SMTP_MESSAGES.length;
+    const invite = await postJson("/api/company/recruiter-invitations", {
+      email: RECRUITER_EMAIL,
+      fullName: "Recrutador de Teste E2E"
+    }, { cookie: companyCookie });
+    await expectStatus(invite, 201, "recruiter invitation");
+    const firstInvitationToken = extractEmailToken(emailCount, "/recrutador/convite");
+
+    emailCount = SMTP_MESSAGES.length;
+    const resend = await postJson("/api/company/recruiter-invitations", {
+      email: RECRUITER_EMAIL,
+      fullName: "Recrutador de Teste E2E"
+    }, { cookie: companyCookie });
+    await expectStatus(resend, 200, "recruiter invitation resend");
+    const currentInvitationToken = extractEmailToken(emailCount, "/recrutador/convite");
+    assert.notEqual(currentInvitationToken, firstInvitationToken, "resending must issue a new invitation token");
+
+    const recruiterAccount = await prisma.user.findUnique({
+      where: { email: RECRUITER_EMAIL },
+      select: { id: true, role: true, isActive: true, pendingActivation: true }
+    });
+    assert.ok(recruiterAccount && recruiterAccount.role === "RECRUITER" && !recruiterAccount.isActive && recruiterAccount.pendingActivation, "invited recruiter must remain inactive until accepting the invitation");
+    const invitationRecord = await prisma.recruiterInvitation.findFirst({
+      where: { companyId: companyAccount.company.id, recipientUserId: recruiterAccount.id },
+      select: { id: true, tokenHash: true, status: true }
+    });
+    assert.ok(invitationRecord && invitationRecord.status === "PENDING", "resend must preserve one pending invitation");
+    assert.equal(invitationRecord.tokenHash, digest(currentInvitationToken), "database must store only the SHA-256 digest of the current invitation token");
+    assert.notEqual(invitationRecord.tokenHash, digest(firstInvitationToken), "resend must invalidate the previous invitation token");
+
+    const staleInvitation = await postJson("/api/recruiter/invitations/respond", {
+      token: firstInvitationToken,
+      action: "accept",
+      password: RECRUITER_PASSWORD
+    });
+    await expectStatus(staleInvitation, 400, "previous recruiter invitation token after resend");
+
+    const acceptInvitation = await postJson("/api/recruiter/invitations/respond", {
+      token: currentInvitationToken,
+      action: "accept",
+      password: RECRUITER_PASSWORD
+    });
+    await expectStatus(acceptInvitation, 200, "accept recruiter invitation and activate account");
+
+    const acceptedRecruiter = await prisma.user.findUnique({
+      where: { id: recruiterAccount.id },
+      select: { isActive: true, pendingActivation: true }
+    });
+    assert.ok(acceptedRecruiter?.isActive && !acceptedRecruiter.pendingActivation, "accepting the invitation must activate the recruiter account");
+    const activeLink = await prisma.recruiterLink.findFirst({
+      where: { companyId: companyAccount.company.id, recruiterId: recruiterAccount.id, active: true },
+      select: { id: true }
+    });
+    assert.ok(activeLink, "accepting the invitation must create an active company link");
+
+    const listedLinks = await fetch(\`\${BASE_URL}/api/company/recruiter-links\`, {
+      headers: { cookie: companyCookie },
+      redirect: "manual"
+    });
+    const listedLinksBody = await expectStatus(listedLinks, 200, "company recruiter links list");
+    assert.ok(JSON.parse(listedLinksBody).links.some(link => link.recruiter.email === RECRUITER_EMAIL), "company must see its active recruiter link");
+
+    const endLink = await postJson("/api/company/recruiter-links/end", { recruiterLinkId: activeLink.id }, { cookie: companyCookie });
+    await expectStatus(endLink, 200, "company ends its own recruiter link");
+    const preservedRecruiter = await prisma.user.findUnique({
+      where: { id: recruiterAccount.id },
+      select: { id: true, isActive: true }
+    });
+    const endedLink = await prisma.recruiterLink.findUnique({ where: { id: activeLink.id }, select: { active: true, endedAt: true } });
+    assert.ok(preservedRecruiter?.isActive && endedLink && !endedLink.active && endedLink.endedAt, "ending a link must preserve the recruiter account while deactivating only the company link");
+
+    const reusedInvitation = await postJson("/api/recruiter/invitations/respond", {
+      token: currentInvitationToken,
+      action: "accept",
+      password: RECRUITER_PASSWORD
+    });
+    await expectStatus(reusedInvitation, 400, "accepted recruiter invitation token reuse");
+
+    process.stdout.write("Auth E2E passed: candidate registration/login/recovery/reset/session revocation; company registration/email verification; recruiter invitation/resend/acceptance/link termination.\\n");
   } finally {
     try {
       await cleanupTestData();
