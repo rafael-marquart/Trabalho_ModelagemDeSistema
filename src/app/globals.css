@@ -95,3 +95,12 @@ button, input, select { font: inherit; }
   .form-options { align-items: flex-start; flex-direction: column; }
   .signup-links { flex-direction: column; align-items: center; }
 }
+
+.secondary-button { min-height: 42px; padding: 0 14px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); background: var(--surface); font-weight: 600; cursor: pointer; }
+.secondary-button:hover { border-color: #b7a3e9; background: var(--purple-soft); }
+.secondary-button:disabled { cursor: wait; opacity: .7; }
+.section-heading { margin: 32px 0 14px; font-family: "Manrope", sans-serif; font-size: 18px; }
+.invitation-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.invitation-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; }
+.invitation-item .muted { margin-top: 5px; font-size: 12px; }
+@media (max-width: 480px) { .invitation-item { align-items: flex-start; flex-direction: column; } }
