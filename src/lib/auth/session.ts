@@ -52,14 +52,12 @@ export async function getCurrentUser() {
 
   if (!session || !session.user.isActive || session.expiresAt <= new Date()) {
     await prisma.session.deleteMany({ where: { tokenHash: digest(token) } });
-    cookieStore.delete(COOKIE_NAME);
     return null;
   }
 
   const now = new Date();
   if (now.getTime() - session.lastSeenAt.getTime() >= IDLE_TIMEOUT_MS) {
     await prisma.session.deleteMany({ where: { id: session.id } });
-    cookieStore.delete(COOKIE_NAME);
     return null;
   }
 
