@@ -33,6 +33,7 @@ describe("send recruiter invitation", () => {
       update: vi.fn(),
       create: vi.fn()
     },
+    user: { create: vi.fn() },
     auditEvent: { create: vi.fn() }
   };
   let transactionCount = 0;
@@ -45,7 +46,8 @@ describe("send recruiter invitation", () => {
     createTokenMock.mockReturnValue({ token: "one-time-token-value", tokenHash: "token-hash" });
     sendEmailMock.mockResolvedValue(undefined);
     prismaMock.company.findUnique.mockResolvedValue({ id: "company-1", legalName: "Empresa Exemplo" });
-    prismaMock.user.findUnique.mockResolvedValue({ id: "recruiter-1", email: "recruiter@example.com", role: "RECRUITER" });
+    prismaMock.user.findUnique.mockResolvedValue({ id: "recruiter-1", email: "recruiter@example.com", role: "RECRUITER", isActive: true, pendingActivation: false });
+    tx.user.create.mockResolvedValue({ id: "new-recruiter-1", email: "new@example.com", role: "RECRUITER", isActive: false, pendingActivation: true });
     prismaMock.recruiterLink.findFirst.mockResolvedValue(null);
     prismaMock.recruiterInvitation.findMany.mockResolvedValue([]);
     prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => {
@@ -65,7 +67,7 @@ describe("send recruiter invitation", () => {
     new Request("https://acessavagas.example/api/company/recruiter-invitations", {
       method: "POST",
       headers: { "content-type": "application/json", origin: "https://acessavagas.example" },
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email, fullName: "Nome do Recrutador" })
     });
 
   it("does not audit an expiration if another request already changed the invitation", async () => {
@@ -95,7 +97,7 @@ describe("send recruiter invitation", () => {
     expect(response.status).toBe(201);
     expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
       where: { email: "recruiter@example.com" },
-      select: { id: true, email: true, role: true }
+      select: { id: true, email: true, role: true, isActive: true, pendingActivation: true }
     });
     expect(tx.$queryRaw).toHaveBeenCalled();
     expect(tx.recruiterInvitation.create).toHaveBeenCalledWith({
@@ -111,6 +113,34 @@ describe("send recruiter invitation", () => {
     expect(sendEmailMock).toHaveBeenCalledWith(expect.objectContaining({
       to: "recruiter@example.com",
       text: expect.stringContaining("token=one-time-token-value")
+    }));
+  });
+
+
+  it("creates a pending recruiter account when the email is new", async () => {
+    prismaMock.user.findUnique.mockResolvedValueOnce(null);
+
+    const response = await POST(new Request("https://acessavagas.example/api/company/recruiter-invitations", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: "https://acessavagas.example" },
+      body: JSON.stringify({ email: "new@example.com", fullName: "Novo Recrutador" })
+    }) as never);
+
+    expect(response.status).toBe(201);
+    expect(tx.user.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        email: "new@example.com",
+        fullName: "Novo Recrutador",
+        role: "RECRUITER",
+        isActive: false,
+        pendingActivation: true,
+        passwordHash: expect.any(String)
+      }),
+      select: { id: true, email: true, role: true, isActive: true, pendingActivation: true }
+    });
+    expect(sendEmailMock).toHaveBeenCalledWith(expect.objectContaining({
+      to: "new@example.com",
+      text: expect.stringContaining("defina sua senha e aceite explicitamente o vínculo")
     }));
   });
 
