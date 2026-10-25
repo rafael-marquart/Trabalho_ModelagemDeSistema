@@ -111,7 +111,8 @@ describe("password recovery request", () => {
 
     const response = await POST(request as never);
 
-    expect(response.status).toBe(429);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ message: "Se os dados corresponderem a uma conta elegível, enviaremos instruções ao e-mail cadastrado." });
     expect(tx.recoveryAttempt.create).not.toHaveBeenCalled();
     expect(tx.recoveryBlock.upsert).toHaveBeenCalledWith({
       where: { scopeKey: expect.stringMatching(/^ip:/) },
