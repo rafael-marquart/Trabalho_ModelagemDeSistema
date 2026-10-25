@@ -59,8 +59,41 @@ export async function POST(request: NextRequest) {
     const lockKey = `recruiter-invitation:${company.id}:${recipient.id}`;
     await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`;
 
+    const now = new Date();
+    const expiredInvitations = await tx.recruiterInvitation.findMany({
+      where: {
+        companyId: company.id,
+        recipientUserId: recipient.id,
+        status: "PENDING",
+        expiresAt: { lte: now }
+      },
+      select: { id: true }
+    });
+
+    for (const expiredInvitation of expiredInvitations) {
+      const expired = await tx.recruiterInvitation.updateMany({
+        where: {
+          id: expiredInvitation.id,
+          status: "PENDING",
+          expiresAt: { lte: now }
+        },
+        data: { status: "EXPIRED", respondedAt: now }
+      });
+
+      if (expired.count === 1) {
+        await tx.auditEvent.create({
+          data: {
+            actorUserId: user.id,
+            eventType: "RECRUITER_INVITATION_EXPIRED",
+            subjectType: "RecruiterInvitation",
+            subjectId: expiredInvitation.id
+          }
+        });
+      }
+    }
+
     const pending = await tx.recruiterInvitation.findFirst({
-      where: { companyId: company.id, recipientUserId: recipient.id, status: "PENDING", expiresAt: { gt: new Date() } },
+      where: { companyId: company.id, recipientUserId: recipient.id, status: "PENDING", expiresAt: { gt: now } },
       orderBy: { createdAt: "desc" }
     });
     const invitation = pending
