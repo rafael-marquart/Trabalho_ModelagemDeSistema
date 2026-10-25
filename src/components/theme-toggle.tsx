@@ -5,7 +5,7 @@ import React from "react";
 import { useTheme } from "@/components/theme-provider";
 
 export default function ThemeToggle() {
-  const { theme, toggleTheme, ready } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   return (
     <button
       type="button"
