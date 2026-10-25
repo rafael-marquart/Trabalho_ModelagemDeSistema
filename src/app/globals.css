@@ -133,6 +133,7 @@ button, input, select { font: inherit; }
 :root[data-theme="dark"] .choice-card { background: var(--surface); }
 :root[data-theme="dark"] .auth-page { background: radial-gradient(circle at 0% 100%, #302342 0, transparent 36%), var(--background); }
 :root[data-theme="dark"] .auth-card { border-color: var(--line); background: var(--surface); box-shadow: 0 22px 60px rgba(0,0,0,.25); }
+:root[data-theme="dark"] .primary-button { color: #211d32; }
 :root[data-theme="dark"] .auth-brand { color: var(--ink); }
 :root[data-theme="dark"] .auth-form > label { color: var(--ink); }
 :root[data-theme="dark"] .auth-form input:not([type="checkbox"]),
