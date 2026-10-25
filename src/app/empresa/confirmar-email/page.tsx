@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import ThemeToggle from "@/components/theme-toggle";
 import { useEffect, useState } from "react";
 
 export default function ConfirmCompanyEmailPage() {
@@ -36,6 +37,7 @@ export default function ConfirmCompanyEmailPage() {
 
   return (
     <main className="auth-page">
+      <div className="theme-control-host"><ThemeToggle /></div>
       <Link className="brand auth-brand" href="/">
         <img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" />
       </Link>
