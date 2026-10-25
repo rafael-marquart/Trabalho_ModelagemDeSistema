@@ -6,6 +6,29 @@ import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 
 const schema = z.object({ companyId: z.string().min(1).max(128), decision: z.literal("approve") });
 
+
+export async function GET() {
+  const actor = await getCurrentUser();
+  if (!actor || actor.role !== "ADMIN" || !actor.isActive) {
+    return NextResponse.json({ message: "Acesso não autorizado." }, { status: 401 });
+  }
+
+  const companies = await prisma.company.findMany({
+    where: { emailConfirmedAt: { not: null }, officialIdValidatedAt: null },
+    select: {
+      id: true,
+      legalName: true,
+      tradeName: true,
+      officialId: true,
+      contactEmail: true,
+      emailConfirmedAt: true,
+      createdAt: true
+    },
+    orderBy: { createdAt: "asc" }
+  });
+  return NextResponse.json({ companies });
+}
+
 export async function POST(request: Request) {
   const originRejection = rejectCrossOriginRequest(request);
   if (originRejection) return originRejection;
