@@ -28,66 +28,72 @@ export async function POST(request: NextRequest) {
   const normalizedCpf = normalizeCpf(input.identifier);
   const identifierKey = key(identifier);
   const ipKey = key(getClientIp(request));
+  const expectedRole = input.profile === "candidate" ? "CANDIDATE" : input.profile === "recruiter" ? "RECRUITER" : "COMPANY";
   const user = await prisma.user.findFirst({
     where: input.profile === "candidate"
       ? { OR: [{ email: identifier }, ...(normalizedCpf ? [{ cpf: normalizedCpf }] : [])] }
       : { email: identifier }
   });
 
-  const expectedRole = input.profile === "candidate" ? "CANDIDATE" : input.profile === "recruiter" ? "RECRUITER" : "COMPANY";
-  const locked = user?.lockedUntil && user.lockedUntil > new Date();
-  const valid = Boolean(
-    user &&
-    user.role === expectedRole &&
-    user.isActive &&
-    !locked &&
-    await verifyPassword(user.passwordHash, input.password)
-  );
+  // Serialize credential checks for a known account, not just counter updates.
+  // Otherwise a valid login and a wrong-password request can race and reset/increment
+  // the consecutive-failure counter in an order different from their DB updates.
+  const outcome = await prisma.$transaction(async (tx) => {
+    let currentUser = null;
+    if (user) {
+      const lockKey = `login-account:${user.id}`;
+      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`;
+      currentUser = await tx.user.findUnique({ where: { id: user.id } });
+    }
 
-  if (!valid || !user) {
-    await prisma.$transaction(async (tx) => {
-      await tx.loginAttempt.create({ data: { identifierKey, ipKey, succeeded: false } });
+    const now = new Date();
+    const eligible = Boolean(
+      currentUser &&
+      currentUser.role === expectedRole &&
+      currentUser.isActive &&
+      (!currentUser.lockedUntil || currentUser.lockedUntil <= now)
+    );
+    const valid = Boolean(eligible && currentUser && await verifyPassword(currentUser.passwordHash, input.password));
 
-      // Atomically increment the counter in PostgreSQL. Concurrent failed
-      // logins cannot overwrite one another's increments or prolong an active lock.
-      if (user && user.role === expectedRole && user.isActive && !locked) {
-        await tx.$queryRaw<Array<{ failedLoginCount: number }>>`
-          UPDATE "User"
-          SET
-            "failedLoginCount" = CASE
-              WHEN "failedLoginCount" + 1 >= ${MAX_ATTEMPTS} THEN 0
-              ELSE "failedLoginCount" + 1
-            END,
-            "lockedUntil" = CASE
-              WHEN "failedLoginCount" + 1 >= ${MAX_ATTEMPTS}
-                THEN ${new Date(Date.now() + WINDOW_MS)}
-              ELSE "lockedUntil"
-            END
-          WHERE "id" = ${user.id}
-            AND ("lockedUntil" IS NULL OR "lockedUntil" <= NOW())
-          RETURNING "failedLoginCount"
-        `;
-        // The SQL update itself is atomic; the threshold sets the lock and
-        // resets the consecutive-failure counter in the same statement.
-      }
+    await tx.loginAttempt.create({
+      data: { identifierKey, ipKey, succeeded: valid }
     });
 
+    if (currentUser && currentUser.role === expectedRole && currentUser.isActive) {
+      if (valid) {
+        await tx.user.update({
+          where: { id: currentUser.id },
+          data: { failedLoginCount: 0, lockedUntil: null }
+        });
+      } else if (!currentUser.lockedUntil || currentUser.lockedUntil <= now) {
+        const nextCount = currentUser.failedLoginCount + 1;
+        if (nextCount >= MAX_ATTEMPTS) {
+          await tx.user.update({
+            where: { id: currentUser.id },
+            data: { failedLoginCount: 0, lockedUntil: new Date(now.getTime() + WINDOW_MS) }
+          });
+        } else {
+          await tx.user.update({
+            where: { id: currentUser.id },
+            data: { failedLoginCount: nextCount }
+          });
+        }
+      }
+    }
+
+    return { valid, userId: valid && currentUser ? currentUser.id : null };
+  });
+
+  if (!outcome.valid || !outcome.userId) {
     return NextResponse.json(
       { message: "Não foi possível entrar com os dados informados." },
       { status: 401 }
     );
   }
 
-  await prisma.$transaction([
-    prisma.loginAttempt.create({ data: { identifierKey, ipKey, succeeded: true } }),
-    prisma.user.update({
-      where: { id: user.id },
-      data: { failedLoginCount: 0, lockedUntil: null }
-    })
-  ]);
-  await createSession(user.id, input.rememberMe);
+  await createSession(outcome.userId, input.rememberMe);
   await prisma.auditEvent.create({
-    data: { actorUserId: user.id, eventType: "AUTH_LOGIN_SUCCEEDED", subjectType: "User", subjectId: user.id }
+    data: { actorUserId: outcome.userId, eventType: "AUTH_LOGIN_SUCCEEDED", subjectType: "User", subjectId: outcome.userId }
   });
 
   return NextResponse.json({
