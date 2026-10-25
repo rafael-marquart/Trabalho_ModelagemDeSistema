@@ -95,6 +95,31 @@ describe("password reset", () => {
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
 
+  it("rejects a token belonging to an inactive account", async () => {
+    prismaMock.passwordResetToken.findUnique.mockResolvedValueOnce({
+      ...tokenRecord,
+      user: { id: "user-1", isActive: false }
+    });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(400);
+    expect(hashPasswordMock).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
+  it("rejects a token that another concurrent request has already claimed", async () => {
+    tx.passwordResetToken.updateMany.mockResolvedValueOnce({ count: 0 });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(400);
+    expect(tx.passwordResetToken.deleteMany).not.toHaveBeenCalled();
+    expect(tx.user.update).not.toHaveBeenCalled();
+    expect(tx.session.deleteMany).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
   it("rejects malformed input without querying the token", async () => {
     const response = await POST(new Request("https://acessavagas.example/api/auth/password/reset", {
       method: "POST",
