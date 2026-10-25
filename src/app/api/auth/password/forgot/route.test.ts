@@ -133,7 +133,8 @@ describe("password recovery request", () => {
 
     const response = await POST(request as never);
 
-    expect(response.status).toBe(429);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ message: "Se os dados corresponderem a uma conta elegível, enviaremos instruções ao e-mail cadastrado." });
     expect(tx.recoveryBlock.upsert).toHaveBeenCalledWith({
       where: { scopeKey: expect.stringMatching(/^identifier:/) },
       create: { scopeKey: expect.stringMatching(/^identifier:/), blockedUntil: expect.any(Date) },
@@ -156,7 +157,8 @@ describe("password recovery request", () => {
 
     const response = await POST(request as never);
 
-    expect(response.status).toBe(429);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ message: "Se os dados corresponderem a uma conta elegível, enviaremos instruções ao e-mail cadastrado." });
     expect(tx.recoveryAttempt.count).not.toHaveBeenCalled();
     expect(tx.recoveryBlock.upsert).not.toHaveBeenCalled();
     expect(tx.passwordResetToken.deleteMany).not.toHaveBeenCalled();
