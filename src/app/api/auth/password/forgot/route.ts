@@ -61,13 +61,36 @@ export async function POST(request: NextRequest) {
       await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`;
     }
 
-    const cutoff = new Date(Date.now() - WINDOW_MS);
+    const now = new Date();
+    const cutoff = new Date(now.getTime() - WINDOW_MS);
+    const scopeKeys = [
+      `identifier:${identifierKey}`,
+      `ip:${ipKey}`
+    ];
+    const activeBlock = await tx.recoveryBlock.findFirst({
+      where: { scopeKey: { in: scopeKeys }, blockedUntil: { gt: now } },
+      select: { scopeKey: true, blockedUntil: true }
+    });
+    if (activeBlock) return { allowed: false, token: null };
+
     const [identifierAttempts, ipAttempts] = await Promise.all([
       tx.recoveryAttempt.count({ where: { identifierKey, createdAt: { gte: cutoff } } }),
       tx.recoveryAttempt.count({ where: { ipKey, createdAt: { gte: cutoff } } })
     ]);
 
-    if (identifierAttempts >= MAX_REQUESTS || ipAttempts >= MAX_REQUESTS) {
+    const exhaustedScopes = [
+      ...(identifierAttempts >= MAX_REQUESTS ? [scopeKeys[0]] : []),
+      ...(ipAttempts >= MAX_REQUESTS ? [scopeKeys[1]] : [])
+    ];
+    if (exhaustedScopes.length) {
+      const blockedUntil = new Date(now.getTime() + WINDOW_MS);
+      for (const scopeKey of exhaustedScopes) {
+        await tx.recoveryBlock.upsert({
+          where: { scopeKey },
+          create: { scopeKey, blockedUntil },
+          update: { blockedUntil }
+        });
+      }
       return { allowed: false, token: null };
     }
 
