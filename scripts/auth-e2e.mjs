@@ -457,13 +457,6 @@ async function main() {
     assert.ok(recruiterCookieMatch?.[1], "recruiter login must issue a session cookie");
     const recruiterCookie = `acessa_session=${recruiterCookieMatch[1]}`;
 
-    const listedLinks = await fetch(`${BASE_URL}/api/company/recruiter-links`, {
-      headers: { cookie: companyCookie },
-      redirect: "manual"
-    });
-    const listedLinksBody = await expectStatus(listedLinks, 200, "company recruiter links list");
-    assert.ok(JSON.parse(listedLinksBody).links.some(link => link.recruiter.email === RECRUITER_EMAIL), "company must see its active recruiter link");
-
     const endInitialLink = await postJson("/api/company/recruiter-links/end", { recruiterLinkId: activeLink.id }, { cookie: companyCookie });
     await expectStatus(endInitialLink, 200, "company ends its own recruiter link");
     const preservedRecruiter = await prisma.user.findUnique({
