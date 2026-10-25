@@ -73,7 +73,7 @@ describe("candidate registration", () => {
     expect(tx.user.create).toHaveBeenCalled();
   });
 
-  it("does not report registration success when the audit write fails", async () => {
+  it("propagates a transaction failure without reporting registration success", async () => {
     prismaMock.$transaction.mockRejectedValueOnce(new Error("audit database unavailable"));
 
     await expect(POST(makeRequest())).rejects.toThrow("audit database unavailable");
