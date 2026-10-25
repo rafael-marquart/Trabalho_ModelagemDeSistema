@@ -59,3 +59,5 @@ jobs:
         run: npm test
       - name: Production build
         run: npm run build
+      - name: End-to-end auth flow with PostgreSQL and test SMTP
+        run: node scripts/auth-e2e.mjs
