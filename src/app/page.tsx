@@ -5,8 +5,7 @@ export default function HomePage() {
     <main className="page-shell">
       <section className="welcome-panel" aria-labelledby="welcome-title">
         <Link className="brand" href="/" aria-label="Acessa Vagas — início">
-          <span className="brand-mark" aria-hidden="true">a</span>
-          <span>Acessa<span className="brand-accent">Vagas</span></span>
+          <img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" />
         </Link>
         <div className="welcome-copy">
           <p className="eyebrow">Oportunidades para todos</p>
