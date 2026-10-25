@@ -8,7 +8,7 @@ export default defineConfig({
     }
   },
   test: {
-    environment: "node",
-    include: ["src/**/*.test.ts", "scripts/**/*.test.mjs"]
+    environment: "jsdom",
+    include: ["src/**/*.test.ts", "src/**/*.test.tsx", "scripts/**/*.test.mjs"]
   }
 });
