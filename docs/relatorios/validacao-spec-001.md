@@ -13,7 +13,7 @@
 - O HEAD mantém a serialização por bloqueio de linha no reset de senha, teste para usuário que deixa de estar elegível antes da transação e proteção contra corrida na ativação de empresa durante a confirmação de e-mail. A ordem das operações foi ajustada para não consumir tokens secundários se a ativação não for confirmada.
 - A recuperação de senha mantém resposta HTTP 200 e mensagem genérica quando há throttling, para reduzir risco de enumeração de contas.
 - A listagem `GET /api/company/recruiter-invitations` é somente leitura: convites pendentes cujo prazo já passou são apresentados como `EXPIRED` na resposta, sem atualizar o banco nem gravar auditoria durante a consulta. O status persistido pode permanecer `PENDING` até um fluxo explícito de escrita tratar o convite.
-- CI não comprova configuração real de SMTP, proxy, domínio público, agendador de retenção nem experiência de acessibilidade em navegadores/dispositivos.
+- CI não comprova configuração real de SMTP, proxy, domínio público, agendador de retenção nem experiência de acessibilidade em navegadores/dispositivos. O bloqueio de login é por conta; a proteção por IP no fluxo de login permanece uma decisão/pendência de segurança, diferente do throttling por conta/IP já implementado na recuperação de senha.
 
 ## Matriz dos critérios de aceitação
 
@@ -38,7 +38,7 @@
 
 1. **Integração/E2E:** executar percursos completos de cadastro, confirmação de e-mail, login, recuperação, convite de recrutador, aceite/recusa, cancelamento e encerramento de vínculo contra PostgreSQL e provedor de e-mail de teste.
 2. **Autorização:** verificar sistematicamente candidato, empresa, recrutador e usuário anônimo em todas as rotas protegidas, inclusive tentativa de acessar identificadores de outra organização.
-3. **Segurança:** revisar limites de tentativas, concorrência de tokens de uso único, sessões, origem de requisição, mensagens anti-enumeração, cookies e logs de auditoria.
+3. **Segurança:** revisar concorrência de tokens de uso único, sessões, origem de requisição, mensagens anti-enumeração, cookies e logs de auditoria. O login atualmente aplica bloqueio por conta após 10 falhas consecutivas em 15 minutos e registra IP/identificador com hash, mas não implementa limite global de tentativas por IP para login; avaliar e definir esse controle antes da publicação. O cabeçalho `X-Forwarded-For` só é confiável se o proxy de produção o sobrescrever.
 4. **Acessibilidade/usabilidade:** revisar foco, labels, mensagens `role="alert"`/`role="status"`, contraste, teclado e leitor de tela; a aprovação do SVG não comprova conformidade da implementação.
 5. **Configuração operacional:** definir e testar `APP_BASE_URL`, SMTP e configuração do proxy confiável; configurar e monitorar a execução diária da retenção de auditoria.
 6. **Figma:** sincronizar `Gestao-Recrutadores.svg` e `Mensagens-Autenticacao.svg` na fonte editável e verificar visualmente. A fonte ainda não foi atualizada.
