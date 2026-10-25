@@ -8,13 +8,13 @@ Além do bloqueio existente por conta (10 falhas consecutivas em 15 minutos), o 
 
 O endpoint considera as falhas registradas nos últimos 15 minutos para o IP. A contagem inclui identificadores existentes e inexistentes; os identificadores e IPs persistidos são hashes SHA-256, não os valores brutos.
 
-| Falhas registradas no intervalo móvel de 15 minutos | Resposta a novas tentativas | Retry-After |
+| Falhas anteriores registradas no intervalo móvel de 15 minutos | Resposta à tentativa seguinte | Retry-After |
 |---:|---|---:|
-| 0–30 | Sem bloqueio por IP | — |
-| 31–50 | HTTP 429 | 60 segundos |
-| 51–80 | HTTP 429 | 300 segundos |
-| 81–120 | HTTP 429 | 900 segundos |
-| Acima de 120 | HTTP 429 | 3600 segundos |
+| 0–29 | Sem bloqueio por IP | — |
+| 30–49 | HTTP 429 | 60 segundos |
+| 50–79 | HTTP 429 | 300 segundos |
+| 80–119 | HTTP 429 | 900 segundos |
+| 120 ou mais | HTTP 429 | 3600 segundos |
 
 A aplicação avalia o total de falhas anteriores antes de processar a tentativa seguinte. Quando o limite é atingido, o cooldown é aplicado com base no horário da falha mais recente; novas tentativas bloqueadas também são registradas como falhas e reiniciam o cooldown, permitindo que abuso persistente avance para faixas maiores. O cabeçalho Retry-After informa o tempo restante do cooldown. A mensagem de erro não revela se a conta existe.
 
