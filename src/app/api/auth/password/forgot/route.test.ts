@@ -6,7 +6,6 @@ const { prismaMock, sendEmailMock } = vi.hoisted(() => ({
     user: { findFirst: vi.fn() },
     $transaction: vi.fn(),
     recoveryAttempt: { count: vi.fn(), create: vi.fn() },
-    recoveryBlock: { findFirst: vi.fn(), upsert: vi.fn() },
     passwordResetToken: { deleteMany: vi.fn(), create: vi.fn() },
     auditEvent: { create: vi.fn() }
   },
@@ -23,6 +22,7 @@ describe("password recovery request", () => {
   const tx = {
     $queryRaw: vi.fn(),
     recoveryAttempt: { count: vi.fn(), create: vi.fn() },
+    recoveryBlock: { findFirst: vi.fn(), upsert: vi.fn() },
     passwordResetToken: { deleteMany: vi.fn(), create: vi.fn() }
   };
 
