@@ -30,13 +30,13 @@ describe("login", () => {
   };
   const tx = {
     $queryRaw: vi.fn(),
-    user: { findUnique: vi.fn(), update: vi.fn() },
+    user: { findFirst: vi.fn(), findUnique: vi.fn(), update: vi.fn() },
     loginAttempt: { count: vi.fn(), create: vi.fn() }
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
-    prismaMock.user.findFirst.mockResolvedValue(user);
+    tx.user.findFirst.mockResolvedValue(user);
     prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => callback(tx));
     tx.$queryRaw.mockResolvedValue([]);
     tx.user.findUnique.mockResolvedValue(user);
@@ -183,7 +183,7 @@ describe("login", () => {
     expect(tx.loginAttempt.create).toHaveBeenCalledWith({
       data: expect.objectContaining({ succeeded: false })
     });
-    expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
+    expect(tx.user.findFirst).not.toHaveBeenCalled();
     expect(verifyPasswordMock).not.toHaveBeenCalled();
     expect(createSessionMock).not.toHaveBeenCalled();
   });
