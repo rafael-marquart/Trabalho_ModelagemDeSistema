@@ -71,6 +71,22 @@ describe("cancel recruiter invitation", () => {
     expect(tx.auditEvent.create).not.toHaveBeenCalled();
   });
 
+  it("does not cancel or audit an invitation outside the company's ownership", async () => {
+    tx.recruiterInvitation.updateMany.mockResolvedValueOnce({ count: 0 });
+
+    const response = await POST(makeRequest("invitation-from-another-company"));
+
+    expect(response.status).toBe(409);
+    expect(tx.recruiterInvitation.updateMany).toHaveBeenCalledWith({
+      where: expect.objectContaining({
+        id: "invitation-from-another-company",
+        companyId: "company-1"
+      }),
+      data: { status: "CANCELLED", respondedAt: expect.any(Date) }
+    });
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
   it("rejects a missing or inactive company", async () => {
     prismaMock.company.findUnique.mockResolvedValueOnce(null);
 
