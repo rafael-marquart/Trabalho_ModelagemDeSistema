@@ -10,6 +10,7 @@ export default function RecruiterInvitationPage() {
   const [message, setMessage] = useState("Carregando convite…");
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     const value = new URLSearchParams(window.location.search).get("token") || "";
@@ -25,7 +26,7 @@ export default function RecruiterInvitationPage() {
       const response = await fetch("/api/recruiter/invitations/respond", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, action })
+        body: JSON.stringify({ token, action, ...(password ? { password } : {}) })
       });
       const result = await response.json();
       if (response.status === 401) {
@@ -55,6 +56,9 @@ export default function RecruiterInvitationPage() {
         <h1 id="invitation-title">Convite para recrutador</h1>
         <p className={error ? "form-error" : "muted"} role={error ? "alert" : "status"} aria-live="polite">{message}</p>
         {token && <div className="auth-form">
+          <label htmlFor="new-recruiter-password">Se este for seu primeiro acesso, crie uma senha para ativar a conta</label>
+          <input id="new-recruiter-password" type="password" autoComplete="new-password" value={password} onChange={event => setPassword(event.target.value)} minLength={10} maxLength={128} aria-describedby="recruiter-password-help" />
+          <p id="recruiter-password-help" className="muted">Mínimo de 10 caracteres, com letra maiúscula, minúscula e número. Contas existentes podem entrar antes de aceitar.</p>
           <button className="primary-button" disabled={loading} onClick={() => respond("accept")}>{loading ? "Processando…" : "Aceitar convite"}</button>
           <button className="secondary-button" disabled={loading} onClick={() => respond("refuse")}>Recusar convite</button>
         </div>}
