@@ -44,6 +44,7 @@ describe("company email verification", () => {
     tx.companyEmailVerificationToken.updateMany.mockResolvedValue({ count: 1 });
     tx.companyEmailVerificationToken.deleteMany.mockResolvedValue({ count: 1 });
     tx.company.updateMany.mockResolvedValue({ count: 1 });
+    tx.user.updateMany.mockResolvedValue({ count: 1 });
     tx.auditEvent.create.mockResolvedValue({ id: "audit-1" });
   });
 
@@ -90,6 +91,17 @@ describe("company email verification", () => {
     const response = await POST(makeRequest() as never);
 
     expect(response.status).toBe(400);
+    expect(transactionRolledBack).toBe(true);
+    expect(tx.companyEmailVerificationToken.deleteMany).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it("rolls back token consumption when the company account cannot be activated", async () => {
+    tx.user.updateMany.mockResolvedValueOnce({ count: 0 });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(500);
     expect(transactionRolledBack).toBe(true);
     expect(tx.companyEmailVerificationToken.deleteMany).not.toHaveBeenCalled();
     expect(tx.auditEvent.create).not.toHaveBeenCalled();
