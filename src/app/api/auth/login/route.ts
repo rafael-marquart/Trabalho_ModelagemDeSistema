@@ -7,7 +7,16 @@ import { prisma } from "@/lib/prisma";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 
 const WINDOW_MS = 15 * 60 * 1000;
-const MAX_ATTEMPTS = 10;
+const MAX_ACCOUNT_ATTEMPTS = 10;
+
+// Rolling-window IP thresholds: increasing cooldowns reduce automated abuse
+// while allowing a small number of mistakes on shared networks.
+const IP_FAILURE_THRESHOLDS = [
+  { attempts: 120, cooldownSeconds: 60 * 60 },
+  { attempts: 80, cooldownSeconds: 15 * 60 },
+  { attempts: 50, cooldownSeconds: 5 * 60 },
+  { attempts: 30, cooldownSeconds: 60 }
+] as const;
 
 function key(value: string): string {
   return createHash("sha256").update(value).digest("hex");
@@ -33,24 +42,42 @@ export async function POST(request: NextRequest) {
   const identifierKey = key(identifier);
   const ipKey = key(getClientIp(request));
   const expectedRole = input.profile === "candidate" ? "CANDIDATE" : input.profile === "recruiter" ? "RECRUITER" : "COMPANY";
-  const user = await prisma.user.findFirst({
-    where: input.profile === "candidate"
-      ? { OR: [{ email: identifier }, ...(normalizedCpf ? [{ cpf: normalizedCpf }] : [])] }
-      : { email: identifier }
-  });
 
-  // Serialize credential checks for a known account, not just counter updates.
-  // Otherwise a valid login and a wrong-password request can race and reset/increment
-  // the consecutive-failure counter in an order different from their DB updates.
   const outcome = await prisma.$transaction(async (tx) => {
+    // Serialize attempts from the same IP so concurrent requests cannot all pass
+    // the threshold check before any of them is recorded.
+    const ipLockKey = `login-ip:${ipKey}`;
+    await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${ipLockKey}, 0))`;
+
+    const now = new Date();
+    const windowStart = new Date(now.getTime() - WINDOW_MS);
+    const recentFailures = await tx.loginAttempt.count({
+      where: { ipKey, succeeded: false, createdAt: { gte: windowStart } }
+    });
+    const ipThreshold = IP_FAILURE_THRESHOLDS.find((threshold) => recentFailures >= threshold.attempts);
+
+    if (ipThreshold) {
+      // Count blocked requests too, so repeated abuse progresses to a longer cooldown.
+      await tx.loginAttempt.create({ data: { identifierKey, ipKey, succeeded: false } });
+      return { valid: false, userId: null, passwordChangedAt: null, retryAfterSeconds: ipThreshold.cooldownSeconds };
+    }
+
+    const user = await tx.user.findFirst({
+      where: input.profile === "candidate"
+        ? { OR: [{ email: identifier }, ...(normalizedCpf ? [{ cpf: normalizedCpf }] : [])] }
+        : { email: identifier }
+    });
+
+    // Serialize credential checks for a known account, not just counter updates.
+    // Otherwise a valid login and a wrong-password request can race and reset/increment
+    // the consecutive-failure counter in an order different from their DB updates.
     let currentUser = null;
     if (user) {
-      const lockKey = `login-account:${user.id}`;
-      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`;
+      const accountLockKey = `login-account:${user.id}`;
+      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${accountLockKey}, 0))`;
       currentUser = await tx.user.findUnique({ where: { id: user.id } });
     }
 
-    const now = new Date();
     const eligible = Boolean(
       currentUser &&
       currentUser.role === expectedRole &&
@@ -59,9 +86,7 @@ export async function POST(request: NextRequest) {
     );
     const valid = Boolean(eligible && currentUser && await verifyPassword(currentUser.passwordHash, input.password));
 
-    await tx.loginAttempt.create({
-      data: { identifierKey, ipKey, succeeded: valid }
-    });
+    await tx.loginAttempt.create({ data: { identifierKey, ipKey, succeeded: valid } });
 
     if (currentUser && currentUser.role === expectedRole && currentUser.isActive) {
       if (valid) {
@@ -71,7 +96,7 @@ export async function POST(request: NextRequest) {
         });
       } else if (!currentUser.lockedUntil || currentUser.lockedUntil <= now) {
         const nextCount = currentUser.failedLoginCount + 1;
-        if (nextCount >= MAX_ATTEMPTS) {
+        if (nextCount >= MAX_ACCOUNT_ATTEMPTS) {
           await tx.user.update({
             where: { id: currentUser.id },
             data: { failedLoginCount: 0, lockedUntil: new Date(now.getTime() + WINDOW_MS) }
@@ -88,9 +113,17 @@ export async function POST(request: NextRequest) {
     return {
       valid,
       userId: valid && currentUser ? currentUser.id : null,
-      passwordChangedAt: valid && currentUser ? currentUser.passwordChangedAt : null
+      passwordChangedAt: valid && currentUser ? currentUser.passwordChangedAt : null,
+      retryAfterSeconds: null
     };
   });
+
+  if (outcome.retryAfterSeconds) {
+    return NextResponse.json(
+      { message: "Não foi possível entrar com os dados informados. Aguarde antes de tentar novamente." },
+      { status: 429, headers: { "Retry-After": String(outcome.retryAfterSeconds) } }
+    );
+  }
 
   if (!outcome.valid || !outcome.userId) {
     return NextResponse.json(
