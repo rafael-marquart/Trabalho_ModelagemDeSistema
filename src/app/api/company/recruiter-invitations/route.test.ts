@@ -78,7 +78,8 @@ describe("send recruiter invitation", () => {
         expiresAt: new Date(Date.now() - 60_000),
         createdAt: new Date("2026-10-01T12:00:00.000Z"),
         respondedAt: null,
-        recipient: { fullName: "Pessoa Convidada", email: "convidado@example.com" }
+        recipientName: "Nome informado pela empresa",
+        recipientEmail: "convidado@example.com"
       }
     ]);
 
@@ -89,13 +90,14 @@ describe("send recruiter invitation", () => {
       invitations: [{
         id: "expired-invitation-1",
         status: "EXPIRED",
-        recipient: { fullName: "Pessoa Convidada", email: "convidado@example.com" }
+        recipient: { fullName: "Nome informado pela empresa", email: "convidado@example.com" }
       }]
     });
     expect(prismaMock.recruiterInvitation.findMany).toHaveBeenCalledWith(expect.objectContaining({
       where: { companyId: "company-1" },
       select: expect.objectContaining({
-        recipient: { select: { fullName: true, email: true } }
+        recipientName: true,
+        recipientEmail: true
       })
     }));
     expect(prismaMock.recruiterInvitation.findMany).toHaveBeenCalledTimes(1);
@@ -119,6 +121,8 @@ describe("send recruiter invitation", () => {
         recipientUserId: "recruiter-1",
         sentByUserId: "company-user-1",
         tokenHash: "token-hash",
+        recipientName: "Nome do Recrutador",
+        recipientEmail: "recruiter@example.com",
         expiresAt: expect.any(Date)
       }),
       select: { id: true }
@@ -169,7 +173,9 @@ describe("send recruiter invitation", () => {
         tokenHash: "token-hash",
         expiresAt: expect.any(Date),
         sentByUserId: "company-user-1",
-        respondedAt: null
+        respondedAt: null,
+        recipientName: "Nome do Recrutador",
+        recipientEmail: "recruiter@example.com"
       }),
       select: { id: true }
     });
