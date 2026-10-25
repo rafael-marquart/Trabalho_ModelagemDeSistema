@@ -8,6 +8,7 @@ on:
       - "feat/**"
       - "fix/**"
       - "test/**"
+      - "desenvolvimento-do-projeto"
 
 jobs:
   validate:
