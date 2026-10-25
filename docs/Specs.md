@@ -116,10 +116,11 @@ A decisão aprovada define recuperação de candidato por e-mail ou CPF e recupe
 
 ### 5.4 Cadastro de Recrutador
 1. Uma Empresa autenticada e autorizada acessa as próprias configurações. **Não existe papel de Administrador associado à Empresa**; o perfil Administrador é reservado à moderação/gestão da plataforma.
-2. A Empresa abre a área de Recrutadores e informa os dados necessários.
-3. O sistema valida os dados e cria ou associa uma conta USUARIO com perfil de Recrutador.
-4. O sistema mantém o vínculo com a Empresa que realizou o cadastro.
-5. O sistema registra a alteração conforme as regras aplicáveis.
+2. A Empresa abre a área de Recrutadores e informa nome e e-mail.
+3. Se o e-mail pertencer a uma conta elegível de Recrutador, o sistema envia um convite de uso único; o titular deve aceitar explicitamente o vínculo.
+4. Se o e-mail ainda não pertencer a uma conta, o sistema cria uma conta RECRUITER inativa com credencial aleatória não divulgada e envia um link de uso único. A pessoa define sua senha e aceita explicitamente o vínculo pelo link.
+5. Para uma conta recém-criada, a ativação e o vínculo são concluídos atomicamente após o aceite. O convite expira em 7 dias e pode ser reenviado ou cancelado enquanto estiver pendente.
+6. O sistema registra a alteração conforme as regras aplicáveis.
 6. A Empresa pode excluir um Recrutador da própria página de Recrutadores. A operação encerra o vínculo desse Recrutador com a Empresa solicitante, revoga as permissões decorrentes do vínculo e registra a alteração para auditoria; não exclui a conta pessoal do usuário nem apaga seu histórico de ações.
 7. A Empresa não pode administrar vínculos de Recrutadores pertencentes a outra organização.
 
