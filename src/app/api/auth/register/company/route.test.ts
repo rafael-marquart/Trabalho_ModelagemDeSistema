@@ -104,9 +104,10 @@ describe("company registration", () => {
   });
 
   it("does not send verification email if account creation transaction fails", async () => {
-    prismaMock.$transaction.mockRejectedValueOnce(new Error("audit database unavailable"));
+    tx.auditEvent.create.mockRejectedValueOnce(new Error("audit database unavailable"));
 
     await expect(POST(makeRequest())).rejects.toThrow("audit database unavailable");
+    expect(tx.user.create).toHaveBeenCalled();
     expect(sendEmailMock).not.toHaveBeenCalled();
   });
 
