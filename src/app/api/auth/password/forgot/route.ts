@@ -15,7 +15,10 @@ const MAX_REQUESTS = 3;
 const genericMessage = "Se os dados corresponderem a uma conta elegível, enviaremos instruções ao e-mail cadastrado.";
 
 function digest(value: string) { return createHash("sha256").update(value).digest("hex"); }
-function clientIp(request: NextRequest) { return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown"; }
+function clientIp(request: NextRequest) {
+  // This header is trustworthy only when the deployment proxy overwrites it.
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+}
 
 export async function POST(request: NextRequest) {
   const parsed = schema.safeParse(await request.json().catch(() => null));
@@ -27,11 +30,19 @@ export async function POST(request: NextRequest) {
   const identifierKey = digest(identifier);
   const ipKey = digest(clientIp(request));
   const cutoff = new Date(Date.now() - WINDOW_MS);
-  const attempts = await prisma.recoveryAttempt.count({
-    where: { OR: [{ identifierKey }, { ipKey }], createdAt: { gte: cutoff } }
-  });
-  if (attempts >= MAX_REQUESTS) {
-    return NextResponse.json({ message: "Limite de solicitações atingido. Aguarde 15 minutos antes de tentar novamente." }, { status: 429 });
+
+  // The baseline defines independent limits per account/identifier and per IP.
+  // Count each dimension separately so one identifier does not consume the quota
+  // of an unrelated identifier behind the same address (and vice versa).
+  const [identifierAttempts, ipAttempts] = await Promise.all([
+    prisma.recoveryAttempt.count({ where: { identifierKey, createdAt: { gte: cutoff } } }),
+    prisma.recoveryAttempt.count({ where: { ipKey, createdAt: { gte: cutoff } } })
+  ]);
+  if (identifierAttempts >= MAX_REQUESTS || ipAttempts >= MAX_REQUESTS) {
+    return NextResponse.json(
+      { message: "Limite de solicitações atingido. Aguarde 15 minutos antes de tentar novamente." },
+      { status: 429 }
+    );
   }
   await prisma.recoveryAttempt.create({ data: { identifierKey, ipKey } });
 
