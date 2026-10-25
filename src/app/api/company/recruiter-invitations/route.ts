@@ -63,8 +63,11 @@ export async function POST(request: NextRequest) {
       text: `A empresa ${company.legalName} convidou você para se vincular à organização. Aceite ou recuse em até 7 dias: ${baseUrl}/recrutador/convite?token=${token}\n\nSe você não esperava este convite, pode recusá-lo ou ignorar esta mensagem.`
     });
   } catch {
-    await prisma.auditEvent.create({
-      data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_DELIVERY_FAILED", subjectType: "RecruiterInvitation", subjectId: invitation.id }
+    const failedAt = new Date();
+    await prisma.$transaction(async tx => {
+      await tx.recruiterInvitation.updateMany({ where: { id: invitation.id, status: "PENDING" }, data: { status: "CANCELLED", respondedAt: failedAt } });
+      await tx.auditEvent.create({ data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_DELIVERY_FAILED", subjectType: "RecruiterInvitation", subjectId: invitation.id } });
+      await tx.auditEvent.create({ data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_CANCELLED_AFTER_DELIVERY_FAILURE", subjectType: "RecruiterInvitation", subjectId: invitation.id } });
     });
     return NextResponse.json({ message: "O convite foi registrado, mas não foi possível enviar o e-mail." }, { status: 502 });
   }
