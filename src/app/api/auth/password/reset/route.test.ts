@@ -71,6 +71,15 @@ describe("password reset", () => {
     });
   });
 
+  it("does not report a successful reset if the audit write fails inside the transaction", async () => {
+    tx.auditEvent.create.mockRejectedValueOnce(new Error("audit database unavailable"));
+
+    await expect(POST(makeRequest() as never)).rejects.toThrow("audit database unavailable");
+    expect(tx.passwordResetToken.updateMany).toHaveBeenCalled();
+    expect(tx.user.update).toHaveBeenCalled();
+    expect(tx.session.deleteMany).toHaveBeenCalled();
+  });
+
   it("rejects an already-claimed token without changing the password", async () => {
     tx.passwordResetToken.updateMany.mockResolvedValueOnce({ count: 0 });
 
