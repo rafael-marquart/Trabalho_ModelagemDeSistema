@@ -9,7 +9,7 @@ PSQL_DATABASE_URL="${DATABASE_URL%%\?*}"
 # Clean up prior test rows, then race two inserts for the same recruiter.
 psql "$PSQL_DATABASE_URL" -v ON_ERROR_STOP=1 <<'SQL'
 DELETE FROM "RecruiterLink"
-WHERE "id" IN ('ci-concurrent-link-a', 'ci-concurrent-link-b');
+WHERE "id" IN ('ci-active-link-1', 'ci-concurrent-link-a', 'ci-concurrent-link-b');
 SQL
 
 set +e
