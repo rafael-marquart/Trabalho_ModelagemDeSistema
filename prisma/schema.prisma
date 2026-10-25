@@ -82,6 +82,8 @@ model RecruiterInvitation {
   id              String           @id @default(cuid())
   companyId       String
   recipientUserId String
+  recipientName   String
+  recipientEmail  String
   sentByUserId    String?
   tokenHash       String           @unique
   status          InvitationStatus @default(PENDING)
