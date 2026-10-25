@@ -59,6 +59,9 @@ export async function POST(request: Request) {
     if (error && typeof error === "object" && "code" in error && error.code === "P2034") {
       return NextResponse.json({ message: "Houve uma alteração simultânea no vínculo. Atualize a página e tente novamente." }, { status: 409 });
     }
+    if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
+      return NextResponse.json({ message: "Você já possui vínculo ativo com outra empresa. Atualize a página e verifique seus vínculos." }, { status: 409 });
+    }
     throw error;
   }
 }
