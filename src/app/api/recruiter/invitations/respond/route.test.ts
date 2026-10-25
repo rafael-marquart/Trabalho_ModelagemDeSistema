@@ -208,6 +208,46 @@ describe("recruiter invitation response", () => {
     expect(tx.recruiterLink.create).not.toHaveBeenCalled();
   });
 
+  it("maps a serializable transaction conflict to a retryable conflict response", async () => {
+    prismaMock.$transaction.mockRejectedValueOnce({ code: "P2034" });
+
+    const response = await POST(makeRequest());
+
+    expect(response.status).toBe(409);
+    await expect(response.json()).resolves.toMatchObject({
+      message: "Houve uma alteração simultânea no vínculo. Atualize a página e tente novamente."
+    });
+  });
+
+  it("maps a unique active-link conflict to a conflict response", async () => {
+    prismaMock.$transaction.mockRejectedValueOnce({ code: "P2002" });
+
+    const response = await POST(makeRequest());
+
+    expect(response.status).toBe(409);
+    await expect(response.json()).resolves.toMatchObject({
+      message: "Você já possui vínculo ativo com outra empresa. Atualize a página e verifique seus vínculos."
+    });
+  });
+
+  it("does not report acceptance if invitation audit persistence fails", async () => {
+    tx.auditEvent.create.mockRejectedValueOnce(new Error("audit database unavailable"));
+
+    await expect(POST(makeRequest())).rejects.toThrow("audit database unavailable");
+    expect(tx.recruiterInvitation.updateMany).toHaveBeenCalled();
+    expect(tx.recruiterLink.create).toHaveBeenCalled();
+  });
+
+  it("does not report expiration handling as successful if its audit write fails", async () => {
+    prismaMock.recruiterInvitation.findUnique.mockResolvedValueOnce({
+      ...invitation,
+      expiresAt: new Date(Date.now() - 1000)
+    });
+    tx.auditEvent.create.mockRejectedValueOnce(new Error("audit database unavailable"));
+
+    await expect(POST(makeRequest())).rejects.toThrow("audit database unavailable");
+  });
+
   it("rejects a cross-origin request before authentication", async () => {
     rejectOriginMock.mockReturnValueOnce(new Response("blocked", { status: 403 }));
 
