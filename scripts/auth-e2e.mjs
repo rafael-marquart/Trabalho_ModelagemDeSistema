@@ -360,6 +360,31 @@ async function main() {
     });
     await expectStatus(newPage, 200, "candidate page after new login");
 
+    // Company recruiter-management endpoints must reject anonymous callers and
+    // authenticated users with the wrong role, including write operations.
+    const anonymousCompanyLinks = await fetch(`${BASE_URL}/api/company/recruiter-links`, {
+      redirect: "manual"
+    });
+    await expectStatus(anonymousCompanyLinks, 401, "anonymous access to company recruiter links");
+
+    const candidateCompanyLinks = await fetch(`${BASE_URL}/api/company/recruiter-links`, {
+      headers: { cookie: `acessa_session=${newCookieMatch[1]}` },
+      redirect: "manual"
+    });
+    await expectStatus(candidateCompanyLinks, 401, "candidate access to company recruiter links");
+
+    const candidateCompanyInvitations = await fetch(`${BASE_URL}/api/company/recruiter-invitations`, {
+      headers: { cookie: `acessa_session=${newCookieMatch[1]}` },
+      redirect: "manual"
+    });
+    await expectStatus(candidateCompanyInvitations, 401, "candidate access to company recruiter invitations");
+
+    const candidateCreateInvitation = await postJson("/api/company/recruiter-invitations", {
+      email: `unauthorized-${randomUUID()}@example.test`,
+      fullName: "Tentativa Não Autorizada"
+    }, { cookie: `acessa_session=${newCookieMatch[1]}` });
+    await expectStatus(candidateCreateInvitation, 401, "candidate attempts to create company recruiter invitation");
+
     // Force the persisted idle expiry and prove the real protected page rejects the stale cookie.
     await prisma.session.updateMany({
       where: { tokenHash: digest(newCookieMatch[1]) },
