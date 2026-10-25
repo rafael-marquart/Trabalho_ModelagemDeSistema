@@ -55,11 +55,22 @@ export async function POST(request: NextRequest) {
       where: { ipKey, succeeded: false, createdAt: { gte: windowStart } }
     });
     const ipThreshold = IP_FAILURE_THRESHOLDS.find((threshold) => recentFailures >= threshold.attempts);
-
     if (ipThreshold) {
-      // Count blocked requests too, so repeated abuse progresses to a longer cooldown.
-      await tx.loginAttempt.create({ data: { identifierKey, ipKey, succeeded: false } });
-      return { valid: false, userId: null, passwordChangedAt: null, retryAfterSeconds: ipThreshold.cooldownSeconds };
+      const latestFailure = await tx.loginAttempt.findFirst({
+        where: { ipKey, succeeded: false, createdAt: { gte: windowStart } },
+        orderBy: { createdAt: "desc" },
+        select: { createdAt: true }
+      });
+      const cooldownEndsAt = latestFailure
+        ? latestFailure.createdAt.getTime() + ipThreshold.cooldownSeconds * 1000
+        : now.getTime();
+      const retryAfterSeconds = Math.ceil((cooldownEndsAt - now.getTime()) / 1000);
+
+      if (retryAfterSeconds > 0) {
+        // Count blocked requests too, so repeated abuse extends the cooldown.
+        await tx.loginAttempt.create({ data: { identifierKey, ipKey, succeeded: false } });
+        return { valid: false, userId: null, passwordChangedAt: null, retryAfterSeconds };
+      }
     }
 
     const user = await tx.user.findFirst({
