@@ -800,16 +800,40 @@ async function main() {
     }, { cookie: companyCookie });
     await expectStatus(relinkInvite, 201, "new invitation before relinking");
     const relinkToken = extractEmailToken(emailCount, "/recrutador/convite");
-    const relinkAccept = await postJson("/api/recruiter/invitations/respond", {
-      token: relinkToken,
-      action: "accept"
-    }, { cookie: recruiterCookie });
-    await expectStatus(relinkAccept, 200, "active recruiter accepts new company invitation");
+    const relinkInvitation = await prisma.recruiterInvitation.findUnique({
+      where: { tokenHash: digest(relinkToken) },
+      select: { id: true }
+    });
+    assert.ok(relinkInvitation, "relink invitation must be stored before concurrent acceptance");
+    const concurrentRelinkAccepts = await Promise.all([
+      postJson("/api/recruiter/invitations/respond", {
+        token: relinkToken,
+        action: "accept"
+      }, { cookie: recruiterCookie }),
+      postJson("/api/recruiter/invitations/respond", {
+        token: relinkToken,
+        action: "accept"
+      }, { cookie: recruiterCookie })
+    ]);
+    const relinkAcceptStatuses = concurrentRelinkAccepts.map(response => response.status).sort((a, b) => a - b);
+    assert.equal(relinkAcceptStatuses.filter(status => status === 200).length, 1, "exactly one concurrent acceptance may succeed");
+    assert.ok(
+      relinkAcceptStatuses.every(status => status === 200 || status === 400 || status === 409),
+      `concurrent acceptance must return success once and controlled conflicts otherwise; got ${relinkAcceptStatuses.join(",")}`
+    );
     const activeLinkForIsolation = await prisma.recruiterLink.findFirst({
       where: { companyId: companyAccount.company.id, recruiterId: recruiterAccount.id, active: true },
       select: { id: true }
     });
     assert.ok(activeLinkForIsolation, "relinking must create a new active company link");
+    const concurrentAcceptanceAuditCount = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_INVITATION_ACCEPTED", subjectId: relinkInvitation.id }
+    });
+    assert.equal(concurrentAcceptanceAuditCount, 1, "concurrent acceptance must emit exactly one audit event");
+    const activeRecruiterLinkCount = await prisma.recruiterLink.count({
+      where: { recruiterId: recruiterAccount.id, active: true }
+    });
+    assert.equal(activeRecruiterLinkCount, 1, "concurrent acceptance must leave exactly one active company link");
 
     const secondCompanyEmailCount = SMTP_MESSAGES.length;
     const secondCompanyRegistration = await postJson("/api/auth/register/company", {
