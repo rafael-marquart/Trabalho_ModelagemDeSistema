@@ -209,7 +209,7 @@ describe("recruiter invitation response", () => {
 
     const response = await POST(makeRequest());
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(401);
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
 
