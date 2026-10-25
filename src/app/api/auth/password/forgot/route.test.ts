@@ -74,6 +74,46 @@ describe("password recovery request", () => {
     expect(sendEmailMock).not.toHaveBeenCalled();
   });
 
+  it("keeps the public response generic and audits an email delivery failure", async () => {
+    sendEmailMock.mockRejectedValueOnce(new Error("SMTP unavailable"));
+    const request = new Request("https://acessavagas.example/api/auth/password/forgot", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-forwarded-for": "192.0.2.10" },
+      body: JSON.stringify({ profile: "candidate", identifier: "person@example.com" })
+    });
+
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      message: "Se os dados corresponderem a uma conta elegível, enviaremos instruções ao e-mail cadastrado."
+    });
+    expect(prismaMock.auditEvent.create).toHaveBeenCalledWith({
+      data: {
+        actorUserId: "user-1",
+        eventType: "AUTH_PASSWORD_RECOVERY_EMAIL_FAILED",
+        subjectType: "User",
+        subjectId: "user-1"
+      }
+    });
+  });
+
+  it("blocks a request when the IP quota is exhausted even if the account quota remains", async () => {
+    tx.recoveryAttempt.count.mockResolvedValueOnce(0).mockResolvedValueOnce(3);
+    const request = new Request("https://acessavagas.example/api/auth/password/forgot", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-forwarded-for": "192.0.2.10" },
+      body: JSON.stringify({ profile: "candidate", identifier: "person@example.com" })
+    });
+
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(429);
+    expect(tx.recoveryAttempt.create).not.toHaveBeenCalled();
+    expect(tx.passwordResetToken.deleteMany).not.toHaveBeenCalled();
+    expect(sendEmailMock).not.toHaveBeenCalled();
+  });
+
   it("does not replace the token when the account or IP quota is exhausted", async () => {
     tx.recoveryAttempt.count.mockResolvedValueOnce(3).mockResolvedValueOnce(0);
     const request = new Request("https://acessavagas.example/api/auth/password/forgot", {
