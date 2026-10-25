@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import ThemeToggle from "@/components/theme-toggle";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -23,7 +24,7 @@ export default function CandidateSignupPage() {
     finally { setLoading(false); }
   }
 
-  return <main className="auth-page"><Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" /></Link><section className="auth-card"><Link className="back-link" href="/">← Voltar ao início</Link><p className="eyebrow">Cadastro de candidato</p><h1>Vamos preparar seu perfil.</h1><p className="muted">Crie sua conta para começar a explorar oportunidades.</p><form className="auth-form" onSubmit={submit}>
+  return <main className="auth-page"><div className="theme-control-host"><ThemeToggle /></div><Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" /></Link><section className="auth-card"><Link className="back-link" href="/">← Voltar ao início</Link><p className="eyebrow">Cadastro de candidato</p><h1>Vamos preparar seu perfil.</h1><p className="muted">Crie sua conta para começar a explorar oportunidades.</p><form className="auth-form" onSubmit={submit}>
     <label htmlFor="fullName">Nome completo</label><input id="fullName" autoComplete="name" maxLength={160} value={form.fullName} onChange={e=>setForm({...form,fullName:e.target.value})} required />
     <label htmlFor="email">E-mail</label><input id="email" type="email" autoComplete="email" maxLength={254} value={form.email} onChange={e=>setForm({...form,email:e.target.value})} required />
     <label htmlFor="cpf">CPF</label><input id="cpf" inputMode="numeric" autoComplete="off" placeholder="000.000.000-00" value={form.cpf} onChange={e=>setForm({...form,cpf:e.target.value})} required />
