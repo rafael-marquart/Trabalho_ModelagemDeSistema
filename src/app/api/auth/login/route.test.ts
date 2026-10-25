@@ -138,6 +138,42 @@ describe("login", () => {
     expect(prismaMock.auditEvent.create).not.toHaveBeenCalled();
   });
 
+  it("does not verify a password for an inactive account", async () => {
+    tx.user.findUnique.mockResolvedValueOnce({ ...user, isActive: false });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(401);
+    expect(verifyPasswordMock).not.toHaveBeenCalled();
+    expect(createSessionMock).not.toHaveBeenCalled();
+    expect(tx.user.update).not.toHaveBeenCalled();
+  });
+
+  it("does not authenticate a user whose role does not match the selected profile", async () => {
+    tx.user.findUnique.mockResolvedValueOnce({ ...user, role: "COMPANY" });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(401);
+    expect(verifyPasswordMock).not.toHaveBeenCalled();
+    expect(createSessionMock).not.toHaveBeenCalled();
+  });
+
+  it("does not increment the failure counter again while the account is locked", async () => {
+    tx.user.findUnique.mockResolvedValueOnce({
+      ...user,
+      failedLoginCount: 0,
+      lockedUntil: new Date(Date.now() + 60_000)
+    });
+
+    const response = await POST(makeRequest({ password: "WrongPassword123" }) as never);
+
+    expect(response.status).toBe(401);
+    expect(verifyPasswordMock).not.toHaveBeenCalled();
+    expect(tx.user.update).not.toHaveBeenCalled();
+    expect(createSessionMock).not.toHaveBeenCalled();
+  });
+
   it("rejects malformed login input before database access", async () => {
     const response = await POST(makeRequest({ profile: "invalid-profile" }) as never);
 
