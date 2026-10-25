@@ -19,6 +19,10 @@ describe("loginSchema", () => {
     }).success).toBe(true);
   });
 
+  it("accepts recruiter login", () => {
+    expect(loginSchema.safeParse({ profile: "recruiter", identifier: "recrutador@example.com", password: "valid-password" }).success).toBe(true);
+  });
+
   it("rejects unknown profiles and empty credentials", () => {
     expect(loginSchema.safeParse({ profile: "admin", identifier: "x", password: "y" }).success).toBe(false);
     expect(loginSchema.safeParse({ profile: "candidate", identifier: " ", password: "" }).success).toBe(false);
