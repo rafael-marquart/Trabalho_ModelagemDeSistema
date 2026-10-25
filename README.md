@@ -39,6 +39,6 @@ A aplicação está sendo construída incrementalmente na raiz deste repositóri
 
 ### Estado da implementação
 
-A branch de implementação contém a entrada/login, autenticação por credenciais, sessões revogáveis, cadastro inicial de candidato e empresa, endpoints de recuperação/redefinição de senha e a interface de recuperação. A validação de CPF foi adicionada; o fluxo de recuperação e as demais alterações ainda precisam de execução de testes e revisão de segurança.
+A branch de implementação contém a entrada/login, autenticação por credenciais, sessões revogáveis, cadastro inicial de candidato e empresa, recuperação/redefinição de senha e confirmação do e-mail corporativo por link de uso único válido por 24 horas. A confirmação do e-mail não ativa a conta organizacional: a validação do identificador oficial também é necessária.
 
-Permanecem pendentes, entre outros: confirmação de e-mail, validação do identificador oficial e ativação da conta de empresa, convites e vínculos completos de recrutadores, migrações verificadas em PostgreSQL e cobertura de integração/E2E. A aplicação não deve ser publicada em produção até que a SPEC-001 e os critérios de segurança sejam validados.
+Permanecem pendentes, entre outros: procedimento de validação do identificador oficial, ativação após as duas verificações, fluxo completo de convites e vínculos de recrutadores, migrações verificadas em PostgreSQL, testes de integração/E2E e revisão de segurança. A aplicação não deve ser publicada em produção até que a SPEC-001 e os critérios de segurança sejam validados.
