@@ -177,6 +177,22 @@ async function cleanupTestData() {
   const auditSubjectIds = [...userIds, ...companyIds];
 
   await prisma.$transaction(async tx => {
+    // Capture resource IDs before deleting them so audit rows keyed by invitation/link
+    // IDs are cleaned up as well as events keyed by the test users and companies.
+    const relatedLinks = await tx.recruiterLink.findMany({
+      where: { OR: [{ companyId: { in: companyIds } }, { recruiterId: { in: userIds } }] },
+      select: { id: true }
+    });
+    const relatedInvitations = await tx.recruiterInvitation.findMany({
+      where: { OR: [{ companyId: { in: companyIds } }, { recipientUserId: { in: userIds } }, { sentByUserId: { in: userIds } }] },
+      select: { id: true }
+    });
+    const relatedSubjectIds = [
+      ...auditSubjectIds,
+      ...relatedLinks.map(link => link.id),
+      ...relatedInvitations.map(invitation => invitation.id)
+    ];
+
     await tx.recruiterLink.deleteMany({
       where: { OR: [{ companyId: { in: companyIds } }, { recruiterId: { in: userIds } }] }
     });
@@ -210,8 +226,24 @@ async function cleanupTestData() {
       }
     });
     await tx.auditEvent.deleteMany({
-      where: { OR: [{ actorUserId: { in: userIds } }, { subjectId: { in: auditSubjectIds } }] }
+      where: {
+        OR: [
+          { actorUserId: { in: userIds } },
+          { subjectId: { in: relatedSubjectIds } }
+        ]
+      }
     });
+    const remainingTestAuditEvents = await tx.auditEvent.count({
+      where: {
+        OR: [
+          { actorUserId: { in: userIds } },
+          { subjectId: { in: relatedSubjectIds } }
+        ]
+      }
+    });
+    if (remainingTestAuditEvents !== 0) {
+      throw new Error(`E2E cleanup left ${remainingTestAuditEvents} audit event(s) behind`);
+    }
     await tx.company.deleteMany({ where: { id: { in: companyIds } } });
     await tx.user.deleteMany({ where: { id: { in: userIds } } });
   });
@@ -564,11 +596,39 @@ async function main() {
       redirect: "manual"
     });
     await expectStatus(recruiterCompanyLinks, 401, "recruiter role cannot access company recruiter links endpoint");
+    const recruiterCompanyInvitations = await fetch(`${BASE_URL}/api/company/recruiter-invitations`, {
+      headers: { cookie: recruiterCookie },
+      redirect: "manual"
+    });
+    await expectStatus(recruiterCompanyInvitations, 401, "recruiter role cannot access company recruiter invitations endpoint");
     const recruiterCreateInvitation = await postJson("/api/company/recruiter-invitations", {
       email: `unauthorized-recruiter-${randomUUID()}@example.test`,
       fullName: "Tentativa de Recrutador"
     }, { cookie: recruiterCookie });
     await expectStatus(recruiterCreateInvitation, 401, "recruiter role cannot create company recruiter invitation");
+
+    const unauthorizedRecruiterEndAuditBefore = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_LINK_ENDED", subjectId: activeLink.id }
+    });
+    const recruiterEndOwnCompanyLink = await postJson(
+      "/api/company/recruiter-links/end",
+      { recruiterLinkId: activeLink.id },
+      { cookie: recruiterCookie }
+    );
+    await expectStatus(recruiterEndOwnCompanyLink, 401, "recruiter role cannot end a company-owned link");
+    const activeLinkAfterRecruiterAttempt = await prisma.recruiterLink.findUnique({
+      where: { id: activeLink.id },
+      select: { active: true }
+    });
+    assert.equal(activeLinkAfterRecruiterAttempt?.active, true, "recruiter role attempt must not end a company-owned link");
+    const unauthorizedRecruiterEndAuditAfter = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_LINK_ENDED", subjectId: activeLink.id }
+    });
+    assert.equal(
+      unauthorizedRecruiterEndAuditAfter,
+      unauthorizedRecruiterEndAuditBefore,
+      "recruiter role attempt must not create a link-end audit event"
+    );
 
     const endInitialLink = await postJson("/api/company/recruiter-links/end", { recruiterLinkId: activeLink.id }, { cookie: companyCookie });
     await expectStatus(endInitialLink, 200, "company ends its own recruiter link");
@@ -600,6 +660,29 @@ async function main() {
       select: { id: true, tokenHash: true }
     });
     assert.ok(pendingToCancel && pendingToCancel.tokenHash === digest(cancelToken), "cancellable invitation token must match the stored digest");
+    const unauthorizedRecruiterCancelAuditBefore = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_INVITATION_CANCELLED", subjectId: pendingToCancel.id }
+    });
+    const recruiterCancelOwnedInvitation = await postJson(
+      "/api/company/recruiter-invitations/cancel",
+      { invitationId: pendingToCancel.id },
+      { cookie: recruiterCookie }
+    );
+    await expectStatus(recruiterCancelOwnedInvitation, 401, "recruiter role cannot cancel a company-owned invitation");
+    const invitationAfterRecruiterCancelAttempt = await prisma.recruiterInvitation.findUnique({
+      where: { id: pendingToCancel.id },
+      select: { status: true }
+    });
+    assert.equal(invitationAfterRecruiterCancelAttempt?.status, "PENDING", "recruiter role attempt must not cancel a company-owned invitation");
+    const unauthorizedRecruiterCancelAuditAfter = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_INVITATION_CANCELLED", subjectId: pendingToCancel.id }
+    });
+    assert.equal(
+      unauthorizedRecruiterCancelAuditAfter,
+      unauthorizedRecruiterCancelAuditBefore,
+      "recruiter role attempt must not create an invitation-cancel audit event"
+    );
+
     const concurrentCancelResponses = await Promise.all([
       postJson("/api/company/recruiter-invitations/cancel", { invitationId: pendingToCancel.id }, { cookie: companyCookie }),
       postJson("/api/company/recruiter-invitations/cancel", { invitationId: pendingToCancel.id }, { cookie: companyCookie })
@@ -712,6 +795,30 @@ async function main() {
       select: { id: true, tokenHash: true }
     });
     assert.ok(crossCompanyPending && crossCompanyPending.tokenHash === digest(crossCompanyCancelToken), "cross-company cancellation test invitation must be pending for company A");
+
+    const companyAInvitationsResponse = await fetch(`${BASE_URL}/api/company/recruiter-invitations`, {
+      headers: { cookie: companyCookie },
+      redirect: "manual"
+    });
+    const companyAInvitationsBody = await expectStatus(companyAInvitationsResponse, 200, "company A lists its recruiter invitations");
+    assert.ok(
+      JSON.parse(companyAInvitationsBody).invitations.some(invitation => invitation.id === crossCompanyPending.id),
+      "company A must see its own pending invitation"
+    );
+    const companyBInvitationsResponse = await fetch(`${BASE_URL}/api/company/recruiter-invitations`, {
+      headers: { cookie: secondCompanyCookie },
+      redirect: "manual"
+    });
+    const companyBInvitationsBody = await expectStatus(companyBInvitationsResponse, 200, "company B lists its recruiter invitations");
+    assert.ok(
+      JSON.parse(companyBInvitationsBody).invitations.every(invitation => invitation.id !== crossCompanyPending.id),
+      "company B must not see company A's pending invitation"
+    );
+    const invitationSentAuditCount = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_INVITATION_SENT", subjectId: crossCompanyPending.id }
+    });
+    assert.equal(invitationSentAuditCount, 1, "sending an invitation must create exactly one audit event");
+
     const invitationCancelAuditBefore = await prisma.auditEvent.count({
       where: { eventType: "RECRUITER_INVITATION_CANCELLED", subjectId: crossCompanyPending.id }
     });
