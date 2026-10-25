@@ -87,6 +87,13 @@ describe("cancel recruiter invitation", () => {
     expect(tx.auditEvent.create).not.toHaveBeenCalled();
   });
 
+  it("does not report cancellation success when audit persistence fails", async () => {
+    tx.auditEvent.create.mockRejectedValueOnce(new Error("audit database unavailable"));
+
+    await expect(POST(makeRequest())).rejects.toThrow("audit database unavailable");
+    expect(tx.recruiterInvitation.updateMany).toHaveBeenCalled();
+  });
+
   it("rejects a missing or inactive company", async () => {
     prismaMock.company.findUnique.mockResolvedValueOnce(null);
 
