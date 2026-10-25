@@ -139,7 +139,7 @@ describe("login", () => {
   });
 
   it("rejects malformed login input before database access", async () => {
-    const response = await POST(makeRequest({ password: "short" }) as never);
+    const response = await POST(makeRequest({ profile: "invalid-profile" }) as never);
 
     expect(response.status).toBe(400);
     expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
