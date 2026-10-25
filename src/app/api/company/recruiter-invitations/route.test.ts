@@ -194,12 +194,12 @@ describe("send recruiter invitation", () => {
     });
   });
 
-  it("returns a generic result for an email that is not an eligible recruiter", async () => {
-    prismaMock.user.findUnique.mockResolvedValueOnce(null);
+  it("rejects an email belonging to a non-recruiter account", async () => {
+    prismaMock.user.findUnique.mockResolvedValueOnce({ id: "candidate-1", email: "recruiter@example.com", role: "CANDIDATE", isActive: true, pendingActivation: false });
 
     const response = await POST(makeRequest() as never);
 
-    expect(response.status).toBe(202);
+    expect(response.status).toBe(409);
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
     expect(sendEmailMock).not.toHaveBeenCalled();
   });
