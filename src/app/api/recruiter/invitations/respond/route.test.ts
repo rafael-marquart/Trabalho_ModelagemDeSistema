@@ -144,16 +144,17 @@ describe("recruiter invitation response", () => {
     const response = await POST(makeRequest());
 
     expect(response.status).toBe(400);
-    expect(tx.recruiterInvitation.updateMany).toHaveBeenCalledWith({
-      where: {
-        id: "invitation-1",
-        recipientUserId: "recruiter-1",
-        tokenHash: hashOneTimeToken("a-valid-invitation-token"),
-        status: "PENDING",
-        expiresAt: expect.objectContaining({ lte: expect.any(Date) })
-      },
-      data: { status: "EXPIRED", respondedAt: expect.any(Date) }
+    expect(tx.recruiterInvitation.updateMany).toHaveBeenCalledTimes(1);
+    const expirationUpdate = tx.recruiterInvitation.updateMany.mock.calls[0][0];
+    expect(expirationUpdate.where).toMatchObject({
+      id: "invitation-1",
+      recipientUserId: "recruiter-1",
+      tokenHash: hashOneTimeToken("a-valid-invitation-token"),
+      status: "PENDING"
     });
+    expect(expirationUpdate.where.expiresAt.lte).toBeInstanceOf(Date);
+    expect(expirationUpdate.data).toMatchObject({ status: "EXPIRED" });
+    expect(expirationUpdate.data.respondedAt).toBeInstanceOf(Date);
     expect(tx.auditEvent.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         eventType: "RECRUITER_INVITATION_EXPIRED",
