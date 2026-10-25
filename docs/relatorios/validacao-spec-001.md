@@ -2,13 +2,13 @@
 
 **Revisão:** 25/10/2026  
 **Branch:** `feat/initial-app-foundation`  
-**HEAD verificado:** `0878c5c5c20cac6cc6186f9422fee98885454bdb`  
+**HEAD verificado:** `d9c5738047e0d0037e37491ec4a6f9a481be3495`  
 **Pull request:** [#36](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/pull/36) — permanece Draft  
 **Objetivo:** separar implementação existente, evidência automatizada disponível e validações ainda necessárias. Esta matriz não substitui os critérios de aceite da `docs/Specs.md` nem declara a SPEC-001 concluída.
 
 ## Estado de CI observado
 
-- O CI de push (run [40211998010](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40211998010)) e o CI de pull request (run [40212002918](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40212002918)) concluíram com sucesso para o HEAD `0878c5c5c20cac6cc6186f9422fee98885454bdb`.
+- O CI de push (run [40212263297](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40212263297)) e o CI de pull request (run [40212267482](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40212267482)) concluíram com sucesso para o HEAD `d9c5738047e0d0037e37491ec4a6f9a481be3495`.
 - A etapa `validate` passou nas duas execuções. A pipeline cobre validação/geração Prisma, migrações PostgreSQL, restrições de integridade e concorrência, TypeScript, lint, testes unitários e build de produção.
 - O HEAD mantém a serialização por bloqueio de linha no reset de senha, teste para usuário que deixa de estar elegível antes da transação e proteção contra corrida na ativação de empresa durante a confirmação de e-mail. A ordem das operações foi ajustada para não consumir tokens secundários se a ativação não for confirmada.
 - A recuperação de senha mantém resposta HTTP 200 e mensagem genérica quando há throttling, para reduzir risco de enumeração de contas.
@@ -47,4 +47,4 @@
 
 ## Decisão atual
 
-**SPEC-001 permanece em implementação/validação.** O CI de push e pull request passou no HEAD `0878c5c5c20cac6cc6186f9422fee98885454bdb`, com testes unitários, migrações/restrições de banco e build de produção. Ainda não há evidência suficiente para afirmar que todos os critérios passaram por validação ponta a ponta ou operacional. Nenhum merge para `main`, publicação em produção ou início da SPEC-002 está autorizado por este relatório.
+**SPEC-001 permanece em implementação/validação.** O CI de push e pull request passou no HEAD `d9c5738047e0d0037e37491ec4a6f9a481be3495`, com testes unitários, migrações/restrições de banco e build de produção. Ainda não há evidência suficiente para afirmar que todos os critérios passaram por validação ponta a ponta ou operacional. Nenhum merge para `main`, publicação em produção ou início da SPEC-002 está autorizado por este relatório.
