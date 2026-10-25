@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createHash } from "node:crypto";\nimport { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { prismaMock, cookieSet, cookieGet, cookieDelete } = vi.hoisted(() => ({
   prismaMock: {
@@ -23,7 +23,7 @@ vi.mock("next/headers", () => ({
   }))
 }));
 
-import { createSession, getCurrentUser } from "./session";
+import { createSession, getCurrentUser, revokeCurrentSession } from "./session";
 
 describe("createSession", () => {
   const passwordChangedAt = new Date("2026-01-01T00:00:00.000Z");
@@ -69,6 +69,10 @@ describe("createSession", () => {
         path: "/"
       })
     );
+    const rawToken = cookieSet.mock.calls[0][1] as string;
+    const storedHash = sessionCreate.mock.calls[0][0].data.tokenHash as string;
+    expect(storedHash).toBe(createHash("sha256").update(rawToken).digest("hex"));
+    expect(storedHash).not.toBe(rawToken);
   });
 
   it("sets an expiration on the persistent cookie for the remember-me option", async () => {
@@ -155,5 +159,30 @@ describe("getCurrentUser", () => {
 
     await expect(getCurrentUser()).resolves.toBeNull();
     expect(prismaMock.session.findUnique).not.toHaveBeenCalled();
+  });
+});
+
+describe("revokeCurrentSession", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    cookieGet.mockReturnValue({ value: "raw-session-token" });
+  });
+
+  it("deletes the session by token digest and clears the cookie", async () => {
+    await revokeCurrentSession();
+
+    expect(prismaMock.session.deleteMany).toHaveBeenCalledWith({
+      where: { tokenHash: createHash("sha256").update("raw-session-token").digest("hex") }
+    });
+    expect(cookieDelete).toHaveBeenCalledWith("acessa_session");
+  });
+
+  it("still clears the cookie when no session token is present", async () => {
+    cookieGet.mockReturnValueOnce(undefined);
+
+    await revokeCurrentSession();
+
+    expect(prismaMock.session.deleteMany).not.toHaveBeenCalled();
+    expect(cookieDelete).toHaveBeenCalledWith("acessa_session");
   });
 });
