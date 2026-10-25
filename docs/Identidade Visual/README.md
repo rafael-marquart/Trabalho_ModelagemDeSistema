@@ -4,7 +4,7 @@ Esta pasta reúne os materiais de identidade visual e as referências de interfa
 
 ## Estado e aprovação
 
-Em 20/10/2026, o usuário aprovou os materiais visuais e rascunhos apresentados até então nesta etapa do trabalho. Essa aprovação registra a aceitação visual dos materiais existentes e dos rascunhos correspondentes; não substitui aprovação formal dos textos das Specs, não autoriza implementação por si só e não transforma telas não exportadas em arquivos disponíveis nesta pasta.
+Em 20/10/2026, o usuário aprovou os materiais visuais e rascunhos apresentados até então nesta etapa do trabalho. Em 25/10/2026, aprovou explicitamente os protótipos de **Entrada/login e seleção de perfil**, **Login de Candidato** e **Login de Empresa**, conforme registrados na SPEC-001. A aprovação é limitada às referências visuais existentes dessas três telas; não aprova automaticamente os cadastros, recuperação de senha, configurações de recrutadores ou mensagens de autenticação. A aprovação visual não substitui aprovação dos textos das Specs nem autoriza implementação por si só.
 
 **Importante:** o arquivo editável de referência está no [Figma do AcessaVagas](https://www.figma.com/design/VngDm0L22cFu2wQBZDVy95). Os arquivos locais desta pasta são referências estáticas; não são a fonte editável original nem código funcional.
 
