@@ -61,7 +61,28 @@ export async function createSession(userId: string, rememberMe: boolean, expecte
 export async function revokeCurrentSession() {
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
-  if (token) await prisma.session.deleteMany({ where: { tokenHash: digest(token) } });
+  if (token) {
+    const tokenHash = digest(token);
+    await prisma.$transaction(async (tx) => {
+      const session = await tx.session.findUnique({
+        where: { tokenHash },
+        select: { id: true, userId: true }
+      });
+      if (!session) return;
+
+      const revoked = await tx.session.deleteMany({ where: { id: session.id, tokenHash } });
+      if (revoked.count !== 1) return;
+
+      await tx.auditEvent.create({
+        data: {
+          actorUserId: session.userId,
+          eventType: "AUTH_LOGOUT",
+          subjectType: "User",
+          subjectId: session.userId
+        }
+      });
+    });
+  }
   cookieStore.delete(COOKIE_NAME);
 }
 
