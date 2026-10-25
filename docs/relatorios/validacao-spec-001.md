@@ -32,7 +32,7 @@
 
 ## Validações transversais ainda necessárias
 
-1. **CI do HEAD atual:** aguardar conclusão das execuções de push e pull request para `5c26228f`; corrigir falhas, se houver.
+1. **CI do HEAD atual:** aguardar conclusão das execuções de push e pull request para `e29bc849`; corrigir falhas, se houver.
 2. **Integração/E2E:** executar percursos completos de cadastro, confirmação de e-mail, login, recuperação, convite de recrutador, aceite/recusa, cancelamento e encerramento de vínculo contra PostgreSQL e provedor de e-mail de teste.
 3. **Autorização:** verificar sistematicamente candidato, empresa, recrutador e usuário anônimo em todas as rotas protegidas, inclusive tentativa de acessar identificadores de outra organização.
 4. **Segurança:** revisar limites de tentativas, concorrência de tokens de uso único, sessões, origem de requisição, mensagens anti-enumeração, cookies e logs de auditoria.
