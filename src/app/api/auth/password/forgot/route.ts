@@ -96,6 +96,23 @@ export async function POST(request: NextRequest) {
 
     await tx.recoveryAttempt.create({ data: { identifierKey, ipKey } });
 
+    // The third allowed request starts the cooldown immediately after it is
+    // accepted. The current request completes; subsequent requests are blocked.
+    const newlyExhaustedScopes = [
+      ...(identifierAttempts + 1 >= MAX_REQUESTS ? [scopeKeys[0]] : []),
+      ...(ipAttempts + 1 >= MAX_REQUESTS ? [scopeKeys[1]] : [])
+    ];
+    if (newlyExhaustedScopes.length) {
+      const blockedUntil = new Date(now.getTime() + WINDOW_MS);
+      for (const scopeKey of newlyExhaustedScopes) {
+        await tx.recoveryBlock.upsert({
+          where: { scopeKey },
+          create: { scopeKey, blockedUntil },
+          update: { blockedUntil }
+        });
+      }
+    }
+
     // Keep the account/IP quota check and token replacement in one transaction.
     // Concurrent recovery requests for the same account share the advisory lock,
     // so a newer request cannot leave multiple reset tokens valid.
