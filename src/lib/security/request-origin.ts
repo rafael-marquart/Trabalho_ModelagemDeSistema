@@ -1,28 +1,29 @@
 import { NextResponse } from "next/server";
+import { getPublicBaseUrl } from "@/lib/security/public-base-url";
 
 /**
  * Reject browser requests that explicitly identify a different origin.
- * Production deployments must configure APP_BASE_URL to the public canonical
- * origin; failing closed avoids trusting a potentially host-derived request URL.
- * Requests without an Origin header remain supported for non-browser clients.
+ * Production deployments must use an HTTPS APP_BASE_URL as the canonical
+ * public origin. Requests without Origin remain supported for non-browser
+ * clients, but production mutations still fail closed for invalid config.
  */
 export function rejectCrossOriginRequest(request: Request): NextResponse | null {
-  const origin = request.headers.get("origin");
-  if (!origin) return null;
-
-  const configuredBaseUrl = process.env.APP_BASE_URL;
-  if (process.env.NODE_ENV === "production" && !configuredBaseUrl) {
+  const publicBaseUrl = getPublicBaseUrl(request);
+  if (process.env.NODE_ENV === "production" && !publicBaseUrl) {
     return NextResponse.json(
-      { message: "A origem pública da aplicação não está configurada." },
+      { message: "A origem pública da aplicação não está configurada corretamente." },
       { status: 503 }
     );
   }
+
+  const origin = request.headers.get("origin");
+  if (!origin) return null;
 
   let receivedOrigin: string;
   let expectedOrigin: string;
   try {
     receivedOrigin = new URL(origin).origin;
-    expectedOrigin = new URL(configuredBaseUrl || request.url).origin;
+    expectedOrigin = new URL(publicBaseUrl || request.url).origin;
   } catch {
     return NextResponse.json({ message: "Origem da requisição inválida." }, { status: 403 });
   }
