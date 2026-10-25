@@ -27,9 +27,21 @@ export async function POST(request: Request) {
 
   const passwordHash = await hashPassword(password);
 
-  // Claim the token conditionally inside the same transaction as the password
-  // change. This prevents two concurrent requests from successfully reusing it.
+  // Lock the user row before claiming the token. Different valid reset tokens
+  // for the same account must serialize too; otherwise two concurrent requests
+  // could each claim a different token and both change the password.
   const resetSucceeded = await prisma.$transaction(async (tx) => {
+    const eligibleUser = await tx.$queryRaw<Array<{ id: string }>>`
+      SELECT "id"
+      FROM "User"
+      WHERE "id" = ${tokenRecord.userId}
+        AND "isActive" = true
+      FOR UPDATE
+    `;
+    if (eligibleUser.length !== 1) return false;
+
+    // The conditional claim also rejects reuse, expiry, or a token invalidated
+    // by a competing reset after the initial lookup.
     const claimed = await tx.passwordResetToken.updateMany({
       where: { id: tokenRecord.id, usedAt: null, expiresAt: { gt: now } },
       data: { usedAt: now }
