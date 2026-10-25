@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
     await sendEmail({
       to: eligible.email,
       subject: "Novo link de confirmação — Acessa Vagas",
-      text: `Para confirmar o e-mail corporativo, acesse este link em até 24 horas e use-o apenas uma vez: ${baseUrl}/empresa/confirmar-email?token=${outcome.token}\\n\\nSe você não solicitou este envio, ignore esta mensagem.`
+      text: `Para confirmar o e-mail corporativo, acesse este link em até 24 horas e use-o apenas uma vez: ${baseUrl}/empresa/confirmar-email?token=${outcome.token}\n\nSe você não solicitou este envio, ignore esta mensagem.`
     });
   } catch {
     await prisma.$transaction(async tx => {
