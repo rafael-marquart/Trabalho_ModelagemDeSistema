@@ -150,6 +150,16 @@ model RecoveryAttempt {
   @@index([ipKey, createdAt])
 }
 
+
+model RecoveryBlock {
+  scopeKey    String   @id
+  blockedUntil DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([blockedUntil])
+}
+
 model LoginAttempt {
   id            String   @id @default(cuid())
   identifierKey String
