@@ -140,7 +140,7 @@ describe("send recruiter invitation", () => {
     });
     expect(sendEmailMock).toHaveBeenCalledWith(expect.objectContaining({
       to: "new@example.com",
-      text: expect.stringContaining("defina sua senha e aceite explicitamente o vínculo")
+      text: expect.stringContaining("definir sua senha antes de aceitar o vínculo")
     }));
   });
 
