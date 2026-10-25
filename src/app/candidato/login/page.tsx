@@ -39,8 +39,7 @@ export default function CandidateLoginPage() {
   return (
     <main className="auth-page">
       <Link className="brand auth-brand" href="/">
-        <span className="brand-mark" aria-hidden="true">a</span>
-        <span>Acessa<span className="brand-accent">Vagas</span></span>
+        <img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" />
       </Link>
       <section className="auth-card" aria-labelledby="login-title">
         <Link className="back-link" href="/">← Voltar ao início</Link>
