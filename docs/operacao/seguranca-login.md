@@ -20,7 +20,7 @@ A aplicação avalia o total de falhas anteriores antes de processar a tentativa
 
 ## Concorrência e armazenamento
 
-A verificação, a contagem, a persistência do bloqueio e o registro da tentativa são serializados em uma transação PostgreSQL com advisory lock por IP, para evitar que várias requisições concorrentes ultrapassem o limite antes de serem contabilizadas. O histórico usa a tabela LoginAttempt; o bloqueio ativo fica em LoginBlock e tem duração explícita. Índices em ipKey e createdAt apoiam a consulta do histórico. A retenção/limpeza de LoginAttempt deve ser definida e monitorada separadamente caso o volume cresça.
+A verificação, a contagem, a persistência do bloqueio e o registro da tentativa são serializados em uma transação PostgreSQL com advisory lock por IP, para evitar que várias requisições concorrentes ultrapassem o limite antes de serem contabilizadas. O histórico usa a tabela LoginAttempt; o bloqueio ativo fica em LoginBlock e tem duração explícita. Índices em ipKey e createdAt apoiam a consulta do histórico. A retenção/limpeza de LoginAttempt deve ser definida e monitorada separadamente caso o volume cresça. Registros vencidos de LoginBlock também precisam de limpeza periódica para evitar acúmulo de IPs distintos; o repositório ainda não provisiona esse agendador.
 
 ## Requisitos de implantação
 
