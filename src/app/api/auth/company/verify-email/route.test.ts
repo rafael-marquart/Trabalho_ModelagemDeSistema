@@ -26,11 +26,20 @@ describe("company email verification", () => {
     company: { updateMany: vi.fn() },
     auditEvent: { create: vi.fn() }
   };
+  let transactionRolledBack: boolean;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    transactionRolledBack = false;
     prismaMock.companyEmailVerificationToken.findUnique.mockResolvedValue(tokenRecord);
-    prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => callback(tx));
+    prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => {
+      try {
+        return await callback(tx);
+      } catch (error) {
+        transactionRolledBack = true;
+        throw error;
+      }
+    });
     tx.companyEmailVerificationToken.updateMany.mockResolvedValue({ count: 1 });
     tx.companyEmailVerificationToken.deleteMany.mockResolvedValue({ count: 1 });
     tx.company.updateMany.mockResolvedValue({ count: 1 });
@@ -69,13 +78,14 @@ describe("company email verification", () => {
     });
   });
 
-  it("does not record confirmation when another request already confirmed the company", async () => {
+  it("rolls back the token claim when another request already confirmed the company", async () => {
     tx.companyEmailVerificationToken.updateMany.mockResolvedValueOnce({ count: 1 });
     tx.company.updateMany.mockResolvedValueOnce({ count: 0 });
 
     const response = await POST(makeRequest() as never);
 
     expect(response.status).toBe(400);
+    expect(transactionRolledBack).toBe(true);
     expect(tx.companyEmailVerificationToken.deleteMany).not.toHaveBeenCalled();
     expect(tx.auditEvent.create).not.toHaveBeenCalled();
   });
