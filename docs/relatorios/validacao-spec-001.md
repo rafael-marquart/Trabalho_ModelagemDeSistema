@@ -8,7 +8,7 @@
 ## Estado de CI observado
 
 - CI dos commits `09a5c594` passou em ambos os eventos (push e pull request), incluindo validação/geração Prisma, migrações PostgreSQL, restrições de integridade e concorrência, TypeScript, lint, testes unitários e build de produção.
-- Commit `5c26228f` adiciona testes de logout. Na última consulta, as execuções correspondentes ainda estavam em andamento; por isso, não se considera esse novo commit validado até que ambas as execuções terminem.
+- Commit `070e66b3` passou em ambas as execuções (push e pull request), incluindo todos os passos da pipeline.\n- Revisão adicional de segurança identificou que o endpoint de recuperação devolvia HTTP 429 com mensagem específica ao atingir o limite; como o limite por conta pode revelar se um identificador existe, a resposta foi alterada para manter o mesmo HTTP 200 e a mesma mensagem genérica. O bloqueio persistente continua ativo no backend. Os testes e o CI dos commits seguintes ainda precisam confirmar essa correção.
 - CI é uma verificação automatizada de código e banco de teste; não comprova configuração real de SMTP, proxy, domínio público, agendador de retenção nem experiência de acessibilidade em navegadores/dispositivos.
 
 ## Matriz dos critérios de aceitação
@@ -28,7 +28,7 @@
 | Recrutador permanece vinculado à Empresa responsável enquanto ativo | Consulta de vínculos e modelo de dados | Implementado; cobertura automatizada parcial | Conferir transições e permissões após encerramento |
 | Empresa não consegue administrar vínculo de outra Empresa | Escopo por `companyId` nas rotas e testes de autorização | Cobertura unitária existente | Adicionar/confirmar cenário integrado multiempresa |
 | Alterações relevantes são rastreáveis | Eventos de auditoria transacionais em autenticação, convite e encerramento; rotina de retenção | Implementação e testes da rotina disponíveis | Verificar cobertura evento por evento; agendamento/alertas de produção ainda não configurados |
-| Mensagens não expõem credenciais ou dados pessoais desnecessários | Mensagens genéricas de login/recuperação e protótipo de mensagens aprovado | Cobertura parcial por testes unitários e inspeção de código | Revisão manual de todas as mensagens e acessibilidade dos anúncios de erro/sucesso |
+| Mensagens não expõem credenciais ou dados pessoais desnecessários | Mensagens genéricas de login/recuperação e protótipo de mensagens aprovado; throttling de recuperação agora mantém status e texto genéricos | Cobertura parcial por testes unitários e inspeção de código | Confirmar no CI atual e revisar manualmente todas as mensagens e acessibilidade dos anúncios de erro/sucesso |
 
 ## Validações transversais ainda necessárias
 
