@@ -69,6 +69,29 @@ describe("company email verification", () => {
     });
   });
 
+  it("does not record confirmation when another request already confirmed the company", async () => {
+    tx.companyEmailVerificationToken.updateMany.mockResolvedValueOnce({ count: 1 });
+    tx.company.updateMany.mockResolvedValueOnce({ count: 0 });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(400);
+    expect(tx.companyEmailVerificationToken.deleteMany).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it("rejects an already-confirmed company without consuming a token", async () => {
+    prismaMock.companyEmailVerificationToken.findUnique.mockResolvedValueOnce({
+      ...tokenRecord,
+      company: { ...tokenRecord.company, emailConfirmedAt: new Date() }
+    });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(400);
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
   it("rejects expired tokens before starting a transaction", async () => {
     prismaMock.companyEmailVerificationToken.findUnique.mockResolvedValueOnce({
       ...tokenRecord,
