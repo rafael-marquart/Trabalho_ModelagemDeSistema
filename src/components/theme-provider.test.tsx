@@ -44,14 +44,14 @@ describe("accessible theme preference", () => {
     await act(async () => {});
 
     await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "Ativar tema escuro" }));
+      fireEvent.click(screen.getByRole("button", { name: "Alternar tema claro e escuro" }));
     });
     expect(screen.getByTestId("theme").textContent).toBe("dark");
     expect(document.documentElement.dataset.theme).toBe("dark");
     expect(window.localStorage.getItem("acessa-vagas-theme")).toBe("dark");
 
     await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "Ativar tema claro" }));
+      fireEvent.click(screen.getByRole("button", { name: "Alternar tema claro e escuro" }));
     });
     expect(screen.getByTestId("theme").textContent).toBe("light");
     expect(window.localStorage.getItem("acessa-vagas-theme")).toBe("light");
