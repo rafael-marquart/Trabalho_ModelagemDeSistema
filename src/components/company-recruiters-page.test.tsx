@@ -61,6 +61,7 @@ describe("company recruiter management page", () => {
     render(<CompanyRecruitersPage />);
 
     expect(await screen.findByText("Pessoa Convidada")).toBeTruthy();
+    expect(await screen.findByText(/Válido até/)).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Reenviar convite para Pessoa Convidada" }));
 
     await waitFor(() => {

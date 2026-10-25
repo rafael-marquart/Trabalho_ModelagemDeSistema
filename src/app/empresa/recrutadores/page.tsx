@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import React, { FormEvent, useCallback, useEffect, useState } from "react";
 
 type Invitation = {
   id: string;
@@ -298,7 +298,7 @@ export default function CompanyRecruitersPage() {
                     <tr key={"invitation-" + invitation.id}>
                       <td>
                         <strong>{invitation.recipient.fullName}</strong>
-                        <p className="muted">Convite enviado em {formatDate(invitation.createdAt)}</p>
+                        <p className="muted">Convite enviado em {formatDate(invitation.createdAt)} · Válido até {formatDate(invitation.expiresAt)}</p>
                       </td>
                       <td>{invitation.recipient.email}</td>
                       <td>
