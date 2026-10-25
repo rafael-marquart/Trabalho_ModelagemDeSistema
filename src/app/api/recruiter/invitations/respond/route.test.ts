@@ -147,6 +147,8 @@ describe("recruiter invitation response", () => {
     expect(tx.recruiterInvitation.updateMany).toHaveBeenCalledWith({
       where: {
         id: "invitation-1",
+        recipientUserId: "recruiter-1",
+        tokenHash: hashOneTimeToken("a-valid-invitation-token"),
         status: "PENDING",
         expiresAt: expect.objectContaining({ lte: expect.any(Date) })
       },
