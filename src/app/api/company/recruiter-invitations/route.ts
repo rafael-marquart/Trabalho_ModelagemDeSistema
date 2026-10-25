@@ -20,7 +20,7 @@ export async function GET() {
   for (const invitation of expired) {
     await prisma.$transaction(async tx => {
       const changed = await tx.recruiterInvitation.updateMany({
-        where: { id: invitation.id, status: "PENDING", expiresAt: { lte: now } },
+        where: { id: invitation.id, companyId: company.id, status: "PENDING", expiresAt: { lte: now } },
         data: { status: "EXPIRED", respondedAt: now }
       });
       if (changed.count === 1) {
