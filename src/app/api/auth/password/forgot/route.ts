@@ -48,7 +48,10 @@ export async function POST(request: NextRequest) {
     `recovery:ip:${ipKey}`
   ].sort();
 
-  const allowed = await prisma.$transaction(async (tx) => {
+  const recovery = user ? createOneTimeToken() : null;
+  const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
+
+  const outcome = await prisma.$transaction(async (tx) => {
     for (const lockKey of lockKeys) {
       await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`;
     }
@@ -60,33 +63,38 @@ export async function POST(request: NextRequest) {
     ]);
 
     if (identifierAttempts >= MAX_REQUESTS || ipAttempts >= MAX_REQUESTS) {
-      return false;
+      return { allowed: false, token: null };
     }
 
     await tx.recoveryAttempt.create({ data: { identifierKey, ipKey } });
-    return true;
+
+    // Keep the account/IP quota check and token replacement in one transaction.
+    // Concurrent recovery requests for the same account share the advisory lock,
+    // so a newer request cannot leave multiple reset tokens valid.
+    if (user && recovery) {
+      await tx.passwordResetToken.deleteMany({ where: { userId: user.id, usedAt: null } });
+      await tx.passwordResetToken.create({
+        data: { userId: user.id, tokenHash: recovery.tokenHash, expiresAt }
+      });
+    }
+
+    return { allowed: true, token: recovery?.token ?? null };
   });
 
-  if (!allowed) {
+  if (!outcome.allowed) {
     return NextResponse.json(
       { message: "Limite de solicitações atingido. Aguarde 15 minutos antes de tentar novamente." },
       { status: 429 }
     );
   }
 
-  if (user) {
-    const { token, tokenHash } = createOneTimeToken();
-    const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
-    await prisma.$transaction([
-      prisma.passwordResetToken.deleteMany({ where: { userId: user.id, usedAt: null } }),
-      prisma.passwordResetToken.create({ data: { userId: user.id, tokenHash, expiresAt } })
-    ]);
+  if (user && outcome.token) {
     const baseUrl = process.env.APP_BASE_URL || new URL(request.url).origin;
     try {
       await sendEmail({
         to: user.email,
         subject: "Recuperação de senha — Acessa Vagas",
-        text: `Recebemos uma solicitação de recuperação de senha. Use este link em até 30 minutos e apenas uma vez: ${baseUrl}/recuperar-senha?token=${token}\n\nSe você não solicitou, ignore esta mensagem.`
+        text: `Recebemos uma solicitação de recuperação de senha. Use este link em até 30 minutos e apenas uma vez: ${baseUrl}/recuperar-senha?token=${outcome.token}\n\nSe você não solicitou, ignore esta mensagem.`
       });
     } catch {
       // Keep the public response generic if email delivery is not configured.
