@@ -528,10 +528,21 @@ async function main() {
       select: { id: true, tokenHash: true }
     });
     assert.ok(pendingToCancel && pendingToCancel.tokenHash === digest(cancelToken), "cancellable invitation token must match the stored digest");
-    const cancelResponse = await postJson("/api/company/recruiter-invitations/cancel", { invitationId: pendingToCancel.id }, { cookie: companyCookie });
-    await expectStatus(cancelResponse, 200, "company cancels pending recruiter invitation");
+    const concurrentCancelResponses = await Promise.all([
+      postJson("/api/company/recruiter-invitations/cancel", { invitationId: pendingToCancel.id }, { cookie: companyCookie }),
+      postJson("/api/company/recruiter-invitations/cancel", { invitationId: pendingToCancel.id }, { cookie: companyCookie })
+    ]);
+    assert.deepEqual(
+      concurrentCancelResponses.map(response => response.status).sort((a, b) => a - b),
+      [200, 409],
+      "exactly one concurrent request may cancel the same pending invitation"
+    );
     const cancelledInvitation = await prisma.recruiterInvitation.findUnique({ where: { id: pendingToCancel.id }, select: { status: true } });
     assert.equal(cancelledInvitation?.status, "CANCELLED");
+    const cancellationAuditCount = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_INVITATION_CANCELLED", subjectId: pendingToCancel.id }
+    });
+    assert.equal(cancellationAuditCount, 1, "concurrent cancellation must emit exactly one audit event");
     const cancelledTokenResponse = await postJson("/api/recruiter/invitations/respond", { token: cancelToken, action: "refuse" });
     await expectStatus(cancelledTokenResponse, 400, "cancelled recruiter invitation token");
 
