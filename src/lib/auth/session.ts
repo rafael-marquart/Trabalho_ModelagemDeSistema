@@ -20,11 +20,15 @@ export async function createSession(userId: string, rememberMe: boolean, expecte
   // were verified, do not create a session from stale credentials. The check and
   // insert are atomic relative to the reset transaction's user update/session delete.
   const created = await prisma.$transaction(async (tx) => {
-    const eligible = await tx.user.findFirst({
-      where: { id: userId, isActive: true, passwordChangedAt: expectedPasswordChangedAt },
-      select: { id: true }
-    });
-    if (!eligible) return false;
+    const eligible = await tx.$queryRaw<Array<{ id: string }>>`
+      SELECT "id"
+      FROM "User"
+      WHERE "id" = ${userId}
+        AND "isActive" = true
+        AND "passwordChangedAt" = ${expectedPasswordChangedAt}
+      FOR UPDATE
+    `;
+    if (eligible.length !== 1) return false;
 
     await tx.session.create({
       data: { tokenHash: digest(token), userId, rememberMe, expiresAt, absoluteExpiresAt, lastSeenAt: now }
