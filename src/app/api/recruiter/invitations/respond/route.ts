@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Convite inválido, já respondido ou destinado a outra conta." }, { status: 400 });
   }
   if (invitation.expiresAt <= now) {
-    const expired = await prisma.$transaction(async tx => {
+    await prisma.$transaction(async tx => {
       const changed = await tx.recruiterInvitation.updateMany({ where: { id: invitation.id, status: "PENDING", expiresAt: { lte: now } }, data: { status: "EXPIRED", respondedAt: now } });
       if (changed.count === 1) await tx.auditEvent.create({ data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_EXPIRED", subjectType: "RecruiterInvitation", subjectId: invitation.id } });
       return changed.count === 1;
