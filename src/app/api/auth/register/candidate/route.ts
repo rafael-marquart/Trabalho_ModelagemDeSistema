@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
   const passwordHash = await hashPassword(input.password);
   try {
-    const user = await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       const created = await tx.user.create({
         data: { fullName: input.fullName, email, cpf, passwordHash, role: "CANDIDATE" },
         select: { id: true }
@@ -30,7 +30,6 @@ export async function POST(request: Request) {
       await tx.auditEvent.create({
         data: { actorUserId: created.id, eventType: "AUTH_CANDIDATE_REGISTERED", subjectType: "User", subjectId: created.id }
       });
-      return created;
     });
     return NextResponse.json({ ok: true, message: "Conta criada. Você já pode entrar." }, { status: 201 });
   } catch (error) {
