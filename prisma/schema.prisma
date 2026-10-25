@@ -173,6 +173,16 @@ model LoginAttempt {
   @@index([ipKey, createdAt])
 }
 
+model LoginBlock {
+  ipKey           String   @id
+  blockedUntil    DateTime
+  cooldownSeconds Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([blockedUntil])
+}
+
 model CompanyEmailVerificationToken {
   id        String   @id @default(cuid())
   companyId String

@@ -32,7 +32,8 @@ describe("login", () => {
   const tx = {
     $executeRaw: vi.fn(),
     user: { findFirst: vi.fn(), findUnique: vi.fn(), update: vi.fn() },
-    loginAttempt: { count: vi.fn(), findFirst: vi.fn(), create: vi.fn() }
+loginAttempt: { count: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
+    loginBlock: { findUnique: vi.fn(), upsert: vi.fn(), update: vi.fn() }
   };
 
   beforeEach(() => {
@@ -45,6 +46,9 @@ describe("login", () => {
     tx.loginAttempt.count.mockResolvedValue(0);
     tx.loginAttempt.findFirst.mockResolvedValue({ createdAt: new Date() });
     tx.loginAttempt.create.mockResolvedValue({ id: "attempt-1" });
+    tx.loginBlock.findUnique.mockResolvedValue(null);
+    tx.loginBlock.upsert.mockResolvedValue({ ipKey: "hashed-ip", blockedUntil: new Date(), cooldownSeconds: 60 });
+    tx.loginBlock.update.mockResolvedValue({ ipKey: "hashed-ip", blockedUntil: new Date(), cooldownSeconds: 60 });
     verifyPasswordMock.mockResolvedValue(true);
     createSessionMock.mockResolvedValue(true);
     prismaMock.auditEvent.create.mockResolvedValue({ id: "audit-1" });
@@ -187,6 +191,28 @@ describe("login", () => {
     expect(verifyPasswordMock).not.toHaveBeenCalled();
     expect(tx.user.update).not.toHaveBeenCalled();
     expect(createSessionMock).not.toHaveBeenCalled();
+  });
+
+  it("keeps an active IP cooldown after the rolling failure window has emptied", async () => {
+    tx.loginAttempt.count.mockResolvedValue(0);
+    tx.loginBlock.findUnique.mockResolvedValue({
+      blockedUntil: new Date(Date.now() + 10 * 60 * 1000),
+      cooldownSeconds: 3600
+    });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(429);
+    expect(Number(response.headers.get("retry-after"))).toBe(3600);
+    expect(tx.user.findFirst).not.toHaveBeenCalled();
+    expect(verifyPasswordMock).not.toHaveBeenCalled();
+    expect(tx.loginBlock.update).toHaveBeenCalledWith({
+      where: { ipKey: expect.any(String) },
+      data: { blockedUntil: expect.any(Date), cooldownSeconds: 3600 }
+    });
+    expect(tx.loginAttempt.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ succeeded: false })
+    });
   });
 
   it("applies the first graduated IP cooldown before account lookup and records blocked attempts", async () => {

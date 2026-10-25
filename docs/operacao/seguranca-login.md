@@ -16,11 +16,11 @@ O endpoint considera as falhas registradas nos últimos 15 minutos para o IP. A 
 | 80–119 | HTTP 429 | 900 segundos |
 | 120 ou mais | HTTP 429 | 3600 segundos |
 
-A aplicação avalia o total de falhas anteriores antes de processar a tentativa seguinte. Quando o limite é atingido, o cooldown é aplicado com base no horário da falha mais recente; novas tentativas bloqueadas também são registradas como falhas e reiniciam o cooldown, permitindo que abuso persistente avance para faixas maiores. O cabeçalho Retry-After informa o tempo restante do cooldown. A mensagem de erro não revela se a conta existe.
+A aplicação avalia o total de falhas anteriores antes de processar a tentativa seguinte. Ao atingir uma faixa, o cooldown completo começa naquele momento e é persistido por IP em `LoginBlock`, separado do histórico de contagem móvel de 15 minutos. Assim, um bloqueio de 15 ou 60 minutos não desaparece quando as falhas mais antigas saem da janela de contagem nem começa com parte do prazo já consumido. Novas tentativas bloqueadas também são registradas como falhas e reiniciam o cooldown; se a contagem recente subir para uma faixa superior, o cooldown é elevado para essa faixa. O cabeçalho Retry-After informa o tempo de espera aplicado. A mensagem de erro não revela se a conta existe.
 
 ## Concorrência e armazenamento
 
-A verificação, a contagem e o registro da tentativa são serializados em uma transação PostgreSQL com advisory lock por IP, para evitar que várias requisições concorrentes ultrapassem o limite antes de serem contabilizadas. O histórico usa a tabela LoginAttempt; índices existentes em ipKey e createdAt apoiam a consulta. A retenção/limpeza de LoginAttempt deve ser definida e monitorada separadamente caso o volume cresça.
+A verificação, a contagem, a persistência do bloqueio e o registro da tentativa são serializados em uma transação PostgreSQL com advisory lock por IP, para evitar que várias requisições concorrentes ultrapassem o limite antes de serem contabilizadas. O histórico usa a tabela LoginAttempt; o bloqueio ativo fica em LoginBlock e tem duração explícita. Índices em ipKey e createdAt apoiam a consulta do histórico. A retenção/limpeza de LoginAttempt deve ser definida e monitorada separadamente caso o volume cresça.
 
 ## Requisitos de implantação
 

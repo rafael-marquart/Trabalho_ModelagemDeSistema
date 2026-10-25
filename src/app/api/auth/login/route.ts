@@ -55,22 +55,41 @@ export async function POST(request: NextRequest) {
       where: { ipKey, succeeded: false, createdAt: { gte: windowStart } }
     });
     const ipThreshold = IP_FAILURE_THRESHOLDS.find((threshold) => recentFailures >= threshold.attempts);
-    if (ipThreshold) {
-      const latestFailure = await tx.loginAttempt.findFirst({
-        where: { ipKey, succeeded: false, createdAt: { gte: windowStart } },
-        orderBy: { createdAt: "desc" },
-        select: { createdAt: true }
-      });
-      const cooldownEndsAt = latestFailure
-        ? latestFailure.createdAt.getTime() + ipThreshold.cooldownSeconds * 1000
-        : now.getTime();
-      const retryAfterSeconds = Math.ceil((cooldownEndsAt - now.getTime()) / 1000);
+    const activeIpBlock = await tx.loginBlock.findUnique({
+      where: { ipKey },
+      select: { blockedUntil: true, cooldownSeconds: true }
+    });
 
-      if (retryAfterSeconds > 0) {
-        // Count blocked requests too, so repeated abuse extends the cooldown.
-        await tx.loginAttempt.create({ data: { identifierKey, ipKey, succeeded: false } });
-        return { valid: false, userId: null, passwordChangedAt: null, retryAfterSeconds };
-      }
+    if (activeIpBlock && activeIpBlock.blockedUntil > now) {
+      // Keep cooldowns durable after the 15-minute counting window rolls over.
+      // Further blocked requests are counted and restart the current/escalated cooldown.
+      const cooldownSeconds = ipThreshold?.cooldownSeconds ?? activeIpBlock.cooldownSeconds;
+      const blockedUntil = new Date(now.getTime() + cooldownSeconds * 1000);
+      await tx.loginBlock.update({
+        where: { ipKey },
+        data: { blockedUntil, cooldownSeconds }
+      });
+      await tx.loginAttempt.create({ data: { identifierKey, ipKey, succeeded: false } });
+      return { valid: false, userId: null, passwordChangedAt: null, retryAfterSeconds: cooldownSeconds };
+    }
+
+    if (ipThreshold) {
+      // Start the full cooldown when the threshold is detected, not at an earlier
+      // failure timestamp that could make the cooldown partly or fully elapse first.
+      const blockedUntil = new Date(now.getTime() + ipThreshold.cooldownSeconds * 1000);
+      await tx.loginBlock.upsert({
+        where: { ipKey },
+        create: { ipKey, blockedUntil, cooldownSeconds: ipThreshold.cooldownSeconds },
+        update: { blockedUntil, cooldownSeconds: ipThreshold.cooldownSeconds }
+      });
+      // Count blocked requests too, so persistent abuse can escalate the cooldown.
+      await tx.loginAttempt.create({ data: { identifierKey, ipKey, succeeded: false } });
+      return {
+        valid: false,
+        userId: null,
+        passwordChangedAt: null,
+        retryAfterSeconds: ipThreshold.cooldownSeconds
+      };
     }
 
     const user = await tx.user.findFirst({
