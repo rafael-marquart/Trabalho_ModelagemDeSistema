@@ -36,6 +36,7 @@ model User {
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
   sessions          Session[]
+  passwordResetTokens PasswordResetToken[]
   company           Company?              @relation("CompanyAccount")
   recruiterLinks    RecruiterLink[]       @relation("RecruiterLinks")
   invitationsSent   RecruiterInvitation[] @relation("InvitationsSent")
@@ -122,6 +123,29 @@ model AuditEvent {
   @@index([createdAt])
   @@index([actorUserId, createdAt])
   @@index([eventType, createdAt])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([expiresAt])
+}
+
+model RecoveryAttempt {
+  id            String   @id @default(cuid())
+  identifierKey String
+  ipKey         String
+  createdAt     DateTime @default(now())
+
+  @@index([identifierKey, createdAt])
+  @@index([ipKey, createdAt])
 }
 
 model LoginAttempt {
