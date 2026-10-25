@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       : { email: identifier }
   });
 
-  const expectedRole = input.profile === "candidate" ? "CANDIDATE" : "COMPANY";
+  const expectedRole = input.profile === "candidate" ? "CANDIDATE" : input.profile === "recruiter" ? "RECRUITER" : "COMPANY";
   const locked = user?.lockedUntil && user.lockedUntil > new Date();
   const valid = Boolean(
     user &&
@@ -92,6 +92,6 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({
     ok: true,
-    redirectTo: input.profile === "candidate" ? "/candidato" : "/empresa"
+    redirectTo: input.profile === "candidate" ? "/candidato" : input.profile === "recruiter" ? "/recrutador" : "/empresa"
   });
 }
