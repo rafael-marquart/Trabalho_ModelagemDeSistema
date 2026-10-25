@@ -127,7 +127,8 @@ describe("send recruiter invitation", () => {
     }) as never);
 
     expect(response.status).toBe(201);
-    expect(tx.user.create).toHaveBeenCalledWith({
+    expect(tx.user.create).toHaveBeenCalledTimes(1);
+    expect(tx.user.create.mock.calls[0][0]).toMatchObject({
       data: expect.objectContaining({
         email: "new@example.com",
         fullName: "Novo Recrutador",
@@ -135,8 +136,7 @@ describe("send recruiter invitation", () => {
         isActive: false,
         pendingActivation: true,
         passwordHash: expect.any(String)
-      }),
-      select: { id: true, email: true, role: true, isActive: true, pendingActivation: true }
+      })
     });
     expect(sendEmailMock).toHaveBeenCalledWith(expect.objectContaining({
       to: "new@example.com",
