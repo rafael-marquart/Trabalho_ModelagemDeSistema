@@ -234,12 +234,21 @@ async function main() {
     assert.ok(SMTP_MESSAGES.length > previousMessageCount, "password recovery must send an email to the test SMTP server");
 
     const mail = SMTP_MESSAGES.slice(previousMessageCount).join("\n");
-    // SMTP messages may use quoted-printable soft line breaks inside long URLs.
-    // Remove those transport-only breaks before extracting the recovery token.
-    const normalizedMail = mail.replace(/=\r?\n/g, "");
-    const rawTokenMatch = normalizedMail.match(/token=([A-Za-z0-9_-]{20,})/);
-    assert.ok(rawTokenMatch?.[1], "test SMTP message must contain the one-time recovery token");
-    const rawToken = rawTokenMatch[1];
+    // Decode the SMTP message's transfer encoding before parsing the URL.
+    // This keeps the assertion aligned with the token a real recipient receives.
+    const transferEncoding = mail.match(/content-transfer-encoding:\s*([\w-]+)/i)?.[1]?.toLowerCase();
+    let decodedMail = mail;
+    if (transferEncoding === "base64") {
+      const body = mail.split(/\r?\n\r?\n/, 2)[1] || "";
+      decodedMail = Buffer.from(body.replace(/\s/g, ""), "base64").toString("utf8");
+    } else if (transferEncoding === "quoted-printable") {
+      decodedMail = mail
+        .replace(/=\r?\n/g, "")
+        .replace(/=([0-9A-F]{2})/gi, (_match, hex) => String.fromCharCode(Number.parseInt(hex, 16)));
+    }
+    const tokenMatches = [...decodedMail.matchAll(/(?:\?|&)token=([A-Za-z0-9_-]{43})(?=[\s&"'<>]|$)/g)];
+    assert.equal(tokenMatches.length, 1, "test SMTP message must contain exactly one 43-character recovery token URL parameter");
+    const rawToken = tokenMatches[0][1];
 
     const storedToken = await prisma.passwordResetToken.findFirst({
       where: { userId: account.id },
