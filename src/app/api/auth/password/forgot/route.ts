@@ -16,7 +16,7 @@ const genericMessage = "Se os dados corresponderem a uma conta elegível, enviar
 
 function digest(value: string) { return createHash("sha256").update(value).digest("hex"); }
 function clientIp(request: NextRequest) {
-  // This header is trustworthy only when the deployment proxy overwrites it.
+  // Only trust this header when the deployment proxy overwrites it.
   return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 }
 
@@ -27,13 +27,20 @@ export async function POST(request: NextRequest) {
   const input = parsed.data;
   const identifier = normalizeIdentifier(input.identifier);
   const cpf = normalizeCpf(input.identifier);
-  const identifierKey = digest(identifier);
+  const user = await prisma.user.findFirst({
+    where: input.profile === "candidate"
+      ? { role: "CANDIDATE", isActive: true, OR: [{ email: identifier }, ...(cpf ? [{ cpf }] : [])] }
+      : { role: "COMPANY", email: identifier, isActive: true },
+    select: { id: true, email: true }
+  });
+
+  // Key by the account when it exists, so requesting recovery by email and CPF
+  // consumes the same per-account quota. Unknown identifiers still receive a
+  // deterministic key without changing the public response.
+  const identifierKey = digest(user ? `user:${user.id}` : `input:${input.profile}:${identifier}`);
   const ipKey = digest(clientIp(request));
   const cutoff = new Date(Date.now() - WINDOW_MS);
 
-  // The baseline defines independent limits per account/identifier and per IP.
-  // Count each dimension separately so one identifier does not consume the quota
-  // of an unrelated identifier behind the same address (and vice versa).
   const [identifierAttempts, ipAttempts] = await Promise.all([
     prisma.recoveryAttempt.count({ where: { identifierKey, createdAt: { gte: cutoff } } }),
     prisma.recoveryAttempt.count({ where: { ipKey, createdAt: { gte: cutoff } } })
@@ -45,13 +52,6 @@ export async function POST(request: NextRequest) {
     );
   }
   await prisma.recoveryAttempt.create({ data: { identifierKey, ipKey } });
-
-  const user = await prisma.user.findFirst({
-    where: input.profile === "candidate"
-      ? { role: "CANDIDATE", isActive: true, OR: [{ email: identifier }, ...(cpf ? [{ cpf }] : [])] }
-      : { role: "COMPANY", email: identifier, isActive: true },
-    select: { id: true, email: true }
-  });
 
   if (user) {
     const { token, tokenHash } = createOneTimeToken();
@@ -68,9 +68,17 @@ export async function POST(request: NextRequest) {
         text: `Recebemos uma solicitação de recuperação de senha. Use este link em até 30 minutos e apenas uma vez: ${baseUrl}/recuperar-senha?token=${token}\n\nSe você não solicitou, ignore esta mensagem.`
       });
     } catch {
-      // Do not disclose account existence or mail configuration to the requester.
-      await prisma.auditEvent.create({ data: { actorUserId: user.id, eventType: "AUTH_PASSWORD_RECOVERY_EMAIL_FAILED", subjectType: "User", subjectId: user.id } });
+      // Keep the public response generic if email delivery is not configured.
+      await prisma.auditEvent.create({
+        data: {
+          actorUserId: user.id,
+          eventType: "AUTH_PASSWORD_RECOVERY_EMAIL_FAILED",
+          subjectType: "User",
+          subjectId: user.id
+        }
+      });
     }
   }
+
   return NextResponse.json({ message: genericMessage }, { status: 200 });
 }
