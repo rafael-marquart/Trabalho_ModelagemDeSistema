@@ -20,7 +20,7 @@ import { POST } from "./route";
 describe("password recovery request", () => {
   const user = { id: "user-1", email: "person@example.com" };
   const tx = {
-    $queryRaw: vi.fn(),
+    $executeRaw: vi.fn(),
     recoveryAttempt: { count: vi.fn(), create: vi.fn() },
     recoveryBlock: { findFirst: vi.fn(), upsert: vi.fn() },
     passwordResetToken: { deleteMany: vi.fn(), create: vi.fn() }
@@ -30,7 +30,7 @@ describe("password recovery request", () => {
     vi.clearAllMocks();
     prismaMock.user.findFirst.mockResolvedValue(user);
     prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => callback(tx));
-    tx.$queryRaw.mockResolvedValue([]);
+    tx.$executeRaw.mockResolvedValue([]);
     tx.recoveryAttempt.count.mockResolvedValue(0);
     tx.recoveryAttempt.create.mockResolvedValue({ id: "attempt-1" });
     tx.recoveryBlock.findFirst.mockResolvedValue(null);
