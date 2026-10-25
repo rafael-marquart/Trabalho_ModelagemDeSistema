@@ -2,7 +2,7 @@
 
 **Revisão:** 25/10/2026  
 **Branch:** `feat/initial-app-foundation`  
-**HEAD atual da branch:** `5b72aa5839629c0114c72a8a3e39588e70536651`  
+**HEAD atual da branch:** `5861ae583018e3745ec603ad92e51c33e8640372`  
 **Último HEAD de código previamente validado pelo CI:** `d9c5738047e0d0037e37491ec4a6f9a481be3495`  
 **Pull request:** [#36](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/pull/36) — permanece Draft  
 **Objetivo:** separar implementação existente, evidência automatizada disponível e validações ainda necessárias. Esta matriz não substitui os critérios de aceite da `docs/Specs.md` nem declara a SPEC-001 concluída.
@@ -15,7 +15,7 @@
 - A recuperação de senha mantém resposta HTTP 200 e mensagem genérica quando há throttling, para reduzir risco de enumeração de contas.
 - A listagem `GET /api/company/recruiter-invitations` é somente leitura: convites pendentes cujo prazo já passou são apresentados como `EXPIRED` na resposta, sem atualizar o banco nem gravar auditoria durante a consulta. O status persistido pode permanecer `PENDING` até um fluxo explícito de escrita tratar o convite.
 - A rota de logout não deriva mais o destino do redirecionamento do host da requisição: usa a origem canônica `APP_BASE_URL`, e retorna `503` em produção se ela estiver ausente. Testes cobrem host não confiável, ausência de configuração e rejeição de origem cruzada.
-- CI não comprova configuração real de SMTP, proxy, domínio público, agendador de retenção nem experiência de acessibilidade em navegadores/dispositivos. Os workflows anteriores passaram para o HEAD de código `d9c5738047e0d0037e37491ec4a6f9a481be3495`. A implementação de throttling gradual por IP foi adicionada depois desse HEAD; o novo código e os testes precisam passar no CI antes de serem considerados validados. O login agora combina bloqueio por conta com throttling gradual por IP, documentado em `docs/operacao/seguranca-login.md`. A nova proteção ainda aguarda CI para a revisão atual; o cabeçalho `X-Forwarded-For` só é confiável se o proxy de produção o sobrescrever.
+- CI não comprova configuração real de SMTP, proxy, domínio público, agendador de retenção nem experiência de acessibilidade em navegadores/dispositivos. Os workflows anteriores passaram para o HEAD de código `d9c5738047e0d0037e37491ec4a6f9a481be3495`. A implementação de throttling gradual por IP, os testes e os ajustes de enforcement do cooldown foram adicionados depois desse HEAD; os workflows da revisão atual estão em andamento. O login agora combina bloqueio por conta com throttling gradual por IP, documentado em `docs/operacao/seguranca-login.md`. A nova proteção ainda aguarda CI para a revisão atual; o cabeçalho `X-Forwarded-For` só é confiável se o proxy de produção o sobrescrever.
 
 ## Matriz dos critérios de aceitação
 
@@ -48,4 +48,4 @@
 
 ## Decisão atual
 
-**SPEC-001 permanece em implementação/validação.** O CI de push e pull request passou para o código no HEAD `d9c5738047e0d0037e37491ec4a6f9a481be3495`, com testes unitários, migrações/restrições de banco e build de produção. A nova proteção por IP, seus testes e a documentação operacional foram adicionados em commits posteriores e aguardam validação do CI. Ainda não há evidência suficiente para afirmar que todos os critérios passaram por validação ponta a ponta ou operacional. Nenhum merge para `main`, publicação em produção ou início da SPEC-002 está autorizado por este relatório.
+**SPEC-001 permanece em implementação/validação.** O CI de push e pull request passou para o código no HEAD `d9c5738047e0d0037e37491ec4a6f9a481be3495`, com testes unitários, migrações/restrições de banco e build de produção. A nova proteção por IP, seus testes e a documentação operacional foram adicionados em commits posteriores; a revisão atual aguarda validação do CI. Ainda não há evidência suficiente para afirmar que todos os critérios passaram por validação ponta a ponta ou operacional. Nenhum merge para `main`, publicação em produção ou início da SPEC-002 está autorizado por este relatório.
