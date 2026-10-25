@@ -2,7 +2,7 @@
 
 **Revisão:** 25/10/2026  
 **Branch:** `feat/initial-app-foundation`  
-**HEAD verificado:** `d9c5738047e0d0037e37491ec4a6f9a481be3495`  
+**HEAD de código validado pelo CI:** `d9c5738047e0d0037e37491ec4a6f9a481be3495`  
 **Pull request:** [#36](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/pull/36) — permanece Draft  
 **Objetivo:** separar implementação existente, evidência automatizada disponível e validações ainda necessárias. Esta matriz não substitui os critérios de aceite da `docs/Specs.md` nem declara a SPEC-001 concluída.
 
@@ -14,7 +14,7 @@
 - A recuperação de senha mantém resposta HTTP 200 e mensagem genérica quando há throttling, para reduzir risco de enumeração de contas.
 - A listagem `GET /api/company/recruiter-invitations` é somente leitura: convites pendentes cujo prazo já passou são apresentados como `EXPIRED` na resposta, sem atualizar o banco nem gravar auditoria durante a consulta. O status persistido pode permanecer `PENDING` até um fluxo explícito de escrita tratar o convite.
 - A rota de logout não deriva mais o destino do redirecionamento do host da requisição: usa a origem canônica `APP_BASE_URL`, e retorna `503` em produção se ela estiver ausente. Testes cobrem host não confiável, ausência de configuração e rejeição de origem cruzada.
-- CI não comprova configuração real de SMTP, proxy, domínio público, agendador de retenção nem experiência de acessibilidade em navegadores/dispositivos. Os dois workflows de CI para o HEAD atual passaram. O bloqueio de login é por conta; a proteção por IP no fluxo de login permanece uma decisão/pendência de segurança, diferente do throttling por conta/IP já implementado na recuperação de senha.
+- CI não comprova configuração real de SMTP, proxy, domínio público, agendador de retenção nem experiência de acessibilidade em navegadores/dispositivos. Os dois workflows de CI passaram para o HEAD de código `d9c5738047e0d0037e37491ec4a6f9a481be3495`; o commit posterior desta matriz altera apenas documentação. O bloqueio de login é por conta; a proteção por IP no fluxo de login permanece uma decisão/pendência de segurança, diferente do throttling por conta/IP já implementado na recuperação de senha.
 
 ## Matriz dos critérios de aceitação
 
@@ -47,4 +47,4 @@
 
 ## Decisão atual
 
-**SPEC-001 permanece em implementação/validação.** O CI de push e pull request passou no HEAD `d9c5738047e0d0037e37491ec4a6f9a481be3495`, com testes unitários, migrações/restrições de banco e build de produção. Ainda não há evidência suficiente para afirmar que todos os critérios passaram por validação ponta a ponta ou operacional. Nenhum merge para `main`, publicação em produção ou início da SPEC-002 está autorizado por este relatório.
+**SPEC-001 permanece em implementação/validação.** O CI de push e pull request passou para o código no HEAD `d9c5738047e0d0037e37491ec4a6f9a481be3495`, com testes unitários, migrações/restrições de banco e build de produção. A atualização desta matriz é documental; o commit que a contém terá seus próprios workflows. Ainda não há evidência suficiente para afirmar que todos os critérios passaram por validação ponta a ponta ou operacional. Nenhum merge para `main`, publicação em produção ou início da SPEC-002 está autorizado por este relatório.
