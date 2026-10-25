@@ -81,7 +81,11 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return { valid, userId: valid && currentUser ? currentUser.id : null };
+    return {
+      valid,
+      userId: valid && currentUser ? currentUser.id : null,
+      passwordChangedAt: valid && currentUser ? currentUser.passwordChangedAt : null
+    };
   });
 
   if (!outcome.valid || !outcome.userId) {
@@ -91,7 +95,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  await createSession(outcome.userId, input.rememberMe);
+  if (!outcome.passwordChangedAt || !(await createSession(outcome.userId, input.rememberMe, outcome.passwordChangedAt))) {
+    return NextResponse.json(
+      { message: "Não foi possível entrar com os dados informados." },
+      { status: 401 }
+    );
+  }
   await prisma.auditEvent.create({
     data: { actorUserId: outcome.userId, eventType: "AUTH_LOGIN_SUCCEEDED", subjectType: "User", subjectId: outcome.userId }
   });
