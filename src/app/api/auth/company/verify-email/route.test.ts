@@ -24,6 +24,7 @@ describe("company email verification", () => {
   const tx = {
     companyEmailVerificationToken: { updateMany: vi.fn(), deleteMany: vi.fn() },
     company: { updateMany: vi.fn() },
+    user: { updateMany: vi.fn() },
     auditEvent: { create: vi.fn() }
   };
   let transactionRolledBack: boolean;
@@ -53,7 +54,7 @@ describe("company email verification", () => {
       body: JSON.stringify({ token })
     });
 
-  it("claims a valid token once and audits email confirmation without activating the user", async () => {
+  it("claims a valid token once, activates the company, and audits email confirmation", async () => {
     const response = await POST(makeRequest() as never);
 
     expect(response.status).toBe(200);
@@ -68,6 +69,10 @@ describe("company email verification", () => {
     expect(tx.company.updateMany).toHaveBeenCalledWith({
       where: { id: "company-1", emailConfirmedAt: null },
       data: { emailConfirmedAt: expect.any(Date) }
+    });
+    expect(tx.user.updateMany).toHaveBeenCalledWith({
+      where: { id: "company-user-1", role: "COMPANY", isActive: false },
+      data: { isActive: true }
     });
     expect(tx.auditEvent.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
