@@ -72,13 +72,8 @@ describe("login", () => {
       data: { failedLoginCount: 0, lockedUntil: null }
     });
     expect(createSessionMock).toHaveBeenCalledWith("candidate-1", false, user.passwordChangedAt);
-    expect(prismaMock.auditEvent.create).toHaveBeenCalledWith({
-      data: expect.objectContaining({
-        actorUserId: "candidate-1",
-        eventType: "AUTH_LOGIN_SUCCEEDED",
-        subjectId: "candidate-1"
-      })
-    });
+    // Successful-login audit is written atomically inside createSession.
+    expect(prismaMock.auditEvent.create).not.toHaveBeenCalled();
   });
 
   it("increments consecutive failures and never creates a session for a wrong password", async () => {
