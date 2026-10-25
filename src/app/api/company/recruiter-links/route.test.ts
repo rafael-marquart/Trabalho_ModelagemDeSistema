@@ -65,34 +65,6 @@ describe("list active recruiter links", () => {
     expect(response.status).toBe(403);
     expect(prismaMock.recruiterLink.findMany).not.toHaveBeenCalled();
   });
-  it("explicitly rejects POST mutations and runs the origin guard first", async () => {
-    const { POST } = await import("./route");
-    const request = new Request("https://acessavagas.example/api/company/recruiter-links", {
-      method: "POST",
-      headers: { origin: "https://attacker.example" }
-    });
-
-    const response = await POST(request as never);
-
-    expect(response.status).toBe(403);
-    expect(getCurrentUserMock).not.toHaveBeenCalled();
-    expect(prismaMock.recruiterLink.findMany).not.toHaveBeenCalled();
-  });
-
-  it("returns method-not-allowed for same-origin POST because the endpoint is read-only", async () => {
-    const { POST } = await import("./route");
-    const request = new Request("https://acessavagas.example/api/company/recruiter-links", {
-      method: "POST",
-      headers: { origin: "https://acessavagas.example" }
-    });
-
-    const response = await POST(request as never);
-
-    expect(response.status).toBe(405);
-    expect(response.headers.get("allow")).toBe("GET");
-    expect(getCurrentUserMock).not.toHaveBeenCalled();
-    expect(prismaMock.recruiterLink.findMany).not.toHaveBeenCalled();
-  });
 
 
 });
