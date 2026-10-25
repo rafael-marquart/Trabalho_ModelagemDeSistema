@@ -49,6 +49,7 @@ export default function HomePage() {
           <div className="signup-links">
             <Link href="/candidato/cadastro">Criar conta de candidato</Link>
             <Link href="/empresa/cadastro">Cadastrar empresa</Link>
+            <Link href="/recrutador/login">Entrar como recrutador</Link>
           </div>
           <p className="legal-note">Ao continuar, você concorda com os termos de uso e a política de privacidade da plataforma.</p>
         </div>
