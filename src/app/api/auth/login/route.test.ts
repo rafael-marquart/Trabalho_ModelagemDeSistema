@@ -31,7 +31,7 @@ describe("login", () => {
   const tx = {
     $queryRaw: vi.fn(),
     user: { findUnique: vi.fn(), update: vi.fn() },
-    loginAttempt: { create: vi.fn() }
+    loginAttempt: { count: vi.fn(), create: vi.fn() }
   };
 
   beforeEach(() => {
@@ -41,6 +41,7 @@ describe("login", () => {
     tx.$queryRaw.mockResolvedValue([]);
     tx.user.findUnique.mockResolvedValue(user);
     tx.user.update.mockResolvedValue(user);
+    tx.loginAttempt.count.mockResolvedValue(0);
     tx.loginAttempt.create.mockResolvedValue({ id: "attempt-1" });
     verifyPasswordMock.mockResolvedValue(true);
     createSessionMock.mockResolvedValue(true);
@@ -167,6 +168,40 @@ describe("login", () => {
     expect(verifyPasswordMock).not.toHaveBeenCalled();
     expect(tx.user.update).not.toHaveBeenCalled();
     expect(createSessionMock).not.toHaveBeenCalled();
+  });
+
+  it("applies the first graduated IP cooldown before account lookup and records blocked attempts", async () => {
+    tx.loginAttempt.count.mockResolvedValueOnce(30);
+
+    const response = await POST(makeRequest({ identifier: "unknown@example.com" }) as never);
+
+    expect(response.status).toBe(429);
+    expect(response.headers.get("retry-after")).toBe("60");
+    expect(await response.json()).toEqual({
+      message: "Não foi possível entrar com os dados informados. Aguarde antes de tentar novamente."
+    });
+    expect(tx.loginAttempt.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ succeeded: false })
+    });
+    expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
+    expect(verifyPasswordMock).not.toHaveBeenCalled();
+    expect(createSessionMock).not.toHaveBeenCalled();
+  });
+
+  it("escalates the IP cooldown as rolling-window failures increase", async () => {
+    for (const [failures, expectedCooldown] of [[50, "300"], [80, "900"], [120, "3600"]]) {
+      vi.clearAllMocks();
+      prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => callback(tx));
+      tx.$queryRaw.mockResolvedValue([]);
+      tx.loginAttempt.count.mockResolvedValueOnce(failures);
+      tx.loginAttempt.create.mockResolvedValue({ id: "blocked-attempt" });
+
+      const response = await POST(makeRequest() as never);
+
+      expect(response.status).toBe(429);
+      expect(response.headers.get("retry-after")).toBe(expectedCooldown);
+      expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
+    }
   });
 
   it("rejects malformed login input before database access", async () => {
