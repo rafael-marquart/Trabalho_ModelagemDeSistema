@@ -5,6 +5,7 @@ import { createOneTimeToken } from "@/lib/auth/tokens";
 import { sendEmail } from "@/lib/email";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 import { prisma } from "@/lib/prisma";
+import { getPublicBaseUrl } from "@/lib/security/public-base-url";
 
 const schema = z.object({ email: z.string().trim().email().max(254) });
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
@@ -110,8 +111,9 @@ export async function POST(request: NextRequest) {
     return { invitation, wasResent: Boolean(pending) };
   });
   const { invitation, wasResent } = invitationResult;
-  const baseUrl = process.env.APP_BASE_URL || new URL(request.url).origin;
+  const baseUrl = getPublicBaseUrl(request);
   try {
+    if (!baseUrl) throw new Error("APP_BASE_URL is required to send production email links");
     await sendEmail({
       to: recipient.email,
       subject: "Convite para se vincular a uma empresa — Acessa Vagas",
