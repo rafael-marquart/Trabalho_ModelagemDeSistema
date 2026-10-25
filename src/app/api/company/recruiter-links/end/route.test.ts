@@ -103,6 +103,20 @@ describe("end recruiter link", () => {
     expect(getCurrentUserMock).not.toHaveBeenCalled();
   });
 
+  it("returns a controlled validation response for malformed JSON", async () => {
+    const request = new Request("https://acessavagas.example/api/company/recruiter-links/end", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: "https://acessavagas.example" },
+      body: "{"
+    });
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({ message: "Vínculo de recrutador inválido." });
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
   it("rejects malformed link identifiers", async () => {
     const response = await POST(makeRequest(""));
 
