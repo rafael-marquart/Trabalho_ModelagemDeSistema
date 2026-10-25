@@ -66,6 +66,12 @@ describe("candidate registration", () => {
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
 
+  it("does not report registration success when the audit write fails", async () => {
+    prismaMock.$transaction.mockRejectedValueOnce(new Error("audit database unavailable"));
+
+    await expect(POST(makeRequest())).rejects.toThrow("audit database unavailable");
+  });
+
   it("maps duplicate account constraints to a conflict response", async () => {
     prismaMock.$transaction.mockRejectedValueOnce({ code: "P2002" });
 
