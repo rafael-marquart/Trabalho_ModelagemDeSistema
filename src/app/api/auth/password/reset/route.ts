@@ -50,7 +50,7 @@ export async function POST(request: Request) {
 
     await tx.user.update({
       where: { id: tokenRecord.userId },
-      data: { passwordHash, passwordChangedAt: now, failedLoginCount: 0, lockedUntil: null }
+      data: { passwordHash, passwordChangedAt: now, failedLoginCount: 0, lastFailedLoginAt: null, lockedUntil: null }
     });
     await tx.passwordResetToken.deleteMany({
       where: { userId: tokenRecord.userId, id: { not: tokenRecord.id } }
