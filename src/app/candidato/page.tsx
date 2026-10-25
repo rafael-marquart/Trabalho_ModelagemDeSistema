@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ThemeToggle from "@/components/theme-toggle";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 
@@ -8,6 +9,7 @@ export default async function CandidateHomePage() {
 
   return (
     <main className="auth-page">
+      <div className="theme-control-host"><ThemeToggle /></div>
       <div className="entry-content">
         <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" /></Link>
         <section className="auth-card">
