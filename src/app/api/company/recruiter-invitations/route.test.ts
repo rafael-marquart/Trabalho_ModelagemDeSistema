@@ -70,24 +70,26 @@ describe("send recruiter invitation", () => {
       body: JSON.stringify({ email, fullName: "Nome do Recrutador" })
     });
 
-  it("does not audit an expiration if another request already changed the invitation", async () => {
-    prismaMock.recruiterInvitation.findMany
-      .mockResolvedValueOnce([{ id: "expired-invitation-1" }])
-      .mockResolvedValueOnce([]);
-    tx.recruiterInvitation.updateMany.mockResolvedValueOnce({ count: 0 });
+  it("lists expired pending invitations as expired without mutating state during GET", async () => {
+    prismaMock.recruiterInvitation.findMany.mockResolvedValueOnce([
+      {
+        id: "expired-invitation-1",
+        status: "PENDING",
+        expiresAt: new Date(Date.now() - 60_000),
+        createdAt: new Date("2026-10-01T12:00:00.000Z"),
+        respondedAt: null
+      }
+    ]);
 
     const response = await GET();
 
     expect(response.status).toBe(200);
-    expect(tx.recruiterInvitation.updateMany).toHaveBeenCalledWith({
-      where: {
-        id: "expired-invitation-1",
-        companyId: "company-1",
-        status: "PENDING",
-        expiresAt: expect.objectContaining({ lte: expect.any(Date) })
-      },
-      data: { status: "EXPIRED", respondedAt: expect.any(Date) }
+    await expect(response.json()).resolves.toMatchObject({
+      invitations: [{ id: "expired-invitation-1", status: "EXPIRED" }]
     });
+    expect(prismaMock.recruiterInvitation.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(tx.recruiterInvitation.updateMany).not.toHaveBeenCalled();
     expect(tx.auditEvent.create).not.toHaveBeenCalled();
   });
 
