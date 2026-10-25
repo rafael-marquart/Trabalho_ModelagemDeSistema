@@ -90,6 +90,15 @@ describe("company email verification", () => {
     expect(tx.auditEvent.create).not.toHaveBeenCalled();
   });
 
+  it("rolls back confirmation and token consumption when audit persistence fails", async () => {
+    tx.auditEvent.create.mockRejectedValueOnce(new Error("audit database unavailable"));
+
+    await expect(POST(makeRequest() as never)).rejects.toThrow("audit database unavailable");
+    expect(transactionRolledBack).toBe(true);
+    expect(tx.company.updateMany).toHaveBeenCalled();
+    expect(tx.companyEmailVerificationToken.deleteMany).toHaveBeenCalled();
+  });
+
   it("rejects an already-confirmed company without consuming a token", async () => {
     prismaMock.companyEmailVerificationToken.findUnique.mockResolvedValueOnce({
       ...tokenRecord,
