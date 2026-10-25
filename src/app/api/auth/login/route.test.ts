@@ -25,6 +25,7 @@ describe("login", () => {
     isActive: true,
     passwordHash: "stored-hash",
     failedLoginCount: 0,
+    lastFailedLoginAt: null,
     lockedUntil: null,
     passwordChangedAt: new Date("2026-01-01T00:00:00.000Z")
   };
@@ -71,7 +72,7 @@ describe("login", () => {
     expect(verifyPasswordMock).toHaveBeenCalledWith("stored-hash", "StrongPassword123");
     expect(tx.user.update).toHaveBeenCalledWith({
       where: { id: "candidate-1" },
-      data: { failedLoginCount: 0, lockedUntil: null }
+      data: { failedLoginCount: 0, lastFailedLoginAt: null, lockedUntil: null }
     });
     expect(createSessionMock).toHaveBeenCalledWith("candidate-1", false, user.passwordChangedAt);
     // Successful-login audit is written atomically inside createSession.
@@ -80,7 +81,7 @@ describe("login", () => {
 
   it("increments consecutive failures and never creates a session for a wrong password", async () => {
     verifyPasswordMock.mockResolvedValueOnce(false);
-    tx.user.findUnique.mockResolvedValueOnce({ ...user, failedLoginCount: 4 });
+    tx.user.findUnique.mockResolvedValueOnce({ ...user, failedLoginCount: 4, lastFailedLoginAt: new Date(Date.now() - 60_000) });
 
     const response = await POST(makeRequest({ password: "WrongPassword123" }) as never);
 
@@ -90,7 +91,7 @@ describe("login", () => {
     });
     expect(tx.user.update).toHaveBeenCalledWith({
       where: { id: "candidate-1" },
-      data: { failedLoginCount: 5 }
+      data: { failedLoginCount: 5, lastFailedLoginAt: expect.any(Date) }
     });
     expect(createSessionMock).not.toHaveBeenCalled();
     expect(prismaMock.auditEvent.create).not.toHaveBeenCalled();
@@ -98,18 +99,35 @@ describe("login", () => {
 
   it("locks the account for 15 minutes on the tenth consecutive failure", async () => {
     verifyPasswordMock.mockResolvedValueOnce(false);
-    tx.user.findUnique.mockResolvedValueOnce({ ...user, failedLoginCount: 9 });
+    tx.user.findUnique.mockResolvedValueOnce({ ...user, failedLoginCount: 9, lastFailedLoginAt: new Date(Date.now() - 60_000) });
 
     const response = await POST(makeRequest({ password: "WrongPassword123" }) as never);
 
     expect(response.status).toBe(401);
     expect(tx.user.update).toHaveBeenCalledWith({
       where: { id: "candidate-1" },
-      data: { failedLoginCount: 0, lockedUntil: expect.any(Date) }
+      data: { failedLoginCount: 0, lastFailedLoginAt: null, lockedUntil: expect.any(Date) }
     });
     const lock = tx.user.update.mock.calls[0][0].data.lockedUntil as Date;
     expect(lock.getTime()).toBeGreaterThan(Date.now() + 14 * 60 * 1000);
     expect(lock.getTime()).toBeLessThanOrEqual(Date.now() + 15 * 60 * 1000 + 1000);
+  });
+
+  it("resets a stale failure counter when the previous failure is outside 15 minutes", async () => {
+    verifyPasswordMock.mockResolvedValueOnce(false);
+    tx.user.findUnique.mockResolvedValueOnce({
+      ...user,
+      failedLoginCount: 9,
+      lastFailedLoginAt: new Date(Date.now() - 16 * 60 * 1000)
+    });
+
+    const response = await POST(makeRequest({ password: "WrongPassword123" }) as never);
+
+    expect(response.status).toBe(401);
+    expect(tx.user.update).toHaveBeenCalledWith({
+      where: { id: "candidate-1" },
+      data: { failedLoginCount: 1, lastFailedLoginAt: expect.any(Date) }
+    });
   });
 
   it("does not verify credentials for a locked account", async () => {
