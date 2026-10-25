@@ -30,6 +30,7 @@ button, input { font: inherit; }
 .welcome-panel { position: relative; isolation: isolate; display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; padding: clamp(32px, 5vw, 72px); color: #fff; background: linear-gradient(145deg, #35205f 0%, #5b38a3 54%, #7853c6 100%); }
 .brand { display: inline-flex; align-items: center; gap: 10px; width: fit-content; color: inherit; font-family: "Manrope", sans-serif; font-size: 21px; font-weight: 800; letter-spacing: -0.8px; }
 .brand:hover { text-decoration: none; }
+.brand-logo { display: block; width: 164px; height: auto; object-fit: contain; }
 .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 11px; color: var(--purple-dark); background: #fff; font-size: 25px; font-weight: 800; line-height: 1; }
 .brand-accent { color: #c9b7ff; }
 .welcome-copy { position: relative; z-index: 1; max-width: 480px; margin: auto 0; padding: 72px 0 90px; }
