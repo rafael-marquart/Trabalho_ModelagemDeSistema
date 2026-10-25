@@ -48,6 +48,8 @@ jobs:
         run: npx prisma migrate deploy
       - name: Verify active recruiter link database constraint
         run: psql "postgresql://postgres:postgres@localhost:5432/acessa_vagas" -v ON_ERROR_STOP=1 -f scripts/test-active-recruiter-link-constraint.sql
+      - name: Verify concurrent active recruiter link constraint
+        run: bash scripts/test-active-recruiter-link-concurrency.sh
       - name: Check TypeScript
         run: npm run typecheck
       - name: Lint
