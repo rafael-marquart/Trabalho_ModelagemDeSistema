@@ -104,3 +104,51 @@ button, input, select { font: inherit; }
 .invitation-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; }
 .invitation-item .muted { margin-top: 5px; font-size: 12px; }
 @media (max-width: 480px) { .invitation-item { align-items: flex-start; flex-direction: column; } }
+
+/* Shared theme controls and token-driven surfaces; SVG prototypes remain the visual source of truth. */
+.theme-control-host { display: flex; justify-content: flex-end; margin: 0 0 14px; }
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 40px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px;
+  color: var(--ink); background: var(--surface); cursor: pointer; font-size: 13px; font-weight: 600;
+}
+.theme-toggle:hover { border-color: #b7a3e9; }
+.theme-toggle:focus-visible { outline: 3px solid #9d83e5; outline-offset: 3px; }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #f2edf9;
+  --muted: #c0b7d1;
+  --purple: #c5a9ff;
+  --purple-dark: #ddceff;
+  --purple-soft: #35264c;
+  --line: #4a405b;
+  --surface: #211a2d;
+  --background: #17121f;
+  --danger: #ff9ba9;
+}
+:root[data-theme="dark"] body { color: var(--ink); background: var(--background); }
+:root[data-theme="dark"] a { color: var(--purple-dark); }
+:root[data-theme="dark"] .page-shell,
+:root[data-theme="dark"] .entry-panel,
+:root[data-theme="dark"] .choice-card { background: var(--surface); }
+:root[data-theme="dark"] .auth-page { background: radial-gradient(circle at 0% 100%, #302342 0, transparent 36%), var(--background); }
+:root[data-theme="dark"] .auth-card { border-color: var(--line); background: var(--surface); box-shadow: 0 22px 60px rgba(0,0,0,.25); }
+:root[data-theme="dark"] .auth-brand { color: var(--ink); }
+:root[data-theme="dark"] .auth-form > label { color: var(--ink); }
+:root[data-theme="dark"] .auth-form input:not([type="checkbox"]),
+:root[data-theme="dark"] .auth-form select {
+  border-color: #615572; color: var(--ink); background: #2b2238;
+}
+:root[data-theme="dark"] .auth-form input::placeholder { color: #b7abc8; }
+:root[data-theme="dark"] .secondary-button { color: var(--ink); background: var(--surface); }
+:root[data-theme="dark"] .choice-copy strong { color: var(--ink); }
+:root[data-theme="dark"] .choice-copy span,
+:root[data-theme="dark"] .muted,
+:root[data-theme="dark"] .back-link,
+:root[data-theme="dark"] .checkbox-label { color: var(--muted); }
+:root[data-theme="dark"] .form-error { color: var(--danger); }
+:root[data-theme="dark"] .entry-divider { color: var(--muted); }
+:root[data-theme="dark"] .legal-note { color: #b6a9c8; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
