@@ -2,15 +2,15 @@
 
 **Revisão:** 25/10/2026  
 **Branch:** `feat/initial-app-foundation`  
-**HEAD verificado:** `98faa117f9e959dda0c9f0728c7efc18ff0cffbb`  
+**HEAD verificado:** `70c3d4ff29248d6c7cb6baf174f11ab499332d0c`  
 **Pull request:** [#36](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/pull/36) — permanece Draft  
 **Objetivo:** separar implementação existente, evidência automatizada disponível e validações ainda necessárias. Esta matriz não substitui os critérios de aceite da `docs/Specs.md` nem declara a SPEC-001 concluída.
 
 ## Estado de CI observado
 
-- O CI de push (run [40209992168](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40209992168)) e o CI de pull request (run [40209997107](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40209997107)) concluíram com sucesso para o HEAD `98faa117f9e959dda0c9f0728c7efc18ff0cffbb`.
+- O CI de push (run [40210520015](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40210520015)) e o CI de pull request (run [40210522708](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40210522708)) concluíram com sucesso para o HEAD `70c3d4ff29248d6c7cb6baf174f11ab499332d0c`.
 - A etapa `validate` passou nas duas execuções. A pipeline cobre validação/geração Prisma, migrações PostgreSQL, restrições de integridade e concorrência, TypeScript, lint, testes unitários e build de produção.
-- O HEAD inclui a serialização por bloqueio de linha no reset de senha e teste para usuário que deixa de estar elegível antes da transação. A aprovação do CI confirma os testes automatizados existentes, não substitui testes integrados/E2E.
+- O HEAD mantém a serialização por bloqueio de linha no reset de senha, teste para usuário que deixa de estar elegível antes da transação e proteção contra corrida na ativação de empresa durante a confirmação de e-mail. A ordem das operações foi ajustada para não consumir tokens secundários se a ativação não for confirmada.
 - A recuperação de senha mantém resposta HTTP 200 e mensagem genérica quando há throttling, para reduzir risco de enumeração de contas.
 - CI não comprova configuração real de SMTP, proxy, domínio público, agendador de retenção nem experiência de acessibilidade em navegadores/dispositivos.
 
