@@ -3108,3 +3108,60 @@ As decisões de apresentação por estrelas, mínimo de uma avaliação válida 
 | SPEC-016 a SPEC-021 | aprovadas; prontas para implementação | Nenhum bloqueio por OPEN-088. |
 
 Esta aprovação se refere aos **textos das Specs** e autoriza implementação controlada das capacidades marcadas como prontas, respeitando os limites registrados nas OPENs e a decisão atual REV-018. Para Adzuna, o escopo autorizado é exclusivamente até 25 chamadas de teste; não autoriza coleta contínua nem operação de produção. A aprovação não altera nem aprova layouts: protótipos e layouts aplicáveis continuam sujeitos à aprovação visual própria. SPEC-007, SPEC-008 e SPEC-010 não têm mais bloqueio por OPEN-088; a implementação pode prosseguir conforme este registro, aplicando HERE Routing API no plano gratuito, estimativa padrão sem trânsito/horário e tratamento de falhas conforme OPEN-033. A aprovação não altera nem aprova layouts: protótipos e layouts aplicáveis continuam sujeitos à aprovação visual própria.
+
+## Processo de implementação e critérios transversais
+
+Este processo rege a implementação das Specs aprovadas e complementa seus critérios de aceitação. Não substitui requisitos funcionais, RNFs, decisões de negócio ou dependências específicas registrados neste documento e nas demais fontes de rastreabilidade.
+
+### Controle de versão e integração
+
+- Não implementar diretamente na branch `main`. Desenvolver em branches de trabalho separadas, com nomes que identifiquem o tipo de alteração e a Spec relacionada quando aplicável.
+- Integrar alterações à `main` somente por Pull Request (PR), após revisão e verificações aplicáveis.
+- **Cada PR exige aprovação explícita do responsável pelo projeto antes do merge.** Testes aprovados ou revisões concluídas não equivalem a essa autorização.
+- Manter as alterações tão pequenas e rastreáveis quanto viável. Quando houver dependências entre Specs, implementá-las na ordem necessária ou dividir o trabalho em PRs coerentes.
+- Não alterar regras de negócio previamente aprovadas por iniciativa própria. Se uma inconsistência exigir decisão funcional, apresentar o impacto e aguardar orientação.
+
+### Ciclo de cada Spec
+
+1. Revisar a Spec, os critérios de aceitação, RNFs, casos de uso, fluxos, modelo de dados, dependências e questões em aberto.
+2. Definir escopo, impactos, estratégia de teste e critérios de conclusão antes de alterar o código.
+3. Implementar em branch separada, sem ultrapassar o escopo acordado.
+4. Executar testes proporcionais ao risco e verificações de segurança e acessibilidade aplicáveis.
+5. Revisar regressões, documentação, resultados, limitações e pendências; registrar testes não executados como não executados.
+6. Preparar PR com referência à Spec, resumo das alterações, instruções/evidências de teste, riscos e pendências.
+7. Aguardar aprovação explícita do responsável antes de integrar.
+
+Uma Spec não está concluída se critérios obrigatórios falharem ou houver bloqueador conhecido de segurança ou acessibilidade. Pendências não bloqueantes devem ser registradas com justificativa e impacto, sem ocultá-las para declarar conclusão.
+
+### Testes e qualidade
+
+A estratégia de testes será proporcional ao risco e à natureza da alteração, podendo incluir testes unitários, integração, ponta a ponta (E2E), regressão, análise estática, build, verificação de dependências, segurança e acessibilidade. As verificações pertinentes de segurança e acessibilidade devem ser consideradas em todas as Specs, ainda que a profundidade varie.
+
+Não afirmar que um teste passou se não tiver sido executado e verificado. Ferramentas automatizadas apoiam, mas não substituem, a revisão manual quando esta for necessária. Problemas críticos de segurança e falhas em critérios obrigatórios bloqueiam a conclusão até serem resolvidos ou formalmente reavaliados.
+
+### Segurança
+
+Conforme a arquitetura e os RNFs aplicáveis, considerar autenticação e autorização no servidor, validação de dados, prevenção de vulnerabilidades como XSS, SQL injection e CSRF, proteção de credenciais e tokens, tratamento seguro de erros, revisão de dependências e permissões, proteção de dados pessoais e configuração segura de transporte e hospedagem. Ocultar controles na interface não substitui a autorização no servidor.
+
+### Acessibilidade — WCAG 2.2 nível AA
+
+**O projeto adota WCAG 2.2 nível AA como padrão de referência definido para acessibilidade.** Os critérios aplicáveis devem orientar análise, design, implementação e testes de todas as Specs. A validação deverá combinar ferramentas automatizadas com verificações manuais pertinentes, incluindo teclado, foco visível, semântica, leitores de tela, contraste, formulários, mensagens de erro, ampliação e telas menores. Resultados e limitações devem ser registrados; não se deve declarar conformidade sem verificação suficiente.
+
+A acessibilidade deverá ser avaliada tanto no tema claro quanto no tema escuro. Estados e mensagens não podem depender exclusivamente de cor para comunicar informação.
+
+### Tema claro e tema escuro
+
+O site deverá oferecer tema claro e tema escuro, com controles acessíveis, contraste e legibilidade adequados, componentes e estados consistentes e comportamento responsivo. A preferência de tema deverá, idealmente, persistir entre visitas, respeitando a arquitetura e as decisões de privacidade aplicáveis. Ambos os temas entram nas verificações visuais e de acessibilidade.
+
+### Pull Requests, publicação e produção
+
+O PR deverá documentar o escopo, os testes executados e seus resultados, as verificações relevantes de segurança/acessibilidade, os riscos e as pendências. Recomenda-se automatizar build, testes e verificações disponíveis com GitHub Actions e proteger a `main` contra pushes diretos, quando a configuração do repositório permitir.
+
+A publicação em produção exige **aprovação explícita do responsável pelo projeto**, independentemente de o merge ter sido aprovado. Quando compatível com a arquitetura, usar ambiente de preview/homologação para validar mudanças antes da produção. Antes da publicação, verificar build, testes, configuração de serviços e variáveis, ausência de segredos no repositório, jornadas principais, HTTPS e possibilidade de reversão.
+
+O objetivo final é disponibilizar um link público funcional da aplicação no campo About do repositório GitHub. O provedor de hospedagem deve ser confirmado com base na arquitetura real; não presumir uma plataforma sem essa verificação.
+
+### Limites de integração externa já definidos
+
+A integração com Adzuna permanece limitada a **até 25 chamadas de teste**. Essa autorização não permite coleta contínua, rotina diária, operação de produção nem ampliação do limite.
+
