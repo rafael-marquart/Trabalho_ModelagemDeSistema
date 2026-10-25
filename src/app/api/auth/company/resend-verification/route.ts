@@ -99,8 +99,8 @@ export async function POST(request: NextRequest) {
     const stillEligible = await tx.company.findFirst({
       where: {
         id: eligibleCompanyId!,
-        emailConfirmedAt: null,
-        accountUser: { role: "COMPANY", isActive: false }
+        accountUserId: eligible.id,
+        emailConfirmedAt: null
       },
       select: { id: true }
     });
