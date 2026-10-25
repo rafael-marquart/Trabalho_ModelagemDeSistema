@@ -121,7 +121,7 @@ A decisão aprovada define recuperação de candidato por e-mail ou CPF e recupe
 5. O sistema registra a alteração conforme as regras aplicáveis.
 6. A Empresa não pode administrar vínculos de Recrutadores pertencentes a outra organização.
 
-O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou tratar um e-mail que já pertença a uma conta precisa ser decidida antes da implementação. O perfil Administrador é exclusivo da plataforma e não participa da administração da conta Empresa.
+O comportamento deriva de UC-07 e RB-46. Quando o e-mail já pertencer a uma conta, a Empresa envia um convite ao e-mail dessa conta e o titular deve aceitá-lo explicitamente. O convite é válido por 7 dias; a Empresa pode reenviá-lo, invalidando o link anterior, ou cancelá-lo enquanto estiver pendente. O titular pode recusá-lo, e um convite sem resposta expira após 7 dias. O link do convite é de uso único. Um Recrutador pode estar associado ativamente a apenas uma Empresa por vez; se já estiver vinculado a uma Empresa, não poderá aceitar convite de outra até que o vínculo existente seja encerrado. O convite não transfere nem encerra por si só um vínculo existente. O perfil Administrador é exclusivo da plataforma e não participa da administração da conta Empresa.
 
 
 
@@ -136,8 +136,10 @@ O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou t
 6. Não permitir novo cadastro de Empresa com identificador oficial já associado a outra Empresa; orientar recuperação ou associação à conta existente.
 7. A Empresa cadastra e vincula Recrutadores nas próprias configurações, conforme RF-17 e RB-46.
 8. Quando o e-mail informado já pertencer a uma conta, a Empresa autenticada e autorizada pode solicitar o vínculo por convite enviado ao e-mail da conta; o titular deve dar aceite explícito antes da efetivação.
-9. Enquanto o convite estiver pendente, não conceder permissões de Recrutador para a Empresa solicitante; informar à Empresa apenas o estado pendente, sem dados adicionais da conta existente.
-10. Antes de efetivar o vínculo após o aceite, validar novamente a autorização da Empresa e respeitar RB-46; o aceite não autoriza automaticamente transferência ou administração de vínculo pertencente a outra Empresa.
+9. O convite tem validade de 7 dias e link de uso único. A Empresa pode reenviar o convite enquanto pendente; o reenvio invalida o link anterior. A Empresa também pode cancelar o convite enquanto pendente. O titular pode recusá-lo; convites não respondidos expiram ao fim dos 7 dias. Os estados de acompanhamento são `Pendente`, `Recusado`, `Expirado` e `Cancelado`, conforme a ação ou prazo aplicável.
+10. Enquanto o convite estiver pendente, não conceder permissões de Recrutador para a Empresa solicitante; informar à Empresa apenas o estado do convite, sem dados adicionais da conta existente.
+11. Antes de efetivar o vínculo após o aceite, validar novamente a autorização da Empresa e respeitar RB-46. Um Recrutador pode ter vínculo ativo com apenas uma Empresa por vez; se já estiver vinculado a outra Empresa, não poderá aceitar novo convite até que o vínculo atual seja encerrado. Aceitar convite não encerra nem transfere automaticamente vínculo existente.
+12. Registrar envio, reenvio, cancelamento, recusa, expiração, aceite e efetivação do vínculo conforme RB-27 e RNF-14.
 11. Eventos de envio e resposta ao convite e de efetivação do vínculo são relevantes para rastreabilidade conforme RB-27 e RNF-14. Conforme decisão registrada na OPEN-006, os eventos relevantes de negócio e segurança devem ser auditados e os registros mantidos por 1 ano, com acesso restrito, proteção contra alteração/exclusão indevida e minimização dos dados registrados. Não se exige auditoria indiscriminada de consultas e visualizações; detalhes técnicos exaustivos e descarte permanecem para definição na implementação, respeitando a política aprovada e obrigações aplicáveis.
 12. Operações protegidas devem verificar perfil e permissão no backend (RB-12, RF-40, DA-02).
 13. Sessão expirada ou invalidada não pode autorizar operação protegida (RB-22).
@@ -145,7 +147,9 @@ O comportamento deriva de UC-07 e RB-46. A forma de verificar consentimento ou t
 15. O cadastro inicial oferece Usuário ou Empresa; Recrutador é cadastrado/associado pela Empresa.
 16. O Recrutador permanece vinculado à Empresa responsável (RB-46).
 17. Uma Empresa só pode administrar vínculos sob sua própria responsabilidade.
-18. Não se introduz o papel de Gestor de Seleção.
+18. Cada Recrutador pode ter no máximo um vínculo ativo com uma Empresa por vez. Não efetivar novo vínculo enquanto houver outro vínculo ativo; o vínculo atual deve ser encerrado antes da aceitação/efetivação de um novo convite.
+19. Convites de Recrutador expiram após 7 dias; reenvio invalida o link anterior, cancelamento só é permitido enquanto pendente, recusa não cria vínculo e o link é de uso único.
+20. Não se introduz o papel de Gestor de Seleção.
 19. Cadastro, perfil e vínculo organizacional devem permanecer íntegros (RNF-09).
 20. Alterações relevantes devem ser rastreáveis conforme RB-27 e RNF-14, respeitando RNF-08.
 21. ADR-002 centraliza a autorização no backend, mas não determina JWT, sessão/cookie ou mecanismo específico.
