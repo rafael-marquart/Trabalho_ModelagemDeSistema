@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { revokeCurrentSessionMock } = vi.hoisted(() => ({
   revokeCurrentSessionMock: vi.fn()
@@ -15,7 +15,11 @@ describe("logout", () => {
     vi.clearAllMocks();
     revokeCurrentSessionMock.mockResolvedValue(undefined);
     delete process.env.APP_BASE_URL;
-    process.env.NODE_ENV = "test";
+    vi.stubEnv("NODE_ENV", "test");
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it("revokes the current session and redirects to the entry page", async () => {
@@ -44,7 +48,7 @@ describe("logout", () => {
   });
 
   it("does not redirect or revoke the session when production origin is not configured", async () => {
-    process.env.NODE_ENV = "production";
+    vi.stubEnv("NODE_ENV", "production");
     delete process.env.APP_BASE_URL;
     const request = new Request("https://acessavagas.example/api/auth/logout", {
       method: "POST",
