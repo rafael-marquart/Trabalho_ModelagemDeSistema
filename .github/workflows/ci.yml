@@ -46,6 +46,8 @@ jobs:
         run: npm run db:generate
       - name: Apply migrations to PostgreSQL
         run: npx prisma migrate deploy
+      - name: Verify active recruiter link database constraint
+        run: psql "postgresql://postgres:postgres@localhost:5432/acessa_vagas" -v ON_ERROR_STOP=1 -f scripts/test-active-recruiter-link-constraint.sql
       - name: Check TypeScript
         run: npm run typecheck
       - name: Lint
