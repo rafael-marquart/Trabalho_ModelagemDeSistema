@@ -240,6 +240,15 @@ describe("revokeCurrentSession", () => {
     expect(cookieDelete).toHaveBeenCalledWith("acessa_session");
   });
 
+  it("does not report logout complete or clear the cookie when audit persistence fails", async () => {
+    prismaMock.auditEvent.create.mockRejectedValueOnce(new Error("audit database unavailable"));
+
+    await expect(revokeCurrentSession()).rejects.toThrow("audit database unavailable");
+
+    expect(prismaMock.session.deleteMany).toHaveBeenCalledWith({ where: { id: "session-1", tokenHash } });
+    expect(cookieDelete).not.toHaveBeenCalled();
+  });
+
   it("still clears the cookie when no session token is present", async () => {
     cookieGet.mockReturnValueOnce(undefined);
 
