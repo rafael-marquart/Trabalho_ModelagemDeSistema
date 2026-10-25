@@ -58,13 +58,25 @@ export async function getCurrentUser() {
     return null;
   }
 
-  await prisma.session.update({
-    where: { id: session.id },
+  // A session can be revoked between the read above and this refresh (for
+  // example by password reset or logout in another request). Use a conditional
+  // update so a stale request never turns that race into a 500 or refreshes an
+  // already-expired session.
+  const refreshed = await prisma.session.updateMany({
+    where: {
+      id: session.id,
+      expiresAt: { gt: now },
+      absoluteExpiresAt: { gt: now }
+    },
     data: {
       lastSeenAt: now,
       expiresAt: new Date(Math.min(now.getTime() + IDLE_TIMEOUT_MS, session.absoluteExpiresAt.getTime()))
     }
   });
+
+  if (refreshed.count !== 1) {
+    return null;
+  }
 
   return session.user;
 }
