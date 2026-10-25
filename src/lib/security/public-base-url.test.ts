@@ -23,7 +23,7 @@ describe("getPublicBaseUrl", () => {
   });
 
   it("does not accept invalid or non-http configured URLs", () => {
-    process.env.NODE_ENV = "production";
+    vi.stubEnv("NODE_ENV", "production");
     process.env.APP_BASE_URL = "javascript:alert(1)";
 
     expect(getPublicBaseUrl(request)).toBeNull();
