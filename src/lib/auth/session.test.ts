@@ -35,7 +35,11 @@ describe("createSession", () => {
     vi.clearAllMocks();
     const auditCreate = vi.fn().mockResolvedValue({ id: "audit-1" });
     prismaMock.$transaction.mockImplementation(async (callback: (tx: unknown) => unknown) =>
-      callback({ $queryRaw: queryRaw, session: { create: sessionCreate }, auditEvent: { create: auditCreate } })
+      callback({
+        $queryRaw: queryRaw,
+        session: { create: sessionCreate, findUnique: prismaMock.session.findUnique, deleteMany: prismaMock.session.deleteMany },
+        auditEvent: { create: auditCreate }
+      })
     );
     queryRaw.mockResolvedValue([{ id: "user-1" }]);
     sessionCreate.mockResolvedValue({ id: "session-1" });
@@ -184,17 +188,45 @@ describe("getCurrentUser", () => {
 });
 
 describe("revokeCurrentSession", () => {
+  const tokenHash = createHash("sha256").update("raw-session-token").digest("hex");
+
   beforeEach(() => {
     vi.clearAllMocks();
     cookieGet.mockReturnValue({ value: "raw-session-token" });
+    prismaMock.session.findUnique.mockResolvedValue({ id: "session-1", userId: "user-1" });
+    prismaMock.session.deleteMany.mockResolvedValue({ count: 1 });
+    prismaMock.auditEvent.create.mockResolvedValue({ id: "audit-1" });
   });
 
-  it("deletes the session by token digest and clears the cookie", async () => {
+  it("revokes the session and audits logout in one transaction before clearing the cookie", async () => {
     await revokeCurrentSession();
 
-    expect(prismaMock.session.deleteMany).toHaveBeenCalledWith({
-      where: { tokenHash: createHash("sha256").update("raw-session-token").digest("hex") }
+    expect(prismaMock.$transaction).toHaveBeenCalledWith(expect.any(Function));
+    expect(prismaMock.session.findUnique).toHaveBeenCalledWith({
+      where: { tokenHash },
+      select: { id: true, userId: true }
     });
+    expect(prismaMock.session.deleteMany).toHaveBeenCalledWith({
+      where: { id: "session-1", tokenHash }
+    });
+    expect(prismaMock.auditEvent.create).toHaveBeenCalledWith({
+      data: {
+        actorUserId: "user-1",
+        eventType: "AUTH_LOGOUT",
+        subjectType: "User",
+        subjectId: "user-1"
+      }
+    });
+    expect(cookieDelete).toHaveBeenCalledWith("acessa_session");
+  });
+
+  it("does not create a logout audit when the session no longer exists", async () => {
+    prismaMock.session.findUnique.mockResolvedValueOnce(null);
+
+    await revokeCurrentSession();
+
+    expect(prismaMock.session.deleteMany).not.toHaveBeenCalled();
+    expect(prismaMock.auditEvent.create).not.toHaveBeenCalled();
     expect(cookieDelete).toHaveBeenCalledWith("acessa_session");
   });
 
@@ -203,6 +235,7 @@ describe("revokeCurrentSession", () => {
 
     await revokeCurrentSession();
 
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
     expect(prismaMock.session.deleteMany).not.toHaveBeenCalled();
     expect(cookieDelete).toHaveBeenCalledWith("acessa_session");
   });
