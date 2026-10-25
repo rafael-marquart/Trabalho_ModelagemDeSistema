@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
       // Atomically increment the counter in PostgreSQL. Concurrent failed
       // logins cannot overwrite one another's increments or prolong an active lock.
       if (user && user.role === expectedRole && user.isActive && !locked) {
-        const rows = await tx.$queryRaw<Array<{ failedLoginCount: number }>>`
+        await tx.$queryRaw<Array<{ failedLoginCount: number }>>`
           UPDATE "User"
           SET
             "failedLoginCount" = CASE
@@ -86,7 +86,6 @@ export async function POST(request: NextRequest) {
         `;
         // The SQL update itself is atomic; the threshold sets the lock and
         // resets the consecutive-failure counter in the same statement.
-        void rows;
       }
     });
 
@@ -103,11 +102,6 @@ export async function POST(request: NextRequest) {
       data: { failedLoginCount: 0, lockedUntil: null }
     })
   ]);
-
-  await prisma.user.update({
-    where: { id: user.id },
-    data: { failedLoginCount: 0, lockedUntil: null }
-  });
   await createSession(user.id, input.rememberMe);
   await prisma.auditEvent.create({
     data: { actorUserId: user.id, eventType: "AUTH_LOGIN_SUCCEEDED", subjectType: "User", subjectId: user.id }
