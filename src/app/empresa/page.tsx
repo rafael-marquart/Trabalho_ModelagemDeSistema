@@ -13,7 +13,7 @@ export default async function CompanyHomePage() {
         <section className="auth-card">
           <p className="eyebrow">Área da empresa</p>
           <h1>Bem-vinda ao Acessa Vagas.</h1>
-          <p className="muted">Sua sessão está ativa. O painel da empresa será desenvolvido nas próximas etapas da implementação.</p>
+          <p className="muted">Gerencie os convites e vínculos com recrutadores da sua organização.</p><p className="auth-footer"><Link href="/empresa/recrutadores">Gerenciar recrutadores</Link></p>
           <form action="/api/auth/logout" method="post"><button className="primary-button" type="submit">Sair da conta</button></form>
         </section>
       </div>
