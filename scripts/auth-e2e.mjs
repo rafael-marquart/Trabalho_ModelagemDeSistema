@@ -390,6 +390,16 @@ async function main() {
     }, { cookie: `acessa_session=${newCookieMatch[1]}` });
     await expectStatus(candidateCreateInvitation, 401, "candidate attempts to create company recruiter invitation");
 
+    const candidateCancelInvitation = await postJson("/api/company/recruiter-invitations/cancel", {
+      invitationId: randomUUID()
+    }, { cookie: `acessa_session=${newCookieMatch[1]}` });
+    await expectStatus(candidateCancelInvitation, 401, "candidate attempts to cancel company recruiter invitation");
+
+    const candidateEndRecruiterLink = await postJson("/api/company/recruiter-links/end", {
+      recruiterLinkId: randomUUID()
+    }, { cookie: `acessa_session=${newCookieMatch[1]}` });
+    await expectStatus(candidateEndRecruiterLink, 401, "candidate attempts to end company recruiter link");
+
     // Force the persisted idle expiry and prove the real protected page rejects the stale cookie.
     await prisma.session.updateMany({
       where: { tokenHash: digest(newCookieMatch[1]) },
