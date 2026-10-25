@@ -47,6 +47,7 @@ export default function ConfirmCompanyEmailPage() {
         <p className={status === "error" ? "form-error" : "muted"} role={status === "error" ? "alert" : "status"} aria-live="polite">
           {message}
         </p>
+        {status === "error" && <p className="auth-footer"><Link href="/empresa/reenviar-confirmacao">Solicitar novo link de confirmação</Link></p>}
         {status !== "loading" && <p className="auth-footer"><Link href="/empresa/login">Ir para o acesso da empresa</Link></p>}
       </section>
     </main>
