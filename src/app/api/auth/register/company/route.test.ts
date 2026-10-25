@@ -44,7 +44,7 @@ describe("company registration", () => {
       body: JSON.stringify({
         legalName: "Empresa Exemplo Ltda",
         tradeName: "Exemplo",
-        officialId: "12.345.678/0001-90",
+        officialId: "11.222.333/0001-81",
         contactEmail: " CONTATO@EXEMPLO.COM ",
         password: "StrongPassword123",
         ...overrides
@@ -67,7 +67,7 @@ describe("company registration", () => {
           create: {
             legalName: "Empresa Exemplo Ltda",
             tradeName: "Exemplo",
-            officialId: "12345678000190",
+            officialId: "11222333000181",
             contactEmail: "contato@exemplo.com"
           }
         }
@@ -89,6 +89,15 @@ describe("company registration", () => {
 
   it("rejects an identifier that is too short after normalization", async () => {
     const response = await POST(makeRequest({ officialId: "12-34" }));
+
+    expect(response.status).toBe(400);
+    expect(hashPasswordMock).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
+
+  it("rejects foreign identifiers and invalid CNPJ check digits", async () => {
+    const response = await POST(makeRequest({ officialId: "12345678" }));
 
     expect(response.status).toBe(400);
     expect(hashPasswordMock).not.toHaveBeenCalled();
