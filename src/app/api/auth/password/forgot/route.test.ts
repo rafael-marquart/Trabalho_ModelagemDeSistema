@@ -53,7 +53,7 @@ describe("password recovery request", () => {
     expect(stored.expiresAt).toBeInstanceOf(Date);
 
     const email = sendEmailMock.mock.calls[0][0];
-    const rawToken = email.text.match(/token=([^\\s]+)/)?.[1];
+    const rawToken = email.text.match(/token=([^\s]+)/)?.[1];
     expect(rawToken).toBeTruthy();
     expect(stored.tokenHash).toBe(createHash("sha256").update(rawToken).digest("hex"));
   });
