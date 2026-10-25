@@ -93,7 +93,7 @@ export async function POST(request: Request) {
     await sendEmail({
       to: email,
       subject: "Confirme o e-mail corporativo — Acessa Vagas",
-      text: `Para confirmar o e-mail corporativo, acesse este link em até 24 horas e use-o apenas uma vez: ${baseUrl}/empresa/confirmar-email?token=${token}\n\nA confirmação do e-mail não libera a conta por si só; a validação do identificador oficial também é necessária. Se você não solicitou este cadastro, ignore esta mensagem.`
+      text: `Para confirmar o e-mail corporativo, acesse este link em até 24 horas e use-o apenas uma vez: ${baseUrl}/empresa/confirmar-email?token=${token}\n\nA confirmação do e-mail ativa a conta empresarial. O CNPJ é conferido apenas pelo número de dígitos, sem consulta à existência em fonte externa. Se você não solicitou este cadastro, ignore esta mensagem.`
     });
   } catch {
     await prisma.auditEvent.create({
@@ -108,6 +108,6 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     ok: true,
-    message: "Recebemos o cadastro. Se o envio estiver disponível, enviaremos um link de confirmação ao e-mail corporativo. A conta permanecerá indisponível até a confirmação do e-mail e a validação do identificador oficial."
+    message: "Recebemos o cadastro. Se o envio estiver disponível, enviaremos um link de confirmação ao e-mail corporativo. A conta permanecerá indisponível até a confirmação do e-mail corporativo."
   }, { status: 201 });
 }
