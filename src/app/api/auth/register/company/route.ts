@@ -6,6 +6,7 @@ import { normalizeIdentifier } from "@/lib/auth/login-schema";
 import { createOneTimeToken } from "@/lib/auth/tokens";
 import { sendEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
+import { getPublicBaseUrl } from "@/lib/security/public-base-url";
 
 const schema = z.object({
   legalName: z.string().trim().min(2).max(200),
@@ -81,8 +82,9 @@ export async function POST(request: Request) {
     throw error;
   }
 
-  const baseUrl = process.env.APP_BASE_URL || new URL(request.url).origin;
+  const baseUrl = getPublicBaseUrl(request);
   try {
+    if (!baseUrl) throw new Error("APP_BASE_URL is required to send production email links");
     await sendEmail({
       to: email,
       subject: "Confirme o e-mail corporativo — Acessa Vagas",
