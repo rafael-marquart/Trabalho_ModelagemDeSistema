@@ -127,10 +127,10 @@ export async function POST(request: NextRequest) {
   });
 
   if (!outcome.allowed) {
-    return NextResponse.json(
-      { message: "Limite de solicitações atingido. Aguarde 15 minutos antes de tentar novamente." },
-      { status: 429 }
-    );
+    // Keep status and message identical for known and unknown identifiers.
+    // The persisted cooldown still blocks processing, but does not reveal whether
+    // the submitted email/CPF belongs to an account.
+    return NextResponse.json({ message: genericMessage }, { status: 200 });
   }
 
   if (user && outcome.token) {
