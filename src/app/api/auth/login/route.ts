@@ -4,6 +4,7 @@ import { loginSchema, normalizeCpf, normalizeIdentifier } from "@/lib/auth/login
 import { verifyPassword } from "@/lib/auth/password";
 import { createSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
+import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 
 const WINDOW_MS = 15 * 60 * 1000;
 const MAX_ATTEMPTS = 10;
@@ -18,6 +19,9 @@ function getClientIp(request: NextRequest): string {
 }
 
 export async function POST(request: NextRequest) {
+  const originRejection = rejectCrossOriginRequest(request);
+  if (originRejection) return originRejection;
+
   const parsed = loginSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
     return NextResponse.json({ message: "Confira os dados informados." }, { status: 400 });
