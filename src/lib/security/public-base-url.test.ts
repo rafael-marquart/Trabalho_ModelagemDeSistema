@@ -1,20 +1,15 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { getPublicBaseUrl } from "./public-base-url";
 
-const originalNodeEnv = process.env.NODE_ENV;
-const originalBaseUrl = process.env.APP_BASE_URL;
-
 afterEach(() => {
-  process.env.NODE_ENV = originalNodeEnv;
-  if (originalBaseUrl === undefined) delete process.env.APP_BASE_URL;
-  else process.env.APP_BASE_URL = originalBaseUrl;
+  vi.unstubAllEnvs();
 });
 
 describe("getPublicBaseUrl", () => {
   const request = new Request("https://untrusted-host.example/path");
 
   it("uses the configured canonical origin and strips path", () => {
-    process.env.NODE_ENV = "production";
+    vi.stubEnv("NODE_ENV", "production");
     process.env.APP_BASE_URL = "https://acessavagas.example/base-path";
 
     expect(getPublicBaseUrl(request)).toBe("https://acessavagas.example");
@@ -35,7 +30,7 @@ describe("getPublicBaseUrl", () => {
   });
 
   it("uses request origin only outside production when no canonical URL is configured", () => {
-    process.env.NODE_ENV = "test";
+    vi.stubEnv("NODE_ENV", "test");
     delete process.env.APP_BASE_URL;
 
     expect(getPublicBaseUrl(request)).toBe("https://untrusted-host.example");
