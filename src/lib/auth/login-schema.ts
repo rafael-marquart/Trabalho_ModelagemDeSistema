@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const loginSchema = z.object({
-  profile: z.enum(["candidate", "company"]),
+  profile: z.enum(["candidate", "company", "recruiter"]),
   identifier: z.string().trim().min(1).max(160),
   password: z.string().min(1).max(1024),
   rememberMe: z.boolean().default(false)
