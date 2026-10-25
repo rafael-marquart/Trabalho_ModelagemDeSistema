@@ -43,7 +43,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 ### Incluído
 - Apresentar login por e-mail e senha e opções de criação de conta como Usuário ou Empresa.
 - Autenticar usuários existentes e permitir recuperação de senha conforme RF-02.
-- Permitir cadastro de conta de Empresa conforme RF-17.
+- Permitir cadastro de conta de Empresa conforme RF-17, restrito inicialmente a empresas brasileiras com CNPJ válido (formato e dígitos verificadores conferidos no cadastro). A confirmação do e-mail é separada da validação do CNPJ em fonte oficial por Administrador; a conta permanece inativa até ambas as etapas serem concluídas. Empresas estrangeiras ou sem CNPJ estão fora do escopo inicial.
 - Identificar o perfil autenticado e aplicar permissões correspondentes.
 - Permitir que Empresa autenticada cadastre ou associe usuários com perfil de Recrutador nas configurações.
 - Manter o vínculo do Recrutador com a Empresa responsável.
@@ -123,7 +123,7 @@ A decisão aprovada define recuperação de candidato por e-mail ou CPF e recupe
 6. A Empresa pode excluir um Recrutador da própria página de Recrutadores. A operação encerra o vínculo desse Recrutador com a Empresa solicitante, revoga as permissões decorrentes do vínculo e registra a alteração para auditoria; não exclui a conta pessoal do usuário nem apaga seu histórico de ações.
 7. A Empresa não pode administrar vínculos de Recrutadores pertencentes a outra organização.
 
-O comportamento deriva de UC-07 e RB-46. Quando o e-mail já pertencer a uma conta, a Empresa envia um convite ao e-mail dessa conta e o titular deve aceitá-lo explicitamente. O convite é válido por 7 dias; a Empresa pode reenviá-lo, invalidando o link anterior, ou cancelá-lo enquanto estiver pendente. O titular pode recusá-lo, e um convite sem resposta expira após 7 dias. O link do convite é de uso único. Um Recrutador pode estar associado ativamente a apenas uma Empresa por vez; se já estiver vinculado a uma Empresa, não poderá aceitar convite de outra até que o vínculo existente seja encerrado. O convite não transfere nem encerra por si só um vínculo existente. O perfil Administrador é exclusivo da plataforma e não participa da administração da conta Empresa.
+O comportamento deriva de UC-07 e RB-46. Quando o e-mail já pertencer a uma conta elegível de Recrutador, a Empresa envia um convite ao e-mail dessa conta e o titular deve aceitá-lo explicitamente. Quando o e-mail ainda não pertencer a uma conta, a Empresa informa nome e e-mail; o sistema cria conta RECRUITER inativa, marcada como pendente de ativação, com senha aleatória que não é revelada nem enviada, e envia link de uso único. A pessoa define sua senha e aceita explicitamente o vínculo pelo link; a ativação da conta e a criação do vínculo são concluídas atomicamente. O convite é válido por 7 dias; a Empresa pode reenviá-lo, invalidando o link anterior, ou cancelá-lo enquanto estiver pendente. O titular pode recusá-lo, e um convite sem resposta expira após 7 dias. O link do convite é de uso único. Um Recrutador pode estar associado ativamente a apenas uma Empresa por vez; se já estiver vinculado a uma Empresa, não poderá aceitar convite de outra até que o vínculo existente seja encerrado. O convite não transfere nem encerra por si só um vínculo existente. O perfil Administrador é exclusivo da plataforma e não participa da administração da conta Empresa.
 
 
 
