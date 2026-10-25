@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
 
   const outcome = await prisma.$transaction(async (tx) => {
     for (const lockKey of lockKeys) {
-      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`;
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`;
     }
 
     const now = new Date();
