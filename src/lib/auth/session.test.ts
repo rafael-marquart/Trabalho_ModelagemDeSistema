@@ -1,20 +1,29 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { prismaMock, cookieSet } = vi.hoisted(() => ({
-  prismaMock: { $transaction: vi.fn() },
-  cookieSet: vi.fn()
+const { prismaMock, cookieSet, cookieGet, cookieDelete } = vi.hoisted(() => ({
+  prismaMock: {
+    $transaction: vi.fn(),
+    session: {
+      deleteMany: vi.fn(),
+      findUnique: vi.fn(),
+      updateMany: vi.fn()
+    }
+  },
+  cookieSet: vi.fn(),
+  cookieGet: vi.fn(),
+  cookieDelete: vi.fn()
 }));
 
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
 vi.mock("next/headers", () => ({
   cookies: vi.fn(async () => ({
     set: cookieSet,
-    delete: vi.fn(),
-    get: vi.fn()
+    delete: cookieDelete,
+    get: cookieGet
   }))
 }));
 
-import { createSession } from "./session";
+import { createSession, getCurrentUser } from "./session";
 
 describe("createSession", () => {
   const passwordChangedAt = new Date("2026-01-01T00:00:00.000Z");
@@ -70,5 +79,59 @@ describe("createSession", () => {
       expect.any(String),
       expect.objectContaining({ expires: expect.any(Date) })
     );
+  });
+});
+
+describe("getCurrentUser", () => {
+  const currentUser = { id: "user-1", isActive: true, role: "CANDIDATE" };
+  const validSession = () => ({
+    id: "session-1",
+    userId: "user-1",
+    user: currentUser,
+    expiresAt: new Date(Date.now() + 30 * 60 * 1000),
+    absoluteExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    cookieGet.mockReturnValue({ value: "raw-session-token" });
+    prismaMock.session.findUnique.mockResolvedValue(validSession());
+    prismaMock.session.updateMany.mockResolvedValue({ count: 1 });
+    prismaMock.session.deleteMany.mockResolvedValue({ count: 1 });
+  });
+
+  it("returns the user when the session is refreshed successfully", async () => {
+    await expect(getCurrentUser()).resolves.toEqual(currentUser);
+    expect(prismaMock.session.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({
+        id: "session-1",
+        expiresAt: expect.objectContaining({ gt: expect.any(Date) }),
+        absoluteExpiresAt: expect.objectContaining({ gt: expect.any(Date) })
+      })
+    }));
+  });
+
+  it("returns null when the session is revoked between lookup and refresh", async () => {
+    prismaMock.session.updateMany.mockResolvedValueOnce({ count: 0 });
+
+    await expect(getCurrentUser()).resolves.toBeNull();
+  });
+
+  it("deletes an expired session and does not refresh it", async () => {
+    prismaMock.session.findUnique.mockResolvedValueOnce({
+      ...validSession(),
+      expiresAt: new Date(Date.now() - 1000)
+    });
+
+    await expect(getCurrentUser()).resolves.toBeNull();
+    expect(prismaMock.session.deleteMany).toHaveBeenCalledWith({ where: { id: "session-1" } });
+    expect(prismaMock.session.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("returns null when no session cookie is present", async () => {
+    cookieGet.mockReturnValueOnce(undefined);
+
+    await expect(getCurrentUser()).resolves.toBeNull();
+    expect(prismaMock.session.findUnique).not.toHaveBeenCalled();
   });
 });
