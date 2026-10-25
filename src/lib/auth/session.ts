@@ -33,6 +33,16 @@ export async function createSession(userId: string, rememberMe: boolean, expecte
     await tx.session.create({
       data: { tokenHash: digest(token), userId, rememberMe, expiresAt, absoluteExpiresAt, lastSeenAt: now }
     });
+    // Keep successful-login auditing atomic with session creation. If audit
+    // persistence fails, the transaction rolls back and no cookie is issued.
+    await tx.auditEvent.create({
+      data: {
+        actorUserId: userId,
+        eventType: "AUTH_LOGIN_SUCCEEDED",
+        subjectType: "User",
+        subjectId: userId
+      }
+    });
     return true;
   });
   if (!created) return false;
