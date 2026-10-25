@@ -21,11 +21,11 @@
 body { margin: 0; min-height: 100vh; }
 a { color: var(--purple-dark); text-decoration: none; }
 a:hover { text-decoration: underline; }
-a:focus-visible, button:focus-visible, input:focus-visible {
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
   outline: 3px solid #9d83e5;
   outline-offset: 3px;
 }
-button, input { font: inherit; }
+button, input, select { font: inherit; }
 .page-shell { min-height: 100vh; display: grid; grid-template-columns: minmax(340px, 0.92fr) minmax(460px, 1.08fr); background: var(--surface); }
 .welcome-panel { position: relative; isolation: isolate; display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; padding: clamp(32px, 5vw, 72px); color: #fff; background: linear-gradient(145deg, #35205f 0%, #5b38a3 54%, #7853c6 100%); }
 .brand { display: inline-flex; align-items: center; gap: 10px; width: fit-content; color: inherit; font-family: "Manrope", sans-serif; font-size: 21px; font-weight: 800; letter-spacing: -0.8px; }
@@ -70,7 +70,7 @@ button, input { font: inherit; }
 .auth-card h1 { font-size: clamp(29px, 4vw, 37px); letter-spacing: -1.2px; }
 .auth-form { display: grid; gap: 10px; margin-top: 28px; }
 .auth-form > label { margin-top: 8px; color: #403a51; font-size: 13px; font-weight: 600; }
-.auth-form input:not([type="checkbox"]) { width: 100%; min-height: 48px; padding: 12px 14px; border: 1px solid #dcd6e7; border-radius: 10px; color: var(--ink); background: #fff; }
+.auth-form input:not([type="checkbox"]), .auth-form select { width: 100%; min-height: 48px; padding: 12px 14px; border: 1px solid #dcd6e7; border-radius: 10px; color: var(--ink); background: #fff; }
 .auth-form input::placeholder { color: #a39cad; }
 .form-options { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0 12px; font-size: 12px; }
 .checkbox-label { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
