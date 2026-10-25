@@ -669,7 +669,7 @@ async function main() {
     emailCount = SMTP_MESSAGES.length;
     const cancelInvite = await postJson("/api/company/recruiter-invitations", {
       email: RECRUITER_EMAIL,
-      fullName: "Recrutador de Teste E2E"
+      fullName: "Nome informado pela empresa"
     }, { cookie: companyCookie });
     await expectStatus(cancelInvite, 201, "new invitation before cancellation");
     const cancelToken = extractEmailToken(emailCount, "/recrutador/convite");
@@ -679,6 +679,22 @@ async function main() {
       select: { id: true, tokenHash: true }
     });
     assert.ok(pendingToCancel && pendingToCancel.tokenHash === digest(cancelToken), "cancellable invitation token must match the stored digest");
+    const invitationSnapshotResponse = await fetch(`${BASE_URL}/api/company/recruiter-invitations`, {
+      headers: { cookie: companyCookie },
+      redirect: "manual"
+    });
+    const invitationSnapshotBody = await expectStatus(invitationSnapshotResponse, 200, "company lists its invitation using the submitted recipient snapshot");
+    const invitationSnapshot = JSON.parse(invitationSnapshotBody).invitations.find(invitation => invitation.id === pendingToCancel.id);
+    assert.deepEqual(
+      invitationSnapshot?.recipient,
+      { fullName: "Nome informado pela empresa", email: RECRUITER_EMAIL },
+      "invitation list must return only the recipient details supplied by the company, not live profile data"
+    );
+    assert.notEqual(
+      invitationSnapshot?.recipient.fullName,
+      "Recrutador de Teste E2E",
+      "invitation list must not disclose the existing recruiter's current profile name"
+    );
     const unauthorizedRecruiterCancelAuditBefore = await prisma.auditEvent.count({
       where: { eventType: "RECRUITER_INVITATION_CANCELLED", subjectId: pendingToCancel.id }
     });
