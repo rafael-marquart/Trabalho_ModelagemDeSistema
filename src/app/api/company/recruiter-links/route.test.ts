@@ -11,7 +11,7 @@ const { prismaMock, getCurrentUserMock } = vi.hoisted(() => ({
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
 vi.mock("@/lib/auth/session", () => ({ getCurrentUser: getCurrentUserMock }));
 
-import { GET } from "./route";
+import { GET, POST } from "./route";
 
 describe("list active recruiter links", () => {
   const companyUser = { id: "company-user-1", role: "COMPANY", isActive: true };
@@ -91,6 +91,31 @@ describe("list active recruiter links", () => {
     expect(response.status).toBe(405);
     expect(response.headers.get("allow")).toBe("GET");
     expect(getCurrentUserMock).not.toHaveBeenCalled();
+    expect(prismaMock.recruiterLink.findMany).not.toHaveBeenCalled();
+  });
+
+  it("rejects cross-origin POST before querying company resources", async () => {
+    const request = new Request("https://acessavagas.example/api/company/recruiter-links", {
+      method: "POST",
+      headers: { origin: "https://attacker.example" }
+    });
+    const response = await POST(request as never);
+    expect(response.status).toBe(403);
+    expect(getCurrentUserMock).not.toHaveBeenCalled();
+    expect(prismaMock.company.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.recruiterLink.findMany).not.toHaveBeenCalled();
+  });
+
+  it("rejects same-origin POST because this endpoint is read-only", async () => {
+    const request = new Request("https://acessavagas.example/api/company/recruiter-links", {
+      method: "POST",
+      headers: { origin: "https://acessavagas.example" }
+    });
+    const response = await POST(request as never);
+    expect(response.status).toBe(405);
+    expect(response.headers.get("allow")).toBe("GET");
+    expect(getCurrentUserMock).not.toHaveBeenCalled();
+    expect(prismaMock.company.findUnique).not.toHaveBeenCalled();
     expect(prismaMock.recruiterLink.findMany).not.toHaveBeenCalled();
   });
 
