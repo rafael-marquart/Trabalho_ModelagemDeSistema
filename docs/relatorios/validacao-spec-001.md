@@ -2,20 +2,20 @@
 
 **Revisão:** 25/10/2026  
 **Branch:** `feat/initial-app-foundation`  
-**HEAD atual da branch:** `5861ae583018e3745ec603ad92e51c33e8640372`  
-**Último HEAD de código previamente validado pelo CI:** `d9c5738047e0d0037e37491ec4a6f9a481be3495`  
+**HEAD atual da branch:** `36991af68fbc838a4c711cf24342e3348c3a770d`  
+**Último HEAD validado pelo CI:** `36991af68fbc838a4c711cf24342e3348c3a770d`  
 **Pull request:** [#36](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/pull/36) — permanece Draft  
 **Objetivo:** separar implementação existente, evidência automatizada disponível e validações ainda necessárias. Esta matriz não substitui os critérios de aceite da `docs/Specs.md` nem declara a SPEC-001 concluída.
 
 ## Estado de CI observado
 
-- O CI de push (run [40212263297](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40212263297)) e o CI de pull request (run [40212267482](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40212267482)) concluíram com sucesso para o HEAD `d9c5738047e0d0037e37491ec4a6f9a481be3495`.
+- O CI de push (run [40213050589](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40213050589)) e o CI de pull request (run [40213054268](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40213054268)) concluíram com sucesso para o HEAD `36991af68fbc838a4c711cf24342e3348c3a770d`.
 - A etapa `validate` passou nas duas execuções. A pipeline cobre validação/geração Prisma, migrações PostgreSQL, restrições de integridade e concorrência, TypeScript, lint, testes unitários e build de produção.
 - O HEAD mantém a serialização por bloqueio de linha no reset de senha, teste para usuário que deixa de estar elegível antes da transação e proteção contra corrida na ativação de empresa durante a confirmação de e-mail. A ordem das operações foi ajustada para não consumir tokens secundários se a ativação não for confirmada.
 - A recuperação de senha mantém resposta HTTP 200 e mensagem genérica quando há throttling, para reduzir risco de enumeração de contas.
 - A listagem `GET /api/company/recruiter-invitations` é somente leitura: convites pendentes cujo prazo já passou são apresentados como `EXPIRED` na resposta, sem atualizar o banco nem gravar auditoria durante a consulta. O status persistido pode permanecer `PENDING` até um fluxo explícito de escrita tratar o convite.
-- A rota de logout não deriva mais o destino do redirecionamento do host da requisição: usa a origem canônica `APP_BASE_URL`, e retorna `503` em produção se ela estiver ausente. Testes cobrem host não confiável, ausência de configuração e rejeição de origem cruzada.
-- CI não comprova configuração real de SMTP, proxy, domínio público, agendador de retenção nem experiência de acessibilidade em navegadores/dispositivos. Os workflows anteriores passaram para o HEAD de código `d9c5738047e0d0037e37491ec4a6f9a481be3495`. A implementação de throttling gradual por IP, os testes e os ajustes de enforcement do cooldown foram adicionados depois desse HEAD; os workflows da revisão atual estão em andamento. O login agora combina bloqueio por conta com throttling gradual por IP, documentado em `docs/operacao/seguranca-login.md`. A nova proteção ainda aguarda CI para a revisão atual; o cabeçalho `X-Forwarded-For` só é confiável se o proxy de produção o sobrescrever.
+- A rota de logout usa a origem canônica `APP_BASE_URL`, em vez de derivar o destino do host da requisição, e retorna `503` em produção se a configuração estiver ausente. Testes cobrem host não confiável, ausência de configuração e rejeição de origem cruzada.
+- O CI não comprova configuração real de SMTP, proxy, domínio público, agendador de retenção nem acessibilidade em navegadores/dispositivos. O throttling gradual por IP e seus testes foram adicionados e passaram na revisão atual. O cabeçalho `X-Forwarded-For` só é confiável se o proxy de produção o sobrescrever.
 
 ## Matriz dos critérios de aceitação
 
@@ -36,6 +36,16 @@
 | Alterações relevantes são rastreáveis | Eventos de auditoria transacionais em autenticação, convite e encerramento; rotina de retenção | Implementação e testes da rotina disponíveis | Verificar cobertura evento por evento; agendamento/alertas de produção ainda não configurados |
 | Mensagens não expõem credenciais ou dados pessoais desnecessários | Mensagens genéricas de login/recuperação e protótipo de mensagens aprovado; throttling de recuperação mantém status e texto genéricos | Cobertura parcial por testes unitários e inspeção de código; CI passou | Revisar manualmente mensagens e acessibilidade dos anúncios de erro/sucesso |
 
+## Auditoria de autorização e isolamento
+
+Revisão estática das rotas de autenticação, convite e vínculo na revisão `36991af` e conferência dos testes correspondentes:
+
+- As rotas de convite e vínculo exigem sessão com papel `COMPANY`, verificam conta ativa e obtêm a empresa pelo `accountUserId` da sessão; listagens e mutações são limitadas ao `companyId` autenticado.
+- Cancelamento de convite e encerramento de vínculo usam mutações condicionais que incluem o identificador do recurso, a empresa proprietária e o estado esperado; os testes verificam que identificadores pertencentes a outra empresa não são alterados nem auditados.
+- A resposta ao convite verifica o destinatário autenticado, reivindica o token apenas se ainda estiver pendente e válido, confirma que a empresa está ativa e impede criar vínculo quando o recrutador já tem vínculo ativo. Há testes de corrida, destinatário incorreto, empresa inativa e falhas de auditoria.
+- A confirmação de e-mail e a redefinição de senha reivindicam tokens de uso único dentro de transações e falham de forma controlada se a conta/estado mudou. A redefinição invalida sessões existentes.
+- Esta foi uma revisão estática apoiada nos testes existentes, não um teste de penetração nem validação integrada multiempresa. Nenhuma vulnerabilidade de autorização evidente foi identificada nos fluxos inspecionados; permanecem necessárias verificações E2E e operacionais.
+
 ## Validações transversais ainda necessárias
 
 1. **Integração/E2E:** executar percursos completos de cadastro, confirmação de e-mail, login, recuperação, convite de recrutador, aceite/recusa, cancelamento e encerramento de vínculo contra PostgreSQL e provedor de e-mail de teste.
@@ -48,4 +58,4 @@
 
 ## Decisão atual
 
-**SPEC-001 permanece em implementação/validação.** O CI de push e pull request passou para o código no HEAD `d9c5738047e0d0037e37491ec4a6f9a481be3495`, com testes unitários, migrações/restrições de banco e build de produção. A nova proteção por IP, seus testes e a documentação operacional foram adicionados em commits posteriores; a revisão atual aguarda validação do CI. Ainda não há evidência suficiente para afirmar que todos os critérios passaram por validação ponta a ponta ou operacional. Nenhum merge para `main`, publicação em produção ou início da SPEC-002 está autorizado por este relatório.
+**SPEC-001 permanece em implementação/validação.** O CI de push e pull request passou para o HEAD `36991af68fbc838a4c711cf24342e3348c3a770d`, incluindo a proteção gradual por IP, testes, migrações/restrições de banco e build de produção. A revisão estática de autorização/isolamento não identificou vulnerabilidade evidente nos fluxos inspecionados, mas ainda não há evidência suficiente para afirmar que todos os critérios passaram por validação ponta a ponta ou operacional. Nenhum merge para `main`, publicação em produção ou início da SPEC-002 está autorizado por este relatório.
