@@ -117,9 +117,10 @@ model AuditEvent {
   eventType   String
   subjectType String?
   subjectId   String?
-  metadata    Json?
-  createdAt   DateTime @default(now())
-  actor       User?    @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  metadata      Json?
+  retentionHold Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  actor         User?    @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
 
   @@index([createdAt])
   @@index([actorUserId, createdAt])
