@@ -1,9 +1,9 @@
 "use client";
 
+import React, { FormEvent, useState } from "react";
 import Link from "next/link";
-import ThemeToggle from "@/components/theme-toggle";
-import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import AuthSplitLayout from "@/components/auth-split-layout";
 
 export default function CompanyLoginPage() {
   const router = useRouter();
@@ -38,31 +38,25 @@ export default function CompanyLoginPage() {
   }
 
   return (
-    <main className="auth-page">
-      <div className="theme-control-host"><ThemeToggle /></div>
-      
-      <Link className="brand auth-brand" href="/">
-        <img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" />
-      </Link>
-      <section className="auth-card" aria-labelledby="login-title">
-        <Link className="back-link" href="/">← Voltar ao início</Link>
-        <p className="eyebrow">Área da empresa</p>
-        <h1 id="login-title">Vamos encontrar novos talentos.</h1>
-        <p className="muted">Entre para gerenciar sua organização e suas vagas.</p>
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <label htmlFor="identifier">E-mail</label>
-          <input id="identifier" type="email" autoComplete="username" value={identifier} onChange={event => setIdentifier(event.target.value)} required />
-          <label htmlFor="password">Senha</label>
-          <input id="password" type="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required />
-          <div className="form-options">
-            <label className="checkbox-label"><input type="checkbox" checked={rememberMe} onChange={event => setRememberMe(event.target.checked)} /> Manter conectado</label>
-            <Link href="/recuperar-senha">Esqueci minha senha</Link>
-          </div>
-          {error && <p className="form-error" role="alert">{error}</p>}
-          <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar"}</button>
-        </form>
-        <p className="auth-footer">Ainda não cadastrou sua empresa? <Link href="/empresa/cadastro">Cadastre-se</Link></p>
-      </section>
-    </main>
+    <AuthSplitLayout
+      profile="company"
+      eyebrow="Área da empresa"
+      title="Entrar como empresa"
+      description="Publique vagas e acompanhe seus processos seletivos."
+      footer={<p className="auth-footer">Ainda não cadastrou sua empresa? <Link href="/empresa/cadastro">Cadastrar empresa</Link></p>}
+    >
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <label htmlFor="identifier">E-mail corporativo</label>
+        <input id="identifier" type="email" autoComplete="username" value={identifier} onChange={event => setIdentifier(event.target.value)} required />
+        <label htmlFor="password">Senha</label>
+        <input id="password" type="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required />
+        <div className="form-options">
+          <label className="checkbox-label"><input type="checkbox" checked={rememberMe} onChange={event => setRememberMe(event.target.checked)} /> Manter conectado</label>
+          <Link href="/recuperar-senha">Esqueci minha senha</Link>
+        </div>
+        {error && <p className="form-error" role="alert">{error}</p>}
+        <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar na plataforma  →"}</button>
+      </form>
+    </AuthSplitLayout>
   );
 }
