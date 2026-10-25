@@ -128,6 +128,28 @@ describe("getCurrentUser", () => {
     expect(prismaMock.session.updateMany).not.toHaveBeenCalled();
   });
 
+  it("deletes a session whose absolute lifetime has ended", async () => {
+    prismaMock.session.findUnique.mockResolvedValueOnce({
+      ...validSession(),
+      absoluteExpiresAt: new Date(Date.now() - 1000)
+    });
+
+    await expect(getCurrentUser()).resolves.toBeNull();
+    expect(prismaMock.session.deleteMany).toHaveBeenCalledWith({ where: { id: "session-1" } });
+    expect(prismaMock.session.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("does not refresh a session belonging to an inactive user", async () => {
+    prismaMock.session.findUnique.mockResolvedValueOnce({
+      ...validSession(),
+      user: { ...currentUser, isActive: false }
+    });
+
+    await expect(getCurrentUser()).resolves.toBeNull();
+    expect(prismaMock.session.deleteMany).toHaveBeenCalledWith({ where: { id: "session-1" } });
+    expect(prismaMock.session.updateMany).not.toHaveBeenCalled();
+  });
+
   it("returns null when no session cookie is present", async () => {
     cookieGet.mockReturnValueOnce(undefined);
 
