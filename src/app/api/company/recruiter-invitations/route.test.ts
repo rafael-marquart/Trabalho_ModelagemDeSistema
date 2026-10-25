@@ -5,6 +5,7 @@ const { prismaMock, getCurrentUserMock, createTokenMock, sendEmailMock, rejectOr
     company: { findUnique: vi.fn() },
     user: { findUnique: vi.fn() },
     recruiterLink: { findFirst: vi.fn() },
+    recruiterInvitation: { findMany: vi.fn() },
     $transaction: vi.fn()
   },
   getCurrentUserMock: vi.fn(),
@@ -19,7 +20,7 @@ vi.mock("@/lib/auth/tokens", () => ({ createOneTimeToken: createTokenMock }));
 vi.mock("@/lib/email", () => ({ sendEmail: sendEmailMock }));
 vi.mock("@/lib/security/request-origin", () => ({ rejectCrossOriginRequest: rejectOriginMock }));
 
-import { POST } from "./route";
+import { GET, POST } from "./route";
 
 describe("send recruiter invitation", () => {
   const companyUser = { id: "company-user-1", role: "COMPANY", isActive: true };
@@ -46,6 +47,7 @@ describe("send recruiter invitation", () => {
     prismaMock.company.findUnique.mockResolvedValue({ id: "company-1", legalName: "Empresa Exemplo" });
     prismaMock.user.findUnique.mockResolvedValue({ id: "recruiter-1", email: "recruiter@example.com", role: "RECRUITER" });
     prismaMock.recruiterLink.findFirst.mockResolvedValue(null);
+    prismaMock.recruiterInvitation.findMany.mockResolvedValue([]);
     prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => {
       transactionCount += 1;
       return callback(tx);
