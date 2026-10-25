@@ -22,8 +22,9 @@ export default function HomePage() {
       </section>
 
       <section className="entry-panel" aria-labelledby="entry-title">
-        <div className="theme-control-host"><ThemeToggle /></div>
-        <div className="theme-control-host"><ThemeToggle /></div>
+      <div className="theme-control-host"><ThemeToggle /></div>
+        
+        
         <div className="entry-content">
           <p className="eyebrow">Bem-vindo(a)</p>
           <h2 id="entry-title">Acesse sua conta</h2>
