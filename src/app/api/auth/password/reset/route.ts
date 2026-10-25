@@ -4,10 +4,14 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth/password";
 import { passwordConfirmationSchema } from "@/lib/auth/password-policy";
 import { hashOneTimeToken } from "@/lib/auth/tokens";
+import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 
 const schema = passwordConfirmationSchema.extend({ token: z.string().min(20).max(200) });
 
 export async function POST(request: Request) {
+  const originRejection = rejectCrossOriginRequest(request);
+  if (originRejection) return originRejection;
+
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ message: "Confira o link e os dados informados.", issues: parsed.error.flatten().fieldErrors }, { status: 400 });
 
