@@ -14,6 +14,7 @@ const TEST_IP = "192.0.2.77";
 const EMAIL = `spec001-e2e-${randomUUID()}@example.test`;
 const COMPANY_EMAIL = `spec001-company-${randomUUID()}@example.test`;
 const RECRUITER_EMAIL = `spec001-recruiter-${randomUUID()}@example.test`;
+const SECOND_COMPANY_EMAIL = `spec001-company-two-${randomUUID()}@example.test`;
 const OLD_PASSWORD = "InitialPassword123";
 const NEW_PASSWORD = "ChangedPassword456";
 const COMPANY_PASSWORD = "CompanyPassword123";
@@ -155,7 +156,7 @@ async function expectStatus(response, expected, description) {
 
 async function cleanupTestData() {
   const users = await prisma.user.findMany({
-    where: { email: { in: [EMAIL, COMPANY_EMAIL, RECRUITER_EMAIL] } },
+    where: { email: { in: [EMAIL, COMPANY_EMAIL, RECRUITER_EMAIL, SECOND_COMPANY_EMAIL] } },
     select: { id: true, company: { select: { id: true } } }
   });
   if (!users.length) return;
@@ -444,14 +445,33 @@ async function main() {
     const listedLinksBody = await expectStatus(listedLinks, 200, "company recruiter links list");
     assert.ok(JSON.parse(listedLinksBody).links.some(link => link.recruiter.email === RECRUITER_EMAIL), "company must see its active recruiter link");
 
-    const endLink = await postJson("/api/company/recruiter-links/end", { recruiterLinkId: activeLink.id }, { cookie: companyCookie });
-    await expectStatus(endLink, 200, "company ends its own recruiter link");
+    const recruiterLogin = await postJson("/api/auth/login", {
+      profile: "recruiter",
+      identifier: RECRUITER_EMAIL,
+      password: RECRUITER_PASSWORD,
+      rememberMe: false
+    });
+    const recruiterLoginBody = await expectStatus(recruiterLogin, 200, "recruiter login after activation");
+    assert.equal(JSON.parse(recruiterLoginBody).redirectTo, "/recrutador");
+    const recruiterCookieMatch = (recruiterLogin.headers.get("set-cookie") || "").match(/(?:^|,\s*)acessa_session=([^;]+)/);
+    assert.ok(recruiterCookieMatch?.[1], "recruiter login must issue a session cookie");
+    const recruiterCookie = `acessa_session=${recruiterCookieMatch[1]}`;
+
+    const listedLinks = await fetch(`${BASE_URL}/api/company/recruiter-links`, {
+      headers: { cookie: companyCookie },
+      redirect: "manual"
+    });
+    const listedLinksBody = await expectStatus(listedLinks, 200, "company recruiter links list");
+    assert.ok(JSON.parse(listedLinksBody).links.some(link => link.recruiter.email === RECRUITER_EMAIL), "company must see its active recruiter link");
+
+    const endInitialLink = await postJson("/api/company/recruiter-links/end", { recruiterLinkId: activeLink.id }, { cookie: companyCookie });
+    await expectStatus(endInitialLink, 200, "company ends its own recruiter link");
     const preservedRecruiter = await prisma.user.findUnique({
       where: { id: recruiterAccount.id },
       select: { id: true, isActive: true }
     });
-    const endedLink = await prisma.recruiterLink.findUnique({ where: { id: activeLink.id }, select: { active: true, endedAt: true } });
-    assert.ok(preservedRecruiter?.isActive && endedLink && !endedLink.active && endedLink.endedAt, "ending a link must preserve the recruiter account while deactivating only the company link");
+    const endedInitialLink = await prisma.recruiterLink.findUnique({ where: { id: activeLink.id }, select: { active: true, endedAt: true } });
+    assert.ok(preservedRecruiter?.isActive && endedInitialLink && !endedInitialLink.active && endedInitialLink.endedAt, "ending a link must preserve the recruiter account while deactivating only the company link");
 
     const reusedInvitation = await postJson("/api/recruiter/invitations/respond", {
       token: currentInvitationToken,
@@ -460,7 +480,117 @@ async function main() {
     });
     await expectStatus(reusedInvitation, 400, "accepted recruiter invitation token reuse");
 
-    process.stdout.write("Auth E2E passed: candidate registration/login/recovery/reset/session revocation; company registration/email verification; recruiter invitation/resend/acceptance/link termination.\n");
+    // Cancellation must revoke a pending invitation without affecting the recruiter account.
+    emailCount = SMTP_MESSAGES.length;
+    const cancelInvite = await postJson("/api/company/recruiter-invitations", {
+      email: RECRUITER_EMAIL,
+      fullName: "Recrutador de Teste E2E"
+    }, { cookie: companyCookie });
+    await expectStatus(cancelInvite, 201, "new invitation before cancellation");
+    const cancelToken = extractEmailToken(emailCount, "/recrutador/convite");
+    const pendingToCancel = await prisma.recruiterInvitation.findFirst({
+      where: { companyId: companyAccount.company.id, recipientUserId: recruiterAccount.id, status: "PENDING" },
+      orderBy: { createdAt: "desc" },
+      select: { id: true, tokenHash: true }
+    });
+    assert.ok(pendingToCancel && pendingToCancel.tokenHash === digest(cancelToken), "cancellable invitation token must match the stored digest");
+    const cancelResponse = await postJson("/api/company/recruiter-invitations/cancel", { invitationId: pendingToCancel.id }, { cookie: companyCookie });
+    await expectStatus(cancelResponse, 200, "company cancels pending recruiter invitation");
+    const cancelledInvitation = await prisma.recruiterInvitation.findUnique({ where: { id: pendingToCancel.id }, select: { status: true } });
+    assert.equal(cancelledInvitation?.status, "CANCELLED");
+    const cancelledTokenResponse = await postJson("/api/recruiter/invitations/respond", { token: cancelToken, action: "refuse" });
+    await expectStatus(cancelledTokenResponse, 400, "cancelled recruiter invitation token");
+
+    // Refusal is also a terminal state and must not create a link.
+    emailCount = SMTP_MESSAGES.length;
+    const refuseInvite = await postJson("/api/company/recruiter-invitations", {
+      email: RECRUITER_EMAIL,
+      fullName: "Recrutador de Teste E2E"
+    }, { cookie: companyCookie });
+    await expectStatus(refuseInvite, 201, "new invitation before refusal");
+    const refusalToken = extractEmailToken(emailCount, "/recrutador/convite");
+    const refusal = await postJson("/api/recruiter/invitations/respond", { token: refusalToken, action: "refuse" });
+    await expectStatus(refusal, 200, "recruiter refuses invitation");
+    const refusedInvitation = await prisma.recruiterInvitation.findFirst({
+      where: { companyId: companyAccount.company.id, recipientUserId: recruiterAccount.id },
+      orderBy: { createdAt: "desc" },
+      select: { status: true }
+    });
+    assert.equal(refusedInvitation?.status, "REFUSED");
+
+    // Re-link the recruiter to company A, then prove company B cannot terminate that link.
+    emailCount = SMTP_MESSAGES.length;
+    const relinkInvite = await postJson("/api/company/recruiter-invitations", {
+      email: RECRUITER_EMAIL,
+      fullName: "Recrutador de Teste E2E"
+    }, { cookie: companyCookie });
+    await expectStatus(relinkInvite, 201, "new invitation before relinking");
+    const relinkToken = extractEmailToken(emailCount, "/recrutador/convite");
+    const relinkAccept = await postJson("/api/recruiter/invitations/respond", {
+      token: relinkToken,
+      action: "accept"
+    }, { cookie: recruiterCookie });
+    await expectStatus(relinkAccept, 200, "active recruiter accepts new company invitation");
+    const activeLinkForIsolation = await prisma.recruiterLink.findFirst({
+      where: { companyId: companyAccount.company.id, recruiterId: recruiterAccount.id, active: true },
+      select: { id: true }
+    });
+    assert.ok(activeLinkForIsolation, "relinking must create a new active company link");
+
+    const secondCompanyEmailCount = SMTP_MESSAGES.length;
+    const secondCompanyRegistration = await postJson("/api/auth/register/company", {
+      legalName: "Segunda Empresa de Teste E2E",
+      tradeName: "Empresa E2E Dois",
+      officialId: "98765432000198",
+      contactEmail: SECOND_COMPANY_EMAIL,
+      password: COMPANY_PASSWORD
+    });
+    await expectStatus(secondCompanyRegistration, 201, "second company registration");
+    const secondCompanyAccount = await prisma.user.findUnique({
+      where: { email: SECOND_COMPANY_EMAIL },
+      select: { id: true, isActive: true, company: { select: { id: true } } }
+    });
+    assert.ok(secondCompanyAccount?.company && !secondCompanyAccount.isActive, "second company must remain inactive until verification");
+    const secondCompanyToken = extractEmailToken(secondCompanyEmailCount, "/empresa/confirmar-email");
+    const verifySecondCompany = await postJson("/api/auth/company/verify-email", { token: secondCompanyToken });
+    await expectStatus(verifySecondCompany, 200, "second company email verification");
+
+    const secondCompanyLogin = await postJson("/api/auth/login", {
+      profile: "company",
+      identifier: SECOND_COMPANY_EMAIL,
+      password: COMPANY_PASSWORD,
+      rememberMe: false
+    });
+    await expectStatus(secondCompanyLogin, 200, "second company login");
+    const secondCompanyCookieMatch = (secondCompanyLogin.headers.get("set-cookie") || "").match(/(?:^|,\s*)acessa_session=([^;]+)/);
+    assert.ok(secondCompanyCookieMatch?.[1], "second company login must issue a session cookie");
+    const secondCompanyCookie = `acessa_session=${secondCompanyCookieMatch[1]}`;
+
+    const crossCompanyEnd = await postJson("/api/company/recruiter-links/end", {
+      recruiterLinkId: activeLinkForIsolation.id
+    }, { cookie: secondCompanyCookie });
+    await expectStatus(crossCompanyEnd, 409, "second company cannot terminate another company's recruiter link");
+    const stillActiveLink = await prisma.recruiterLink.findUnique({
+      where: { id: activeLinkForIsolation.id },
+      select: { active: true }
+    });
+    assert.equal(stillActiveLink?.active, true, "cross-company termination attempt must not change the link");
+
+    const finalEndLink = await postJson("/api/company/recruiter-links/end", {
+      recruiterLinkId: activeLinkForIsolation.id
+    }, { cookie: companyCookie });
+    await expectStatus(finalEndLink, 200, "owning company terminates its recruiter link");
+    const finalPreservedRecruiter = await prisma.user.findUnique({
+      where: { id: recruiterAccount.id },
+      select: { id: true, isActive: true }
+    });
+    const finalEndedLink = await prisma.recruiterLink.findUnique({
+      where: { id: activeLinkForIsolation.id },
+      select: { active: true, endedAt: true }
+    });
+    assert.ok(finalPreservedRecruiter?.isActive && finalEndedLink && !finalEndedLink.active && finalEndedLink.endedAt, "link termination must preserve the recruiter account and end only the owning company's link");
+
+    process.stdout.write("Auth E2E passed: candidate auth/recovery; company verification; recruiter invitation/resend/accept/refuse/cancel; multi-company link isolation and termination.\n");
   } finally {
     try {
       await cleanupTestData();
