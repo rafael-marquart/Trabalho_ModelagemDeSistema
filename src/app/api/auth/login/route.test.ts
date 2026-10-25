@@ -33,7 +33,7 @@ describe("login", () => {
     $executeRaw: vi.fn(),
     user: { findFirst: vi.fn(), findUnique: vi.fn(), update: vi.fn() },
 loginAttempt: { count: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
-    loginBlock: { findUnique: vi.fn(), upsert: vi.fn(), update: vi.fn() }
+    loginBlock: { findUnique: vi.fn(), upsert: vi.fn() }
   };
 
   beforeEach(() => {
@@ -48,7 +48,6 @@ loginAttempt: { count: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
     tx.loginAttempt.create.mockResolvedValue({ id: "attempt-1" });
     tx.loginBlock.findUnique.mockResolvedValue(null);
     tx.loginBlock.upsert.mockResolvedValue({ ipKey: "hashed-ip", blockedUntil: new Date(), cooldownSeconds: 60 });
-    tx.loginBlock.update.mockResolvedValue({ ipKey: "hashed-ip", blockedUntil: new Date(), cooldownSeconds: 60 });
     verifyPasswordMock.mockResolvedValue(true);
     createSessionMock.mockResolvedValue(true);
     prismaMock.auditEvent.create.mockResolvedValue({ id: "audit-1" });
@@ -206,9 +205,10 @@ loginAttempt: { count: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
     expect(Number(response.headers.get("retry-after"))).toBe(3600);
     expect(tx.user.findFirst).not.toHaveBeenCalled();
     expect(verifyPasswordMock).not.toHaveBeenCalled();
-    expect(tx.loginBlock.update).toHaveBeenCalledWith({
+    expect(tx.loginBlock.upsert).toHaveBeenCalledWith({
       where: { ipKey: expect.any(String) },
-      data: { blockedUntil: expect.any(Date), cooldownSeconds: 3600 }
+      create: { ipKey: expect.any(String), blockedUntil: expect.any(Date), cooldownSeconds: 3600 },
+      update: { blockedUntil: expect.any(Date), cooldownSeconds: 3600 }
     });
     expect(tx.loginAttempt.create).toHaveBeenCalledWith({
       data: expect.objectContaining({ succeeded: false })

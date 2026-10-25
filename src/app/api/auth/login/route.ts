@@ -65,9 +65,10 @@ export async function POST(request: NextRequest) {
       // Further blocked requests are counted and restart the current/escalated cooldown.
       const cooldownSeconds = ipThreshold?.cooldownSeconds ?? activeIpBlock.cooldownSeconds;
       const blockedUntil = new Date(now.getTime() + cooldownSeconds * 1000);
-      await tx.loginBlock.update({
+      await tx.loginBlock.upsert({
         where: { ipKey },
-        data: { blockedUntil, cooldownSeconds }
+        create: { ipKey, blockedUntil, cooldownSeconds },
+        update: { blockedUntil, cooldownSeconds }
       });
       await tx.loginAttempt.create({ data: { identifierKey, ipKey, succeeded: false } });
       return { valid: false, userId: null, passwordChangedAt: null, retryAfterSeconds: cooldownSeconds };
