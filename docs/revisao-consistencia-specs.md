@@ -185,3 +185,31 @@ Esta é uma auditoria de consistência documental. Ela identifica cobertura e pr
 **Resultado de prontidão:** o projeto está liberado para implementação controlada das capacidades e fluxos aprovados nas Specs, observando dependências e limites específicos. A integração Adzuna só pode ser exercitada dentro do lote de até 25 chamadas de teste. Aprovações visuais que não foram explicitamente concluídas continuam separadas e não são declaradas aprovadas por esta decisão; a confirmação acima cobre as cores do diagrama.
 
 **Rastreabilidade:** esta decisão atual prevalece sobre as conclusões de REV-014/REV-015 que indicavam veto geral à implementação ou mantinham as cores do diagrama como pendência. Não altera regras funcionais já aprovadas, estados canônicos do funil, limites da API ou demais requisitos de segurança e autorização.
+
+## REV-019 — Processo de implementação, acessibilidade e governança de entrega
+
+**Decisões confirmadas pelo usuário:**
+- Implementar as capacidades aprovadas Spec por Spec, respeitando dependências.
+- Não implementar diretamente na `main`; trabalhar em branches separadas.
+- Cada PR exige aprovação explícita do usuário antes de integrar à `main`.
+- Testes proporcionais ao risco, considerando segurança e acessibilidade em todas as Specs.
+- Publicação em produção somente após aprovação explícita do usuário.
+- WCAG 2.2 nível AA é o padrão de referência definido para acessibilidade.
+- O site deve oferecer tema claro e tema escuro.
+- O objetivo final inclui disponibilizar um link público funcional da aplicação no campo About do repositório.
+- Nesta etapa foi autorizada a atualização da documentação do projeto, não a implementação funcional do site.
+
+**Parâmetros operacionais consolidados:**
+- Antes de cada Spec, analisar critérios de aceite, RNFs, dependências, impacto e estratégia de testes.
+- Documentar alterações, resultados, testes não executados, riscos e pendências no PR.
+- Não declarar concluída uma Spec com critérios obrigatórios falhos ou bloqueadores conhecidos de segurança/acessibilidade.
+- Recomenda-se automatizar build e testes com GitHub Actions e proteger a `main`, quando suportado pela configuração do repositório.
+- Recomenda-se preview/homologação antes da produção, quando compatível com a arquitetura.
+- A aprovação do PR e a aprovação da publicação são autorizações separadas.
+- A acessibilidade deve ser avaliada nos temas claro e escuro; ferramentas automáticas não substituem toda verificação manual.
+- O limite já aprovado da Adzuna permanece em até 25 chamadas de teste, sem coleta contínua ou uso em produção.
+
+**Resultado:** registrar este processo em `docs/Specs.md` e nesta revisão para manter rastreabilidade. A atualização documental não autoriza implementação de funcionalidades, merge à `main` ou publicação em produção.
+
+**Rastreabilidade:** complementa o registro de prontidão REV-018; não altera decisões funcionais já aprovadas, limites de APIs ou aprovações visuais específicas.
+
