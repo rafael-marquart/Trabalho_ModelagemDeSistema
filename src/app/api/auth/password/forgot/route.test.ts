@@ -15,7 +15,7 @@ const { prismaMock, sendEmailMock } = vi.hoisted(() => ({
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
 vi.mock("@/lib/email", () => ({ sendEmail: sendEmailMock }));
 
-import { POST } from "./forgot/route";
+import { POST } from "./route";
 
 describe("password recovery request", () => {
   const user = { id: "user-1", email: "person@example.com" };
