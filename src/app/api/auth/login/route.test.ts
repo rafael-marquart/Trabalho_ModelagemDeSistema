@@ -200,7 +200,7 @@ describe("login", () => {
 
       expect(response.status).toBe(429);
       expect(response.headers.get("retry-after")).toBe(expectedCooldown);
-      expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
+      expect(tx.user.findFirst).not.toHaveBeenCalled();
     }
   });
 
@@ -208,7 +208,7 @@ describe("login", () => {
     const response = await POST(makeRequest({ profile: "invalid-profile" }) as never);
 
     expect(response.status).toBe(400);
-    expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
+    expect(tx.user.findFirst).not.toHaveBeenCalled();
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
 
@@ -220,7 +220,7 @@ describe("login", () => {
     }) as never);
 
     expect(response.status).toBe(403);
-    expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
+    expect(tx.user.findFirst).not.toHaveBeenCalled();
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
 
@@ -233,7 +233,7 @@ describe("login", () => {
     }) as never);
 
     expect(response.status).toBe(403);
-    expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
+    expect(tx.user.findFirst).not.toHaveBeenCalled();
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
 
