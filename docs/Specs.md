@@ -68,10 +68,10 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 | Cadastro de Usuário/Candidato | Iniciar criação de conta de candidato | Aprovado em 25/10/2026 |
 | Cadastro de Empresa | Iniciar criação de conta organizacional | Aprovado em 25/10/2026 |
 | Recuperação de senha | Iniciar recuperação de senha | Aprovado em 25/10/2026 |
-| Configurações da Empresa — Recrutadores | Cadastrar ou associar recrutador à Empresa autenticada | Protótipo disponível — aprovação pendente (`Gestao-Recrutadores.svg`) |
-| Mensagens de autenticação | Informar falha ou bloqueio sem expor dados indevidos | Protótipo disponível — aprovação pendente (`Mensagens-Autenticacao.svg`) |
+| Configurações da Empresa — Recrutadores | Cadastrar ou associar recrutador à Empresa autenticada | Aprovado em 25/10/2026 (`Gestao-Recrutadores.svg`) |
+| Mensagens de autenticação | Informar falha ou bloqueio sem expor dados indevidos | Aprovado em 25/10/2026 (`Mensagens-Autenticacao.svg`) |
 
-A lista identifica áreas funcionais, não define quantidade final de páginas ou composição visual. Os protótipos existentes estão em `docs/Identidade Visual/`; referências adicionais devem ser registradas junto à Spec correspondente e aprovadas separadamente.
+A lista identifica áreas funcionais, não define quantidade final de páginas ou composição visual. Os protótipos SVG listados estão aprovados visualmente; são referências estáticas. A sincronização dos dois protótipos novos com a fonte editável Figma permanece pendente.
 
 ## 4. Dependências
 
