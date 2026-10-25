@@ -35,11 +35,11 @@ export async function POST(request: NextRequest) {
     select: { id: true, email: true, company: { select: { id: true, emailConfirmedAt: true } } }
   });
   const eligible = candidate?.company && !candidate.company.emailConfirmedAt ? candidate : null;
-  const identifierKey = digest(eligible ? \`company-verification:user:\${eligible.id}\` : \`company-verification:input:\${email}\`);
-  const ipKey = digest(\`company-verification:ip:\${clientIp(request)}\`);
+  const identifierKey = digest(eligible ? `company-verification:user:${eligible.id}` : `company-verification:input:${email}`);
+  const ipKey = digest(`company-verification:ip:${clientIp(request)}`);
   const scopeKeys = [
-    \`company-verification:identifier:\${identifierKey}\`,
-    \`company-verification:ip:\${ipKey}\`
+    `company-verification:identifier:${identifierKey}`,
+    `company-verification:ip:${ipKey}`
   ];
   const lockKeys = [...scopeKeys].sort();
   const token = eligible ? createOneTimeToken() : null;
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
   const outcome = await prisma.$transaction(async tx => {
     for (const lockKey of lockKeys) {
-      await tx.$executeRaw\`SELECT pg_advisory_xact_lock(hashtextextended(\${lockKey}, 0))\`;
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`;
     }
 
     const now = new Date();
@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
     await sendEmail({
       to: eligible.email,
       subject: "Novo link de confirmação — Acessa Vagas",
-      text: \`Para confirmar o e-mail corporativo, acesse este link em até 24 horas e use-o apenas uma vez: \${baseUrl}/empresa/confirmar-email?token=\${outcome.token}\\n\\nSe você não solicitou este envio, ignore esta mensagem.\`
+      text: `Para confirmar o e-mail corporativo, acesse este link em até 24 horas e use-o apenas uma vez: ${baseUrl}/empresa/confirmar-email?token=${outcome.token}\\n\\nSe você não solicitou este envio, ignore esta mensagem.`
     });
   } catch {
     await prisma.$transaction(async tx => {
