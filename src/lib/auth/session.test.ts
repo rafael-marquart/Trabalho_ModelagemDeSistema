@@ -231,6 +231,15 @@ describe("revokeCurrentSession", () => {
     expect(cookieDelete).toHaveBeenCalledWith("acessa_session");
   });
 
+  it("does not audit logout if the conditional revocation loses a race", async () => {
+    prismaMock.session.deleteMany.mockResolvedValueOnce({ count: 0 });
+
+    await revokeCurrentSession();
+
+    expect(prismaMock.auditEvent.create).not.toHaveBeenCalled();
+    expect(cookieDelete).toHaveBeenCalledWith("acessa_session");
+  });
+
   it("still clears the cookie when no session token is present", async () => {
     cookieGet.mockReturnValueOnce(undefined);
 
