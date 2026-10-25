@@ -176,4 +176,17 @@ describe("login", () => {
     expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
+
+  it("rejects cross-origin login before querying accounts", async () => {
+    const response = await POST(new Request("https://acessavagas.example/api/auth/login", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: "https://attacker.example" },
+      body: JSON.stringify({ profile: "candidate", identifier: "person@example.com", password: "StrongPassword123" })
+    }) as never);
+
+    expect(response.status).toBe(403);
+    expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
 });
