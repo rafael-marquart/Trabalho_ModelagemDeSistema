@@ -1,7 +1,9 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import AuthSplitLayout from "@/components/auth-split-layout";
+
+afterEach(() => cleanup());
 
 vi.mock("next/link", () => ({
   default: ({
