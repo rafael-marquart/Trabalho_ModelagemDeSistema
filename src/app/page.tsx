@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
+import ThemeToggle from "@/components/theme-toggle";
 
 export default function HomePage() {
   return (
@@ -22,6 +23,7 @@ export default function HomePage() {
       </section>
 
       <section className="entry-panel" aria-labelledby="entry-title">
+        <div className="theme-control-host"><ThemeToggle /></div>
         <div className="theme-control-host"><ThemeToggle /></div>
         <div className="entry-content">
           <p className="eyebrow">Bem-vindo(a)</p>
