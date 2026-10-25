@@ -16,7 +16,7 @@ O endpoint considera as falhas registradas nos últimos 15 minutos para o IP. A 
 | 81–120 | HTTP 429 | 900 segundos |
 | Acima de 120 | HTTP 429 | 3600 segundos |
 
-A aplicação avalia o total de falhas anteriores antes de processar a tentativa seguinte. As tentativas bloqueadas também são registradas como falhas, permitindo que abuso persistente avance para faixas de cooldown maiores. O cabeçalho Retry-After informa o intervalo mínimo de espera recomendado. A mensagem de erro não revela se a conta existe.
+A aplicação avalia o total de falhas anteriores antes de processar a tentativa seguinte. Quando o limite é atingido, o cooldown é aplicado com base no horário da falha mais recente; novas tentativas bloqueadas também são registradas como falhas e reiniciam o cooldown, permitindo que abuso persistente avance para faixas maiores. O cabeçalho Retry-After informa o tempo restante do cooldown. A mensagem de erro não revela se a conta existe.
 
 ## Concorrência e armazenamento
 
