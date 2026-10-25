@@ -24,31 +24,31 @@ export async function POST(request: Request) {
   let confirmed = false;
   try {
     confirmed = await prisma.$transaction(async (tx) => {
-    const claimed = await tx.companyEmailVerificationToken.updateMany({
-      where: { id: tokenRecord.id, usedAt: null, expiresAt: { gt: now } },
-      data: { usedAt: now }
-    });
-    if (claimed.count !== 1) return false;
+      const claimed = await tx.companyEmailVerificationToken.updateMany({
+        where: { id: tokenRecord.id, usedAt: null, expiresAt: { gt: now } },
+        data: { usedAt: now }
+      });
+      if (claimed.count !== 1) return false;
 
-    const updated = await tx.company.updateMany({
-      where: { id: tokenRecord.company.id, emailConfirmedAt: null },
-      data: { emailConfirmedAt: now }
-    });
-    // Throwing aborts the interactive transaction so the token claim is rolled
-    // back if another request confirmed the company after the initial read.
-    if (updated.count !== 1) throw new Error("COMPANY_EMAIL_ALREADY_CONFIRMED");
+      const updated = await tx.company.updateMany({
+        where: { id: tokenRecord.company.id, emailConfirmedAt: null },
+        data: { emailConfirmedAt: now }
+      });
+      // Throwing aborts the interactive transaction so the token claim is rolled
+      // back if another request confirmed the company after the initial read.
+      if (updated.count !== 1) throw new Error("COMPANY_EMAIL_ALREADY_CONFIRMED");
 
-    await tx.companyEmailVerificationToken.deleteMany({
-      where: { companyId: tokenRecord.company.id, id: { not: tokenRecord.id } }
-    });
-    await tx.auditEvent.create({
-      data: {
-        actorUserId: tokenRecord.company.accountUserId,
-        eventType: "AUTH_COMPANY_EMAIL_CONFIRMED",
-        subjectType: "Company",
-        subjectId: tokenRecord.company.id
-      }
-    });
+      await tx.companyEmailVerificationToken.deleteMany({
+        where: { companyId: tokenRecord.company.id, id: { not: tokenRecord.id } }
+      });
+      await tx.auditEvent.create({
+        data: {
+          actorUserId: tokenRecord.company.accountUserId,
+          eventType: "AUTH_COMPANY_EMAIL_CONFIRMED",
+          subjectType: "Company",
+          subjectId: tokenRecord.company.id
+        }
+      });
       return true;
     });
   } catch (error) {
