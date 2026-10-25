@@ -558,6 +558,17 @@ async function main() {
     assert.ok(recruiterCookieMatch?.[1], "recruiter login must issue a session cookie");
     const recruiterCookie = `acessa_session=${recruiterCookieMatch[1]}`;
 
+    const recruiterCompanyLinks = await fetch(`${BASE_URL}/api/company/recruiter-links`, {
+      headers: { cookie: recruiterCookie },
+      redirect: "manual"
+    });
+    await expectStatus(recruiterCompanyLinks, 401, "recruiter role cannot access company recruiter links endpoint");
+    const recruiterCreateInvitation = await postJson("/api/company/recruiter-invitations", {
+      email: `unauthorized-recruiter-${randomUUID()}@example.test`,
+      fullName: "Tentativa de Recrutador"
+    }, { cookie: recruiterCookie });
+    await expectStatus(recruiterCreateInvitation, 401, "recruiter role cannot create company recruiter invitation");
+
     const endInitialLink = await postJson("/api/company/recruiter-links/end", { recruiterLinkId: activeLink.id }, { cookie: companyCookie });
     await expectStatus(endInitialLink, 200, "company ends its own recruiter link");
     const preservedRecruiter = await prisma.user.findUnique({
