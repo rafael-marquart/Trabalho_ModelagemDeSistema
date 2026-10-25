@@ -21,3 +21,22 @@ Repositório para o trabalho de modelagem de sistemas - GRUPO: Gabriella Mansur 
   * **Publicação de Vagas Externas:** Extração e estruturação automática de anúncios públicos (via URL ou texto colado) utilizando IA (LLM) para conversão em formato JSON padronizado.
 * **Acessibilidade por Design (WCAG 2.1 AA):** Desenvolvida em conformidade com Lei Brasileira de Inclusão (LBI nº 13.146/2015), garantindo autonomia total com leitores de tela, navegação por teclado, comandos de voz e modo de alto contraste.
 * **Funil Seletivo Transparente:** Painéis exclusivos para acompanhamento de etapas em tempo real com indicação clara do formato da entrevista (presencial ou online).
+
+
+## Aplicação web — início da implementação
+
+A aplicação está sendo construída incrementalmente na raiz deste repositório, mantendo os documentos de requisitos em `docs/`.
+
+**Stack inicial:** Next.js 15, React 19, TypeScript, PostgreSQL, Prisma, Argon2id, Zod e Vitest.
+
+### Executar localmente
+
+1. Instale Node.js 20.9+ e PostgreSQL 15+.
+2. Execute `npm install`.
+3. Copie `.env.example` para `.env` e configure `DATABASE_URL`.
+4. Execute `npm run db:generate` e `npm run db:migrate`.
+5. Execute `npm run dev` e abra http://localhost:3000.
+
+### Estado inicial
+
+Já existe uma primeira estrutura para a entrada/login, autenticação por credenciais, sessões revogáveis e modelos relacionais. Cadastro, recuperação de senha, convites completos, fluxos restantes e testes ainda precisam ser concluídos. Esta versão não deve ser publicada em produção.
