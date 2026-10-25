@@ -11,6 +11,7 @@ const SMTP_PORT = Number(process.env.AUTH_E2E_SMTP_PORT || "2527");
 const BASE_URL = `http://127.0.0.1:${PORT}`;
 const PUBLIC_URL = `https://127.0.0.1:${PORT}`;
 const TEST_IP = "192.0.2.77";
+const LOCKOUT_TEST_IP = "198.51.100.42";
 const EMAIL = `spec001-e2e-${randomUUID()}@example.test`;
 const COMPANY_EMAIL = `spec001-company-${randomUUID()}@example.test`;
 const RECRUITER_EMAIL = `spec001-recruiter-${randomUUID()}@example.test`;
@@ -165,6 +166,7 @@ async function cleanupTestData() {
   const userIds = users.map(user => user.id);
   const companyIds = users.flatMap(user => user.company ? [user.company.id] : []);
   const ipKey = digest(TEST_IP);
+  const loginIpKeys = [ipKey, digest(LOCKOUT_TEST_IP)];
   const companyVerificationIpKey = digest(`company-verification:ip:${TEST_IP}`);
   const recoveryKeys = userIds.map(id => digest(`user:${id}`));
   const companyVerificationKeys = [
@@ -183,7 +185,8 @@ async function cleanupTestData() {
     await tx.companyEmailVerificationToken.deleteMany({ where: { companyId: { in: companyIds } } });
     await tx.passwordResetToken.deleteMany({ where: { userId: { in: userIds } } });
     await tx.session.deleteMany({ where: { userId: { in: userIds } } });
-    await tx.loginAttempt.deleteMany({ where: { ipKey } });
+    await tx.loginAttempt.deleteMany({ where: { ipKey: { in: loginIpKeys } } });
+    await tx.loginBlock.deleteMany({ where: { ipKey: { in: loginIpKeys } } });
     await tx.recoveryAttempt.deleteMany({
       where: {
         OR: [
@@ -669,7 +672,40 @@ async function main() {
     });
     assert.ok(finalPreservedRecruiter?.isActive && finalEndedLink && !finalEndedLink.active && finalEndedLink.endedAt, "link termination must preserve the recruiter account and end only the owning company's link");
 
-    process.stdout.write("Auth E2E passed: candidate auth/recovery; company verification; recruiter invitation/resend/accept/refuse/cancel; multi-company link isolation and termination.\n");
+    // Logout must revoke the server-side session, not merely clear the browser cookie.
+    const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });
+    assert.equal(companySessionsBeforeLogout, 1, "company login must have one active session before logout");
+    const logout = await postJson("/api/auth/logout", {}, { cookie: companyCookie });
+    await expectStatus(logout, 303, "company logout");
+    const companySessionsAfterLogout = await prisma.session.count({ where: { userId: companyAccount.id } });
+    assert.equal(companySessionsAfterLogout, 0, "logout must revoke the server-side session");
+
+    // Exercise the approved ten-consecutive-failure account lockout using an isolated IP
+    // so the IP-level progressive throttling does not mask the account-level behavior.
+    for (let attempt = 1; attempt <= 10; attempt += 1) {
+      const failedLogin = await postJson("/api/auth/login", {
+        profile: "candidate",
+        identifier: EMAIL,
+        password: "DefinitelyWrongPassword123",
+        rememberMe: false
+      }, { "x-forwarded-for": LOCKOUT_TEST_IP });
+      await expectStatus(failedLogin, 401, `account lockout failure ${attempt}`);
+    }
+    const lockedAccountLogin = await postJson("/api/auth/login", {
+      profile: "candidate",
+      identifier: EMAIL,
+      password: NEW_PASSWORD,
+      rememberMe: false
+    }, { "x-forwarded-for": LOCKOUT_TEST_IP });
+    await expectStatus(lockedAccountLogin, 401, "correct password remains blocked after ten consecutive failures");
+    const lockedCandidate = await prisma.user.findUnique({
+      where: { email: EMAIL },
+      select: { lockedUntil: true, failedLoginCount: true }
+    });
+    assert.ok(lockedCandidate?.lockedUntil && lockedCandidate.lockedUntil > new Date(), "ten consecutive failures must persist an active account lock");
+    assert.equal(lockedCandidate.failedLoginCount, 0, "the locked account counter is reset after the threshold is reached");
+
+    process.stdout.write("Auth E2E passed: candidate auth/recovery and session revocation; company verification; recruiter invitation/resend/accept/refuse/cancel; multi-company isolation and concurrency; logout; account lockout.\\n");
   } finally {
     try {
       await cleanupTestData();
