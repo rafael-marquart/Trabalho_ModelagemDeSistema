@@ -105,7 +105,8 @@ export default function CompanyRecruitersPage() {
   }
 
   return <main className="auth-page">
-    <div className="theme-control-host"><ThemeToggle /></div>
+      <div className="theme-control-host"><ThemeToggle /></div>
+    
     <Link className="brand auth-brand" href="/empresa"><img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" /></Link>
     <section className="auth-card" aria-labelledby="recruiters-title">
       <Link className="back-link" href="/empresa">← Voltar à área da empresa</Link>
