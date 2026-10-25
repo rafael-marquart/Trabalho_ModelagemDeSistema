@@ -103,19 +103,22 @@ export async function POST(request: NextRequest) {
       if (valid) {
         await tx.user.update({
           where: { id: currentUser.id },
-          data: { failedLoginCount: 0, lockedUntil: null }
+          data: { failedLoginCount: 0, lastFailedLoginAt: null, lockedUntil: null }
         });
       } else if (!currentUser.lockedUntil || currentUser.lockedUntil <= now) {
-        const nextCount = currentUser.failedLoginCount + 1;
+        // Count only consecutive failures inside the documented 15-minute window.
+        // A stale counter must not cause a lock after failures spread over a longer period.
+        const hasRecentFailure = Boolean(currentUser.lastFailedLoginAt && currentUser.lastFailedLoginAt >= windowStart);
+        const nextCount = (hasRecentFailure ? currentUser.failedLoginCount : 0) + 1;
         if (nextCount >= MAX_ACCOUNT_ATTEMPTS) {
           await tx.user.update({
             where: { id: currentUser.id },
-            data: { failedLoginCount: 0, lockedUntil: new Date(now.getTime() + WINDOW_MS) }
+            data: { failedLoginCount: 0, lastFailedLoginAt: null, lockedUntil: new Date(now.getTime() + WINDOW_MS) }
           });
         } else {
           await tx.user.update({
             where: { id: currentUser.id },
-            data: { failedLoginCount: nextCount }
+            data: { failedLoginCount: nextCount, lastFailedLoginAt: now }
           });
         }
       }
