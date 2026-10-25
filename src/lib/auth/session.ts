@@ -13,10 +13,11 @@ function digest(token: string): string {
 export async function createSession(userId: string, rememberMe: boolean) {
   const token = randomBytes(32).toString("base64url");
   const now = new Date();
-  const expiresAt = new Date(now.getTime() + (rememberMe ? REMEMBERED_SESSION_MS : IDLE_TIMEOUT_MS));
+  const absoluteExpiresAt = new Date(now.getTime() + (rememberMe ? REMEMBERED_SESSION_MS : IDLE_TIMEOUT_MS));
+  const expiresAt = new Date(Math.min(now.getTime() + IDLE_TIMEOUT_MS, absoluteExpiresAt.getTime()));
 
   await prisma.session.create({
-    data: { tokenHash: digest(token), userId, expiresAt, lastSeenAt: now }
+    data: { tokenHash: digest(token), userId, rememberMe, expiresAt, absoluteExpiresAt, lastSeenAt: now }
   });
 
   const cookieStore = await cookies();
@@ -25,18 +26,14 @@ export async function createSession(userId: string, rememberMe: boolean) {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    expires: expiresAt
+    ...(rememberMe ? { expires: absoluteExpiresAt } : {})
   });
 }
 
 export async function revokeCurrentSession() {
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
-
-  if (token) {
-    await prisma.session.deleteMany({ where: { tokenHash: digest(token) } });
-  }
-
+  if (token) await prisma.session.deleteMany({ where: { tokenHash: digest(token) } });
   cookieStore.delete(COOKIE_NAME);
 }
 
@@ -50,25 +47,24 @@ export async function getCurrentUser() {
     include: { user: true }
   });
 
-  if (!session || !session.user.isActive || session.expiresAt <= new Date()) {
-    await prisma.session.deleteMany({ where: { tokenHash: digest(token) } });
-    return null;
-  }
-
   const now = new Date();
-  if (now.getTime() - session.lastSeenAt.getTime() >= IDLE_TIMEOUT_MS) {
-    await prisma.session.deleteMany({ where: { id: session.id } });
+  if (
+    !session ||
+    !session.user.isActive ||
+    session.expiresAt <= now ||
+    session.absoluteExpiresAt <= now
+  ) {
+    if (session) await prisma.session.deleteMany({ where: { id: session.id } });
     return null;
   }
 
   await prisma.session.update({
     where: { id: session.id },
-    data: { lastSeenAt: now }
+    data: {
+      lastSeenAt: now,
+      expiresAt: new Date(Math.min(now.getTime() + IDLE_TIMEOUT_MS, session.absoluteExpiresAt.getTime()))
+    }
   });
 
   return session.user;
-}
-
-export function hashSessionToken(token: string): string {
-  return digest(token);
 }
