@@ -80,6 +80,7 @@ describe("send recruiter invitation", () => {
     expect(tx.recruiterInvitation.updateMany).toHaveBeenCalledWith({
       where: {
         id: "expired-invitation-1",
+        companyId: "company-1",
         status: "PENDING",
         expiresAt: expect.objectContaining({ lte: expect.any(Date) })
       },
