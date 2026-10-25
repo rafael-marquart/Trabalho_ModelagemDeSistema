@@ -39,19 +39,40 @@ export async function POST(request: NextRequest) {
   // deterministic key without changing the public response.
   const identifierKey = digest(user ? `user:${user.id}` : `input:${input.profile}:${identifier}`);
   const ipKey = digest(clientIp(request));
-  const cutoff = new Date(Date.now() - WINDOW_MS);
+  // Serialize requests sharing either quota key. Lock keys in a stable order
+  // so requests for different accounts from the same IP cannot deadlock.
+  // The checks and attempt insert must share the transaction; otherwise
+  // concurrent requests could all pass the count before any insert is visible.
+  const lockKeys = [
+    `recovery:identifier:${identifierKey}`,
+    `recovery:ip:${ipKey}`
+  ].sort();
 
-  const [identifierAttempts, ipAttempts] = await Promise.all([
-    prisma.recoveryAttempt.count({ where: { identifierKey, createdAt: { gte: cutoff } } }),
-    prisma.recoveryAttempt.count({ where: { ipKey, createdAt: { gte: cutoff } } })
-  ]);
-  if (identifierAttempts >= MAX_REQUESTS || ipAttempts >= MAX_REQUESTS) {
+  const allowed = await prisma.$transaction(async (tx) => {
+    for (const lockKey of lockKeys) {
+      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`;
+    }
+
+    const cutoff = new Date(Date.now() - WINDOW_MS);
+    const [identifierAttempts, ipAttempts] = await Promise.all([
+      tx.recoveryAttempt.count({ where: { identifierKey, createdAt: { gte: cutoff } } }),
+      tx.recoveryAttempt.count({ where: { ipKey, createdAt: { gte: cutoff } } })
+    ]);
+
+    if (identifierAttempts >= MAX_REQUESTS || ipAttempts >= MAX_REQUESTS) {
+      return false;
+    }
+
+    await tx.recoveryAttempt.create({ data: { identifierKey, ipKey } });
+    return true;
+  });
+
+  if (!allowed) {
     return NextResponse.json(
       { message: "Limite de solicitações atingido. Aguarde 15 minutos antes de tentar novamente." },
       { status: 429 }
     );
   }
-  await prisma.recoveryAttempt.create({ data: { identifierKey, ipKey } });
 
   if (user) {
     const { token, tokenHash } = createOneTimeToken();
