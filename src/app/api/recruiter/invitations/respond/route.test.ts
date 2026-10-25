@@ -135,6 +135,44 @@ describe("recruiter invitation response", () => {
     expect(tx.recruiterLink.create).not.toHaveBeenCalled();
   });
 
+  it("expires an overdue invitation and audits only the winning state transition", async () => {
+    prismaMock.recruiterInvitation.findUnique.mockResolvedValueOnce({
+      ...invitation,
+      expiresAt: new Date(Date.now() - 1000)
+    });
+
+    const response = await POST(makeRequest());
+
+    expect(response.status).toBe(400);
+    expect(tx.recruiterInvitation.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "invitation-1",
+        status: "PENDING",
+        expiresAt: expect.objectContaining({ lte: expect.any(Date) })
+      },
+      data: { status: "EXPIRED", respondedAt: expect.any(Date) }
+    });
+    expect(tx.auditEvent.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        eventType: "RECRUITER_INVITATION_EXPIRED",
+        subjectId: "invitation-1"
+      })
+    });
+  });
+
+  it("does not duplicate expiration audit when another request already changed the invitation", async () => {
+    prismaMock.recruiterInvitation.findUnique.mockResolvedValueOnce({
+      ...invitation,
+      expiresAt: new Date(Date.now() - 1000)
+    });
+    tx.recruiterInvitation.updateMany.mockResolvedValueOnce({ count: 0 });
+
+    const response = await POST(makeRequest());
+
+    expect(response.status).toBe(400);
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
   it("rejects invitations addressed to another recruiter", async () => {
     prismaMock.recruiterInvitation.findUnique.mockResolvedValueOnce({
       ...invitation,
