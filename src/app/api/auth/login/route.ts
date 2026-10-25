@@ -28,23 +28,6 @@ export async function POST(request: NextRequest) {
   const normalizedCpf = normalizeCpf(input.identifier);
   const identifierKey = key(identifier);
   const ipKey = key(getClientIp(request));
-  const cutoff = new Date(Date.now() - WINDOW_MS);
-
-  const recentFailures = await prisma.loginAttempt.count({
-    where: {
-      OR: [{ identifierKey }, { ipKey }],
-      succeeded: false,
-      createdAt: { gte: cutoff }
-    }
-  });
-
-  if (recentFailures >= MAX_ATTEMPTS) {
-    return NextResponse.json(
-      { message: "Muitas tentativas de acesso. Aguarde 15 minutos e tente novamente." },
-      { status: 429 }
-    );
-  }
-
   const user = await prisma.user.findFirst({
     where: input.profile === "candidate"
       ? { OR: [{ email: identifier }, ...(normalizedCpf ? [{ cpf: normalizedCpf }] : [])] }
