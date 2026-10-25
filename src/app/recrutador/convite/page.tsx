@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function RecruiterInvitationPage() {
+  const router = useRouter();
   const [token, setToken] = useState("");
   const [message, setMessage] = useState("Carregando convite…");
   const [error, setError] = useState(false);
@@ -12,7 +14,7 @@ export default function RecruiterInvitationPage() {
   useEffect(() => {
     const value = new URLSearchParams(window.location.search).get("token") || "";
     setToken(value);
-    setMessage(value ? "Entre na sua conta de recrutador para aceitar ou recusar o convite." : "O link do convite está ausente ou inválido.");
+    setMessage(value ? "Aceite ou recuse o convite. Se ainda não estiver conectado, você será encaminhado ao acesso de recrutador." : "O link do convite está ausente ou inválido.");
     setError(!value);
   }, []);
 
@@ -26,6 +28,13 @@ export default function RecruiterInvitationPage() {
         body: JSON.stringify({ token, action })
       });
       const result = await response.json();
+      if (response.status === 401) {
+        const loginUrl = new URL("/recrutador/login", window.location.origin);
+        loginUrl.searchParams.set("token", token);
+        loginUrl.searchParams.set("action", action);
+        router.push(loginUrl.pathname + loginUrl.search);
+        return;
+      }
       setMessage(result.message || "Não foi possível responder ao convite.");
       setError(!response.ok);
     } catch {
