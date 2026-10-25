@@ -681,6 +681,37 @@ async function main() {
       "company B must not see company A's recruiter link"
     );
 
+    // Company B must not cancel a pending invitation owned by company A.
+    emailCount = SMTP_MESSAGES.length;
+    const crossCompanyCancelInvite = await postJson("/api/company/recruiter-invitations", {
+      email: RECRUITER_EMAIL,
+      fullName: "Recrutador de Teste E2E"
+    }, { cookie: companyCookie });
+    await expectStatus(crossCompanyCancelInvite, 201, "company A creates invitation for cross-company cancellation test");
+    const crossCompanyCancelToken = extractEmailToken(emailCount, "/recrutador/convite");
+    const crossCompanyPending = await prisma.recruiterInvitation.findFirst({
+      where: { companyId: companyAccount.company.id, recipientUserId: recruiterAccount.id, status: "PENDING" },
+      orderBy: { createdAt: "desc" },
+      select: { id: true, tokenHash: true }
+    });
+    assert.ok(crossCompanyPending && crossCompanyPending.tokenHash === digest(crossCompanyCancelToken), "cross-company cancellation test invitation must be pending for company A");
+    const invitationCancelAuditBefore = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_INVITATION_CANCELLED", subjectId: crossCompanyPending.id }
+    });
+    const crossCompanyCancel = await postJson("/api/company/recruiter-invitations/cancel", {
+      invitationId: crossCompanyPending.id
+    }, { cookie: secondCompanyCookie });
+    await expectStatus(crossCompanyCancel, 409, "company B cannot cancel company A invitation");
+    const invitationAfterCrossCompanyCancel = await prisma.recruiterInvitation.findUnique({
+      where: { id: crossCompanyPending.id },
+      select: { status: true }
+    });
+    assert.equal(invitationAfterCrossCompanyCancel?.status, "PENDING", "cross-company cancellation attempt must not change invitation state");
+    const invitationCancelAuditAfter = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_INVITATION_CANCELLED", subjectId: crossCompanyPending.id }
+    });
+    assert.equal(invitationCancelAuditAfter, invitationCancelAuditBefore, "rejected cross-company cancellation must not create an audit event");
+
     const linkEndAuditBefore = await prisma.auditEvent.count({
       where: { eventType: "RECRUITER_LINK_ENDED", subjectId: activeLinkForIsolation.id }
     });
