@@ -32,7 +32,8 @@ export default function RecruiterLoginPage() {
     finally { setLoading(false); }
   }
   return <main className="auth-page">
-    <div className="theme-control-host"><ThemeToggle /></div>
+      <div className="theme-control-host"><ThemeToggle /></div>
+    
     <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" /></Link>
     <section className="auth-card" aria-labelledby="recruiter-login-title">
       <Link className="back-link" href="/">← Voltar ao início</Link>
