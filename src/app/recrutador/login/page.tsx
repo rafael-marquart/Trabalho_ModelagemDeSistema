@@ -1,21 +1,32 @@
 "use client";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function RecruiterLoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setLoading(true); setError("");
     try {
       const response = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profile: "recruiter", identifier, password, rememberMe: false }) });
       const result = await response.json();
       if (!response.ok) { setError(result.message || "Não foi possível entrar."); return; }
-      router.push(result.redirectTo); router.refresh();
+
+      const token = searchParams.get("token") || "";
+      const action = searchParams.get("action");
+      if (token.length >= 20 && token.length <= 200 && (action === "accept" || action === "refuse")) {
+        const invitationUrl = new URLSearchParams({ token, action });
+        router.push("/recrutador/convite?" + invitationUrl.toString());
+      } else {
+        router.push(result.redirectTo);
+      }
+      router.refresh();
     } catch { setError("Não foi possível conectar ao serviço. Tente novamente."); }
     finally { setLoading(false); }
   }
