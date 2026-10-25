@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import ThemeToggle from "@/components/theme-toggle";
 import { FormEvent, useEffect, useState } from "react";
 
 type Profile = "candidate" | "company";
@@ -75,6 +76,7 @@ export default function PasswordRecoveryPage() {
 
   return (
     <main className="auth-page">
+      <div className="theme-control-host"><ThemeToggle /></div>
       <Link className="brand auth-brand" href="/" aria-label="Acessa Vagas — início">
         <img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" />
       </Link>
