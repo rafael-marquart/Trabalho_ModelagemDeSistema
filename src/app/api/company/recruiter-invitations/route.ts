@@ -1,0 +1,66 @@
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { getCurrentUser } from "@/lib/auth/session";
+import { createOneTimeToken } from "@/lib/auth/tokens";
+import { sendEmail } from "@/lib/email";
+import { prisma } from "@/lib/prisma";
+
+const schema = z.object({ email: z.string().trim().email().max(254) });
+const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+
+export async function GET() {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "COMPANY") return NextResponse.json({ message: "Acesso não autorizado." }, { status: 401 });
+  const company = await prisma.company.findUnique({ where: { accountUserId: user.id }, select: { id: true } });
+  if (!company || !user.isActive) return NextResponse.json({ message: "A empresa não está habilitada para gerenciar recrutadores." }, { status: 403 });
+  const invitations = await prisma.recruiterInvitation.findMany({
+    where: { companyId: company.id },
+    select: { id: true, status: true, expiresAt: true, createdAt: true, respondedAt: true, recipient: { select: { email: true } } },
+    orderBy: { createdAt: "desc" }
+  });
+  return NextResponse.json({ invitations });
+}
+
+export async function POST(request: NextRequest) {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "COMPANY") return NextResponse.json({ message: "Acesso não autorizado." }, { status: 401 });
+  const company = await prisma.company.findUnique({ where: { accountUserId: user.id }, select: { id: true, legalName: true } });
+  if (!company || !user.isActive) return NextResponse.json({ message: "A empresa não está habilitada para gerenciar recrutadores." }, { status: 403 });
+  const parsed = schema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ message: "Informe um e-mail válido." }, { status: 400 });
+  const email = parsed.data.email.toLowerCase();
+  const recipient = await prisma.user.findUnique({ where: { email }, select: { id: true, email: true, role: true } });
+  if (!recipient || recipient.role !== "RECRUITER") {
+    return NextResponse.json({ message: "Se o e-mail corresponder a uma conta de recrutador elegível, o convite será processado." }, { status: 202 });
+  }
+  const activeLink = await prisma.recruiterLink.findFirst({ where: { recruiterId: recipient.id, active: true }, select: { id: true } });
+  if (activeLink) return NextResponse.json({ message: "Este recrutador já possui vínculo ativo." }, { status: 409 });
+
+  const pending = await prisma.recruiterInvitation.findFirst({
+    where: { companyId: company.id, recipientUserId: recipient.id, status: "PENDING" },
+    orderBy: { createdAt: "desc" }
+  });
+  const { token, tokenHash } = createOneTimeToken();
+  const expiresAt = new Date(Date.now() + SEVEN_DAYS);
+  const invitation = pending
+    ? await prisma.recruiterInvitation.update({ where: { id: pending.id }, data: { tokenHash, expiresAt, sentByUserId: user.id, respondedAt: null }, select: { id: true } })
+    : await prisma.recruiterInvitation.create({ data: { companyId: company.id, recipientUserId: recipient.id, sentByUserId: user.id, tokenHash, expiresAt }, select: { id: true } });
+
+  await prisma.auditEvent.create({
+    data: { actorUserId: user.id, eventType: pending ? "RECRUITER_INVITATION_RESENT" : "RECRUITER_INVITATION_SENT", subjectType: "RecruiterInvitation", subjectId: invitation.id }
+  });
+  const baseUrl = process.env.APP_BASE_URL || new URL(request.url).origin;
+  try {
+    await sendEmail({
+      to: recipient.email,
+      subject: "Convite para se vincular a uma empresa — Acessa Vagas",
+      text: `A empresa ${company.legalName} convidou você para se vincular à organização. Aceite ou recuse em até 7 dias: ${baseUrl}/recrutador/convite?token=${token}\n\nSe você não esperava este convite, pode recusá-lo ou ignorar esta mensagem.`
+    });
+  } catch {
+    await prisma.auditEvent.create({
+      data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_DELIVERY_FAILED", subjectType: "RecruiterInvitation", subjectId: invitation.id }
+    });
+    return NextResponse.json({ message: "O convite foi registrado, mas não foi possível enviar o e-mail." }, { status: 502 });
+  }
+  return NextResponse.json({ ok: true, message: pending ? "Convite reenviado; o link anterior foi invalidado." : "Convite enviado." }, { status: pending ? 200 : 201 });
+}
