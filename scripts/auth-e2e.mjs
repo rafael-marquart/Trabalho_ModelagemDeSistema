@@ -334,6 +334,7 @@ async function main() {
     await expectStatus(newPage, 200, "candidate page after new login");
 
     // Company registration and email verification exercise the inactive-to-active transition.
+    const companyEmailCount = SMTP_MESSAGES.length;
     const companyRegistration = await postJson("/api/auth/register/company", {
       legalName: "Empresa de Teste E2E",
       tradeName: "Empresa E2E",
@@ -349,8 +350,8 @@ async function main() {
     assert.ok(companyAccount?.company && companyAccount.role === "COMPANY" && !companyAccount.isActive, "company must remain inactive before email verification");
     assert.equal(companyAccount.company.emailConfirmedAt, null);
 
-    let emailCount = SMTP_MESSAGES.length - 1;
-    const companyVerificationToken = extractEmailToken(emailCount, "/empresa/confirmar-email");
+    let emailCount = SMTP_MESSAGES.length;
+    const companyVerificationToken = extractEmailToken(companyEmailCount, "/empresa/confirmar-email");
     const storedVerification = await prisma.companyEmailVerificationToken.findFirst({
       where: { companyId: companyAccount.company.id },
       select: { tokenHash: true }
