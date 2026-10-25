@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/session";
 import { createOneTimeToken } from "@/lib/auth/tokens";
+import { hashPassword } from "@/lib/auth/password";
+import { randomBytes } from "node:crypto";
 import { sendEmail } from "@/lib/email";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 import { prisma } from "@/lib/prisma";
 import { getPublicBaseUrl } from "@/lib/security/public-base-url";
 
-const schema = z.object({ email: z.string().trim().email().max(254) });
+const schema = z.object({ email: z.string().trim().email().max(254), fullName: z.string().trim().min(2).max(160) });
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
 
 export async function GET() {
@@ -47,11 +49,45 @@ export async function POST(request: NextRequest) {
   const company = await prisma.company.findUnique({ where: { accountUserId: user.id }, select: { id: true, legalName: true } });
   if (!company || !user.isActive) return NextResponse.json({ message: "A empresa não está habilitada para gerenciar recrutadores." }, { status: 403 });
   const parsed = schema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ message: "Informe um e-mail válido." }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ message: "Informe nome e e-mail válidos para o recrutador." }, { status: 400 });
   const email = parsed.data.email.toLowerCase();
-  const recipient = await prisma.user.findUnique({ where: { email }, select: { id: true, email: true, role: true } });
-  if (!recipient || recipient.role !== "RECRUITER") {
-    return NextResponse.json({ message: "Se o e-mail corresponder a uma conta de recrutador elegível, o convite será processado." }, { status: 202 });
+  let recipient = await prisma.user.findUnique({
+    where: { email },
+    select: { id: true, email: true, role: true, isActive: true, pendingActivation: true }
+  });
+  if (recipient && recipient.role !== "RECRUITER") {
+    return NextResponse.json({ message: "Não foi possível processar o convite com os dados informados." }, { status: 409 });
+  }
+  if (!recipient) {
+    const initialSecret = randomBytes(32).toString("base64url");
+    const passwordHash = await hashPassword(initialSecret);
+    try {
+      recipient = await prisma.$transaction(async tx => {
+        const created = await tx.user.create({
+          data: {
+            email,
+            fullName: parsed.data.fullName,
+            passwordHash,
+            role: "RECRUITER",
+            isActive: false,
+            pendingActivation: true
+          },
+          select: { id: true, email: true, role: true, isActive: true, pendingActivation: true }
+        });
+        await tx.auditEvent.create({
+          data: { actorUserId: user.id, eventType: "RECRUITER_ACCOUNT_CREATED_PENDING_ACTIVATION", subjectType: "User", subjectId: created.id }
+        });
+        return created;
+      });
+    } catch (error) {
+      if (typeof error === "object" && error !== null && "code" in error && error.code === "P2002") {
+        return NextResponse.json({ message: "Não foi possível processar o convite com os dados informados. Atualize a lista e tente novamente." }, { status: 409 });
+      }
+      throw error;
+    }
+  }
+  if (!recipient.isActive && !recipient.pendingActivation) {
+    return NextResponse.json({ message: "A conta de recrutador não está habilitada para receber convites." }, { status: 409 });
   }
   const activeLink = await prisma.recruiterLink.findFirst({ where: { recruiterId: recipient.id, active: true }, select: { id: true } });
   if (activeLink) return NextResponse.json({ message: "Este recrutador já possui vínculo ativo." }, { status: 409 });
