@@ -20,7 +20,7 @@ A referência editável original está no [Figma do AcessaVagas](https://www.fig
 
 ## Estado de aprovação visual
 
-Em 25/10/2026, o usuário aprovou explicitamente os protótipos existentes de Entrada/login e seleção de perfil, Login de Candidato, Login de Empresa, Cadastro de Candidato, Cadastro de Empresa e Recuperação de senha. Em 25/10/2026, o usuário aprovou também os protótipos de Gestão de recrutadores e Mensagens de autenticação. Todos os protótipos SVG catalogados estão aprovados visualmente. Os SVGs são estáticos e não substituem a fonte editável do Figma. Os SVGs são estáticos e não substituem a fonte editável do Figma.
+Em 25/10/2026, o usuário aprovou explicitamente os protótipos existentes de Entrada/login e seleção de perfil, Login de Candidato, Login de Empresa, Cadastro de Candidato, Cadastro de Empresa e Recuperação de senha. Em 25/10/2026, o usuário aprovou também os protótipos de Gestão de recrutadores e Mensagens de autenticação. Os oito protótipos da SPEC-001 citados acima estão aprovados visualmente. Essa aprovação não se estende automaticamente aos protótipos de outras Specs. Os SVGs são estáticos e não substituem a fonte editável do Figma.
 
 ## Telas adicionais trabalhadas no Figma
 
