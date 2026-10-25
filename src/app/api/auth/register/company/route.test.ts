@@ -96,12 +96,24 @@ describe("company registration", () => {
   });
 
 
-  it("rejects foreign identifiers and invalid CNPJ check digits", async () => {
+  it("rejects identifiers that do not contain exactly 14 digits", async () => {
     const response = await POST(makeRequest({ officialId: "12345678" }));
 
     expect(response.status).toBe(400);
     expect(hashPasswordMock).not.toHaveBeenCalled();
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
+
+  it("accepts 14 digits without validating check digits or official existence", async () => {
+    const response = await POST(makeRequest({ officialId: "00000000000000" }));
+
+    expect(response.status).toBe(201);
+    expect(tx.user.create).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        company: { create: expect.objectContaining({ officialId: "00000000000000" }) }
+      })
+    }));
   });
 
   it("maps unique constraint violations to a conflict", async () => {
