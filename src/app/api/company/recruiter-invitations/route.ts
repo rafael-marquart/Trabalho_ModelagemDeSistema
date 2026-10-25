@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/session";
 import { createOneTimeToken } from "@/lib/auth/tokens";
 import { sendEmail } from "@/lib/email";
+import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 import { prisma } from "@/lib/prisma";
 
 const schema = z.object({ email: z.string().trim().email().max(254) });
@@ -37,6 +38,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const originRejection = rejectCrossOriginRequest(request);
+  if (originRejection) return originRejection;
+
   const user = await getCurrentUser();
   if (!user || user.role !== "COMPANY") return NextResponse.json({ message: "Acesso não autorizado." }, { status: 401 });
   const company = await prisma.company.findUnique({ where: { accountUserId: user.id }, select: { id: true, legalName: true } });
