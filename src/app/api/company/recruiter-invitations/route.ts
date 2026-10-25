@@ -51,19 +51,28 @@ export async function POST(request: NextRequest) {
   const activeLink = await prisma.recruiterLink.findFirst({ where: { recruiterId: recipient.id, active: true }, select: { id: true } });
   if (activeLink) return NextResponse.json({ message: "Este recrutador já possui vínculo ativo." }, { status: 409 });
 
-  const pending = await prisma.recruiterInvitation.findFirst({
-    where: { companyId: company.id, recipientUserId: recipient.id, status: "PENDING", expiresAt: { gt: new Date() } },
-    orderBy: { createdAt: "desc" }
-  });
   const { token, tokenHash } = createOneTimeToken();
   const expiresAt = new Date(Date.now() + SEVEN_DAYS);
-  const invitation = pending
-    ? await prisma.recruiterInvitation.update({ where: { id: pending.id }, data: { tokenHash, expiresAt, sentByUserId: user.id, respondedAt: null }, select: { id: true } })
-    : await prisma.recruiterInvitation.create({ data: { companyId: company.id, recipientUserId: recipient.id, sentByUserId: user.id, tokenHash, expiresAt }, select: { id: true } });
+  // Serialize sends for this company/recipient pair. Without the advisory lock,
+  // simultaneous requests can both observe no pending invite and create duplicates.
+  const invitationResult = await prisma.$transaction(async (tx) => {
+    const lockKey = `recruiter-invitation:${company.id}:${recipient.id}`;
+    await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`;
 
-  await prisma.auditEvent.create({
-    data: { actorUserId: user.id, eventType: pending ? "RECRUITER_INVITATION_RESENT" : "RECRUITER_INVITATION_SENT", subjectType: "RecruiterInvitation", subjectId: invitation.id }
+    const pending = await tx.recruiterInvitation.findFirst({
+      where: { companyId: company.id, recipientUserId: recipient.id, status: "PENDING", expiresAt: { gt: new Date() } },
+      orderBy: { createdAt: "desc" }
+    });
+    const invitation = pending
+      ? await tx.recruiterInvitation.update({ where: { id: pending.id }, data: { tokenHash, expiresAt, sentByUserId: user.id, respondedAt: null }, select: { id: true } })
+      : await tx.recruiterInvitation.create({ data: { companyId: company.id, recipientUserId: recipient.id, sentByUserId: user.id, tokenHash, expiresAt }, select: { id: true } });
+
+    await tx.auditEvent.create({
+      data: { actorUserId: user.id, eventType: pending ? "RECRUITER_INVITATION_RESENT" : "RECRUITER_INVITATION_SENT", subjectType: "RecruiterInvitation", subjectId: invitation.id }
+    });
+    return { invitation, wasResent: Boolean(pending) };
   });
+  const { invitation, wasResent } = invitationResult;
   const baseUrl = process.env.APP_BASE_URL || new URL(request.url).origin;
   try {
     await sendEmail({
@@ -91,5 +100,5 @@ export async function POST(request: NextRequest) {
         : "Não foi possível confirmar a entrega deste e-mail. Verifique a lista de convites antes de tentar novamente."
     }, { status: 502 });
   }
-  return NextResponse.json({ ok: true, message: pending ? "Convite reenviado; o link anterior foi invalidado." : "Convite enviado." }, { status: pending ? 200 : 201 });
+  return NextResponse.json({ ok: true, message: wasResent ? "Convite reenviado; o link anterior foi invalidado." : "Convite enviado." }, { status: wasResent ? 200 : 201 });
 }
