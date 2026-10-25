@@ -26,7 +26,7 @@ describe("company registration", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.NODE_ENV = "test";
+    vi.stubEnv("NODE_ENV", "test");
     delete process.env.APP_BASE_URL;
     prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => callback(tx));
     tx.user.create.mockResolvedValue({ id: "company-user-1", company: { id: "company-1" } });
