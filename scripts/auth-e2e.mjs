@@ -600,6 +600,19 @@ async function main() {
     assert.ok(secondCompanyCookieMatch?.[1], "second company login must issue a session cookie");
     const secondCompanyCookie = `acessa_session=${secondCompanyCookieMatch[1]}`;
 
+    const secondCompanyLinksResponse = await fetch(`${BASE_URL}/api/company/recruiter-links`, {
+      headers: { cookie: secondCompanyCookie },
+      redirect: "manual"
+    });
+    const secondCompanyLinksBody = await expectStatus(secondCompanyLinksResponse, 200, "second company recruiter links list");
+    assert.ok(
+      JSON.parse(secondCompanyLinksBody).links.every(link => link.recruiter.email !== RECRUITER_EMAIL),
+      "company B must not see company A's recruiter link"
+    );
+
+    const linkEndAuditBefore = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_LINK_ENDED", subjectId: activeLinkForIsolation.id }
+    });
     const crossCompanyEnd = await postJson("/api/company/recruiter-links/end", {
       recruiterLinkId: activeLinkForIsolation.id
     }, { cookie: secondCompanyCookie });
@@ -609,11 +622,32 @@ async function main() {
       select: { active: true }
     });
     assert.equal(stillActiveLink?.active, true, "cross-company termination attempt must not change the link");
+    const linkEndAuditAfterCrossCompanyAttempt = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_LINK_ENDED", subjectId: activeLinkForIsolation.id }
+    });
+    assert.equal(
+      linkEndAuditAfterCrossCompanyAttempt,
+      linkEndAuditBefore,
+      "a rejected cross-company termination must not create an audit event"
+    );
 
-    const finalEndLink = await postJson("/api/company/recruiter-links/end", {
-      recruiterLinkId: activeLinkForIsolation.id
-    }, { cookie: companyCookie });
-    await expectStatus(finalEndLink, 200, "owning company terminates its recruiter link");
+    const concurrentEndResponses = await Promise.all([
+      postJson("/api/company/recruiter-links/end", { recruiterLinkId: activeLinkForIsolation.id }, { cookie: companyCookie }),
+      postJson("/api/company/recruiter-links/end", { recruiterLinkId: activeLinkForIsolation.id }, { cookie: companyCookie })
+    ]);
+    assert.deepEqual(
+      concurrentEndResponses.map(response => response.status).sort((a, b) => a - b),
+      [200, 409],
+      "exactly one concurrent request may terminate the same active recruiter link"
+    );
+    const linkEndAuditAfterConcurrentRequests = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_LINK_ENDED", subjectId: activeLinkForIsolation.id }
+    });
+    assert.equal(
+      linkEndAuditAfterConcurrentRequests,
+      1,
+      "concurrent termination must emit exactly one audit event"
+    );
     const finalPreservedRecruiter = await prisma.user.findUnique({
       where: { id: recruiterAccount.id },
       select: { id: true, isActive: true }
