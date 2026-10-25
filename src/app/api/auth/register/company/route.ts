@@ -7,6 +7,7 @@ import { createOneTimeToken } from "@/lib/auth/tokens";
 import { sendEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 import { getPublicBaseUrl } from "@/lib/security/public-base-url";
+import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 
 const schema = z.object({
   legalName: z.string().trim().min(2).max(200),
@@ -18,6 +19,9 @@ const schema = z.object({
 const EMAIL_VERIFICATION_MS = 24 * 60 * 60 * 1000;
 
 export async function POST(request: Request) {
+  const originRejection = rejectCrossOriginRequest(request);
+  if (originRejection) return originRejection;
+
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
     return NextResponse.json(
