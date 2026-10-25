@@ -45,6 +45,10 @@ export async function POST(request: Request) {
       await tx.companyEmailVerificationToken.deleteMany({
         where: { companyId: tokenRecord.company.id, id: { not: tokenRecord.id } }
       });
+      await tx.user.updateMany({
+        where: { id: tokenRecord.company.accountUserId, role: "COMPANY", isActive: false },
+        data: { isActive: true }
+      });
       await tx.auditEvent.create({
         data: {
           actorUserId: tokenRecord.company.accountUserId,
@@ -65,6 +69,6 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     ok: true,
-    message: "E-mail corporativo confirmado. A conta continuará indisponível até a validação do identificador oficial."
+    message: "E-mail corporativo confirmado. Sua conta empresarial está ativada."
   });
 }
