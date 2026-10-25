@@ -101,7 +101,7 @@ describe("company email verification", () => {
 
     const response = await POST(makeRequest() as never);
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(400);
     expect(transactionRolledBack).toBe(true);
     expect(tx.companyEmailVerificationToken.deleteMany).not.toHaveBeenCalled();
     expect(tx.auditEvent.create).not.toHaveBeenCalled();
