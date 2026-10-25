@@ -2,16 +2,17 @@
 
 **Revisão:** 25/10/2026  
 **Branch:** `feat/initial-app-foundation`  
-**HEAD atual da branch:** `36991af68fbc838a4c711cf24342e3348c3a770d`  
-**Último HEAD validado pelo CI:** `36991af68fbc838a4c711cf24342e3348c3a770d`  
+**HEAD da implementação revisada:** `c1a20c2fb2f79c4f5a5411f360062a81ac7a3c78`  
+**Último HEAD de implementação validado pelo CI:** `c1a20c2fb2f79c4f5a5411f360062a81ac7a3c78`  
 **Pull request:** [#36](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/pull/36) — permanece Draft  
 **Objetivo:** separar implementação existente, evidência automatizada disponível e validações ainda necessárias. Esta matriz não substitui os critérios de aceite da `docs/Specs.md` nem declara a SPEC-001 concluída.
 
 ## Estado de CI observado
 
-- O CI de push (run [40213050589](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40213050589)) e o CI de pull request (run [40213054268](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40213054268)) concluíram com sucesso para o HEAD `36991af68fbc838a4c711cf24342e3348c3a770d`.
+- O CI de push (run [40215613435](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40215613435)) e o CI de pull request (run [40215617140](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40215617140)) concluíram com sucesso para o HEAD `c1a20c2fb2f79c4f5a5411f360062a81ac7a3c78`. As duas execuções incluem validação/geração Prisma, migrações PostgreSQL, TypeScript, lint, testes unitários e build de produção.
 - A etapa `validate` passou nas duas execuções. A pipeline cobre validação/geração Prisma, migrações PostgreSQL, restrições de integridade e concorrência, TypeScript, lint, testes unitários e build de produção.
 - O HEAD mantém a serialização por bloqueio de linha no reset de senha, teste para usuário que deixa de estar elegível antes da transação e proteção contra corrida na ativação de empresa durante a confirmação de e-mail. A ordem das operações foi ajustada para não consumir tokens secundários se a ativação não for confirmada.
+- A contagem de falhas por conta agora acompanha `lastFailedLoginAt` e reinicia o contador quando a falha anterior está fora da janela móvel de 15 minutos; o sucesso e a redefinição de senha limpam ambos os campos. O teste de regressão cobre contador antigo com nove falhas registradas há mais de 15 minutos.
 - A recuperação de senha mantém resposta HTTP 200 e mensagem genérica quando há throttling, para reduzir risco de enumeração de contas.
 - A listagem `GET /api/company/recruiter-invitations` é somente leitura: convites pendentes cujo prazo já passou são apresentados como `EXPIRED` na resposta, sem atualizar o banco nem gravar auditoria durante a consulta. O status persistido pode permanecer `PENDING` até um fluxo explícito de escrita tratar o convite.
 - A rota de logout usa a origem canônica `APP_BASE_URL`, em vez de derivar o destino do host da requisição, e retorna `503` em produção se a configuração estiver ausente. Testes cobrem host não confiável, ausência de configuração e rejeição de origem cruzada.
@@ -49,13 +50,13 @@ Revisão estática das rotas de autenticação, convite e vínculo na revisão `
 ## Validações transversais ainda necessárias
 
 1. **Integração/E2E:** executar percursos completos de cadastro, confirmação de e-mail, login, recuperação, convite de recrutador, aceite/recusa, cancelamento e encerramento de vínculo contra PostgreSQL e provedor de e-mail de teste.
-2. **Autorização:** verificar sistematicamente candidato, empresa, recrutador e usuário anônimo em todas as rotas protegidas, inclusive tentativa de acessar identificadores de outra organização.
+2. **Autorização:** uma revisão estática das 12 rotas de API atuais confirmou que todas as rotas mutáveis `POST` verificam origem e que as operações de convites/vínculos de empresa são limitadas à empresa autenticada. Ainda falta executar sistematicamente cenários integrados para candidato, empresa, recrutador e usuário anônimo em todas as rotas protegidas, inclusive acesso a identificadores de outra organização.
 3. **Segurança:** revisar concorrência de tokens de uso único, sessões, origem de requisição, mensagens anti-enumeração, cookies e logs de auditoria. O login aplica bloqueio por conta após 10 falhas consecutivas em 15 minutos e throttling gradual por IP: 31 falhas no intervalo móvel de 15 minutos acionam cooldown de 60 segundos; 51, 5 minutos; 81, 15 minutos; e 121 ou mais, 60 minutos. Os parâmetros estão documentados em `docs/operacao/seguranca-login.md`. Testar operação atrás do proxy confiável e monitorar impactos em redes compartilhadas.
-4. **Acessibilidade/usabilidade:** revisar foco, labels, mensagens `role="alert"`/`role="status"`, contraste, teclado e leitor de tela; a aprovação do SVG não comprova conformidade da implementação.
+4. **Acessibilidade/usabilidade e temas:** revisar foco, labels, mensagens `role="alert"`/`role="status"`, contraste, teclado e leitor de tela; a aprovação do SVG não comprova conformidade da implementação. A inspeção estática atual não encontrou seletor/controle de tema escuro na implementação CSS/UI, embora o requisito transversal do projeto exija tema claro e escuro. Definir e validar a solução sem alterar silenciosamente os protótipos aprovados.
 5. **Configuração operacional:** definir e testar `APP_BASE_URL`, SMTP e configuração do proxy confiável; configurar e monitorar a execução diária da retenção de auditoria.
 6. **Figma:** sincronizar `Gestao-Recrutadores.svg` e `Mensagens-Autenticacao.svg` na fonte editável e verificar visualmente. A fonte ainda não foi atualizada.
 7. **Fechamento:** revisar os 14 critérios acima com evidências, confirmar os critérios de aceite da SPEC-001 e obter aprovação explícita antes de retirar Draft ou iniciar outra Spec.
 
 ## Decisão atual
 
-**SPEC-001 permanece em implementação/validação.** O CI de push e pull request passou para o HEAD `36991af68fbc838a4c711cf24342e3348c3a770d`, incluindo a proteção gradual por IP, testes, migrações/restrições de banco e build de produção. A revisão estática de autorização/isolamento não identificou vulnerabilidade evidente nos fluxos inspecionados, mas ainda não há evidência suficiente para afirmar que todos os critérios passaram por validação ponta a ponta ou operacional. Nenhum merge para `main`, publicação em produção ou início da SPEC-002 está autorizado por este relatório.
+**SPEC-001 permanece em implementação/validação.** O CI de push e pull request passou para o HEAD de implementação `c1a20c2fb2f79c4f5a5411f360062a81ac7a3c78`, incluindo a correção da janela de falhas por conta, testes, migrações/restrições de banco e build de produção. A revisão estática de autorização/isolamento não identificou vulnerabilidade evidente nos fluxos inspecionados, mas ainda não há evidência suficiente para afirmar que todos os critérios passaram por validação ponta a ponta ou operacional. Nenhum merge para `main`, publicação em produção ou início da SPEC-002 está autorizado por este relatório.
