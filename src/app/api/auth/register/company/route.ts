@@ -3,6 +3,7 @@ import { z } from "zod";
 import { hashPassword } from "@/lib/auth/password";
 import { passwordSchema } from "@/lib/auth/password-policy";
 import { normalizeIdentifier } from "@/lib/auth/login-schema";
+import { isValidCnpj, normalizeCnpj } from "@/lib/auth/cnpj";
 import { createOneTimeToken } from "@/lib/auth/tokens";
 import { sendEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
@@ -32,9 +33,9 @@ export async function POST(request: Request) {
 
   const input = parsed.data;
   const email = normalizeIdentifier(input.contactEmail);
-  const officialId = input.officialId.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
-  if (officialId.length < 8) {
-    return NextResponse.json({ message: "Confira os dados informados." }, { status: 400 });
+  const officialId = normalizeCnpj(input.officialId);
+  if (!isValidCnpj(officialId)) {
+    return NextResponse.json({ message: "Informe um CNPJ válido. O cadastro inicial aceita apenas empresas brasileiras." }, { status: 400 });
   }
 
   const passwordHash = await hashPassword(input.password);
