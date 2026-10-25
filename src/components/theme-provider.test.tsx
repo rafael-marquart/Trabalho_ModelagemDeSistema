@@ -26,7 +26,7 @@ describe("accessible theme preference", () => {
 
     expect(screen.getByTestId("theme").textContent).toBe("light");
     expect(document.documentElement.dataset.theme).toBe("light");
-    expect(screen.getByRole("button", { name: "Ativar tema escuro" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Alternar tema claro e escuro" }).getAttribute("aria-pressed")).toBe("false");
   });
 
   it("restores a saved dark theme preference", async () => {
@@ -36,7 +36,7 @@ describe("accessible theme preference", () => {
 
     expect(screen.getByTestId("theme").textContent).toBe("dark");
     expect(document.documentElement.dataset.theme).toBe("dark");
-    expect(screen.getByRole("button", { name: "Ativar tema claro" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Alternar tema claro e escuro" }).getAttribute("aria-pressed")).toBe("true");
   });
 
   it("persists theme changes when the user activates the control", async () => {
