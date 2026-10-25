@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loginSchema, normalizeCpf, normalizeIdentifier } from "./login-schema";
+import { isValidCpf, loginSchema, normalizeCpf, normalizeIdentifier } from "./login-schema";
 
 describe("loginSchema", () => {
   it("accepts candidate login with email and remember-me preference", () => {
@@ -31,6 +31,18 @@ describe("identifier normalization", () => {
   });
 
   it("keeps only digits in CPF", () => {
-    expect(normalizeCpf("123.456.789-00")).toBe("12345678900");
+    expect(normalizeCpf("529.982.247-25")).toBe("52998224725");
+  });
+});
+
+describe("CPF validation", () => {
+  it("accepts a CPF with valid check digits", () => {
+    expect(isValidCpf("529.982.247-25")).toBe(true);
+  });
+
+  it("rejects invalid check digits, repeated digits, and wrong lengths", () => {
+    expect(isValidCpf("123.456.789-00")).toBe(false);
+    expect(isValidCpf("111.111.111-11")).toBe(false);
+    expect(isValidCpf("5299822472")).toBe(false);
   });
 });
