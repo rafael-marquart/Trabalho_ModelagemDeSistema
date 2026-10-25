@@ -16,6 +16,7 @@ const EMAIL = `spec001-e2e-${randomUUID()}@example.test`;
 const COMPANY_EMAIL = `spec001-company-${randomUUID()}@example.test`;
 const RECRUITER_EMAIL = `spec001-recruiter-${randomUUID()}@example.test`;
 const SECOND_COMPANY_EMAIL = `spec001-company-two-${randomUUID()}@example.test`;
+const CROSS_COMPANY_INVITATION_EMAIL = `spec001-cross-company-invite-${randomUUID()}@example.test`;
 const UNKNOWN_COMPANY_EMAIL = `unknown-company-${randomUUID()}@example.test`;
 const OLD_PASSWORD = "InitialPassword123";
 const NEW_PASSWORD = "ChangedPassword456";
@@ -158,7 +159,7 @@ async function expectStatus(response, expected, description) {
 
 async function cleanupTestData() {
   const users = await prisma.user.findMany({
-    where: { email: { in: [EMAIL, COMPANY_EMAIL, RECRUITER_EMAIL, SECOND_COMPANY_EMAIL] } },
+    where: { email: { in: [EMAIL, COMPANY_EMAIL, RECRUITER_EMAIL, SECOND_COMPANY_EMAIL, CROSS_COMPANY_INVITATION_EMAIL] } },
     select: { id: true, company: { select: { id: true } } }
   });
   if (!users.length) return;
@@ -695,13 +696,18 @@ async function main() {
     // Company B must not cancel a pending invitation owned by company A.
     emailCount = SMTP_MESSAGES.length;
     const crossCompanyCancelInvite = await postJson("/api/company/recruiter-invitations", {
-      email: RECRUITER_EMAIL,
-      fullName: "Recrutador de Teste E2E"
+      email: CROSS_COMPANY_INVITATION_EMAIL,
+      fullName: "Recrutador de Teste de Isolamento"
     }, { cookie: companyCookie });
     await expectStatus(crossCompanyCancelInvite, 201, "company A creates invitation for cross-company cancellation test");
     const crossCompanyCancelToken = extractEmailToken(emailCount, "/recrutador/convite");
+    const crossCompanyInvitationRecipient = await prisma.user.findUnique({
+      where: { email: CROSS_COMPANY_INVITATION_EMAIL },
+      select: { id: true }
+    });
+    assert.ok(crossCompanyInvitationRecipient, "cross-company invitation recipient account must exist");
     const crossCompanyPending = await prisma.recruiterInvitation.findFirst({
-      where: { companyId: companyAccount.company.id, recipientUserId: recruiterAccount.id, status: "PENDING" },
+      where: { companyId: companyAccount.company.id, recipientUserId: crossCompanyInvitationRecipient.id, status: "PENDING" },
       orderBy: { createdAt: "desc" },
       select: { id: true, tokenHash: true }
     });
