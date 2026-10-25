@@ -2,7 +2,6 @@
 
 **Revisão:** 25/10/2026 — atualização após cobertura E2E das transições de auditoria dos convites  
 **Branch:** `feat/initial-app-foundation`  
-**Último commit com código de aplicação validado pelo CI:** `9505388e7e54958bf48874c48b18c828bb9997c0` (recuperação de senha alinhada ao layout de autenticação compartilhado).  
 **Último HEAD integrado de implementação/testes validado pelo CI:** `62e4af93442b443590e103cdda6e845be5373ebf` (snapshot de destinatário do convite, migração de banco e regressão de privacidade E2E).  
 **CI confirmado para o HEAD `62e4af93442b443590e103cdda6e845be5373ebf`:** push [40243954634](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40243954634) e Pull Request [40243959357](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40243959357), ambos aprovados.  
 **Pull request:** [#36](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/pull/36) — permanece Draft  
