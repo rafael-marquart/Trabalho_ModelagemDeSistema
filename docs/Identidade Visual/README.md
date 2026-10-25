@@ -4,7 +4,7 @@ Esta pasta reúne os materiais de identidade visual e as referências de interfa
 
 ## Estado e aprovação
 
-Em 20/10/2026, o usuário aprovou os materiais visuais e rascunhos apresentados até então nesta etapa do trabalho. Em 25/10/2026, aprovou explicitamente os protótipos de **Entrada/login e seleção de perfil**, **Login de Candidato** e **Login de Empresa**, conforme registrados na SPEC-001. A aprovação é limitada às referências visuais existentes dessas três telas; não aprova automaticamente os cadastros, recuperação de senha, configurações de recrutadores ou mensagens de autenticação. A aprovação visual não substitui aprovação dos textos das Specs nem autoriza implementação por si só.
+Em 20/10/2026, o usuário aprovou os materiais visuais e rascunhos apresentados até então nesta etapa do trabalho. Em 25/10/2026, aprovou explicitamente os protótipos existentes de **Entrada/login e seleção de perfil**, **Login de Candidato**, **Login de Empresa**, **Cadastro de Candidato**, **Cadastro de Empresa** e **Recuperação de senha**. Também autorizou a criação dos protótipos de **Gestão de recrutadores** e **Mensagens de autenticação** com base na identidade visual aprovada. Estes dois últimos foram adicionados como propostas estáticas para revisão e ainda não devem ser considerados formalmente aprovados. A aprovação visual não substitui aprovação dos textos das Specs nem autoriza integração ou publicação.
 
 **Importante:** o arquivo editável de referência está no [Figma do AcessaVagas](https://www.figma.com/design/VngDm0L22cFu2wQBZDVy95). Os arquivos locais desta pasta são referências estáticas; não são a fonte editável original nem código funcional.
 
@@ -22,6 +22,8 @@ Em 20/10/2026, o usuário aprovou os materiais visuais e rascunhos apresentados 
 - [Cadastro — Candidato](Cadastro-Candidato.svg)
 - [Cadastro — Empresa](Cadastro-Empresa.svg)
 - [Recuperação de senha](Recuperacao-de-Senha.svg)
+- [Gestão de recrutadores](Gestao-Recrutadores.svg) — proposta estática para revisão.
+- [Mensagens de autenticação](Mensagens-Autenticacao.svg) — proposta estática para revisão.
 - [Página inicial — Candidato](Pagina-Inicial-Candidato.svg)
 - [Página inicial — Empresa](Pagina-Inicial-Empresa.svg)
 
@@ -39,7 +41,9 @@ Os seguintes protótipos foram adicionados como SVGs nesta pasta:
 - [Confirmação de cancelamento](Confirmacao-Cancelamento.svg)
 - [Resultado do cancelamento](Resultado-Cancelamento.svg)
 
-**Ajuste visual ainda pendente:** o SVG de resultado do cancelamento foi incluído como exportado, mas a tela ainda precisa remover/ocultar o controle de cancelamento e aplicar cinza ao status “Cancelada”. A edição no Figma não foi aplicada por limite de uso da ferramenta; portanto, esse arquivo não deve ser tratado como versão corrigida desse ajuste.
+**Ajuste visual ainda pendente:** o SVG de resultado do cancelamento foi incluído como exportado, mas a tela ainda precisa remover/ocultar o controle de cancelamento e aplicar cinza ao status “Cancelada”. A edição no Figma não foi aplicada; portanto, esse arquivo não deve ser tratado como versão corrigida desse ajuste.
+
+Os novos protótipos de Gestão de recrutadores e Mensagens de autenticação foram criados como SVGs estáticos de referência. A fonte editável Figma ainda precisa ser atualizada para incorporar essas duas telas.
 
 ## Direção visual
 
