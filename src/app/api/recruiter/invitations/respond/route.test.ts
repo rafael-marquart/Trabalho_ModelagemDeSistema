@@ -5,7 +5,6 @@ const { prismaMock, getCurrentUserMock, rejectOriginMock } = vi.hoisted(() => ({
   prismaMock: {
     recruiterInvitation: { findUnique: vi.fn() },
     user: { findUnique: vi.fn() },
-    user: { findUnique: vi.fn() },
     $transaction: vi.fn()
   },
   getCurrentUserMock: vi.fn(),
