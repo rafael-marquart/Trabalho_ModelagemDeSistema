@@ -12,10 +12,10 @@ psql "$PSQL_DATABASE_URL" -v ON_ERROR_STOP=1 -c \
   'DELETE FROM "RecruiterLink" WHERE "id" IN ('"'"'ci-concurrent-link-a'"'"', '"'"'ci-concurrent-link-b'"'"');'
 
 set +e
-psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c \
+psql "$PSQL_DATABASE_URL" -v ON_ERROR_STOP=1 -c \
   'INSERT INTO "RecruiterLink" ("id", "companyId", "recruiterId") VALUES ('"'"'\''ci-concurrent-link-a'\'', '\''ci-company'\'', '\''ci-recruiter-user'\'');' >/tmp/link-a.log 2>&1 &
 pid_a=$!
-psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c \
+psql "$PSQL_DATABASE_URL" -v ON_ERROR_STOP=1 -c \
   'INSERT INTO "RecruiterLink" ("id", "companyId", "recruiterId") VALUES ('"'"'\''ci-concurrent-link-b'\'', '\''ci-company'\'', '\''ci-recruiter-user'\'');' >/tmp/link-b.log 2>&1 &
 pid_b=$!
 wait "$pid_a"
