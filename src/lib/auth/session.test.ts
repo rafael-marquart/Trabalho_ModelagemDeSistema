@@ -1,4 +1,5 @@
-import { createHash } from "node:crypto";\nimport { beforeEach, describe, expect, it, vi } from "vitest";
+import { createHash } from "node:crypto";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { prismaMock, cookieSet, cookieGet, cookieDelete } = vi.hoisted(() => ({
   prismaMock: {
