@@ -161,4 +161,46 @@ describe("password recovery request", () => {
     expect(tx.passwordResetToken.deleteMany).not.toHaveBeenCalled();
     expect(sendEmailMock).not.toHaveBeenCalled();
   });
+
+  it("starts the account cooldown after allowing the third request", async () => {
+    tx.recoveryAttempt.count.mockResolvedValueOnce(2).mockResolvedValueOnce(0);
+    const request = new Request("https://acessavagas.example/api/auth/password/forgot", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-forwarded-for": "192.0.2.10" },
+      body: JSON.stringify({ profile: "candidate", identifier: "person@example.com" })
+    });
+
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(200);
+    expect(tx.recoveryAttempt.create).toHaveBeenCalled();
+    expect(tx.recoveryBlock.upsert).toHaveBeenCalledWith({
+      where: { scopeKey: expect.stringMatching(/^identifier:/) },
+      create: { scopeKey: expect.stringMatching(/^identifier:/), blockedUntil: expect.any(Date) },
+      update: { blockedUntil: expect.any(Date) }
+    });
+    expect(tx.passwordResetToken.create).toHaveBeenCalled();
+    expect(sendEmailMock).toHaveBeenCalled();
+  });
+
+  it("starts the IP cooldown after allowing the third request from that IP", async () => {
+    tx.recoveryAttempt.count.mockResolvedValueOnce(0).mockResolvedValueOnce(2);
+    const request = new Request("https://acessavagas.example/api/auth/password/forgot", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-forwarded-for": "192.0.2.10" },
+      body: JSON.stringify({ profile: "candidate", identifier: "person@example.com" })
+    });
+
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(200);
+    expect(tx.recoveryBlock.upsert).toHaveBeenCalledWith({
+      where: { scopeKey: expect.stringMatching(/^ip:/) },
+      create: { scopeKey: expect.stringMatching(/^ip:/), blockedUntil: expect.any(Date) },
+      update: { blockedUntil: expect.any(Date) }
+    });
+    expect(tx.passwordResetToken.create).toHaveBeenCalled();
+    expect(sendEmailMock).toHaveBeenCalled();
+  });
+
 });
