@@ -2,11 +2,13 @@
 set -euo pipefail
 
 : "${DATABASE_URL:?DATABASE_URL must point to the CI PostgreSQL database}"
+# Prisma adds `schema=public`, which libpq/psql does not accept as a URI parameter.
+PSQL_DATABASE_URL="${DATABASE_URL%%\?*}"
 
 # The preceding SQL smoke test creates this company and recruiter.
 # Competing inserts use distinct link IDs but the same recruiter, so the
 # partial unique index must allow exactly one active link.
-psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c \
+psql "$PSQL_DATABASE_URL" -v ON_ERROR_STOP=1 -c \
   'DELETE FROM "RecruiterLink" WHERE "id" IN ('"'"'ci-concurrent-link-a'"'"', '"'"'ci-concurrent-link-b'"'"');'
 
 set +e
