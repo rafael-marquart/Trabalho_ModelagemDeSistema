@@ -101,10 +101,6 @@ export async function POST(request: NextRequest) {
       { status: 401 }
     );
   }
-  await prisma.auditEvent.create({
-    data: { actorUserId: outcome.userId, eventType: "AUTH_LOGIN_SUCCEEDED", subjectType: "User", subjectId: outcome.userId }
-  });
-
   return NextResponse.json({
     ok: true,
     redirectTo: input.profile === "candidate" ? "/candidato" : input.profile === "recruiter" ? "/recrutador" : "/empresa"
