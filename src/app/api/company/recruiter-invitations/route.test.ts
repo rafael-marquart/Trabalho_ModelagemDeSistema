@@ -174,6 +174,37 @@ describe("send recruiter invitation", () => {
     expect(sendEmailMock).not.toHaveBeenCalled();
   });
 
+  it("rejects an inactive company account before sending or mutating invitations", async () => {
+    getCurrentUserMock.mockResolvedValueOnce({ ...companyUser, isActive: false });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(403);
+    expect(prismaMock.user.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(sendEmailMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects invitation listing for an inactive company account", async () => {
+    getCurrentUserMock.mockResolvedValueOnce({ ...companyUser, isActive: false });
+
+    const response = await GET();
+
+    expect(response.status).toBe(403);
+    expect(prismaMock.recruiterInvitation.findMany).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
+  it("rejects invitation listing when the company record is missing", async () => {
+    prismaMock.company.findUnique.mockResolvedValueOnce(null);
+
+    const response = await GET();
+
+    expect(response.status).toBe(403);
+    expect(prismaMock.recruiterInvitation.findMany).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
   it("rejects cross-origin requests before authentication", async () => {
     rejectOriginMock.mockReturnValueOnce(new Response("blocked", { status: 403 }));
 
