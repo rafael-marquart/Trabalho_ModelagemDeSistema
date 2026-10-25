@@ -31,6 +31,7 @@ Permitir que o usuário acesse o sistema de forma segura e autenticada, validand
 - EX01 (Credenciais inválidas): Se o e-mail ou a senha estiverem incorretos, o sistema informa o erro e impede o acesso.
 - EX02 (Usuário bloqueado): Se o perfil estiver bloqueado por segurança, o sistema informa a impossibilidade de acesso e orienta a recuperação.
 - EX03 (Recuperação de senha): Se o usuário não lembrar a senha, ele pode usar a opção de recuperação para redefinir as credenciais.
+- EX04 (Empresa aguardando validação): A conta empresarial permanece indisponível até a confirmação do e-mail corporativo e a validação administrativa do CNPJ em fonte oficial. O cadastro inicial aceita apenas empresas brasileiras com CNPJ válido; empresas estrangeiras ou sem CNPJ estão fora do escopo inicial.
 
 ## Pós-condições
 
