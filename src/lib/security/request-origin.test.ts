@@ -43,6 +43,16 @@ describe("rejectCrossOriginRequest", () => {
     expect(rejectCrossOriginRequest(request)?.status).toBe(503);
   });
 
+  it("fails closed in production when APP_BASE_URL uses HTTP", () => {
+    vi.stubEnv("APP_BASE_URL", "http://acessavagas.example");
+    vi.stubEnv("NODE_ENV", "production");
+    const request = new Request("https://acessavagas.example/api/mutation", {
+      headers: { origin: "https://acessavagas.example" }
+    });
+
+    expect(rejectCrossOriginRequest(request)?.status).toBe(503);
+  });
+
   it("allows requests without Origin for non-browser clients", () => {
     vi.stubEnv("APP_BASE_URL", "https://acessavagas.example");
     const request = new Request("https://acessavagas.example/api/mutation");
