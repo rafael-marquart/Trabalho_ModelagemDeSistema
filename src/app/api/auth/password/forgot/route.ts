@@ -6,6 +6,7 @@ import { normalizeCpf, normalizeIdentifier } from "@/lib/auth/login-schema";
 import { createOneTimeToken } from "@/lib/auth/tokens";
 import { sendEmail } from "@/lib/email";
 import { getPublicBaseUrl } from "@/lib/security/public-base-url";
+import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 
 const schema = z.object({
   profile: z.enum(["candidate", "company"]),
@@ -22,6 +23,9 @@ function clientIp(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const originRejection = rejectCrossOriginRequest(request);
+  if (originRejection) return originRejection;
+
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ message: genericMessage }, { status: 200 });
 
