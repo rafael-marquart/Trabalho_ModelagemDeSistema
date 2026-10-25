@@ -546,6 +546,14 @@ async function main() {
     assert.ok(invitationRecord && invitationRecord.status === "PENDING", "resend must preserve one pending invitation");
     assert.equal(invitationRecord.tokenHash, digest(currentInvitationToken), "database must store only the SHA-256 digest of the current invitation token");
     assert.notEqual(invitationRecord.tokenHash, digest(firstInvitationToken), "resend must invalidate the previous invitation token");
+    const sentAuditCount = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_INVITATION_SENT", subjectId: invitationRecord.id }
+    });
+    assert.equal(sentAuditCount, 1, "creating an invitation must emit exactly one sent event");
+    const resentAuditCount = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_INVITATION_RESENT", subjectId: invitationRecord.id }
+    });
+    assert.equal(resentAuditCount, 1, "resending an invitation must emit exactly one resend event");
 
     const staleInvitation = await postJson("/api/recruiter/invitations/respond", {
       token: firstInvitationToken,
@@ -560,6 +568,13 @@ async function main() {
       password: RECRUITER_PASSWORD
     });
     await expectStatus(acceptInvitation, 200, "accept recruiter invitation and activate account");
+    const acceptedAuditCount = await prisma.auditEvent.count({
+      where: {
+        eventType: "RECRUITER_ACCOUNT_ACTIVATED_AND_INVITATION_ACCEPTED",
+        subjectId: invitationRecord.id
+      }
+    });
+    assert.equal(acceptedAuditCount, 1, "accepting and activating a new recruiter must emit exactly one audit event");
 
     const acceptedRecruiter = await prisma.user.findUnique({
       where: { id: recruiterAccount.id },
@@ -632,6 +647,10 @@ async function main() {
 
     const endInitialLink = await postJson("/api/company/recruiter-links/end", { recruiterLinkId: activeLink.id }, { cookie: companyCookie });
     await expectStatus(endInitialLink, 200, "company ends its own recruiter link");
+    const initialLinkEndAuditCount = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_LINK_ENDED", subjectId: activeLink.id }
+    });
+    assert.equal(initialLinkEndAuditCount, 1, "ending an active recruiter link must emit exactly one audit event");
     const preservedRecruiter = await prisma.user.findUnique({
       where: { id: recruiterAccount.id },
       select: { id: true, isActive: true }
@@ -714,9 +733,64 @@ async function main() {
     const refusedInvitation = await prisma.recruiterInvitation.findFirst({
       where: { companyId: companyAccount.company.id, recipientUserId: recruiterAccount.id },
       orderBy: { createdAt: "desc" },
-      select: { status: true }
+      select: { id: true, status: true }
     });
     assert.equal(refusedInvitation?.status, "REFUSED");
+    assert.ok(refusedInvitation?.id, "refused invitation must remain traceable by ID");
+    const refusalAuditCount = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_INVITATION_REFUSED", subjectId: refusedInvitation.id }
+    });
+    assert.equal(refusalAuditCount, 1, "refusing an invitation must emit exactly one audit event");
+
+    // Expiration is exposed as expired on read without mutating the invitation.
+    // An explicit response attempt performs the terminal transition and records it.
+    emailCount = SMTP_MESSAGES.length;
+    const expireInvite = await postJson("/api/company/recruiter-invitations", {
+      email: RECRUITER_EMAIL,
+      fullName: "Recrutador de Teste E2E"
+    }, { cookie: companyCookie });
+    await expectStatus(expireInvite, 201, "new invitation before expiration audit test");
+    const expireToken = extractEmailToken(emailCount, "/recrutador/convite");
+    const expiringInvitation = await prisma.recruiterInvitation.findFirst({
+      where: { companyId: companyAccount.company.id, recipientUserId: recruiterAccount.id, status: "PENDING" },
+      orderBy: { createdAt: "desc" },
+      select: { id: true, tokenHash: true }
+    });
+    assert.ok(expiringInvitation && expiringInvitation.tokenHash === digest(expireToken), "expiration test must target the current invitation token");
+    await prisma.recruiterInvitation.update({
+      where: { id: expiringInvitation.id },
+      data: { expiresAt: new Date(Date.now() - 1000) }
+    });
+
+    const expiredListResponse = await fetch(`${BASE_URL}/api/company/recruiter-invitations`, {
+      headers: { cookie: companyCookie },
+      redirect: "manual"
+    });
+    const expiredListBody = await expectStatus(expiredListResponse, 200, "company lists an expired invitation");
+    assert.ok(
+      JSON.parse(expiredListBody).invitations.some(invitation => invitation.id === expiringInvitation.id && invitation.status === "EXPIRED"),
+      "read-only invitation listing must present an expired pending invitation as EXPIRED"
+    );
+    const persistedBeforeExpirationTransition = await prisma.recruiterInvitation.findUnique({
+      where: { id: expiringInvitation.id },
+      select: { status: true }
+    });
+    assert.equal(persistedBeforeExpirationTransition?.status, "PENDING", "GET must not mutate the persisted invitation state");
+
+    const expireResponse = await postJson("/api/recruiter/invitations/respond", {
+      token: expireToken,
+      action: "refuse"
+    });
+    await expectStatus(expireResponse, 400, "expired recruiter invitation cannot be answered");
+    const expiredInvitation = await prisma.recruiterInvitation.findUnique({
+      where: { id: expiringInvitation.id },
+      select: { status: true }
+    });
+    assert.equal(expiredInvitation?.status, "EXPIRED", "explicit response to an expired invitation must persist the expired state");
+    const expirationAuditCount = await prisma.auditEvent.count({
+      where: { eventType: "RECRUITER_INVITATION_EXPIRED", subjectId: expiringInvitation.id }
+    });
+    assert.equal(expirationAuditCount, 1, "expiring an invitation must emit exactly one audit event");
 
     // Re-link the recruiter to company A, then prove company B cannot terminate that link.
     emailCount = SMTP_MESSAGES.length;
