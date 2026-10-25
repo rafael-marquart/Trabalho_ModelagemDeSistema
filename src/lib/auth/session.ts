@@ -45,6 +45,7 @@ export async function createSession(userId: string, rememberMe: boolean, expecte
     path: "/",
     ...(rememberMe ? { expires: absoluteExpiresAt } : {})
   });
+  return true;
 }
 
 export async function revokeCurrentSession() {
