@@ -32,6 +32,7 @@ model User {
   isActive          Boolean               @default(true)
   pendingActivation Boolean               @default(false)
   failedLoginCount  Int                   @default(0)
+  lastFailedLoginAt DateTime?
   lockedUntil       DateTime?
   passwordChangedAt DateTime              @default(now())
   createdAt         DateTime              @default(now())
