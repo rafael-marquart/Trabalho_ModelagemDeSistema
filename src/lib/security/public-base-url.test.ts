@@ -16,7 +16,7 @@ describe("getPublicBaseUrl", () => {
   });
 
   it("fails closed in production when APP_BASE_URL is missing", () => {
-    process.env.NODE_ENV = "production";
+    vi.stubEnv("NODE_ENV", "production");
     delete process.env.APP_BASE_URL;
 
     expect(getPublicBaseUrl(request)).toBeNull();
