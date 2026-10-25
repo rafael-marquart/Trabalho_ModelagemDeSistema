@@ -352,17 +352,36 @@ async function main() {
     assert.equal(companyAccount.company.emailConfirmedAt, null);
 
     let emailCount = SMTP_MESSAGES.length;
-    const companyVerificationToken = extractEmailToken(companyEmailCount, "/empresa/confirmar-email");
+    const firstCompanyVerificationToken = extractEmailToken(companyEmailCount, "/empresa/confirmar-email");
     const storedVerification = await prisma.companyEmailVerificationToken.findFirst({
       where: { companyId: companyAccount.company.id },
       select: { tokenHash: true }
     });
     assert.ok(storedVerification, "company verification token must be stored");
-    assert.equal(storedVerification.tokenHash, digest(companyVerificationToken), "database must store only the SHA-256 digest of the company verification token");
+    assert.equal(storedVerification.tokenHash, digest(firstCompanyVerificationToken), "database must store only the SHA-256 digest of the company verification token");
 
-    const verifyCompany = await postJson("/api/auth/company/verify-email", { token: companyVerificationToken });
+    emailCount = SMTP_MESSAGES.length;
+    const resendCompanyVerification = await postJson("/api/auth/company/resend-verification", { email: COMPANY_EMAIL });
+    const resendCompanyBody = await expectStatus(resendCompanyVerification, 200, "company verification resend");
+    assert.match(resendCompanyBody, /Se houver uma conta empresarial pendente/);
+    const currentCompanyVerificationToken = extractEmailToken(emailCount, "/empresa/confirmar-email");
+    assert.notEqual(currentCompanyVerificationToken, firstCompanyVerificationToken, "resending company verification must issue a new token");
+    const updatedStoredVerification = await prisma.companyEmailVerificationToken.findFirst({
+      where: { companyId: companyAccount.company.id },
+      select: { tokenHash: true }
+    });
+    assert.equal(updatedStoredVerification?.tokenHash, digest(currentCompanyVerificationToken), "resend must replace the stored company verification token hash");
+
+    const staleCompanyVerification = await postJson("/api/auth/company/verify-email", { token: firstCompanyVerificationToken });
+    await expectStatus(staleCompanyVerification, 400, "previous company verification token after resend");
+    const unknownCompanyEmail = `unknown-company-${randomUUID()}@example.test`;
+    const unknownResend = await postJson("/api/auth/company/resend-verification", { email: unknownCompanyEmail });
+    const unknownResendBody = await expectStatus(unknownResend, 200, "unknown company verification resend");
+    assert.equal(unknownResendBody, resendCompanyBody, "company verification resend must not reveal whether an account exists");
+
+    const verifyCompany = await postJson("/api/auth/company/verify-email", { token: currentCompanyVerificationToken });
     await expectStatus(verifyCompany, 200, "company email verification");
-    const reusedVerification = await postJson("/api/auth/company/verify-email", { token: companyVerificationToken });
+    const reusedVerification = await postJson("/api/auth/company/verify-email", { token: currentCompanyVerificationToken });
     await expectStatus(reusedVerification, 400, "company verification token reuse");
     const activatedCompany = await prisma.user.findUnique({
       where: { id: companyAccount.id },
