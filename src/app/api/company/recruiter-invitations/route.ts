@@ -13,9 +13,15 @@ export async function GET() {
   if (!user || user.role !== "COMPANY") return NextResponse.json({ message: "Acesso não autorizado." }, { status: 401 });
   const company = await prisma.company.findUnique({ where: { accountUserId: user.id }, select: { id: true } });
   if (!company || !user.isActive) return NextResponse.json({ message: "A empresa não está habilitada para gerenciar recrutadores." }, { status: 403 });
+  const now = new Date();
+  const expired = await prisma.recruiterInvitation.findMany({ where: { companyId: company.id, status: "PENDING", expiresAt: { lte: now } }, select: { id: true, recipientUserId: true } });
+  for (const invitation of expired) {
+    const changed = await prisma.recruiterInvitation.updateMany({ where: { id: invitation.id, status: "PENDING", expiresAt: { lte: now } }, data: { status: "EXPIRED", respondedAt: now } });
+    if (changed.count === 1) await prisma.auditEvent.create({ data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_EXPIRED", subjectType: "RecruiterInvitation", subjectId: invitation.id } });
+  }
   const invitations = await prisma.recruiterInvitation.findMany({
     where: { companyId: company.id },
-    select: { id: true, status: true, expiresAt: true, createdAt: true, respondedAt: true, recipient: { select: { email: true } } },
+    select: { id: true, status: true, expiresAt: true, createdAt: true, respondedAt: true },
     orderBy: { createdAt: "desc" }
   });
   return NextResponse.json({ invitations });
@@ -37,7 +43,7 @@ export async function POST(request: NextRequest) {
   if (activeLink) return NextResponse.json({ message: "Este recrutador já possui vínculo ativo." }, { status: 409 });
 
   const pending = await prisma.recruiterInvitation.findFirst({
-    where: { companyId: company.id, recipientUserId: recipient.id, status: "PENDING" },
+    where: { companyId: company.id, recipientUserId: recipient.id, status: "PENDING", expiresAt: { gt: new Date() } },
     orderBy: { createdAt: "desc" }
   });
   const { token, tokenHash } = createOneTimeToken();
