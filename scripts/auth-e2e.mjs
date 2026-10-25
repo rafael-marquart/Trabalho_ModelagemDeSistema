@@ -367,6 +367,11 @@ async function main() {
     });
     await expectStatus(anonymousCompanyLinks, 401, "anonymous access to company recruiter links");
 
+    const anonymousCompanyInvitations = await fetch(`${BASE_URL}/api/company/recruiter-invitations`, {
+      redirect: "manual"
+    });
+    await expectStatus(anonymousCompanyInvitations, 401, "anonymous access to company recruiter invitations");
+
     const candidateCompanyLinks = await fetch(`${BASE_URL}/api/company/recruiter-links`, {
       headers: { cookie: `acessa_session=${newCookieMatch[1]}` },
       redirect: "manual"
