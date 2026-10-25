@@ -15,7 +15,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Acesso não autorizado." }, { status: 401 });
   }
 
-  const parsed = schema.safeParse(await request.json().catch(() => null));
+  const body = await request.json().catch(() => null);
+  const parsed = schema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ message: "Vínculo de recrutador inválido." }, { status: 400 });
   }
