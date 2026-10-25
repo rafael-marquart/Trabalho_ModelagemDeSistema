@@ -37,6 +37,8 @@ A aplicação está sendo construída incrementalmente na raiz deste repositóri
 4. Execute `npm run db:generate` e `npm run db:migrate`.
 5. Execute `npm run dev` e abra http://localhost:3000.
 
-### Estado inicial
+### Estado da implementação
 
-Já existe uma primeira estrutura para a entrada/login, autenticação por credenciais, sessões revogáveis e modelos relacionais. Cadastro, recuperação de senha, convites completos, fluxos restantes e testes ainda precisam ser concluídos. Esta versão não deve ser publicada em produção.
+A branch de implementação contém a entrada/login, autenticação por credenciais, sessões revogáveis, cadastro inicial de candidato e empresa, endpoints de recuperação/redefinição de senha e a interface de recuperação. A validação de CPF foi adicionada; o fluxo de recuperação e as demais alterações ainda precisam de execução de testes e revisão de segurança.
+
+Permanecem pendentes, entre outros: confirmação de e-mail, validação do identificador oficial e ativação da conta de empresa, convites e vínculos completos de recrutadores, migrações verificadas em PostgreSQL e cobertura de integração/E2E. A aplicação não deve ser publicada em produção até que a SPEC-001 e os critérios de segurança sejam validados.
