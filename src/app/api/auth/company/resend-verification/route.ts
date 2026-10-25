@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
     select: { id: true, email: true, company: { select: { id: true, emailConfirmedAt: true } } }
   });
   const eligible = candidate?.company && !candidate.company.emailConfirmedAt ? candidate : null;
+  const eligibleCompanyId = eligible?.company?.id ?? null;
   const identifierKey = digest(eligible ? `company-verification:user:${eligible.id}` : `company-verification:input:${email}`);
   const ipKey = digest(`company-verification:ip:${clientIp(request)}`);
   const scopeKeys = [
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
     if (!eligible || !token) return { allowed: true, token: null, userId: null, companyId: null };
     const stillEligible = await tx.company.findFirst({
       where: {
-        id: eligible.company.id,
+        id: eligibleCompanyId!,
         emailConfirmedAt: null,
         accountUser: { role: "COMPANY", isActive: false }
       },
