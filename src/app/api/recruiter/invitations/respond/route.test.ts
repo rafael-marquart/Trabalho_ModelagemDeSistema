@@ -4,6 +4,7 @@ import { hashOneTimeToken } from "@/lib/auth/tokens";
 const { prismaMock, getCurrentUserMock, rejectOriginMock } = vi.hoisted(() => ({
   prismaMock: {
     recruiterInvitation: { findUnique: vi.fn() },
+    user: { findUnique: vi.fn() },
     $transaction: vi.fn()
   },
   getCurrentUserMock: vi.fn(),
@@ -30,6 +31,7 @@ describe("recruiter invitation response", () => {
     company: { findUnique: vi.fn() },
     recruiterLink: { findFirst: vi.fn(), create: vi.fn() },
     recruiterInvitation: { updateMany: vi.fn() },
+    user: { updateMany: vi.fn() },
     auditEvent: { create: vi.fn() }
   };
 
@@ -38,11 +40,13 @@ describe("recruiter invitation response", () => {
     getCurrentUserMock.mockResolvedValue(user);
     rejectOriginMock.mockReturnValue(null);
     prismaMock.recruiterInvitation.findUnique.mockResolvedValue(invitation);
+    prismaMock.user.findUnique.mockResolvedValue({ id: "recruiter-1", role: "RECRUITER", isActive: true, pendingActivation: false });
     prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => callback(tx));
     tx.company.findUnique.mockResolvedValue({ id: "company-1", accountUser: { isActive: true } });
     tx.recruiterLink.findFirst.mockResolvedValue(null);
     tx.recruiterLink.create.mockResolvedValue({ id: "link-1" });
     tx.recruiterInvitation.updateMany.mockResolvedValue({ count: 1 });
+    tx.user.updateMany.mockResolvedValue({ count: 1 });
     tx.auditEvent.create.mockResolvedValue({ id: "audit-1" });
   });
 
