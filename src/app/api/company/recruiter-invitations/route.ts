@@ -73,12 +73,23 @@ export async function POST(request: NextRequest) {
     });
   } catch {
     const failedAt = new Date();
-    await prisma.$transaction(async tx => {
-      await tx.recruiterInvitation.updateMany({ where: { id: invitation.id, status: "PENDING" }, data: { status: "CANCELLED", respondedAt: failedAt } });
-      await tx.auditEvent.create({ data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_DELIVERY_FAILED", subjectType: "RecruiterInvitation", subjectId: invitation.id } });
-      await tx.auditEvent.create({ data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_CANCELLED_AFTER_DELIVERY_FAILURE", subjectType: "RecruiterInvitation", subjectId: invitation.id } });
+    const cancellationApplied = await prisma.$transaction(async tx => {
+      // Guard by tokenHash as well as status: a stale failed send must not cancel a newer resend.
+      const changed = await tx.recruiterInvitation.updateMany({
+        where: { id: invitation.id, tokenHash, status: "PENDING" },
+        data: { status: "CANCELLED", respondedAt: failedAt }
+      });
+      if (changed.count === 1) {
+        await tx.auditEvent.create({ data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_DELIVERY_FAILED", subjectType: "RecruiterInvitation", subjectId: invitation.id } });
+        await tx.auditEvent.create({ data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_CANCELLED_AFTER_DELIVERY_FAILURE", subjectType: "RecruiterInvitation", subjectId: invitation.id } });
+      }
+      return changed.count === 1;
     });
-    return NextResponse.json({ message: "O convite foi registrado, mas não foi possível enviar o e-mail." }, { status: 502 });
+    return NextResponse.json({
+      message: cancellationApplied
+        ? "Não foi possível enviar o e-mail; o convite foi cancelado. Tente enviar novamente."
+        : "Não foi possível confirmar a entrega deste e-mail. Verifique a lista de convites antes de tentar novamente."
+    }, { status: 502 });
   }
   return NextResponse.json({ ok: true, message: pending ? "Convite reenviado; o link anterior foi invalidado." : "Convite enviado." }, { status: pending ? 200 : 201 });
 }
