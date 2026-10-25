@@ -65,4 +65,13 @@ describe("list active recruiter links", () => {
     expect(response.status).toBe(403);
     expect(prismaMock.recruiterLink.findMany).not.toHaveBeenCalled();
   });
+
+  it("rejects when the authenticated user has no company record", async () => {
+    prismaMock.company.findUnique.mockResolvedValueOnce(null);
+
+    const response = await GET();
+
+    expect(response.status).toBe(403);
+    expect(prismaMock.recruiterLink.findMany).not.toHaveBeenCalled();
+  });
 });
