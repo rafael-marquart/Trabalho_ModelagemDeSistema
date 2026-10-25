@@ -766,6 +766,23 @@ async function main() {
     assert.ok(secondCompanyCookieMatch?.[1], "second company login must issue a session cookie");
     const secondCompanyCookie = `acessa_session=${secondCompanyCookieMatch[1]}`;
 
+    // An active recruiter cannot be invited into a second company until the
+    // existing organizational link is ended.
+    const secondCompanyInviteActiveRecruiter = await postJson("/api/company/recruiter-invitations", {
+      email: RECRUITER_EMAIL,
+      fullName: "Recrutador de Teste E2E"
+    }, { cookie: secondCompanyCookie });
+    await expectStatus(secondCompanyInviteActiveRecruiter, 409, "second company cannot invite a recruiter who is actively linked elsewhere");
+    const forbiddenSecondCompanyInvitation = await prisma.recruiterInvitation.findFirst({
+      where: { companyId: secondCompanyAccount.company.id, recipientUserId: recruiterAccount.id },
+      select: { id: true }
+    });
+    assert.equal(forbiddenSecondCompanyInvitation, null, "rejected invitation must not create a cross-company invitation record");
+    const forbiddenSecondCompanyInviteAuditCount = await prisma.auditEvent.count({
+      where: { actorUserId: secondCompanyAccount.id, eventType: "RECRUITER_INVITATION_SENT" }
+    });
+    assert.equal(forbiddenSecondCompanyInviteAuditCount, 0, "rejected cross-company invitation must not create a sent-invitation audit event");
+
     const secondCompanyLinksResponse = await fetch(`${BASE_URL}/api/company/recruiter-links`, {
       headers: { cookie: secondCompanyCookie },
       redirect: "manual"

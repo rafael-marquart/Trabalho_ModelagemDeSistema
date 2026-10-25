@@ -20,7 +20,14 @@ export async function GET() {
   const now = new Date();
   const records = await prisma.recruiterInvitation.findMany({
     where: { companyId: company.id },
-    select: { id: true, status: true, expiresAt: true, createdAt: true, respondedAt: true },
+    select: {
+      id: true,
+      status: true,
+      expiresAt: true,
+      createdAt: true,
+      respondedAt: true,
+      recipient: { select: { fullName: true, email: true } }
+    },
     orderBy: { createdAt: "desc" }
   });
   // GET is read-only: expose expired pending invitations as EXPIRED in the

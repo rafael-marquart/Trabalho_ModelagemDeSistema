@@ -4,9 +4,31 @@ import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 
-type Invitation = { id: string; status: "PENDING" | "REFUSED" | "EXPIRED" | "CANCELLED" | "ACCEPTED"; expiresAt: string; createdAt: string; respondedAt: string | null };
-type RecruiterLink = { id: string; createdAt: string; recruiter: { fullName: string; email: string; isActive: boolean } };
-const labels: Record<Invitation["status"], string> = { PENDING: "Pendente", REFUSED: "Recusado", EXPIRED: "Expirado", CANCELLED: "Cancelado", ACCEPTED: "Aceito" };
+type Invitation = {
+  id: string;
+  status: "PENDING" | "REFUSED" | "EXPIRED" | "CANCELLED" | "ACCEPTED";
+  expiresAt: string;
+  createdAt: string;
+  respondedAt: string | null;
+  recipient: { fullName: string; email: string };
+};
+type RecruiterLink = {
+  id: string;
+  createdAt: string;
+  recruiter: { fullName: string; email: string; isActive: boolean };
+};
+
+const labels: Record<Invitation["status"], string> = {
+  PENDING: "Convite pendente",
+  REFUSED: "Recusado",
+  EXPIRED: "Expirado",
+  CANCELLED: "Cancelado",
+  ACCEPTED: "Aceito"
+};
+
+function formatDate(value: string) {
+  return new Date(value).toLocaleDateString("pt-BR");
+}
 
 export default function CompanyRecruitersPage() {
   const [email, setEmail] = useState("");
@@ -24,7 +46,10 @@ export default function CompanyRecruitersPage() {
         fetch("/api/company/recruiter-invitations", { cache: "no-store" }),
         fetch("/api/company/recruiter-links", { cache: "no-store" })
       ]);
-      const [invitationResult, linksResult] = await Promise.all([invitationResponse.json(), linksResponse.json()]);
+      const [invitationResult, linksResult] = await Promise.all([
+        invitationResponse.json(),
+        linksResponse.json()
+      ]);
       if (!invitationResponse.ok || !linksResponse.ok) {
         setError(true);
         setMessage(invitationResult.message || linksResult.message || "Não foi possível carregar os recrutadores.");
@@ -42,7 +67,9 @@ export default function CompanyRecruitersPage() {
 
   async function send(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setLoading(true); setMessage(""); setError(false);
+    setLoading(true);
+    setMessage("");
+    setError(false);
     try {
       const response = await fetch("/api/company/recruiter-invitations", {
         method: "POST",
@@ -51,20 +78,49 @@ export default function CompanyRecruitersPage() {
       });
       const result = await response.json();
       if (response.ok) {
-        setEmail(""); setFullName("");
+        setEmail("");
+        setFullName("");
         await load();
       }
       setMessage(result.message || (response.ok ? "Solicitação processada." : "Não foi possível enviar o convite."));
       setError(!response.ok);
     } catch {
-      setError(true); setMessage("Não foi possível conectar ao serviço.");
+      setError(true);
+      setMessage("Não foi possível conectar ao serviço.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function resendInvitation(invitation: Invitation) {
+    setLoading(true);
+    setMessage("");
+    setError(false);
+    try {
+      const response = await fetch("/api/company/recruiter-invitations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: invitation.recipient.email,
+          fullName: invitation.recipient.fullName
+        })
+      });
+      const result = await response.json();
+      if (response.ok) await load();
+      setMessage(result.message || (response.ok ? "Convite reenviado." : "Não foi possível reenviar o convite."));
+      setError(!response.ok);
+    } catch {
+      setError(true);
+      setMessage("Não foi possível conectar ao serviço.");
     } finally {
       setLoading(false);
     }
   }
 
   async function cancel(invitationId: string) {
-    setLoading(true); setMessage(""); setError(false);
+    setLoading(true);
+    setMessage("");
+    setError(false);
     try {
       const response = await fetch("/api/company/recruiter-invitations/cancel", {
         method: "POST",
@@ -76,14 +132,17 @@ export default function CompanyRecruitersPage() {
       setMessage(result.message || "Não foi possível cancelar.");
       setError(!response.ok);
     } catch {
-      setError(true); setMessage("Não foi possível conectar ao serviço.");
+      setError(true);
+      setMessage("Não foi possível conectar ao serviço.");
     } finally {
       setLoading(false);
     }
   }
 
   async function endLink(recruiterLinkId: string) {
-    setLoading(true); setMessage(""); setError(false);
+    setLoading(true);
+    setMessage("");
+    setError(false);
     try {
       const response = await fetch("/api/company/recruiter-links/end", {
         method: "POST",
@@ -98,50 +157,195 @@ export default function CompanyRecruitersPage() {
       setMessage(result.message || (response.ok ? "Vínculo encerrado." : "Não foi possível encerrar o vínculo."));
       setError(!response.ok);
     } catch {
-      setError(true); setMessage("Não foi possível conectar ao serviço.");
+      setError(true);
+      setMessage("Não foi possível conectar ao serviço.");
     } finally {
       setLoading(false);
     }
   }
 
-  return <main className="auth-page">
-      <div className="theme-control-host"><ThemeToggle /></div>
-    
-    <Link className="brand auth-brand" href="/empresa"><img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" /></Link>
-    <section className="auth-card" aria-labelledby="recruiters-title">
-      <Link className="back-link" href="/empresa">← Voltar à área da empresa</Link>
-      <p className="eyebrow">Gestão organizacional</p><h1 id="recruiters-title">Recrutadores</h1>
-      <p className="muted">Convide recrutadores e acompanhe os vínculos da sua empresa. Se a pessoa ainda não tiver conta, poderá definir uma senha e aceitar o vínculo pelo link enviado. O convite é válido por 7 dias.</p>
-      <form className="auth-form" onSubmit={send}>
-        <label htmlFor="recruiter-name">Nome completo do recrutador</label>
-        <input id="recruiter-name" type="text" autoComplete="name" value={fullName} onChange={event => setFullName(event.target.value)} required minLength={2} maxLength={160} />
-        <label htmlFor="recruiter-email">E-mail do recrutador</label>
-        <input id="recruiter-email" type="email" autoComplete="email" value={email} onChange={event => setEmail(event.target.value)} required maxLength={254} />
-        <button className="primary-button" type="submit" disabled={loading}>{loading ? "Processando…" : "Enviar convite"}</button>
-      </form>
-      {message && <p className={error ? "form-error" : "muted"} role={error ? "alert" : "status"} aria-live="polite">{message}</p>}
-
-      <h2 className="section-heading">Recrutadores vinculados</h2>
-      {links.length === 0 ? <p className="muted">Nenhum vínculo ativo registrado.</p> : <ul className="invitation-list">{links.map(link => <li key={link.id} className="invitation-item">
-        <div>
-          <strong>{link.recruiter.fullName}</strong>
-          <p className="muted">{link.recruiter.email} · Vínculo desde {new Date(link.createdAt).toLocaleDateString("pt-BR")}</p>
-          <p className="muted">{link.recruiter.isActive ? "Conta ativa" : "Conta desativada"}</p>
-          {confirmingLinkId === link.id && <p className="muted" role="status">Encerrar o vínculo removerá o acesso organizacional, mas preservará a conta e o histórico de ações.</p>}
+  return (
+    <div className="company-dashboard">
+      <header className="company-topbar">
+        <Link className="company-brand" href="/empresa" aria-label="Acessa Vagas — área da empresa">
+          <img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" />
+        </Link>
+        <span className="company-topbar-label">Área da empresa</span>
+        <div className="company-topbar-actions">
+          <ThemeToggle />
+          <span className="company-avatar" aria-hidden="true">AV</span>
         </div>
-        <div>
-          {confirmingLinkId === link.id ? <>
-            <button className="secondary-button" type="button" disabled={loading} onClick={() => void endLink(link.id)}>{loading ? "Processando…" : "Confirmar encerramento"}</button>
-            <button className="secondary-button" type="button" disabled={loading} onClick={() => setConfirmingLinkId(null)}>Voltar</button>
-          </> : <button className="secondary-button" type="button" disabled={loading} onClick={() => setConfirmingLinkId(link.id)}>Encerrar vínculo</button>}
-        </div>
-      </li>)}</ul>}
+      </header>
 
-      <h2 className="section-heading">Convites enviados</h2>
-      {invitations.length === 0 ? <p className="muted">Nenhum convite registrado.</p> : <ul className="invitation-list">{invitations.map(invitation => <li key={invitation.id} className="invitation-item">
-        <div><strong>{labels[invitation.status]}</strong><p className="muted">Enviado em {new Date(invitation.createdAt).toLocaleDateString("pt-BR")} · Válido até {new Date(invitation.expiresAt).toLocaleDateString("pt-BR")}</p></div>
-        {invitation.status === "PENDING" && <button className="secondary-button" type="button" disabled={loading} onClick={() => void cancel(invitation.id)}>Cancelar convite</button>}
-      </li>)}</ul>}
-    </section>
-  </main>;
+      <div className="company-dashboard-body">
+        <aside className="company-sidebar">
+          <p className="company-sidebar-title">MENU DA EMPRESA</p>
+          <nav className="company-nav" aria-label="Menu da empresa">
+            <Link className="company-nav-item" href="/empresa/recrutadores" aria-current="page">Recrutadores</Link>
+            <Link className="company-nav-item" href="/empresa">Área da empresa</Link>
+          </nav>
+        </aside>
+
+        <main className="company-content" aria-labelledby="recruiters-title">
+          <header className="company-page-heading">
+            <h1 id="recruiters-title">Gestão de recrutadores</h1>
+            <p className="muted">Gerencie quem pode atuar nos processos seletivos da sua empresa.</p>
+          </header>
+
+          <section className="invite-panel" aria-labelledby="invite-title">
+            <h2 id="invite-title">Convidar recrutador</h2>
+            <p className="muted">A pessoa receberá um link de uso único para aceitar o vínculo e, se necessário, configurar sua senha.</p>
+            <form className="invite-form" onSubmit={send}>
+              <div className="invite-form-field">
+                <label htmlFor="recruiter-name">Nome completo</label>
+                <input
+                  id="recruiter-name"
+                  type="text"
+                  autoComplete="name"
+                  value={fullName}
+                  onChange={event => setFullName(event.target.value)}
+                  required
+                  minLength={2}
+                  maxLength={160}
+                />
+              </div>
+              <div className="invite-form-field">
+                <label htmlFor="recruiter-email">E-mail</label>
+                <input
+                  id="recruiter-email"
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={event => setEmail(event.target.value)}
+                  required
+                  maxLength={254}
+                />
+              </div>
+              <button className="primary-button" type="submit" disabled={loading}>
+                {loading ? "Processando…" : "Enviar convite"}
+              </button>
+            </form>
+          </section>
+
+          {message && (
+            <p
+              className={"company-message " + (error ? "form-error" : "muted")}
+              role={error ? "alert" : "status"}
+              aria-live={error ? "assertive" : "polite"}
+            >
+              {message}
+            </p>
+          )}
+
+          <section className="recruiter-table-panel" aria-labelledby="people-title">
+            <h2 id="people-title" className="section-heading">Pessoas vinculadas</h2>
+            <p className="muted">Os estados indicam se o acesso está ativo ou depende de uma ação da pessoa convidada.</p>
+            <div className="table-scroll">
+              <table className="recruiter-table">
+                <caption className="visually-hidden">Vínculos ativos e convites de recrutadores da empresa</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Recrutador</th>
+                    <th scope="col">E-mail</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {links.map(link => (
+                    <tr key={"link-" + link.id}>
+                      <td>
+                        <strong>{link.recruiter.fullName}</strong>
+                        <p className="muted">Vínculo desde {formatDate(link.createdAt)}</p>
+                        {confirmingLinkId === link.id && (
+                          <p className="muted" role="status">
+                            Encerrar o vínculo removerá o acesso organizacional, mas preservará a conta e o histórico de ações.
+                          </p>
+                        )}
+                      </td>
+                      <td>{link.recruiter.email}</td>
+                      <td>
+                        <span className={"status-pill " + (link.recruiter.isActive ? "status-active" : "status-neutral")}>
+                          {link.recruiter.isActive ? "Ativo" : "Conta desativada"}
+                        </span>
+                      </td>
+                      <td>
+                        {confirmingLinkId === link.id ? (
+                          <div className="table-actions">
+                            <button className="secondary-button" type="button" disabled={loading} onClick={() => void endLink(link.id)}>
+                              {loading ? "Processando…" : "Confirmar"}
+                            </button>
+                            <button className="secondary-button" type="button" disabled={loading} onClick={() => setConfirmingLinkId(null)}>
+                              Voltar
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            className="secondary-button"
+                            type="button"
+                            disabled={loading}
+                            aria-label={"Encerrar vínculo de " + link.recruiter.fullName}
+                            onClick={() => setConfirmingLinkId(link.id)}
+                          >
+                            Encerrar vínculo
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+
+                  {invitations.map(invitation => (
+                    <tr key={"invitation-" + invitation.id}>
+                      <td>
+                        <strong>{invitation.recipient.fullName}</strong>
+                        <p className="muted">Convite enviado em {formatDate(invitation.createdAt)}</p>
+                      </td>
+                      <td>{invitation.recipient.email}</td>
+                      <td>
+                        <span className={"status-pill status-" + invitation.status.toLowerCase()}>
+                          {labels[invitation.status]}
+                        </span>
+                      </td>
+                      <td>
+                        {invitation.status === "PENDING" ? (
+                          <div className="table-actions">
+                            <button
+                              className="secondary-button"
+                              type="button"
+                              disabled={loading}
+                              aria-label={"Reenviar convite para " + invitation.recipient.fullName}
+                              onClick={() => void resendInvitation(invitation)}
+                            >
+                              Reenviar
+                            </button>
+                            <button
+                              className="secondary-button"
+                              type="button"
+                              disabled={loading}
+                              aria-label={"Cancelar convite para " + invitation.recipient.fullName}
+                              onClick={() => void cancel(invitation.id)}
+                            >
+                              Cancelar
+                            </button>
+                          </div>
+                        ) : (
+                          <span aria-hidden="true">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+
+                  {links.length + invitations.length === 0 && (
+                    <tr>
+                      <td className="empty-table-cell" colSpan={4}>Nenhum recrutador ou convite registrado.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  );
 }

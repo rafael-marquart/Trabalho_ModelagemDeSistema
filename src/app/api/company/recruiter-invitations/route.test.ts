@@ -77,7 +77,8 @@ describe("send recruiter invitation", () => {
         status: "PENDING",
         expiresAt: new Date(Date.now() - 60_000),
         createdAt: new Date("2026-10-01T12:00:00.000Z"),
-        respondedAt: null
+        respondedAt: null,
+        recipient: { fullName: "Pessoa Convidada", email: "convidado@example.com" }
       }
     ]);
 
@@ -85,8 +86,18 @@ describe("send recruiter invitation", () => {
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
-      invitations: [{ id: "expired-invitation-1", status: "EXPIRED" }]
+      invitations: [{
+        id: "expired-invitation-1",
+        status: "EXPIRED",
+        recipient: { fullName: "Pessoa Convidada", email: "convidado@example.com" }
+      }]
     });
+    expect(prismaMock.recruiterInvitation.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: { companyId: "company-1" },
+      select: expect.objectContaining({
+        recipient: { select: { fullName: true, email: true } }
+      })
+    }));
     expect(prismaMock.recruiterInvitation.findMany).toHaveBeenCalledTimes(1);
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
     expect(tx.recruiterInvitation.updateMany).not.toHaveBeenCalled();
