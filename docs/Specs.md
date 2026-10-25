@@ -6,12 +6,12 @@ Documento de detalhamento das Specs do AcessaVagas, baseado na baseline do proje
 
 - Escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. A SPEC-005 — Cadastrar e gerenciar vagas próprias — integra o intervalo SPEC-001 a SPEC-013. As antigas SPEC-014 e SPEC-015 foram removidas do escopo e não serão restauradas nesta revisão. Referências a esses IDs devem ser tratadas como históricas somente quando o contexto confirmar que não afetam dependências, rastreabilidade ou comportamento vigente; referências ativas ou ambíguas devem ser conferidas individualmente e corrigidas quando necessário, sem renumerar as Specs posteriores nem fazer substituição em massa.
 - Estado dos textos: aprovados para implementação controlada conforme o registro consolidado de aprovação e a decisão REV-018.
-- Estado dos layouts: **protótipo disponível — aprovação pendente**, **pendente de protótipo** ou **não se aplica**, conforme a cobertura visual de cada tela/área.
+- Estado dos layouts: **aprovado**, **protótipo disponível — aprovação pendente**, **pendente de protótipo** ou **não se aplica**, conforme a cobertura visual de cada tela/área.
 - **Layout significa evidência visual/protótipo, não código.** Os arquivos em `docs/Identidade Visual/` constituem referências visuais existentes. A presença de protótipo não significa aprovação formal do layout nem autorização de implementação.
 - Implementação: autorizada de forma controlada para as capacidades aprovadas, respeitando limites e dependências registrados. A aprovação do texto e a aprovação do layout são etapas separadas.
 - Lacunas e conflitos são registrados em `docs/OPEN.md`, com IDs OPEN associados às Specs; não são resolvidos silenciosamente.
 
-Estados possíveis do texto: especificada, aprovada, em implementação, implementada ou fora de escopo. Estados de layout: **protótipo disponível — aprovação pendente** (há referência visual correspondente, ainda sem aprovação formal), **pendente de protótipo** (não há referência visual correspondente suficiente) ou **não se aplica** (capacidade sem interface própria). A aprovação do layout permanece separada da aprovação do texto e da implementação.
+Estados possíveis do texto: especificada, aprovada, em implementação, implementada ou fora de escopo. Estados de layout: **aprovado** (referência visual aprovada explicitamente), **protótipo disponível — aprovação pendente** (há referência visual correspondente, ainda sem aprovação formal), **pendente de protótipo** (não há referência visual correspondente suficiente) ou **não se aplica** (capacidade sem interface própria). A aprovação do layout permanece separada da aprovação do texto e da implementação.
 
 ---
 
@@ -24,7 +24,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 | ID | SPEC-001 |
 |
 | Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | protótipos disponíveis para parte das telas; aprovação pendente e áreas restantes sem protótipo |
+| Estado do layout | aprovação parcial: entrada/login, login de Candidato e login de Empresa aprovados em 25/10/2026; demais áreas pendentes de aprovação ou protótipo |
 | Capacidade | Cadastro de usuário/empresa, autenticação, recuperação de senha, autorização por perfil e vínculo organizacional de recrutador |
 
 ## 2. Rastreabilidade
@@ -47,6 +47,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 - Identificar o perfil autenticado e aplicar permissões correspondentes.
 - Permitir que Empresa autenticada cadastre ou associe usuários com perfil de Recrutador nas configurações.
 - Manter o vínculo do Recrutador com a Empresa responsável.
+- Permitir que a Empresa exclua um Recrutador da sua própria página de Recrutadores, encerrando o vínculo organizacional sem apagar a conta do usuário nem seu histórico de ações.
 - Proteger operações no backend e manter o comportamento de sessão previsto em RB-22.
 - Registrar eventos relevantes de negócio e segurança conforme RB-27, RB-41, RNF-14 e decisão da OPEN-006; manter os registros por 1 ano, com acesso restrito e proteção contra alteração ou exclusão indevida.
 
@@ -61,9 +62,9 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 
 | Tela/área | Finalidade | Layout |
 |---|---|---|
-| Entrada/login e seleção de perfil | Login e escolha entre cadastro como Usuário ou Empresa | Protótipo disponível — aprovação pendente |
-| Login de Candidato | Autenticação de candidato | Protótipo disponível — aprovação pendente |
-| Login de Empresa | Autenticação de empresa | Protótipo disponível — aprovação pendente |
+| Entrada/login e seleção de perfil | Login e escolha entre cadastro como Usuário ou Empresa | Aprovado em 25/10/2026 |
+| Login de Candidato | Autenticação de candidato | Aprovado em 25/10/2026 |
+| Login de Empresa | Autenticação de empresa | Aprovado em 25/10/2026 |
 | Cadastro de Usuário/Candidato | Iniciar criação de conta de candidato | Protótipo disponível — aprovação pendente |
 | Cadastro de Empresa | Iniciar criação de conta organizacional | Protótipo disponível — aprovação pendente |
 | Recuperação de senha | Iniciar recuperação de senha | Protótipo disponível — aprovação pendente |
@@ -119,7 +120,8 @@ A decisão aprovada define recuperação de candidato por e-mail ou CPF e recupe
 3. O sistema valida os dados e cria ou associa uma conta USUARIO com perfil de Recrutador.
 4. O sistema mantém o vínculo com a Empresa que realizou o cadastro.
 5. O sistema registra a alteração conforme as regras aplicáveis.
-6. A Empresa não pode administrar vínculos de Recrutadores pertencentes a outra organização.
+6. A Empresa pode excluir um Recrutador da própria página de Recrutadores. A operação encerra o vínculo desse Recrutador com a Empresa solicitante, revoga as permissões decorrentes do vínculo e registra a alteração para auditoria; não exclui a conta pessoal do usuário nem apaga seu histórico de ações.
+7. A Empresa não pode administrar vínculos de Recrutadores pertencentes a outra organização.
 
 O comportamento deriva de UC-07 e RB-46. Quando o e-mail já pertencer a uma conta, a Empresa envia um convite ao e-mail dessa conta e o titular deve aceitá-lo explicitamente. O convite é válido por 7 dias; a Empresa pode reenviá-lo, invalidando o link anterior, ou cancelá-lo enquanto estiver pendente. O titular pode recusá-lo, e um convite sem resposta expira após 7 dias. O link do convite é de uso único. Um Recrutador pode estar associado ativamente a apenas uma Empresa por vez; se já estiver vinculado a uma Empresa, não poderá aceitar convite de outra até que o vínculo existente seja encerrado. O convite não transfere nem encerra por si só um vínculo existente. O perfil Administrador é exclusivo da plataforma e não participa da administração da conta Empresa.
 
@@ -136,23 +138,21 @@ O comportamento deriva de UC-07 e RB-46. Quando o e-mail já pertencer a uma con
 6. Não permitir novo cadastro de Empresa com identificador oficial já associado a outra Empresa; orientar recuperação ou associação à conta existente.
 7. A Empresa cadastra e vincula Recrutadores nas próprias configurações, conforme RF-17 e RB-46.
 8. Quando o e-mail informado já pertencer a uma conta, a Empresa autenticada e autorizada pode solicitar o vínculo por convite enviado ao e-mail da conta; o titular deve dar aceite explícito antes da efetivação.
-9. O convite tem validade de 7 dias e link de uso único. A Empresa pode reenviar o convite enquanto pendente; o reenvio invalida o link anterior. A Empresa também pode cancelar o convite enquanto pendente. O titular pode recusá-lo; convites não respondidos expiram ao fim dos 7 dias. Os estados de acompanhamento são `Pendente`, `Recusado`, `Expirado` e `Cancelado`, conforme a ação ou prazo aplicável.
+9. O convite tem validade de 7 dias e link de uso único. A Empresa pode reenviar o convite enquanto pendente; o reenvio invalida o link anterior. A Empresa também pode cancelar o convite enquanto pendente. O titular pode recusá-lo; convites não respondidos expiram ao fim dos 7 dias. Os estados são `Pendente`, `Recusado`, `Expirado` e `Cancelado`.
 10. Enquanto o convite estiver pendente, não conceder permissões de Recrutador para a Empresa solicitante; informar à Empresa apenas o estado do convite, sem dados adicionais da conta existente.
 11. Antes de efetivar o vínculo após o aceite, validar novamente a autorização da Empresa e respeitar RB-46. Um Recrutador pode ter vínculo ativo com apenas uma Empresa por vez; se já estiver vinculado a outra Empresa, não poderá aceitar novo convite até que o vínculo atual seja encerrado. Aceitar convite não encerra nem transfere automaticamente vínculo existente.
-12. Registrar envio, reenvio, cancelamento, recusa, expiração, aceite e efetivação do vínculo conforme RB-27 e RNF-14.
-11. Eventos de envio e resposta ao convite e de efetivação do vínculo são relevantes para rastreabilidade conforme RB-27 e RNF-14. Conforme decisão registrada na OPEN-006, os eventos relevantes de negócio e segurança devem ser auditados e os registros mantidos por 1 ano, com acesso restrito, proteção contra alteração/exclusão indevida e minimização dos dados registrados. Não se exige auditoria indiscriminada de consultas e visualizações; detalhes técnicos exaustivos e descarte permanecem para definição na implementação, respeitando a política aprovada e obrigações aplicáveis.
-12. Operações protegidas devem verificar perfil e permissão no backend (RB-12, RF-40, DA-02).
-13. Sessão expirada ou invalidada não pode autorizar operação protegida (RB-22).
-14. Candidato, Recrutador e Administrador possuem permissões compatíveis com seus papéis (RF-03).
-15. O cadastro inicial oferece Usuário ou Empresa; Recrutador é cadastrado/associado pela Empresa.
-16. O Recrutador permanece vinculado à Empresa responsável (RB-46).
-17. Uma Empresa só pode administrar vínculos sob sua própria responsabilidade.
-18. Cada Recrutador pode ter no máximo um vínculo ativo com uma Empresa por vez. Não efetivar novo vínculo enquanto houver outro vínculo ativo; o vínculo atual deve ser encerrado antes da aceitação/efetivação de um novo convite.
-19. Convites de Recrutador expiram após 7 dias; reenvio invalida o link anterior, cancelamento só é permitido enquanto pendente, recusa não cria vínculo e o link é de uso único.
-20. Não se introduz o papel de Gestor de Seleção.
-19. Cadastro, perfil e vínculo organizacional devem permanecer íntegros (RNF-09).
-20. Alterações relevantes devem ser rastreáveis conforme RB-27 e RNF-14, respeitando RNF-08.
-21. ADR-002 centraliza a autorização no backend, mas não determina JWT, sessão/cookie ou mecanismo específico.
+12. A Empresa pode excluir um Recrutador na sua própria página de Recrutadores. Isso encerra o vínculo organizacional e revoga as permissões decorrentes desse vínculo, sem apagar a conta do usuário ou seu histórico de ações.
+13. Registrar envio, reenvio, cancelamento, recusa, expiração, aceite, efetivação e encerramento de vínculo conforme RB-27, RNF-14 e OPEN-006. Os registros relevantes são mantidos por 1 ano, com acesso restrito, proteção contra alteração/exclusão indevida e minimização dos dados registrados; não se exige auditoria indiscriminada de consultas e visualizações.
+14. Operações protegidas devem verificar perfil e permissão no backend (RB-12, RF-40, DA-02).
+15. Sessão expirada ou invalidada não pode autorizar operação protegida (RB-22).
+16. Candidato, Recrutador e Administrador possuem permissões compatíveis com seus papéis (RF-03).
+17. O cadastro inicial oferece Usuário ou Empresa; Recrutador é cadastrado/associado pela Empresa.
+18. O Recrutador permanece vinculado à Empresa responsável enquanto o vínculo estiver ativo (RB-46).
+19. Uma Empresa só pode administrar vínculos sob sua própria responsabilidade.
+20. Cadastro, perfil e vínculo organizacional devem permanecer íntegros (RNF-09).
+21. Alterações relevantes devem ser rastreáveis conforme RB-27 e RNF-14, respeitando RNF-08.
+22. ADR-002 centraliza a autorização no backend, mas não determina JWT, sessão/cookie ou mecanismo específico.
+23. Não se introduz o papel de Gestor de Seleção.
 
 ## 7. Modelo de domínio envolvido
 
@@ -205,8 +205,10 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [ ] Recuperação permite redefinição quando a solicitação é válida.
 - [ ] Operações protegidas verificam autorização no backend.
 - [ ] Sessão expirada ou invalidada não executa operações protegidas.
-- [ ] Empresa autorizada consegue cadastrar/associar Recrutador.
-- [ ] Recrutador permanece vinculado à Empresa responsável.
+- [ ] Empresa autorizada consegue cadastrar/associar Recrutador por convite com aceite explícito.
+- [ ] Um Recrutador não mantém mais de um vínculo empresarial ativo.
+- [ ] Empresa consegue excluir Recrutador da própria página, encerrando o vínculo sem apagar conta nem histórico.
+- [ ] Recrutador permanece vinculado à Empresa responsável enquanto o vínculo estiver ativo.
 - [ ] Empresa não consegue administrar vínculo de outra Empresa.
 - [ ] Alterações relevantes são rastreáveis.
 - [ ] Mensagens não expõem credenciais ou dados pessoais desnecessários.
@@ -225,6 +227,8 @@ Contratos conceituais, sem definir endpoints HTTP:
 | T-001-08 | Empresa autorizada cadastra Recrutador | Conta associada à Empresa |
 | T-001-09 | Empresa tenta alterar vínculo de outra organização | Operação recusada |
 | T-001-10 | Alteração de vínculo é concluída | Evento rastreável |
+| T-001-12 | Empresa exclui Recrutador da própria organização | Vínculo encerrado e permissões organizacionais revogadas; conta e histórico preservados |
+| T-001-13 | Empresa tenta excluir Recrutador de outra organização | Operação recusada pelo backend |
 | T-001-11 | Erro de autenticação | Mensagem acessível sem exposição indevida |
 
 ## 13. Questões em aberto
