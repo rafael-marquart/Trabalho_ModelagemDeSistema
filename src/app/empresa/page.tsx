@@ -9,7 +9,7 @@ export default async function CompanyHomePage() {
   return (
     <main className="auth-page">
       <div className="entry-content">
-        <Link className="brand auth-brand" href="/"><span className="brand-mark">a</span><span>Acessa<span className="brand-accent">Vagas</span></span></Link>
+        <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" /></Link>
         <section className="auth-card">
           <p className="eyebrow">Área da empresa</p>
           <h1>Bem-vinda ao Acessa Vagas.</h1>
