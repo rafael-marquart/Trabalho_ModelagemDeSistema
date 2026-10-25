@@ -16,8 +16,7 @@ export default function PasswordRecoveryPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    setToken(params.get("token") || "");
+    setToken(new URLSearchParams(window.location.search).get("token") || "");
   }, []);
 
   async function requestReset(event: FormEvent<HTMLFormElement>) {
@@ -106,14 +105,14 @@ export default function PasswordRecoveryPage() {
               <option value="company">Empresa</option>
             </select>
             <label htmlFor="identifier">{profile === "candidate" ? "E-mail ou CPF" : "E-mail"}</label>
-            <input id="identifier" autoComplete="username" value={identifier} onChange={event => setIdentifier(event.target.value)} required maxLength={160} />
+            <input id="identifier" type={profile === "company" ? "email" : "text"} autoComplete="username" value={identifier} onChange={event => setIdentifier(event.target.value)} required maxLength={160} />
             <button className="primary-button" type="submit" disabled={loading}>{loading ? "Enviando..." : "Enviar instruções"}</button>
           </form>
         )}
 
         {error && <p className="form-error" role="alert">{error}</p>}
         {message && <p role="status" aria-live="polite">{message}</p>}
-        <p className="auth-footer"><Link href={token ? "/candidato/login" : "/candidato/login"}>Voltar ao login</Link></p>
+        <p className="auth-footer">Voltar ao login: <Link href="/candidato/login">Candidato</Link> · <Link href="/empresa/login">Empresa</Link></p>
       </section>
     </main>
   );
