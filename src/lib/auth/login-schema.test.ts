@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loginSchema, normalizeCpf, normalizeIdentifier } from "@/lib/auth/login-schema";
+import { loginSchema, normalizeCpf, normalizeIdentifier } from "./login-schema";
 
 describe("loginSchema", () => {
   it("accepts candidate login with email and remember-me preference", () => {
