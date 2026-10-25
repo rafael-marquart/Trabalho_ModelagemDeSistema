@@ -1,4 +1,4 @@
-import { act, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import ThemeProvider, { useTheme } from "./theme-provider";
 import ThemeToggle from "./theme-toggle";
@@ -42,14 +42,14 @@ describe("accessible theme preference", () => {
     await act(async () => {});
 
     await act(async () => {
-      screen.getByRole("button", { name: "Ativar tema escuro" }).click();
+      fireEvent.click(screen.getByRole("button", { name: "Ativar tema escuro" }));
     });
     expect(screen.getByTestId("theme").textContent).toBe("dark");
     expect(document.documentElement.dataset.theme).toBe("dark");
     expect(window.localStorage.getItem("acessa-vagas-theme")).toBe("dark");
 
     await act(async () => {
-      screen.getByRole("button", { name: "Ativar tema claro" }).click();
+      fireEvent.click(screen.getByRole("button", { name: "Ativar tema claro" }));
     });
     expect(screen.getByTestId("theme").textContent).toBe("light");
     expect(window.localStorage.getItem("acessa-vagas-theme")).toBe("light");
