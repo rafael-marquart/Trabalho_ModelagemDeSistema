@@ -53,6 +53,20 @@ Os novos protótipos de Gestão de recrutadores e Mensagens de autenticação fo
 - **Cores de referência:** roxo e lilás, com fundos claros e contrastes legíveis.
 - **Princípios:** interface acessível, navegação clara, cartões simples, indicadores de compatibilidade e apresentação explícita dos estados.
 
+## Comparação estática com a implementação
+
+Revisão estática do código da branch em 25/10/2026; não representa homologação visual em navegador.
+
+- **Login de Candidato e de Empresa:** os SVGs aprovados mostram composição em duas colunas, painel de marca/slogan e alternância visual de perfil. As páginas atuais usam cartão centralizado; os perfis são separados por rota e não há o painel lateral do protótipo.
+- **Recuperação de senha:** o SVG aprovado usa painel de marca à esquerda e cartão à direita; a página atual usa cartão centralizado.
+- **Gestão de recrutadores:** o SVG aprovado mostra cabeçalho, navegação lateral e tabela de pessoas vinculadas; a implementação atual usa um cartão centralizado com listas e ações.
+- **Mensagens de autenticação:** o SVG mostra cartões de referência para sucesso, informação e erro; a aplicação apresenta mensagens contextuais inline com `role="alert"` ou `role="status"`. A semântica acessível é positiva, mas a composição visual não replica o protótipo.
+- **Paleta e temas:** a implementação usa tokens CSS próprios (por exemplo, `--purple: #6d43c5` e `--background: #f8f7fb`), diferentes de algumas cores dos SVGs (por exemplo, `#6B29BF` e `#FBFAFE`). Os SVGs são referências claras; não há uma referência SVG aprovada para o tema escuro.
+
+Pontos positivos identificados estaticamente: campos principais têm rótulos associados; erros usam anúncio de alerta em telas de autenticação; mensagens de estado usam `role="status"`; o controle de tema expõe nome acessível e `aria-pressed`; há foco visível e regra para movimento reduzido. Uma conta estática de contraste para alguns tokens da implementação dá aproximadamente 5,05:1 para texto `#716c80` sobre branco e 6,44:1 para `#6d43c5` sobre branco; o contorno de foco `#9d83e5` sobre branco fica em aproximadamente 3,08:1. Esses cálculos não substituem medição nos fundos reais nem testes de zoom, reflow, teclado e leitor de tela.
+
+**Pendência concreta:** alinhar a composição e a paleta das telas aprovadas com os SVGs versionados e realizar a revisão manual de acessibilidade nos temas claro e escuro. Não foi executada homologação manual nesta revisão estática.
+
 ## Limites dos arquivos
 
 - SVGs e imagens são protótipos/referências visuais estáticas; não implementam autenticação, validações, envio de e-mail, persistência ou regras de negócio.
