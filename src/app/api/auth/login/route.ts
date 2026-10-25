@@ -61,25 +61,48 @@ export async function POST(request: NextRequest) {
     await verifyPassword(user.passwordHash, input.password)
   );
 
-  await prisma.loginAttempt.create({ data: { identifierKey, ipKey, succeeded: valid } });
-
   if (!valid || !user) {
-    if (user && user.role === expectedRole && user.isActive) {
-      const failedLoginCount = user.failedLoginCount + 1;
-      const shouldLock = failedLoginCount >= MAX_ATTEMPTS;
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          failedLoginCount: shouldLock ? 0 : failedLoginCount,
-          lockedUntil: shouldLock ? new Date(Date.now() + WINDOW_MS) : user.lockedUntil
-        }
-      });
-    }
+    await prisma.$transaction(async (tx) => {
+      await tx.loginAttempt.create({ data: { identifierKey, ipKey, succeeded: false } });
+
+      // Atomically increment the counter in PostgreSQL. Concurrent failed
+      // logins cannot overwrite one another's increments or prolong an active lock.
+      if (user && user.role === expectedRole && user.isActive && !locked) {
+        const rows = await tx.$queryRaw<Array<{ failedLoginCount: number }>>`
+          UPDATE "User"
+          SET
+            "failedLoginCount" = CASE
+              WHEN "failedLoginCount" + 1 >= ${MAX_ATTEMPTS} THEN 0
+              ELSE "failedLoginCount" + 1
+            END,
+            "lockedUntil" = CASE
+              WHEN "failedLoginCount" + 1 >= ${MAX_ATTEMPTS}
+                THEN ${new Date(Date.now() + WINDOW_MS)}
+              ELSE "lockedUntil"
+            END
+          WHERE "id" = ${user.id}
+            AND ("lockedUntil" IS NULL OR "lockedUntil" <= NOW())
+          RETURNING "failedLoginCount"
+        `;
+        // The SQL update itself is atomic; the threshold sets the lock and
+        // resets the consecutive-failure counter in the same statement.
+        void rows;
+      }
+    });
+
     return NextResponse.json(
       { message: "Não foi possível entrar com os dados informados." },
       { status: 401 }
     );
   }
+
+  await prisma.$transaction([
+    prisma.loginAttempt.create({ data: { identifierKey, ipKey, succeeded: true } }),
+    prisma.user.update({
+      where: { id: user.id },
+      data: { failedLoginCount: 0, lockedUntil: null }
+    })
+  ]);
 
   await prisma.user.update({
     where: { id: user.id },
