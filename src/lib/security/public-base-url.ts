@@ -11,6 +11,8 @@ export function getPublicBaseUrl(request: Request): string | null {
   try {
     const url = new URL(candidate);
     if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+    // Production links carry credentials/tokens; never send them over cleartext HTTP.
+    if (process.env.NODE_ENV === "production" && url.protocol !== "https:") return null;
     if (url.username || url.password) return null;
     return url.origin;
   } catch {
