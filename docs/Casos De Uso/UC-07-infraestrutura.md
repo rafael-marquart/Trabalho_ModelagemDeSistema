@@ -17,12 +17,15 @@ Permitir à empresa manter suas informações de acessibilidade e administrar os
 1. A empresa acessa "Configurações da Empresa".
 2. A empresa pode acessar o "Mapeamento de Infraestrutura" e preencher o questionário estruturado sobre rampas, elevadores, banheiros adaptados, leitores de tela, sinalização e políticas inclusivas, respeitando as categorias aprovadas na OPEN-017. As respostas são adequadas à natureza de cada item e, quando aplicável, distinguem presença declarada, ausência declarada e informação não informada; não se presume acessibilidade ou inacessibilidade a partir de dado ausente.
 3. A empresa pode acessar a seção "Recrutadores" para cadastrar um novo recrutador.
-4. A empresa informa os dados necessários do recrutador e o sistema cria ou associa uma conta de usuário com perfil de Recrutador à empresa.
-5. O sistema valida as informações e registra o vínculo do recrutador com a empresa.
+4. A empresa informa nome e e-mail do recrutador.
+5. Se o e-mail corresponder a uma conta elegível de Recrutador, o sistema envia convite de uso único ao titular, que deve aceitar explicitamente o vínculo.
+6. Se o e-mail ainda não corresponder a uma conta, o sistema cria uma conta RECRUITER inativa com credencial aleatória não divulgada e envia link de uso único. A pessoa define sua senha e aceita explicitamente o vínculo pelo link.
+7. O sistema só ativa a conta recém-criada e efetiva o vínculo após o aceite; a conta e o vínculo são atualizados atomicamente. Convites expiram em 7 dias e podem ser reenviados ou cancelados enquanto pendentes.
 
 ## Exceções e Fluxos Alternativos
 
 - EX01 (Alerta de Campos Obrigatórios Pendentes): O sistema impede o salvamento quando itens definidos como obrigatórios estiverem pendentes e identifica os itens a completar. A lista individual de obrigatórios permanece pendente de definição; nem todos os campos são automaticamente obrigatórios.
+- EX02 (Conta de recrutador inelegível): Se a conta existente não tiver perfil RECRUITER, estiver desativada ou já possuir vínculo ativo com outra empresa, o sistema não cria o vínculo e informa que não foi possível processar a solicitação.
 
 ## Relação entre infraestrutura geral e critérios da vaga — decisão OPEN-023
 
