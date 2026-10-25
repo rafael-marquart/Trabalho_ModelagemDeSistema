@@ -4,6 +4,7 @@ import { hashPassword } from "@/lib/auth/password";
 import { passwordSchema } from "@/lib/auth/password-policy";
 import { isValidCpf, normalizeCpf, normalizeIdentifier } from "@/lib/auth/login-schema";
 import { prisma } from "@/lib/prisma";
+import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 
 const schema = z.object({
   fullName: z.string().trim().min(2).max(160),
@@ -13,6 +14,9 @@ const schema = z.object({
 });
 
 export async function POST(request: Request) {
+  const originRejection = rejectCrossOriginRequest(request);
+  if (originRejection) return originRejection;
+
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ message: "Confira os dados informados.", issues: parsed.error.flatten().fieldErrors }, { status: 400 });
   const input = parsed.data;
