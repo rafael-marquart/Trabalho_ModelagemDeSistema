@@ -104,6 +104,37 @@ describe("recruiter invitation response", () => {
     });
   });
 
+  it("rejects non-recruiter users before looking up the invitation", async () => {
+    getCurrentUserMock.mockResolvedValueOnce({ id: "candidate-1", role: "CANDIDATE", isActive: true });
+
+    const response = await POST(makeRequest());
+
+    expect(response.status).toBe(401);
+    expect(prismaMock.recruiterInvitation.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
+  it("does not create a link if the recruiter becomes linked before acceptance", async () => {
+    tx.recruiterLink.findFirst.mockResolvedValueOnce({ id: "existing-link" });
+
+    const response = await POST(makeRequest());
+
+    expect(response.status).toBe(409);
+    expect(tx.recruiterInvitation.updateMany).not.toHaveBeenCalled();
+    expect(tx.recruiterLink.create).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it("does not consume a valid token when a serializable transaction finds the company inactive", async () => {
+    tx.company.findUnique.mockResolvedValueOnce({ id: "company-1", accountUser: { isActive: false } });
+
+    const response = await POST(makeRequest());
+
+    expect(response.status).toBe(409);
+    expect(tx.recruiterInvitation.updateMany).not.toHaveBeenCalled();
+    expect(tx.recruiterLink.create).not.toHaveBeenCalled();
+  });
+
   it("rejects invitations addressed to another recruiter", async () => {
     prismaMock.recruiterInvitation.findUnique.mockResolvedValueOnce({
       ...invitation,
