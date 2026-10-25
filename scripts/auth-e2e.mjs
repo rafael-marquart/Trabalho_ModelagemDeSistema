@@ -705,7 +705,7 @@ async function main() {
     assert.ok(lockedCandidate?.lockedUntil && lockedCandidate.lockedUntil > new Date(), "ten consecutive failures must persist an active account lock");
     assert.equal(lockedCandidate.failedLoginCount, 0, "the locked account counter is reset after the threshold is reached");
 
-    process.stdout.write("Auth E2E passed: candidate auth/recovery and session revocation; company verification; recruiter invitation/resend/accept/refuse/cancel; multi-company isolation and concurrency; logout; account lockout.\\n");
+    process.stdout.write("Auth E2E passed: candidate auth/recovery and session revocation; company verification; recruiter invitation/resend/accept/refuse/cancel; multi-company isolation and concurrency; logout; account lockout.\n");
   } finally {
     try {
       await cleanupTestData();
