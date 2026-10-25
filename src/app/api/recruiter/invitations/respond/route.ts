@@ -32,8 +32,8 @@ export async function POST(request: Request) {
   if (user && (user.role !== "RECRUITER" || user.id !== invitation.recipientUserId)) {
     return NextResponse.json({ message: "Entre na conta de recrutador destinatária do convite." }, { status: 401 });
   }
-  if (!user && !pendingSetup) {
-    return NextResponse.json({ message: "Abra o link do convite para recusar ou entre na conta destinatária." }, { status: 401 });
+  if (!user && parsed.data.action !== "refuse" && !pendingSetup) {
+    return NextResponse.json({ message: "Entre na conta destinatária do convite." }, { status: 401 });
   }
 
   const recipient = await prisma.user.findUnique({
