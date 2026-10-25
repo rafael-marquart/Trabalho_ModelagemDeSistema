@@ -8,7 +8,8 @@ const { prismaMock, cookieSet, cookieGet, cookieDelete } = vi.hoisted(() => ({
       deleteMany: vi.fn(),
       findUnique: vi.fn(),
       updateMany: vi.fn()
-    }
+    },
+    auditEvent: { create: vi.fn() }
   },
   cookieSet: vi.fn(),
   cookieGet: vi.fn(),
@@ -33,12 +34,12 @@ describe("createSession", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    const auditCreate = vi.fn().mockResolvedValue({ id: "audit-1" });
+    prismaMock.auditEvent.create.mockResolvedValue({ id: "audit-1" });
     prismaMock.$transaction.mockImplementation(async (callback: (tx: unknown) => unknown) =>
       callback({
         $queryRaw: queryRaw,
         session: { create: sessionCreate, findUnique: prismaMock.session.findUnique, deleteMany: prismaMock.session.deleteMany },
-        auditEvent: { create: auditCreate }
+        auditEvent: { create: prismaMock.auditEvent.create }
       })
     );
     queryRaw.mockResolvedValue([{ id: "user-1" }]);
