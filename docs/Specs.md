@@ -71,7 +71,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 | Configurações da Empresa — Recrutadores | Cadastrar ou associar recrutador à Empresa autenticada | Aprovado em 25/10/2026 (`Gestao-Recrutadores.svg`) |
 | Mensagens de autenticação | Informar falha ou bloqueio sem expor dados indevidos | Aprovado em 25/10/2026 (`Mensagens-Autenticacao.svg`) |
 
-A lista identifica áreas funcionais, não define quantidade final de páginas ou composição visual. Os protótipos SVG listados estão aprovados visualmente; são referências estáticas. A sincronização dos dois protótipos novos com a fonte editável Figma permanece pendente.
+A lista identifica áreas funcionais, não define quantidade final de páginas ou composição visual. Os protótipos SVG listados estão aprovados visualmente; são referências estáticas. Por decisão do responsável em 25/10/2026, os SVGs mantidos em `docs/Identidade Visual/` são a fonte de referência visual enquanto a conta Figma estiver sem cota. A sincronização da fonte editável permanece pendente, mas não bloqueia a implementação que utilize fielmente esses artefatos versionados.
 
 ## 4. Dependências
 
