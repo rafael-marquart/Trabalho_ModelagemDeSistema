@@ -25,7 +25,7 @@ import { GET, POST } from "./route";
 describe("send recruiter invitation", () => {
   const companyUser = { id: "company-user-1", role: "COMPANY", isActive: true };
   const tx = {
-    $queryRaw: vi.fn(),
+    $executeRaw: vi.fn(),
     recruiterInvitation: {
       findMany: vi.fn(),
       updateMany: vi.fn(),
@@ -54,7 +54,7 @@ describe("send recruiter invitation", () => {
       transactionCount += 1;
       return callback(tx);
     });
-    tx.$queryRaw.mockResolvedValue([]);
+    tx.$executeRaw.mockResolvedValue([]);
     tx.recruiterInvitation.findMany.mockResolvedValue([]);
     tx.recruiterInvitation.findFirst.mockResolvedValue(null);
     tx.recruiterInvitation.create.mockResolvedValue({ id: "invitation-1" });
@@ -101,7 +101,7 @@ describe("send recruiter invitation", () => {
       where: { email: "recruiter@example.com" },
       select: { id: true, email: true, role: true, isActive: true, pendingActivation: true }
     });
-    expect(tx.$queryRaw).toHaveBeenCalled();
+    expect(tx.$executeRaw).toHaveBeenCalled();
     expect(tx.recruiterInvitation.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         companyId: "company-1",
