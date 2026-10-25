@@ -405,6 +405,27 @@ async function main() {
     });
     await expectStatus(anonymousCompanyInvitations, 401, "anonymous access to company recruiter invitations");
 
+    const anonymousCreateInvitation = await postJson("/api/company/recruiter-invitations", {
+      email: CROSS_COMPANY_INVITATION_EMAIL,
+      fullName: "Tentativa Anônima"
+    });
+    await expectStatus(anonymousCreateInvitation, 401, "anonymous caller cannot create a company recruiter invitation");
+    const anonymousInvitationRecipient = await prisma.user.findUnique({
+      where: { email: CROSS_COMPANY_INVITATION_EMAIL },
+      select: { id: true }
+    });
+    assert.equal(anonymousInvitationRecipient, null, "anonymous invitation attempt must not create a recruiter account");
+
+    const anonymousCancelInvitation = await postJson("/api/company/recruiter-invitations/cancel", {
+      invitationId: randomUUID()
+    });
+    await expectStatus(anonymousCancelInvitation, 401, "anonymous caller cannot cancel a company recruiter invitation");
+
+    const anonymousEndRecruiterLink = await postJson("/api/company/recruiter-links/end", {
+      recruiterLinkId: randomUUID()
+    });
+    await expectStatus(anonymousEndRecruiterLink, 401, "anonymous caller cannot end a company recruiter link");
+
     const candidateCompanyLinks = await fetch(`${BASE_URL}/api/company/recruiter-links`, {
       headers: { cookie: `acessa_session=${newCookieMatch[1]}` },
       redirect: "manual"
