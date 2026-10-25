@@ -43,7 +43,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 ### Incluído
 - Apresentar login por e-mail e senha e opções de criação de conta como Usuário ou Empresa.
 - Autenticar usuários existentes e permitir recuperação de senha conforme RF-02.
-- Permitir cadastro de conta de Empresa conforme RF-17, restrito inicialmente a empresas brasileiras com CNPJ válido (formato e dígitos verificadores conferidos no cadastro). A confirmação do e-mail é separada da validação do CNPJ em fonte oficial por Administrador; a conta permanece inativa até ambas as etapas serem concluídas. Empresas estrangeiras ou sem CNPJ estão fora do escopo inicial.
+- Permitir cadastro de conta de Empresa conforme RF-17, restrito inicialmente a empresas brasileiras que informem um CNPJ com exatamente 14 dígitos. A validação verifica apenas a quantidade de dígitos após remover pontuação de formatação; não verifica dígitos verificadores nem consulta a existência do CNPJ em fonte oficial ou serviço externo. Empresas estrangeiras ou sem CNPJ estão fora do escopo inicial. A conta permanece inativa até a confirmação do e-mail corporativo.
 - Identificar o perfil autenticado e aplicar permissões correspondentes.
 - Permitir que Empresa autenticada cadastre ou associe usuários com perfil de Recrutador nas configurações.
 - Manter o vínculo do Recrutador com a Empresa responsável.
