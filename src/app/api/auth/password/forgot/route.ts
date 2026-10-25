@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { normalizeCpf, normalizeIdentifier } from "@/lib/auth/login-schema";
 import { createOneTimeToken } from "@/lib/auth/tokens";
 import { sendEmail } from "@/lib/email";
+import { getPublicBaseUrl } from "@/lib/security/public-base-url";
 
 const schema = z.object({
   profile: z.enum(["candidate", "company"]),
@@ -89,8 +90,9 @@ export async function POST(request: NextRequest) {
   }
 
   if (user && outcome.token) {
-    const baseUrl = process.env.APP_BASE_URL || new URL(request.url).origin;
+    const baseUrl = getPublicBaseUrl(request);
     try {
+      if (!baseUrl) throw new Error("APP_BASE_URL is required to send production email links");
       await sendEmail({
         to: user.email,
         subject: "Recuperação de senha — Acessa Vagas",
