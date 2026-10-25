@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import ThemeToggle from "@/components/theme-toggle";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 
 type Invitation = { id: string; status: "PENDING" | "REFUSED" | "EXPIRED" | "CANCELLED" | "ACCEPTED"; expiresAt: string; createdAt: string; respondedAt: string | null };
@@ -104,6 +105,7 @@ export default function CompanyRecruitersPage() {
   }
 
   return <main className="auth-page">
+    <div className="theme-control-host"><ThemeToggle /></div>
     <Link className="brand auth-brand" href="/empresa"><img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" /></Link>
     <section className="auth-card" aria-labelledby="recruiters-title">
       <Link className="back-link" href="/empresa">← Voltar à área da empresa</Link>
