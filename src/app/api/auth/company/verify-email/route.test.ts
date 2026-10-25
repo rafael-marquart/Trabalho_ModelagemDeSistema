@@ -1,0 +1,93 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { hashOneTimeToken } from "@/lib/auth/tokens";
+
+const { prismaMock } = vi.hoisted(() => ({
+  prismaMock: {
+    companyEmailVerificationToken: { findUnique: vi.fn() },
+    $transaction: vi.fn()
+  }
+}));
+
+vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
+
+import { POST } from "./route";
+
+describe("company email verification", () => {
+  const tokenRecord = {
+    id: "verification-1",
+    companyId: "company-1",
+    tokenHash: "hashed-token",
+    usedAt: null,
+    expiresAt: new Date(Date.now() + 60_000),
+    company: { id: "company-1", emailConfirmedAt: null, accountUserId: "company-user-1" }
+  };
+  const tx = {
+    companyEmailVerificationToken: { updateMany: vi.fn(), deleteMany: vi.fn() },
+    company: { updateMany: vi.fn() },
+    auditEvent: { create: vi.fn() }
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    prismaMock.companyEmailVerificationToken.findUnique.mockResolvedValue(tokenRecord);
+    prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => callback(tx));
+    tx.companyEmailVerificationToken.updateMany.mockResolvedValue({ count: 1 });
+    tx.companyEmailVerificationToken.deleteMany.mockResolvedValue({ count: 1 });
+    tx.company.updateMany.mockResolvedValue({ count: 1 });
+    tx.auditEvent.create.mockResolvedValue({ id: "audit-1" });
+  });
+
+  const makeRequest = (token = "verification-token-long-enough") =>
+    new Request("https://acessavagas.example/api/auth/company/verify-email", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ token })
+    });
+
+  it("claims a valid token once and audits email confirmation without activating the user", async () => {
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(200);
+    expect(prismaMock.companyEmailVerificationToken.findUnique).toHaveBeenCalledWith({
+      where: { tokenHash: hashOneTimeToken("verification-token-long-enough") },
+      include: { company: { select: { id: true, emailConfirmedAt: true, accountUserId: true } } }
+    });
+    expect(tx.companyEmailVerificationToken.updateMany).toHaveBeenCalledWith({
+      where: { id: "verification-1", usedAt: null, expiresAt: expect.objectContaining({ gt: expect.any(Date) }) },
+      data: { usedAt: expect.any(Date) }
+    });
+    expect(tx.company.updateMany).toHaveBeenCalledWith({
+      where: { id: "company-1", emailConfirmedAt: null },
+      data: { emailConfirmedAt: expect.any(Date) }
+    });
+    expect(tx.auditEvent.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        actorUserId: "company-user-1",
+        eventType: "AUTH_COMPANY_EMAIL_CONFIRMED",
+        subjectId: "company-1"
+      })
+    });
+  });
+
+  it("rejects expired tokens before starting a transaction", async () => {
+    prismaMock.companyEmailVerificationToken.findUnique.mockResolvedValueOnce({
+      ...tokenRecord,
+      expiresAt: new Date(Date.now() - 1000)
+    });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(400);
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
+  it("rejects a token that another request already claimed", async () => {
+    tx.companyEmailVerificationToken.updateMany.mockResolvedValueOnce({ count: 0 });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(400);
+    expect(tx.company.updateMany).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+});
