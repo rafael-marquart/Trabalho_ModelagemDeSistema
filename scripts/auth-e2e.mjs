@@ -15,6 +15,7 @@ const EMAIL = `spec001-e2e-${randomUUID()}@example.test`;
 const COMPANY_EMAIL = `spec001-company-${randomUUID()}@example.test`;
 const RECRUITER_EMAIL = `spec001-recruiter-${randomUUID()}@example.test`;
 const SECOND_COMPANY_EMAIL = `spec001-company-two-${randomUUID()}@example.test`;
+const UNKNOWN_COMPANY_EMAIL = `unknown-company-${randomUUID()}@example.test`;
 const OLD_PASSWORD = "InitialPassword123";
 const NEW_PASSWORD = "ChangedPassword456";
 const COMPANY_PASSWORD = "CompanyPassword123";
@@ -164,7 +165,12 @@ async function cleanupTestData() {
   const userIds = users.map(user => user.id);
   const companyIds = users.flatMap(user => user.company ? [user.company.id] : []);
   const ipKey = digest(TEST_IP);
+  const companyVerificationIpKey = digest(`company-verification:ip:${TEST_IP}`);
   const recoveryKeys = userIds.map(id => digest(`user:${id}`));
+  const companyVerificationKeys = [
+    ...userIds.map(id => digest(`company-verification:user:${id}`)),
+    digest(`company-verification:input:${UNKNOWN_COMPANY_EMAIL}`)
+  ];
   const auditSubjectIds = [...userIds, ...companyIds];
 
   await prisma.$transaction(async tx => {
@@ -178,9 +184,26 @@ async function cleanupTestData() {
     await tx.passwordResetToken.deleteMany({ where: { userId: { in: userIds } } });
     await tx.session.deleteMany({ where: { userId: { in: userIds } } });
     await tx.loginAttempt.deleteMany({ where: { ipKey } });
-    await tx.recoveryAttempt.deleteMany({ where: { ipKey } });
+    await tx.recoveryAttempt.deleteMany({
+      where: {
+        OR: [
+          { ipKey },
+          { ipKey: companyVerificationIpKey },
+          { identifierKey: { in: [...recoveryKeys, ...companyVerificationKeys] } }
+        ]
+      }
+    });
     await tx.recoveryBlock.deleteMany({
-      where: { scopeKey: { in: [...recoveryKeys.map(key => `identifier:${key}`), `ip:${ipKey}`] } }
+      where: {
+        scopeKey: {
+          in: [
+            ...recoveryKeys.map(key => `identifier:${key}`),
+            `ip:${ipKey}`,
+            ...companyVerificationKeys.map(key => `company-verification:identifier:${key}`),
+            `company-verification:ip:${companyVerificationIpKey}`
+          ]
+        }
+      }
     });
     await tx.auditEvent.deleteMany({
       where: { OR: [{ actorUserId: { in: userIds } }, { subjectId: { in: auditSubjectIds } }] }
@@ -374,8 +397,7 @@ async function main() {
 
     const staleCompanyVerification = await postJson("/api/auth/company/verify-email", { token: firstCompanyVerificationToken });
     await expectStatus(staleCompanyVerification, 400, "previous company verification token after resend");
-    const unknownCompanyEmail = `unknown-company-${randomUUID()}@example.test`;
-    const unknownResend = await postJson("/api/auth/company/resend-verification", { email: unknownCompanyEmail });
+    const unknownResend = await postJson("/api/auth/company/resend-verification", { email: UNKNOWN_COMPANY_EMAIL });
     const unknownResendBody = await expectStatus(unknownResend, 200, "unknown company verification resend");
     assert.equal(unknownResendBody, resendCompanyBody, "company verification resend must not reveal whether an account exists");
 
