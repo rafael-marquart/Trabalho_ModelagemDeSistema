@@ -74,8 +74,8 @@ export async function POST(request: NextRequest) {
     if (activeBlock) return { allowed: false, token: null };
 
     const [identifierAttempts, ipAttempts] = await Promise.all([
-      tx.recoveryAttempt.count({ where: { identifierKey, createdAt: { gte: cutoff } } }),
-      tx.recoveryAttempt.count({ where: { ipKey, createdAt: { gte: cutoff } } })
+      tx.recoveryAttempt.count({ where: { identifierKey, createdAt: { gt: cutoff } } }),
+      tx.recoveryAttempt.count({ where: { ipKey, createdAt: { gt: cutoff } } })
     ]);
 
     const exhaustedScopes = [
