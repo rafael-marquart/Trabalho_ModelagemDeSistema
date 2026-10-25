@@ -1,8 +1,8 @@
 "use client";
 
+import React, { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
-import ThemeToggle from "@/components/theme-toggle";
-import { FormEvent, useEffect, useState } from "react";
+import AuthSplitLayout from "@/components/auth-split-layout";
 
 type Profile = "candidate" | "company";
 
@@ -75,48 +75,39 @@ export default function PasswordRecoveryPage() {
   }
 
   return (
-    <main className="auth-page">
-      <div className="theme-control-host"><ThemeToggle /></div>
-      
-      <Link className="brand auth-brand" href="/" aria-label="Acessa Vagas — início">
-        <img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" />
-      </Link>
-      <section className="auth-card" aria-labelledby="recovery-title">
-        <Link className="back-link" href="/">← Voltar ao início</Link>
-        <p className="eyebrow">Segurança da conta</p>
-        <h1 id="recovery-title">{token ? "Defina uma nova senha." : "Recupere seu acesso."}</h1>
-        <p className="muted">
-          {token
-            ? "O link de recuperação é válido por 30 minutos e pode ser usado uma única vez."
-            : "Informe os dados da sua conta. Se ela for elegível, enviaremos as instruções ao e-mail cadastrado."}
-        </p>
-
-        {token ? (
-          <form className="auth-form" onSubmit={resetPassword}>
-            <label htmlFor="password">Nova senha</label>
-            <input id="password" type="password" autoComplete="new-password" minLength={10} maxLength={128} value={password} onChange={event => setPassword(event.target.value)} required />
-            <p className="muted">Mínimo de 10 caracteres, com maiúscula, minúscula e número.</p>
-            <label htmlFor="confirmPassword">Confirmar nova senha</label>
-            <input id="confirmPassword" type="password" autoComplete="new-password" minLength={10} maxLength={128} value={confirmPassword} onChange={event => setConfirmPassword(event.target.value)} required />
-            <button className="primary-button" type="submit" disabled={loading}>{loading ? "Redefinindo..." : "Redefinir senha"}</button>
-          </form>
-        ) : (
-          <form className="auth-form" onSubmit={requestReset}>
-            <label htmlFor="profile">Tipo de conta</label>
-            <select id="profile" value={profile} onChange={event => setProfile(event.target.value as Profile)}>
-              <option value="candidate">Candidato</option>
-              <option value="company">Empresa</option>
-            </select>
-            <label htmlFor="identifier">{profile === "candidate" ? "E-mail ou CPF" : "E-mail"}</label>
-            <input id="identifier" type={profile === "company" ? "email" : "text"} autoComplete="username" value={identifier} onChange={event => setIdentifier(event.target.value)} required maxLength={160} />
-            <button className="primary-button" type="submit" disabled={loading}>{loading ? "Enviando..." : "Enviar instruções"}</button>
-          </form>
-        )}
-
-        {error && <p className="form-error" role="alert">{error}</p>}
-        {message && <p role="status" aria-live="polite">{message}</p>}
-        <p className="auth-footer">Voltar ao login: <Link href="/candidato/login">Candidato</Link> · <Link href="/empresa/login">Empresa</Link></p>
-      </section>
-    </main>
+    <AuthSplitLayout
+      profile={profile}
+      showRoleSwitch={false}
+      eyebrow="Segurança da conta"
+      title={token ? "Defina uma nova senha." : "Recupere seu acesso."}
+      description={token
+        ? "O link de recuperação é válido por 30 minutos e pode ser usado uma única vez."
+        : "Informe os dados da sua conta. Se ela for elegível, enviaremos as instruções ao e-mail cadastrado."}
+      footer={<p className="auth-footer">Voltar ao login: <Link href="/candidato/login">Candidato</Link> · <Link href="/empresa/login">Empresa</Link></p>}
+    >
+      {token ? (
+        <form className="auth-form" onSubmit={resetPassword}>
+          <label htmlFor="password">Nova senha</label>
+          <input id="password" type="password" autoComplete="new-password" minLength={10} maxLength={128} value={password} onChange={event => setPassword(event.target.value)} required />
+          <p className="muted">Mínimo de 10 caracteres, com maiúscula, minúscula e número.</p>
+          <label htmlFor="confirmPassword">Confirmar nova senha</label>
+          <input id="confirmPassword" type="password" autoComplete="new-password" minLength={10} maxLength={128} value={confirmPassword} onChange={event => setConfirmPassword(event.target.value)} required />
+          <button className="primary-button" type="submit" disabled={loading}>{loading ? "Redefinindo..." : "Redefinir senha"}</button>
+        </form>
+      ) : (
+        <form className="auth-form" onSubmit={requestReset}>
+          <label htmlFor="profile">Tipo de conta</label>
+          <select id="profile" value={profile} onChange={event => setProfile(event.target.value as Profile)}>
+            <option value="candidate">Candidato</option>
+            <option value="company">Empresa</option>
+          </select>
+          <label htmlFor="identifier">{profile === "candidate" ? "E-mail ou CPF" : "E-mail"}</label>
+          <input id="identifier" type={profile === "company" ? "email" : "text"} autoComplete="username" value={identifier} onChange={event => setIdentifier(event.target.value)} required maxLength={160} />
+          <button className="primary-button" type="submit" disabled={loading}>{loading ? "Enviando..." : "Enviar instruções"}</button>
+        </form>
+      )}
+      {error && <p className="form-error" role="alert">{error}</p>}
+      {message && <p className="company-message" role="status" aria-live="polite">{message}</p>}
+    </AuthSplitLayout>
   );
 }

@@ -47,4 +47,22 @@ describe("authentication split layout", () => {
     expect(screen.getByRole("button", { name: "Alternar tema claro e escuro" })).toBeTruthy();
     expect(screen.getByLabelText("E-mail")).toBeTruthy();
   });
+
+  it("can omit the role switch for shared account-recovery flows", () => {
+    render(
+      <AuthSplitLayout
+        profile="candidate"
+        showRoleSwitch={false}
+        eyebrow="Segurança da conta"
+        title="Recupere seu acesso."
+        description="Informe os dados da sua conta."
+        footer={<p className="auth-footer">Voltar ao login</p>}
+      >
+        <form><label htmlFor="identifier">E-mail</label><input id="identifier" /></form>
+      </AuthSplitLayout>
+    );
+
+    expect(screen.getByRole("heading", { name: "Recupere seu acesso." })).toBeTruthy();
+    expect(screen.queryByRole("navigation", { name: "Tipo de conta" })).toBeNull();
+  });
 });

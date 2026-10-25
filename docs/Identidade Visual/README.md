@@ -58,14 +58,14 @@ Os novos protótipos de Gestão de recrutadores e Mensagens de autenticação fo
 Revisão estática do código da branch em 25/10/2026; não representa homologação visual em navegador.
 
 - **Login de Candidato e de Empresa:** as páginas agora compartilham um layout responsivo de duas colunas, painel de marca/slogan, alternância de perfil com `aria-current`, formulário e links de recuperação/cadastro, seguindo a estrutura principal dos SVGs aprovados. A comparação visual final em navegador ainda está pendente.
-- **Recuperação de senha:** o SVG aprovado usa painel de marca à esquerda e cartão à direita; a página atual usa cartão centralizado.
+- **Recuperação de senha:** agora compartilha o painel de marca à esquerda e o cartão à direita, sem alternância de perfil durante a redefinição; a solicitação continua permitindo escolher Candidato ou Empresa. As mensagens permanecem inline e ainda precisam de comparação com os cartões de estado do SVG.
 - **Gestão de recrutadores:** a implementação agora reproduz os elementos estruturais principais do SVG aprovado: cabeçalho, menu lateral, formulário amplo e tabela responsiva com nome, e-mail, status e ações de reenviar/cancelar convite ou encerrar vínculo. O GET empresarial fornece nome e e-mail do destinatário somente no escopo da empresa autenticada. A comparação final em navegador ainda está pendente.
 - **Mensagens de autenticação:** o SVG mostra cartões de referência para sucesso, informação e erro; a aplicação apresenta mensagens contextuais inline com `role="alert"` ou `role="status"`. A semântica acessível é positiva, mas a composição visual não replica o protótipo.
 - **Paleta e temas:** os tokens principais do tema claro agora correspondem à paleta dos SVGs aprovados (`#1F1440`, `#6B6380`, `#6B29BF`, `#4A148C`, `#F5F0FC`, `#E0D9EB` e `#FBFAFE`). O foco visível usa `#6B29BF` no tema claro e `#C5A9FF` no escuro; testes estáticos calculam contraste superior a 3:1 contra fundos e superfícies dos dois temas. Os SVGs continuam sendo referência apenas para o tema claro.
 
 Pontos positivos identificados estaticamente: campos principais têm rótulos associados; erros e estados têm anúncios semânticos; o controle de tema expõe nome acessível e `aria-pressed`; há foco visível e regra para movimento reduzido. Testes automatizados mantêm os tokens claros sincronizados com os SVGs versionados e verificam contraste estático de pelo menos 3:1 para o contorno de foco nos dois temas. Isso não substitui testes manuais de zoom, reflow, teclado e leitor de tela.
 
-**Pendências concretas:** a recuperação de senha permanece em cartão centralizado e precisa de comparação visual específica com o SVG aprovado; comparar login e gestão de recrutadores em navegador nos tamanhos desktop e móvel; revisar teclado, zoom/reflow, leitor de tela, estados de foco e tema escuro manualmente. Esta alteração foi revisada estaticamente e por CI; não foi executada homologação manual.
+**Pendências concretas:** comparar login, recuperação e gestão de recrutadores em navegador nos tamanhos desktop e móvel; revisar visualmente as mensagens inline contra os cartões de estado do SVG; revisar teclado, zoom/reflow, leitor de tela, estados de foco e tema escuro manualmente. Esta alteração foi revisada estaticamente e por CI; não foi executada homologação manual.
 
 ## Limites dos arquivos
 

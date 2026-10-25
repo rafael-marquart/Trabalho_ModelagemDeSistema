@@ -12,6 +12,7 @@ type AuthSplitLayoutProps = {
   description: string;
   children: ReactNode;
   footer: ReactNode;
+  showRoleSwitch?: boolean;
 };
 
 export default function AuthSplitLayout({
@@ -20,7 +21,8 @@ export default function AuthSplitLayout({
   title,
   description,
   children,
-  footer
+  footer,
+  showRoleSwitch = true
 }: AuthSplitLayoutProps) {
   return (
     <main className="auth-split-page">
@@ -45,22 +47,24 @@ export default function AuthSplitLayout({
       <section className="auth-split-content" aria-labelledby="auth-split-title">
         <div className="theme-control-host"><ThemeToggle /></div>
         <div className="auth-split-card">
-          <nav className="auth-role-switch" aria-label="Tipo de conta">
-            <Link
-              className="auth-role-link"
-              href="/candidato/login"
-              aria-current={profile === "candidate" ? "page" : undefined}
-            >
-              Candidato
-            </Link>
-            <Link
-              className="auth-role-link"
-              href="/empresa/login"
-              aria-current={profile === "company" ? "page" : undefined}
-            >
-              Empresa
-            </Link>
-          </nav>
+          {showRoleSwitch && (
+            <nav className="auth-role-switch" aria-label="Tipo de conta">
+              <Link
+                className="auth-role-link"
+                href="/candidato/login"
+                aria-current={profile === "candidate" ? "page" : undefined}
+              >
+                Candidato
+              </Link>
+              <Link
+                className="auth-role-link"
+                href="/empresa/login"
+                aria-current={profile === "company" ? "page" : undefined}
+              >
+                Empresa
+              </Link>
+            </nav>
+          )}
           <p className="eyebrow">{eyebrow}</p>
           <h1 id="auth-split-title">{title}</h1>
           <p className="muted">{description}</p>
