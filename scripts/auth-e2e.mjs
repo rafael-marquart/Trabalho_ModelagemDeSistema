@@ -234,7 +234,10 @@ async function main() {
     assert.ok(SMTP_MESSAGES.length > previousMessageCount, "password recovery must send an email to the test SMTP server");
 
     const mail = SMTP_MESSAGES.slice(previousMessageCount).join("\n");
-    const rawTokenMatch = mail.match(/token=([A-Za-z0-9_-]{20,})/);
+    // SMTP messages may use quoted-printable soft line breaks inside long URLs.
+    // Remove those transport-only breaks before extracting the recovery token.
+    const normalizedMail = mail.replace(/=\r?\n/g, "");
+    const rawTokenMatch = normalizedMail.match(/token=([A-Za-z0-9_-]{20,})/);
     assert.ok(rawTokenMatch?.[1], "test SMTP message must contain the one-time recovery token");
     const rawToken = rawTokenMatch[1];
 
