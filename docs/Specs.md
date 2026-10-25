@@ -24,7 +24,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 | ID | SPEC-001 |
 |
 | Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | aprovação parcial: entrada/login, login de Candidato, login de Empresa, cadastro de Candidato, cadastro de Empresa e recuperação de senha aprovados em 25/10/2026; gestão de recrutadores e mensagens de autenticação têm protótipos SVG propostos, pendentes de revisão visual |
+| Estado do layout | protótipos de entrada/login, login de Candidato, login de Empresa, cadastro de Candidato, cadastro de Empresa, recuperação de senha, gestão de recrutadores e mensagens de autenticação aprovados visualmente em 25/10/2026; SVGs estáticos de referência |
 | Capacidade | Cadastro de usuário/empresa, autenticação, recuperação de senha, autorização por perfil e vínculo organizacional de recrutador |
 
 ## 2. Rastreabilidade
