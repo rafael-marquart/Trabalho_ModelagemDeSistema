@@ -7,6 +7,7 @@ const labels: Record<Invitation["status"], string> = { PENDING: "Pendente", REFU
 
 export default function CompanyRecruitersPage() {
   const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
@@ -24,11 +25,11 @@ export default function CompanyRecruitersPage() {
   async function send(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setLoading(true); setMessage(""); setError(false);
     try {
-      const response = await fetch("/api/company/recruiter-invitations", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
+      const response = await fetch("/api/company/recruiter-invitations", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, fullName }) });
       const result = await response.json();
       setMessage(result.message || (response.ok ? "Solicitação processada." : "Não foi possível enviar o convite."));
       setError(!response.ok);
-      if (response.ok) { setEmail(""); await load(); }
+      if (response.ok) { setEmail(""); setFullName(""); await load(); }
     } catch { setError(true); setMessage("Não foi possível conectar ao serviço."); }
     finally { setLoading(false); }
   }
@@ -48,9 +49,11 @@ export default function CompanyRecruitersPage() {
     <section className="auth-card" aria-labelledby="recruiters-title">
       <Link className="back-link" href="/empresa">← Voltar à área da empresa</Link>
       <p className="eyebrow">Gestão organizacional</p><h1 id="recruiters-title">Recrutadores</h1>
-      <p className="muted">Convide uma conta existente de recrutador pelo e-mail. O convite é válido por 7 dias.</p>
+      <p className="muted">Informe nome e e-mail. Se a pessoa ainda não tiver conta, poderá definir uma senha e aceitar o vínculo pelo link enviado. O convite é válido por 7 dias.</p>
       <form className="auth-form" onSubmit={send}>
-        <label htmlFor="recruiter-email">E-mail da conta do recrutador</label>
+        <label htmlFor="recruiter-name">Nome completo do recrutador</label>
+        <input id="recruiter-name" type="text" autoComplete="name" value={fullName} onChange={event => setFullName(event.target.value)} required minLength={2} maxLength={160} />
+        <label htmlFor="recruiter-email">E-mail do recrutador</label>
         <input id="recruiter-email" type="email" autoComplete="email" value={email} onChange={event => setEmail(event.target.value)} required maxLength={254} />
         <button className="primary-button" type="submit" disabled={loading}>{loading ? "Processando…" : "Enviar convite"}</button>
       </form>
