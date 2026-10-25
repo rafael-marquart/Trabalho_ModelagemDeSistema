@@ -40,6 +40,7 @@ export default function CompanyLoginPage() {
   return (
     <main className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div>
+      
       <Link className="brand auth-brand" href="/">
         <img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" />
       </Link>
