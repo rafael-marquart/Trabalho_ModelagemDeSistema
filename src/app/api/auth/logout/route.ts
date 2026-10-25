@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { revokeCurrentSession } from "@/lib/auth/session";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   await revokeCurrentSession();
-  return NextResponse.json({ ok: true });
+  return NextResponse.redirect(new URL("/", request.url), { status: 303 });
 }
