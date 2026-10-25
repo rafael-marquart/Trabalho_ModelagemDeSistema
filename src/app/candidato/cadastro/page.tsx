@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
+import ThemeToggle from "@/components/theme-toggle";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
