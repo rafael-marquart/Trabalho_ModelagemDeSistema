@@ -10,9 +10,9 @@
 
 ## Estado atual da validação — 26/10/2026
 
-**HEAD atual da PR:** `21c9c5c6c6768bd60651c85b684c0f183c0ddb85` (documentação; sem mudança de código em relação ao commit validado abaixo).  
-**CI do HEAD atual:** push [40253412059 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253412059) e Pull Request [40253416472 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253416472). O job `validate` concluiu as etapas de Prisma, migrações PostgreSQL, restrição concorrente de vínculo, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL/SMTP local.  
-**HEAD de código/testes:** `ed74230dfc674350a9ceddaad9088fd2a24e285f`; CI de push [40253143930 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253143930) e Pull Request [40253150227 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253150227).  
+**HEAD de código/testes validado:** `ed74230dfc674350a9ceddaad9088fd2a24e285f`; CI de push [40253143930 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253143930) e Pull Request [40253150227 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253150227).  
+**HEAD documental anterior validado:** `21c9c5c6c6768bd60651c85b684c0f183c0ddb85`; CI de push [40253412059 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253412059) e Pull Request [40253416472 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253416472). O job `validate` concluiu as etapas de Prisma, migrações PostgreSQL, restrição concorrente de vínculo, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL/SMTP local.  
+**Revisão documental registrada nesta versão:** `d38ffe94f59ce9f6497210138d09d94ef2e24807`; no momento da atualização, o CI do commit estava em execução: [push 40253780391](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253780391) e [PR 40253785808](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253785808).  
 **PR #36:** [aberta e em Draft](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/pull/36), sem merge ou deploy. A SPEC-002 não foi iniciada.
 
 ### Ajuste recente e limite de privacidade
