@@ -149,4 +149,19 @@ describe("company email verification", () => {
     expect(tx.company.updateMany).not.toHaveBeenCalled();
     expect(tx.auditEvent.create).not.toHaveBeenCalled();
   });
+
+  it("rejects malformed JSON before looking up or consuming a verification token", async () => {
+    const request = new Request("https://acessavagas.example/api/auth/company/verify-email", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{"
+    });
+
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(400);
+    expect(prismaMock.companyEmailVerificationToken.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
 });
