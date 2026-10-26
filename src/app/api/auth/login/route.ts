@@ -135,6 +135,9 @@ export async function POST(request: NextRequest) {
             where: { id: currentUser.id },
             data: { failedLoginCount: 0, lastFailedLoginAt: null, lockedUntil: new Date(now.getTime() + WINDOW_MS) }
           });
+          // Account lock invalidates every existing session immediately, even if
+          // no protected route is accessed again during the lock window.
+          await tx.session.deleteMany({ where: { userId: currentUser.id } });
         } else {
           await tx.user.update({
             where: { id: currentUser.id },
