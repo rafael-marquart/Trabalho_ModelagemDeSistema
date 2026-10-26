@@ -284,4 +284,18 @@ loginAttempt: { count: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
 
+  it("rejects syntactically malformed JSON before database access", async () => {
+    const response = await POST(new Request("https://acessavagas.example/api/auth/login", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-forwarded-for": "192.0.2.10" },
+      body: "{"
+    }) as never);
+
+    expect(response.status).toBe(400);
+    expect(tx.user.findFirst).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(verifyPasswordMock).not.toHaveBeenCalled();
+    expect(createSessionMock).not.toHaveBeenCalled();
+  });
+
 });
