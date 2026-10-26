@@ -8,9 +8,22 @@
 **Pull request:** [#36](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/pull/36) — permanece Draft  
 **Objetivo:** separar implementação existente, evidência automatizada disponível e validações ainda necessárias. Esta matriz não substitui os critérios de aceite da `docs/Specs.md` nem declara a SPEC-001 concluída.
 
-## Atualização de autorização — 26/10/2026
+## Estado atual da validação — 26/10/2026
 
-# Atualização de validação — 26/10/2026
+**HEAD atual da PR:** `21c9c5c6c6768bd60651c85b684c0f183c0ddb85` (documentação; sem mudança de código em relação ao commit validado abaixo).  
+**CI do HEAD atual:** push [40253412059 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253412059) e Pull Request [40253416472 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253416472). O job `validate` concluiu as etapas de Prisma, migrações PostgreSQL, restrição concorrente de vínculo, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL/SMTP local.  
+**HEAD de código/testes:** `ed74230dfc674350a9ceddaad9088fd2a24e285f`; CI de push [40253143930 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253143930) e Pull Request [40253150227 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253150227).  
+**PR #36:** [aberta e em Draft](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/pull/36), sem merge ou deploy. A SPEC-002 não foi iniciada.
+
+### Ajuste recente e limite de privacidade
+
+- A rota de convite de recrutador deixou de retornar uma mensagem que descrevia explicitamente o vínculo do destinatário com outra empresa; o teste e o E2E conferem a mensagem genérica e a ausência de transação/envio nesse conflito.
+- **Limite residual identificado na revisão:** a mensagem genérica, sozinha, não elimina todos os sinais de elegibilidade do e-mail. O endpoint ainda usa status HTTP diferentes entre certos resultados (por exemplo, conflito versus criação/reenvio) e a listagem da empresa reflete se um convite foi efetivamente criado. Isso merece uma decisão de produto/privacidade antes de afirmar proteção completa contra enumeração; não é contabilizado como resolvido por esta correção.
+- Permanecem pendentes a entrega real de SMTP em homologação/produção, configuração efetiva do proxy confiável, agendamento/monitoramento das rotinas de retenção em produção, verificações manuais de acessibilidade e dispositivos, homologação externa e teste de invasão independente.
+
+**Esta atualização registra evidências automatizadas; não declara a SPEC-001 concluída.**
+
+## Atualização de validação — 26/10/2026
 
 **HEAD de código/testes validado:** `ac2d746bb4f35a3cf934ddea8fa6323909302759`.  
 **CI de push:** [40247620336 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40247620336).  
