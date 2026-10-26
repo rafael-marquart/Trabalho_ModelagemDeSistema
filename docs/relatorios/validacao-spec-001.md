@@ -391,3 +391,24 @@ Os erros de unicidade e serialização registrados pelo PostgreSQL nos cenários
 Esta seção confirma a CI automatizada para o HEAD indicado, não declara a SPEC-001 formalmente concluída. Não foram executados nesta revisão: entrega/homologação com SMTP real, validação do proxy confiável real e de `X-Forwarded-For`, agendamento/monitoramento de retenção em produção, teste manual de navegador e comparação visual final, acessibilidade manual em navegadores/dispositivos, homologação externa ou pentest independente. O fluxo de recuperação de senha foi exercitado com SMTP local de captura.
 
 A última alteração de código/testes é o HEAD acima; esta revisão é documental e não altera a implementação. O CI disparado por este commit documental deverá ser verificado separadamente antes de ser citado como aprovado.
+
+## Atualização de estado — 26/10/2026 — revisão sem validação manual adicional
+
+### Estado de integração e interface
+
+- A PR #36 (`feat/initial-app-foundation` → `desenvolvimento-do-projeto`) foi integrada em 26/10/2026. Referências históricas anteriores neste relatório que a descrevem como aberta/Draft não representam mais o estado atual; foram preservadas como registro histórico.
+- A PR #37 (`feat/recruiter-dashboard-brand-polish` → `desenvolvimento-do-projeto`) continua aberta e em Draft. Seu escopo é o painel do recrutador, a apresentação dos botões da página da empresa e a substituição das referências de logo pelo PNG transparente original.
+- Para o HEAD da PR #37, `d2631728ed002a33f14429fbd552dced01354ed6`, as execuções de CI de push [40276230941 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40276230941) e de Pull Request [40276237293 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40276237293) terminaram com sucesso. Isso confirma a pipeline automatizada, não a validação manual da interface.
+- O responsável pelo projeto confirmou visualmente que o PNG original do logo passou a ser exibido corretamente. Também confirmou que a ação “Gerenciar recrutadores” ficou alinhada após o ajuste.
+- O painel do recrutador agora consulta vínculo ativo e convites pendentes da conta autenticada; a confirmação visual recebida mostra a empresa vinculada e estado vazio de convites. Não foi relatado erro visual nessa tela.
+
+### Pendências ainda não verificáveis sem interação no navegador
+
+- Fazer uma rodada final de teclado/foco, semântica e mensagens acessíveis, incluindo tema claro/escuro e tela estreita.
+- Conferir as telas restantes contra os protótipos aprovados e registrar divergências que pertençam à SPEC-001. Não criar campos nem alterar regras de negócio apenas para forçar semelhança visual.
+- A cobertura de testes de autorização continua sendo baseada em cenários de risco; não deve ser descrita como matriz exaustiva papel × rota.
+- SMTP real, URL HTTPS canônica, proxy confiável real e agendamento/monitoramento operacional de retenção permanecem fora do ambiente local de teste e não foram verificados. Não são declarados concluídos por CI verde.
+
+### Próxima ação de fechamento
+
+Executar a validação manual descrita em `docs/operacao/validacao-manual-spec-001.md`, registrar resultados reais e só então consolidar uma decisão formal sobre a conclusão da SPEC-001. A PR #37 permanece Draft; não houve merge dessa PR, deploy ou início da SPEC-002 nesta revisão.
