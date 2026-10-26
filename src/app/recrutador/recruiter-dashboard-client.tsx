@@ -67,9 +67,11 @@ export default function RecruiterHomePage() {
             <article className="recruiter-overview-card recruiter-primary-card">
               <div className="recruiter-card-icon" aria-hidden="true">⌂</div>
               <p className="recruiter-card-kicker">VÍNCULO ATUAL</p>
-              {overview === null ? (
+              {overview === null && !error ? (
                 <p className="muted">Carregando suas informações…</p>
-              ) : overview.link ? (
+              ) : error ? (
+                <p className="muted">Não foi possível carregar o vínculo.</p>
+              ) : overview?.link ? (
                 <>
                   <h2>{overview.link.companyName}</h2>
                   <span className="status-pill status-active">Vínculo ativo</span>
@@ -98,16 +100,18 @@ export default function RecruiterHomePage() {
                 <p className="muted">Para aceitar ou recusar, abra o link de uso único enviado ao seu e-mail.</p>
               </div>
             </div>
-            {overview === null ? (
+            {overview === null && !error ? (
               <p className="muted">Carregando convites…</p>
-            ) : overview.invitations.length === 0 ? (
+            ) : error ? (
+              <p className="muted">Não foi possível carregar os convites.</p>
+            ) : overview?.invitations.length === 0 ? (
               <div className="recruiter-empty-state">
                 <span aria-hidden="true">✓</span>
                 <div><strong>Você está em dia</strong><p className="muted">Não há convites pendentes no momento.</p></div>
               </div>
             ) : (
               <ul className="recruiter-invitation-list">
-                {overview.invitations.map(invitation => (
+                {(overview?.invitations ?? []).map(invitation => (
                   <li key={invitation.id} className="recruiter-invitation-row">
                     <div className="recruiter-invitation-symbol" aria-hidden="true">↗</div>
                     <div className="recruiter-invitation-details">
