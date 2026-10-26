@@ -230,3 +230,14 @@ Validações externas — SMTP de homologação, proxy real, agendamento de rete
 - As verificações automatizadas do workflow passaram para este HEAD: validação/geração Prisma, migrações PostgreSQL, integridade e concorrência de vínculo ativo, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP de captura.
 - A evidência confirma apenas os cenários automatizados exercitados. SMTP real, proxy de homologação/produção, agendamento/monitoramento de retenção, revisão manual completa de acessibilidade e pentest independente continuam não executados.
 - PR #36 permanece aberta em Draft. Sem merge, deploy ou início da SPEC-002.
+
+## Atualização de evidências — HEAD de código/testes `6a17319185e470db41be5421343baa6d16349280` — 26/10/2026
+
+- CI de push: [40254168363 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40254168363).
+- CI do PR: [40254172277 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40254172277).
+- Ambos os fluxos concluíram as verificações de Prisma/migrações e integridade PostgreSQL, TypeScript, lint, testes unitários, build de produção e E2E de autenticação com PostgreSQL e SMTP de captura.
+- Testes de regressão adicionados na rota de envio de convite: JSON malformado, e-mail inválido e nome do destinatário ausente. Eles verificam HTTP 400 e ausência de consulta ao destinatário, busca de vínculo, transação, auditoria e envio de e-mail.
+- Teste de regressão adicionado na rota de cancelamento para JSON malformado, verificando HTTP 400 e ausência de transação, mutação e auditoria.
+- **Risco residual:** a proteção contra enumeração de e-mail não é completa. Apesar da mensagem genérica no conflito de vínculo ativo, diferenças de status HTTP e a listagem de convites ainda podem revelar elegibilidade. Resolver isso de forma consistente exige uma decisão de produto/arquitetura; não registrar a mensagem genérica como mitigação total.
+- As validações externas/manuais já listadas neste relatório permanecem não executadas: SMTP real, proxy real, agendamento/monitoramento de retenção em produção, revisão manual completa de acessibilidade e pentest independente.
+- PR #36 permanece aberta em Draft, sem merge, deploy ou início da SPEC-002.
