@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     const { tokenHash } = createOneTimeToken();
     const expiresAt = new Date(Date.now() + SEVEN_DAYS);
     await prisma.$transaction(async tx => {
-      const lockKey = "recruiter-invitation-request:" + company.id + ":" + email;
+      const lockKey = "recruiter-invitation:" + company.id + ":" + email;
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`;
       const existing = await tx.recruiterInvitation.findFirst({
         where: { companyId: company.id, recipientEmail: email, recipientUserId: null, status: "PENDING", expiresAt: { gt: new Date() } },
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
   // Serialize sends for this company/recipient pair. Without the advisory lock,
   // simultaneous requests can both observe no pending invite and create duplicates.
   const invitationResult = await prisma.$transaction(async (tx) => {
-    const lockKey = `recruiter-invitation:${company.id}:${recipient.id}`;
+    const lockKey = "recruiter-invitation:" + company.id + ":" + email;
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`;
 
     const now = new Date();
