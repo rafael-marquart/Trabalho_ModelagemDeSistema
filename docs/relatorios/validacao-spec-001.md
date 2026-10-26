@@ -272,3 +272,16 @@ Validações externas — SMTP de homologação, proxy real, agendamento de rete
 - O teste de origem cruzada complementa os testes já existentes de JSON malformado, sessão/papel incorreto, concorrência e ausência de efeitos colaterais. Ele não substitui a validação real da configuração de origem no ambiente de produção.
 - Permanecem pendentes: mitigação completa de enumeração de e-mail (decisão de produto/arquitetura), matriz exaustiva papel × rota, SMTP real, configuração real de proxy, agendamento/monitoramento de retenção em produção, revisão manual de acessibilidade e pentest independente.
 - PR #36 permanece aberta em Draft, sem merge, deploy ou início da SPEC-002.
+
+
+## Atualização de evidências — mitigação de enumeração de convites — HEAD `ea6d1bb13aaf5d2924a68f45fdccd05f97762624` — 26/10/2026
+
+- CI da PR: [40259780023 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40259780023). Passaram validação/geração do Prisma Client, migrações PostgreSQL, integridade/concorrência, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL/SMTP de captura.
+- A criação, o reenvio, os resultados inelegíveis e as falhas de entrega em solicitações válidas retornam HTTP 202 e a mesma mensagem genérica. Erros de autenticação, origem e entrada inválida continuam sendo rejeitados normalmente, antes de qualquer operação protegida.
+- Para e-mails inelegíveis, a API registra uma linha neutra com `recipientUserId = null`, token aleatório não enviado e o mesmo formato de listagem. A linha não informa papel ou vínculo de outra empresa, não pode ser aceita pelo endpoint de resposta e pode ser convertida em convite real se o destinatário se tornar elegível.
+- Solicitações neutras e convites reais usam o mesmo bloqueio transacional por empresa/e-mail para evitar duplicidade em concorrência. Ao converter um placeholder, a auditoria registra envio inicial, não reenvio.
+- Falha de SMTP invalida o token tentado e preserva o estado público pendente, evitando revelar elegibilidade pelo status de cancelamento. A interface passou a usar “Solicitação pendente”, sem afirmar que todo registro gerou um e-mail.
+- Regressões unitárias cobrem destinatário de outro papel, recrutador vinculado a outra empresa, falha de entrega, rejeição de placeholder no aceite e conversão de placeholder em convite elegível. O E2E confirma que a segunda empresa vê a linha neutra sem obter o vínculo real.
+- **Resultado técnico:** a lacuna anterior de enumeração por status HTTP e ausência de linha na listagem foi mitigada no fluxo da aplicação e passou no CI acima. Isso não elimina inferências externas baseadas no recebimento real de e-mail nem substitui a validação de privacidade no ambiente operacional.
+- Permanecem pendentes as verificações que exigem ambiente/acesso: SMTP real e links HTTPS canônicos, proxy confiável/`X-Forwarded-For`, agendamento/alertas das rotinas de retenção e revisão manual de acessibilidade nos temas claro/escuro. A cobertura de autorização é por cenários de risco, não uma matriz exaustiva de todo papel × rota.
+- PR #36 permanece aberta em Draft. Sem merge, deploy ou início da SPEC-002.
