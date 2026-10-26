@@ -448,3 +448,27 @@ Executar a validação manual descrita em `docs/operacao/validacao-manual-spec-0
 - Revisão estática de rotas de recuperação, reset, confirmação de e-mail, reenvio de confirmação, convite, cancelamento, vínculo e resposta ao convite concluída.
 - Revisão dos nomes e cenários cobertos nas suítes de recuperação/reset e convites concluída.
 - Restam as verificações que exigem o navegador e o ambiente operacional real: inspeção visual/acessibilidade/responsividade; entrega real de SMTP e URL canônica; configuração de proxy confiável; e operação programada de retenção. A SPEC-001 permanece sem declaração formal de encerramento, a PR #37 permanece Draft e não foi feito merge/deploy nem iniciada SPEC-002.
+
+## Conferência de continuidade — 26/10/2026 — HEAD remoto atualizado
+
+### Estado remoto e CI
+
+- PR #37 consultada diretamente no GitHub: continua aberta, em Draft, sem merge, com destino `desenvolvimento-do-projeto`.
+- HEAD remoto consultado: `66ec102c385de7c2bbf512cb49e957626bcf7c1a`. Esse SHA difere dos HEADs registrados em verificações anteriores; as evidências antigas não foram tratadas como prova do estado atual.
+- Execução de CI associada ao HEAD consultado: [40280153823 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40280153823). O job `validate` concluiu com sucesso: schema Prisma, geração do cliente, migrações PostgreSQL, restrição de vínculo ativo e concorrência, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP de teste.
+- A execução usa SMTP de teste e não comprova entrega real de e-mails, configuração de produção, inspeção visual manual ou acessibilidade validada por pessoa.
+
+### Revisão documental cruzada — pontos confirmados
+
+- `docs/Specs.md` mantém desmarcados os critérios de entrada/login, opções de cadastro e mensagens sem exposição indevida; não os marquei como concluídos apenas com base no CI.
+- O Definition of Done da SPEC-001 continua parcial: rastreabilidade integral e localização formal dos layouts em `docs/layout/` seguem sem confirmação. Os protótipos aprovados estão em `docs/Identidade Visual/`, conforme a decisão documental existente.
+- `docs/operacao/validacao-manual-spec-001.md` ainda apresenta a lista de verificação manual sem itens concluídos. A inspeção do navegador, teclado/foco, responsividade, temas e comparação com protótipos permanece pendente de evidência humana.
+- `docs/OPEN.md` mantém OPEN-001 a OPEN-006 como resolvidas e documenta a limitação operacional da rotina de retenção; não foi encontrada justificativa nesta rodada para reabrir essas decisões nem para alterar comportamento aprovado.
+- O relatório continha evidências de CI de HEADs anteriores. Esta seção registra separadamente o HEAD atual, sem substituir nem reescrever o histórico.
+
+### Resultado e próxima ação
+
+- Não foi confirmada nesta conferência documental uma inconsistência que justificasse mudar requisitos ou comportamento de produto.
+- A SPEC-001 não está pronta para encerramento formal: faltam validação manual da interface, evidência operacional de SMTP/URL HTTPS/proxy/rotina de retenção e fechamento rastreável dos critérios ainda desmarcados.
+- A PR #37 permanece aberta em Draft. Nenhum merge, deploy ou trabalho de implementação da SPEC-002 foi iniciado nesta rodada.
+- Próximo passo: executar a lista manual em ambiente local e registrar resultados verificáveis; em paralelo, conferir a rastreabilidade de RF/RB/RNF/UC/modelo/driver/ADR sem marcar itens sem evidência.
