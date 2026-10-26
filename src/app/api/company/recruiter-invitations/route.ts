@@ -96,7 +96,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "A conta de recrutador não está habilitada para receber convites." }, { status: 409 });
   }
   const activeLink = await prisma.recruiterLink.findFirst({ where: { recruiterId: recipient.id, active: true }, select: { id: true } });
-  if (activeLink) return NextResponse.json({ message: "Este recrutador já possui vínculo ativo." }, { status: 409 });
+  if (activeLink) {
+    // Do not disclose whether the address belongs to a recruiter or whether
+    // that person is linked to another company. Keep the response generic.
+    return NextResponse.json({ message: "Não foi possível processar o convite com os dados informados." }, { status: 409 });
+  }
 
   const { token, tokenHash } = createOneTimeToken();
   const expiresAt = new Date(Date.now() + SEVEN_DAYS);
