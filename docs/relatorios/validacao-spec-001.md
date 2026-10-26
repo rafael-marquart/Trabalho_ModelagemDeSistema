@@ -241,3 +241,14 @@ Validações externas — SMTP de homologação, proxy real, agendamento de rete
 - **Risco residual:** a proteção contra enumeração de e-mail não é completa. Apesar da mensagem genérica no conflito de vínculo ativo, diferenças de status HTTP e a listagem de convites ainda podem revelar elegibilidade. Resolver isso de forma consistente exige uma decisão de produto/arquitetura; não registrar a mensagem genérica como mitigação total.
 - As validações externas/manuais já listadas neste relatório permanecem não executadas: SMTP real, proxy real, agendamento/monitoramento de retenção em produção, revisão manual completa de acessibilidade e pentest independente.
 - PR #36 permanece aberta em Draft, sem merge, deploy ou início da SPEC-002.
+
+
+## Atualização de evidências — HEAD `80e041083c6c954a2cac59da154530af9b672652` — 26/10/2026
+
+- CI de push: [40254871915 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40254871915).
+- CI da PR: [40254875392 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40254875392).
+- Ambas as execuções concluíram com sucesso as etapas de Prisma/migrações PostgreSQL, restrições de integridade e concorrência, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP de captura.
+- Foi acrescentado teste para JSON malformado na resposta a convite de recrutador: espera HTTP 400 e confirma que não se resolve sessão, não se consulta convite/usuário e não se inicia transação.
+- Os testes de regressão de JSON malformado também cobrem recuperação de senha, confirmação de e-mail empresarial, envio de convite e cancelamento de convite; estes verificam rejeição controlada e ausência dos efeitos colaterais pertinentes à rota.
+- A execução verde comprova apenas a pipeline automatizada configurada. A enumeração de e-mail permanece parcialmente mitigada, e continuam não executadas as validações externas/manuais de SMTP real, proxy real, agendamento/monitoramento de retenção em produção, acessibilidade manual e pentest independente.
+- PR #36 permanece aberta em Draft, sem merge ou deploy. A SPEC-002 não foi iniciada.
