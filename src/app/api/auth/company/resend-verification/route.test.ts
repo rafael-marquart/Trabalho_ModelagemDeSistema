@@ -205,4 +205,20 @@ describe("resend company email verification", () => {
     expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
+  it("keeps malformed JSON generic and does not query the account", async () => {
+    const response = await POST(new Request("https://acessavagas.example/api/auth/company/resend-verification", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{"
+    }) as never);
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      message: "Se houver uma conta empresarial pendente com esse e-mail, enviaremos um novo link de confirmação."
+    });
+    expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(sendEmailMock).not.toHaveBeenCalled();
+  });
+
 });
