@@ -38,7 +38,7 @@ export default function ResendCompanyVerificationPage() {
     <main className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div>
       <Link className="brand auth-brand" href="/" aria-label="Acessa Vagas — início">
-        <img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" />
+        <img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" />
       </Link>
       <section className="auth-card" aria-labelledby="resend-title">
         <Link className="back-link" href="/empresa/login">← Voltar ao acesso da empresa</Link>

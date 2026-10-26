@@ -13,7 +13,7 @@ import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 const schema = z.object({
   legalName: z.string().trim().min(2).max(200),
   tradeName: z.string().trim().max(200).optional(),
-  officialId: z.string().trim().min(8).max(30),
+  officialId: z.string().trim().max(30).optional(),
   contactEmail: z.string().trim().email().max(254),
   password: passwordSchema
 });
@@ -33,8 +33,8 @@ export async function POST(request: Request) {
 
   const input = parsed.data;
   const email = normalizeIdentifier(input.contactEmail);
-  const officialId = normalizeCnpj(input.officialId);
-  if (!isValidCnpj(officialId)) {
+  const officialId = input.officialId ? normalizeCnpj(input.officialId) : null;
+  if (officialId !== null && !isValidCnpj(officialId)) {
     return NextResponse.json({ message: "Informe um CNPJ válido. O cadastro inicial aceita apenas empresas brasileiras." }, { status: 400 });
   }
 
@@ -99,7 +99,7 @@ export async function POST(request: Request) {
     await sendEmail({
       to: email,
       subject: "Confirme o e-mail corporativo — Acessa Vagas",
-      text: `Para confirmar o e-mail corporativo, acesse este link em até 24 horas e use-o apenas uma vez: ${baseUrl}/empresa/confirmar-email?token=${token}\n\nA confirmação do e-mail ativa a conta empresarial. O CNPJ é conferido apenas pelo número de dígitos, sem consulta à existência em fonte externa. Se você não solicitou este cadastro, ignore esta mensagem.`
+      text: `Para confirmar o e-mail corporativo, acesse este link em até 24 horas e use-o apenas uma vez: ${baseUrl}/empresa/confirmar-email?token=${token}\n\nA confirmação do e-mail ativa a conta empresarial. Se um CNPJ foi informado, o sistema verifica apenas o formato, sem consultar fonte externa. Se você não solicitou este cadastro, ignore esta mensagem.`
     });
   } catch {
     await prisma.auditEvent.create({

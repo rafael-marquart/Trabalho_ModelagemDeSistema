@@ -391,3 +391,256 @@ Os erros de unicidade e serialização registrados pelo PostgreSQL nos cenários
 Esta seção confirma a CI automatizada para o HEAD indicado, não declara a SPEC-001 formalmente concluída. Não foram executados nesta revisão: entrega/homologação com SMTP real, validação do proxy confiável real e de `X-Forwarded-For`, agendamento/monitoramento de retenção em produção, teste manual de navegador e comparação visual final, acessibilidade manual em navegadores/dispositivos, homologação externa ou pentest independente. O fluxo de recuperação de senha foi exercitado com SMTP local de captura.
 
 A última alteração de código/testes é o HEAD acima; esta revisão é documental e não altera a implementação. O CI disparado por este commit documental deverá ser verificado separadamente antes de ser citado como aprovado.
+
+## Atualização de estado — 26/10/2026 — revisão sem validação manual adicional
+
+### Estado de integração e interface
+
+- A PR #36 (`feat/initial-app-foundation` → `desenvolvimento-do-projeto`) foi integrada em 26/10/2026. Referências históricas anteriores neste relatório que a descrevem como aberta/Draft não representam mais o estado atual; foram preservadas como registro histórico.
+- A PR #37 (`feat/recruiter-dashboard-brand-polish` → `desenvolvimento-do-projeto`) continua aberta e em Draft. Seu escopo é o painel do recrutador, a apresentação dos botões da página da empresa e a substituição das referências de logo pelo PNG transparente original.
+- Para o HEAD da PR #37, `d2631728ed002a33f14429fbd552dced01354ed6`, as execuções de CI de push [40276230941 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40276230941) e de Pull Request [40276237293 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40276237293) terminaram com sucesso. Isso confirma a pipeline automatizada, não a validação manual da interface.
+- O responsável pelo projeto confirmou visualmente que o PNG original do logo passou a ser exibido corretamente. Também confirmou que a ação “Gerenciar recrutadores” ficou alinhada após o ajuste.
+- O painel do recrutador agora consulta vínculo ativo e convites pendentes da conta autenticada; a confirmação visual recebida mostra a empresa vinculada e estado vazio de convites. Não foi relatado erro visual nessa tela.
+
+### Pendências ainda não verificáveis sem interação no navegador
+
+- Fazer uma rodada final de teclado/foco, semântica e mensagens acessíveis, incluindo tema claro/escuro e tela estreita.
+- Conferir as telas restantes contra os protótipos aprovados e registrar divergências que pertençam à SPEC-001. Não criar campos nem alterar regras de negócio apenas para forçar semelhança visual.
+- A cobertura de testes de autorização continua sendo baseada em cenários de risco; não deve ser descrita como matriz exaustiva papel × rota.
+- SMTP real, URL HTTPS canônica, proxy confiável real e agendamento/monitoramento operacional de retenção permanecem fora do ambiente local de teste e não foram verificados. Não são declarados concluídos por CI verde.
+
+### Próxima ação de fechamento
+
+Executar a validação manual descrita em `docs/operacao/validacao-manual-spec-001.md`, registrar resultados reais e só então consolidar uma decisão formal sobre a conclusão da SPEC-001. A PR #37 permanece Draft; não houve merge dessa PR, deploy ou início da SPEC-002 nesta revisão.
+
+## Ajuste de cadastro empresarial — CNPJ opcional — 26/10/2026
+
+- O campo CNPJ no cadastro de empresa foi alterado para opcional: o rótulo passa a ser `CNPJ (opcional)` e o texto auxiliar explicativo foi removido.
+- A mudança não ficou restrita à interface: a API aceita ausência de CNPJ, a coluna `Company.officialId` passou a aceitar `NULL` e foi adicionada a migração `20261026070000_company_cnpj_optional`. A restrição de unicidade permanece para os CNPJs informados; PostgreSQL permite múltiplos valores `NULL` em uma coluna única.
+- Quando o CNPJ é informado, a validação anterior de formato/quantidade de dígitos continua aplicada. O sistema não consulta fontes externas para confirmar a existência do CNPJ.
+- Foi adicionado teste de rota para cadastro sem CNPJ. A validação automatizada do novo HEAD ainda precisa terminar antes de registrar o resultado como aprovado; não foi executada validação manual do formulário nesta atualização.
+
+## Atualização de verificação remota — 26/10/2026 — logo e CNPJ opcional
+
+- HEAD de implementação revisado: `4ef8fc7f8f268d8b1d3323a6279c86f0fea44fcc`. CI de push [40278155446 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40278155446) e CI da PR [40278151350 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40278151350). Ambas executaram validação do Prisma, migrações PostgreSQL, restrições de vínculo de recrutador, TypeScript, lint, testes unitários, build de produção e E2E de autenticação com PostgreSQL/SMTP de teste.
+- Cadastro de candidato e cadastro de empresa agora referenciam `/images/logo-acessa-vagas.png`, em vez do SVG anterior. As páginas inicial, empresa, recrutador e o layout compartilhado de autenticação também usam o PNG. A validação automatizada passou; a aparência em todos os tamanhos e temas ainda depende de conferência manual.
+- CNPJ empresarial: schema Prisma usa `Company.officialId String? @unique`; a migração remove `NOT NULL`; a API converte campo ausente/vazio para `NULL` e mantém validação de formato se informado. Foram adicionados testes para campo vazio e propriedade omitida. CI verde valida a suíte que inclui esses testes.
+- Roteiro manual atualizado para usar a branch `feat/recruiter-dashboard-brand-polish` e verificar o logo nos cadastros e o CNPJ opcional.
+- Permanecem pendentes: inspeção visual final no navegador; teclado/foco, mensagens acessíveis, contraste e responsividade manual; conferir divergências contra protótipos aprovados; SMTP real, URL HTTPS canônica, proxy confiável real e operação programada de retenção, que não são demonstrados pelo CI local.
+- Esta atualização não declara a SPEC-001 formalmente concluída, não integra a PR #37 e não inicia a SPEC-002.
+
+
+## Revisão complementar de recuperação de senha e convites — 26/10/2026
+
+### Evidências de testes revisadas
+
+- Recuperação de senha: a suíte de rota cobre token de uso único armazenado por hash, identificador inexistente, resposta pública genérica, falha de e-mail, limite por conta/IP, cooldown integral, entrada malformada e bloqueio de origem cruzada. O reset cobre sessão invalidada, auditoria transacional, token usado/expirado, conta inativa, concorrência, JSON inválido e origem cruzada.
+- Convites de recrutador: a suíte cobre criação e reenvio, token de uso único, placeholders neutros, falha de entrega, isolamento de empresa, empresa inativa, cancelamento/expiração, aceitação/recusa, ativação de primeiro acesso, conta destinatária incorreta, concorrência serializável, restrição de vínculo único e auditoria.
+- Revisão estática das rotas correspondentes não revelou, nesta rodada, uma falha funcional confirmada que justificasse alterar o comportamento aprovado sem evidência adicional. Isso não equivale a auditoria independente nem a teste manual de todas as combinações.
+- CI no HEAD `9d255a33efdf6b151c6a21dc8b961b65e138b736`: push [40279165511 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40279165511) e PR [40279169688 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40279169688). Todas as etapas de validação, build e E2E concluíram com sucesso.
+
+### Achado residual a manter explícito
+
+- A implementação de convites usa uma resposta HTTP 202 e texto genérico para os casos de convite elegível e neutro, mas a listagem autenticada da empresa mostra o estado do registro criado e os fluxos posteriores podem produzir resultados distintos. Isso é necessário em parte para o funcionamento do painel; não se deve afirmar que há proteção absoluta contra inferência de elegibilidade de e-mail. Não ampliei esse escopo nem alterei respostas sem decisão de produto, pois poderia mudar o fluxo de convite já testado manualmente.
+
+### Estado desta rodada
+
+- Revisão estática de rotas de recuperação, reset, confirmação de e-mail, reenvio de confirmação, convite, cancelamento, vínculo e resposta ao convite concluída.
+- Revisão dos nomes e cenários cobertos nas suítes de recuperação/reset e convites concluída.
+- Restam as verificações que exigem o navegador e o ambiente operacional real: inspeção visual/acessibilidade/responsividade; entrega real de SMTP e URL canônica; configuração de proxy confiável; e operação programada de retenção. A SPEC-001 permanece sem declaração formal de encerramento, a PR #37 permanece Draft e não foi feito merge/deploy nem iniciada SPEC-002.
+
+## Conferência de continuidade — 26/10/2026 — HEAD remoto atualizado
+
+### Estado remoto e CI
+
+- PR #37 consultada diretamente no GitHub: continua aberta, em Draft, sem merge, com destino `desenvolvimento-do-projeto`.
+- HEAD remoto consultado: `66ec102c385de7c2bbf512cb49e957626bcf7c1a`. Esse SHA difere dos HEADs registrados em verificações anteriores; as evidências antigas não foram tratadas como prova do estado atual.
+- Execução de CI associada ao HEAD consultado: [40280153823 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40280153823). O job `validate` concluiu com sucesso: schema Prisma, geração do cliente, migrações PostgreSQL, restrição de vínculo ativo e concorrência, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP de teste.
+- A execução usa SMTP de teste e não comprova entrega real de e-mails, configuração de produção, inspeção visual manual ou acessibilidade validada por pessoa.
+
+### Revisão documental cruzada — pontos confirmados
+
+- `docs/Specs.md` mantém desmarcados os critérios de entrada/login, opções de cadastro e mensagens sem exposição indevida; não os marquei como concluídos apenas com base no CI.
+- O Definition of Done da SPEC-001 continua parcial: rastreabilidade integral e localização formal dos layouts em `docs/layout/` seguem sem confirmação. Os protótipos aprovados estão em `docs/Identidade Visual/`, conforme a decisão documental existente.
+- `docs/operacao/validacao-manual-spec-001.md` ainda apresenta a lista de verificação manual sem itens concluídos. A inspeção do navegador, teclado/foco, responsividade, temas e comparação com protótipos permanece pendente de evidência humana.
+- `docs/OPEN.md` mantém OPEN-001 a OPEN-006 como resolvidas e documenta a limitação operacional da rotina de retenção; não foi encontrada justificativa nesta rodada para reabrir essas decisões nem para alterar comportamento aprovado.
+- O relatório continha evidências de CI de HEADs anteriores. Esta seção registra separadamente o HEAD atual, sem substituir nem reescrever o histórico.
+
+### Resultado e próxima ação
+
+- Não foi confirmada nesta conferência documental uma inconsistência que justificasse mudar requisitos ou comportamento de produto.
+- A SPEC-001 não está pronta para encerramento formal: faltam validação manual da interface, evidência operacional de SMTP/URL HTTPS/proxy/rotina de retenção e fechamento rastreável dos critérios ainda desmarcados.
+- A PR #37 permanece aberta em Draft. Nenhum merge, deploy ou trabalho de implementação da SPEC-002 foi iniciado nesta rodada.
+- Próximo passo: executar a lista manual em ambiente local e registrar resultados verificáveis; em paralelo, conferir a rastreabilidade de RF/RB/RNF/UC/modelo/driver/ADR sem marcar itens sem evidência.
+
+## Revisão remota adicional — rastreabilidade SPEC-001 — 26/10/2026
+
+### Rastreabilidade cruzada conferida
+
+A comparação entre a SPEC-001, `docs/mapa-specs.md` e os documentos de baseline confirmou que as referências principais existem e são coerentes para o escopo desta Spec:
+
+- RF-01, RF-02, RF-03, RF-17 e RF-40 constam em `docs/Requisitos/RF.md`.
+- RB-12, RB-21, RB-22, RB-27 e RB-46 constam em `docs/Requisitos/RB.md`.
+- RNF-07, RNF-08, RNF-09 e RNF-14 constam em `docs/Requisitos/RNF.md`.
+- UC-00 e UC-07 existem em `docs/Casos De Uso/`; UC-00 cobre autenticação, seleção de cadastro e perfil, e UC-07 inclui a administração dos recrutadores.
+- O modelo conceitual registra RECRUTADOR como perfil de USUARIO vinculado à EMPRESA, consistente com a decisão documentada.
+- DA-02 consta nos Drivers Arquiteturais e sua tabela de rastreabilidade associa RF-01/02/03/40, RNF-07/08, RB-12/21/22 e ADR-002/004.
+- ADR-002 e ADR-004 existem em `docs/ADRs/ADRs.md` e registram, respectivamente, autorização centralizada no backend e arquitetura em camadas.
+- A entrada SPEC-001 de `docs/mapa-specs.md` contém o mesmo conjunto principal de IDs. Essa conferência de existência e alinhamento não representa prova de que todas as combinações de requisitos estão exaustivamente cobertas por testes.
+
+### Critérios e evidências remanescentes
+
+- Em `docs/Specs.md`, seguem desmarcados os critérios de aceite para entrada/login, opções de cadastro e mensagens sem exposição indevida. Não foram marcados como concluídos sem evidência funcional e/ou manual apropriada.
+- O Definition of Done da SPEC-001 continua parcial quanto à localização formal dos layouts em `docs/layout/` e ao registro explícito de todas as verificações necessárias. Os protótipos existentes em `docs/Identidade Visual/` são a referência visual aprovada; a ausência de uma cópia em `docs/layout/` não foi tratada como autorização para duplicar ou reorganizar os artefatos.
+- O roteiro `docs/operacao/validacao-manual-spec-001.md` contém 36 verificações ainda não marcadas como executadas. São itens que exigem ambiente local, navegador e/ou interação humana e não podem ser inferidos de CI.
+- As lacunas operacionais permanecem: SMTP real, URL HTTPS canônica, configuração efetiva do proxy confiável e agendamento/monitoramento da rotina de retenção.
+- O achado residual de privacidade dos convites permanece documentado: mensagens genéricas não eliminam absolutamente toda inferência sobre elegibilidade de e-mail. Nenhuma alteração de comportamento foi feita.
+
+### CI do HEAD documental
+
+- HEAD: `b01f1a17ec2ffd7ab15f98fbc2edb2e3ae924de1`.
+- Execução [40280553459 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40280553459).
+- O job `validate` concluiu com sucesso: Prisma schema/client, migrações PostgreSQL, verificações da restrição de vínculo único incluindo concorrência, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP de teste.
+- Esse CI comprova apenas a pipeline automatizada configurada. Não substitui inspeção visual/acessibilidade manual, SMTP real, validação de infraestrutura, homologação externa ou pentest.
+
+### Conclusão da revisão remota
+
+A conferência remota adicional de rastreabilidade da SPEC-001 foi executada. Não surgiu evidência suficiente para alterar regra de negócio, reabrir decisão aprovada ou modificar comportamento. A SPEC-001 continua sem condições para encerramento formal porque há critérios de aceite desmarcados, roteiro manual pendente e verificações operacionais não comprovadas. A PR #37 continua aberta em Draft; não houve merge, deploy nem início da SPEC-002 nesta rodada.
+
+## Inspeção adicional — consistência das referências de logo — 26/10/2026
+
+A revisão estática das páginas ligadas à entrada, autenticação, confirmação de conta e gestão de recrutadores encontrou uma divergência entre as referências de imagem no código:
+
+- As páginas inicial, cadastro de candidato, cadastro de empresa, área da empresa, painel do recrutador, login de candidato/empresa e recuperação de senha usam `/images/logo-acessa-vagas.png`.
+- As páginas de login do recrutador, convite de recrutador, gestão de recrutadores da empresa, confirmação de e-mail corporativo e reenvio de confirmação ainda referenciam `/images/logo-acessa-vagas.svg`.
+
+O roteiro manual da SPEC-001 pede conferir o PNG corrigido nas telas de login, cadastro, recuperação, empresa e recrutador. Portanto, a uniformidade da referência do logo **não está confirmada no código**. Não alterei esses arquivos nesta rodada de inspeção: a correção deve manter o PNG aprovado como fonte de identidade visual, mas a aparência final, escala, recorte e comportamento nos temas claro/escuro ainda exigem verificação visual no navegador.
+
+Essa constatação é uma pendência de consistência visual/documental, não uma falha do CI nem evidência de defeito no fluxo de autenticação.
+
+
+## Inspeção adicional — guarda de rota do painel do recrutador — 26/10/2026
+
+A comparação estática do painel atual com sua implementação anterior identificou uma mudança de comportamento relevante:
+
+- A página `src/app/recrutador/page.tsx` deixou de ser um Server Component que chama `getCurrentUser()` e redireciona usuários sem sessão/perfil RECRUITER para `/recrutador/login`; agora é um Client Component que renderiza a estrutura do painel e busca os dados via `/api/recruiter/invitations`.
+- A rota de API valida a sessão e o perfil RECRUITER antes de consultar e devolver vínculos/convites. Nesta inspeção, não foi identificada exposição dos dados protegidos pela API a usuários não autorizados.
+- Ainda assim, a guarda de navegação da página foi removida: quem não está autenticado pode receber a estrutura visual do painel e uma mensagem de falha em vez de ser redirecionado ao login. Em caso de falha na requisição, os cartões também permanecem no estado visual de carregamento, embora a mensagem de erro seja exibida.
+- Não foi localizada uma suíte específica `route.test.ts` para a nova rota `/api/recruiter/invitations` na branch revisada. O CI geral passou, mas isso não comprova cobertura específica dos cenários de autorização e resposta dessa rota.
+
+Classificação: pendência de comportamento/robustez e cobertura de testes; não foi observada exposição confirmada de dados privados. Não alterei o código nesta rodada, pois o objetivo solicitado foi continuar a inspeção. Recomenda-se restaurar uma guarda de rota no servidor ou adotar um mecanismo equivalente de redirecionamento, tratar explicitamente o estado de falha da interface e adicionar testes para a API antes de considerar a revisão funcional completa.
+
+
+## Correções aplicadas após a inspeção estática — 26/10/2026
+
+Após a revisão dos achados, foram aplicadas correções de baixo risco na branch de trabalho:
+
+- Substituídas as referências restantes ao SVG pelo PNG aprovado em login de recrutador, gestão de recrutadores, tela de convite, confirmação de e-mail corporativo e reenvio de confirmação.
+- Restaurada a guarda de navegação do painel do recrutador no Server Component: a página consulta a sessão e redireciona usuários sem sessão ou sem perfil RECRUITER para `/recrutador/login`. A interface interativa foi separada em `recruiter-dashboard-client.tsx`.
+- Corrigido o estado de falha do painel para que, quando a API não responder corretamente, os cartões deixem de exibir carregamento indefinido e apresentem mensagem de falha.
+- Adicionada suíte `src/app/api/recruiter/invitations/route.test.ts` para verificar resposta com dados do recrutador autenticado e rejeição de usuários anônimos ou de outros perfis antes de consultar dados.
+
+CI do HEAD `f0c64b029addbdf064b3dc9469161a763d87a899`: execução [40281964106 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40281964106). O job `validate` concluiu com sucesso em schema/cliente Prisma, migrações PostgreSQL, restrições de vínculo ativo e concorrência, TypeScript, lint, testes unitários, build de produção e E2E de autenticação com PostgreSQL e SMTP de teste. A suíte nova `src/app/api/recruiter/invitations/route.test.ts` foi incluída na execução aprovada. Isso confirma o CI configurado, mas não comprova entrega real de SMTP nem validação manual da interface. Permanecem pendentes a inspeção visual em navegador, URL HTTPS canônica, configuração efetiva do proxy confiável e execução/monitoramento programado de retenção.
+
+
+## Atualização de validação — 26/10/2026 — continuidade final da SPEC-001
+
+### HEAD e CI consultados
+
+- Branch revisada: `feat/recruiter-dashboard-brand-polish`.
+- HEAD remoto consultado: `b879087e54d35012e8aafeb66c131bf089978fcd`.
+- CI associado ao HEAD: [40381007017 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40381007017).
+- PR #37 permanece aberta em Draft, sem merge e sem deploy. A SPEC-002 não foi iniciada.
+- O CI verde demonstra sucesso da pipeline automatizada configurada no repositório; não substitui as verificações manuais e operacionais listadas abaixo.
+
+### Conferências estáticas adicionais
+
+- A função `src/lib/auth/cnpj.ts` normaliza o identificador removendo caracteres não numéricos e aceita somente quando a entrada de formato contém exatamente 14 dígitos. O comentário e a implementação indicam expressamente que não são verificados dígitos verificadores nem consultada fonte externa.
+- A rota de cadastro de Empresa transforma campo CNPJ ausente ou vazio em `NULL`; os testes cobrem ambas as formas e também aceitação de 14 zeros, rejeição de identificadores curtos e restrições de origem cruzada. Isso está alinhado à regra aprovada para CNPJ opcional e validação somente de formato.
+- A migração `20261026070000_company_cnpj_optional` remove a restrição `NOT NULL` de `Company.officialId`. O responsável confirmou que o cadastro local sem CNPJ passou a funcionar após aplicar a migração. A saída posterior de `prisma migrate status` não foi anexada, portanto não registro verificação independente do estado final da migração.
+- A página do painel do recrutador executa `getCurrentUser()` no servidor e redireciona usuários sem sessão ou sem perfil RECRUITER. A API `GET /api/recruiter/invitations` também valida a sessão/perfil antes de consultar dados, filtra vínculo ativo e convites pendentes não expirados pelo ID do recrutador autenticado e seleciona somente os campos apresentados no painel.
+- A suíte da API do painel verifica a resposta do recrutador autenticado e a rejeição de usuários anônimos, CANDIDATE, COMPANY e ADMIN antes de consultas aos dados. A revisão estática não equivale a uma matriz exaustiva de todas as rotas protegidas.
+- As referências de logo nos arquivos alterados da PR foram ajustadas para `/images/logo-acessa-vagas.png`. A validação visual já relatada pelo responsável cobre o layout geral em 1280, 768 e 390 px, mas não comprova a comparação detalhada de todas as telas com protótipos, os dois temas ou a inspeção por leitor de tela.
+
+### Evidência manual relatada pelo responsável
+
+O roteiro `docs/operacao/validacao-manual-spec-001.md` registra a recuperação de senha de ponta a ponta, incluindo e-mail no Mailpit, redefinição, login com a nova senha e rejeição da senha antiga; cadastro de empresa sem CNPJ após migração local; responsividade geral em três larguras; navegação por teclado/foco; e negação de acesso anônimo à área de candidato sem exibição de dados privados. Esses resultados são relatos explícitos da sessão, não resultados reproduzidos independentemente nesta revisão remota.
+
+### Pendências para encerramento formal
+
+- Continuam sem evidência suficiente os critérios manuais de comparação visual de todas as telas, tema claro/escuro, contraste, mensagens acessíveis e teste com leitor de tela.
+- O roteiro ainda contém cenários não confirmados de cadastro/login de candidato e empresa, confirmação de e-mail, casos completos de convite/reenvio/cancelamento/aceite/recusa e isolamento entre empresas.
+- A tentativa anônima na área de candidato não demonstra, por si só, a autorização de todas as APIs. A cobertura foi ampliada para a API do painel do recrutador, mas não se afirma cobertura exaustiva de todas as rotas.
+- Não há evidência de entrega real de SMTP em homologação/produção, URL HTTPS canônica, configuração efetiva de proxy confiável, nem agendamento e monitoramento da retenção em produção.
+- O risco residual de inferência sobre elegibilidade de e-mails em convites permanece documentado; mensagens genéricas não garantem proteção absoluta contra enumeração.
+- A SPEC-001 não deve ser declarada formalmente concluída até que os critérios pendentes recebam evidência, sejam explicitamente aceitos como pendência operacional/de lançamento, ou tenham uma decisão documentada do responsável. A PR permanece Draft.
+
+
+
+## Auditoria adicional de autenticação e convites — 26/10/2026
+
+### CI verificado por etapas
+
+O workflow associado ao HEAD de código `b879087e54d35012e8aafeb66c131bf089978fcd` é a execução [40381007017 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40381007017). A consulta aos passos confirma sucesso em: instalação de dependências; validação do schema Prisma e geração do cliente; migrações em PostgreSQL; verificação da restrição de vínculo ativo de recrutador e de concorrência; TypeScript; lint; testes unitários; build de produção; e E2E de autenticação com PostgreSQL e SMTP de teste. A execução documental posterior `27f7d762fe2ad0a95407594b58c82d2b8fd2adb4` não apresentou workflow associado na consulta realizada, por isso não é descrita como CI aprovado.
+
+### Sessão e autenticação — revisão estática adicional
+
+- `src/lib/auth/session.ts` armazena o hash do token de sessão, configura cookie `HttpOnly`, `SameSite=Lax`, `Secure` em produção, e aplica expiração por inatividade de 60 minutos e expiração absoluta de até 30 dias para sessão lembrada. A leitura da sessão rejeita usuário inativo, conta temporariamente bloqueada e sessão expirada; a atualização condicional evita renovar uma sessão revogada por concorrência.
+- A criação da sessão e o evento de auditoria de login bem-sucedido estão na mesma transação; a sessão não é criada se a auditoria falhar. A verificação de `passwordChangedAt` sob bloqueio evita criar sessão a partir de credenciais verificadas antes de uma redefinição concorrente.
+- `src/app/api/auth/login/route.ts` serializa tentativas por IP e por conta. Mantém o bloqueio de conta após 10 falhas consecutivas por 15 minutos e acrescenta limiares graduais por IP em janela de 15 minutos (30, 50, 80 e 120 falhas, com cooldowns de 1 minuto, 5 minutos, 15 minutos e 1 hora, respectivamente). A implementação usa hashes para chaves de IP/identificador.
+- Limite operacional importante: a origem do IP é o cabeçalho `X-Forwarded-For`; o código documenta que o proxy de produção deve sobrescrever esse cabeçalho. A proteção por IP não deve ser considerada operacionalmente validada até que a topologia e a configuração do proxy confiável sejam verificadas no ambiente de implantação.
+
+### Cadastro empresarial — regra do CNPJ
+
+- `src/lib/auth/cnpj.ts` aceita exatamente 14 dígitos após normalização e não valida dígitos verificadores nem consulta fonte externa, conforme a decisão aprovada.
+- O teste de cadastro empresarial cobre CNPJ ausente/vazio, normalização do identificador informado, JSON malformado e rejeição de origem cruzada. A migração torna `Company.officialId` anulável; o responsável relatou que o cadastro sem CNPJ funcionou após aplicação local da migração.
+- A verificação independente de `prisma migrate status` após a migração não foi anexada. O CI mais recente aplicou as migrações em banco PostgreSQL efêmero com sucesso, mas isso não confirma o estado do banco local nem de produção.
+
+### Convites e autorização organizacional
+
+- A rota de listagem de convites empresariais filtra pela empresa associada ao usuário autenticado e retorna o snapshot de nome/e-mail fornecido no convite; convites pendentes vencidos são apresentados como expirados sem mutação no GET.
+- A rota de cancelamento exige usuário COMPANY, conta ativa e registro de convite pertencente à empresa autenticada; a atualização de estado e o evento de auditoria ocorrem na mesma transação. A suíte cobre tentativa de cancelamento de convite de outra empresa e rejeição de empresa inativa.
+- A resposta ao convite valida token de uso único por hash, destinatário, papel de recrutador, estado e expiração; no aceite, revalida a empresa e impede segundo vínculo ativo. A revisão estática não substitui execução manual de todos os estados de convite.
+- A API do painel do recrutador exige perfil RECRUITER antes de consultar vínculo e convites, filtra pelo usuário atual e seleciona apenas os campos necessários ao painel. A suíte específica verifica acesso anônimo e perfis diferentes.
+- O isolamento organizacional foi conferido nas rotas lidas e nos testes disponíveis, mas não se declara uma matriz exaustiva de todas as APIs da aplicação, nem teste de invasão.
+
+### Estado após esta rodada
+
+- Nenhuma falha adicional de código foi confirmada que justificasse alterar regras de negócio nesta execução.
+- Evidência automatizada do HEAD de código: aprovada no CI 40381007017.
+- Evidência manual já relatada: recuperação de senha ponta a ponta, CNPJ opcional após migração local, layout geral em 1280/768/390 px, teclado/foco básico e bloqueio de acesso anônimo à área de candidato.
+- Permanecem pendentes: comparação visual detalhada de todas as telas com os protótipos, tema claro/escuro e contraste, teste com leitor de tela, fluxos manuais de cadastro/confirmacão e convite ainda não relatados como concluídos, revisão de todas as APIs protegidas, SMTP real, URL HTTPS canônica, proxy confiável e execução/monitoramento de retenção em ambiente operacional.
+- A SPEC-001 continua sem encerramento formal. As pendências operacionais podem ser aceitas como condições de lançamento somente mediante decisão explícita e registro de responsável/ambiente; não foram convertidas silenciosamente em critérios concluídos.
+
+
+## Decisão final de encerramento da SPEC-001 — 26/10/2026
+
+O responsável determinou explicitamente que não serão realizados novos testes manuais e autorizou concluir a SPEC-001 com base no trabalho já realizado e nas evidências automatizadas. Este registro substitui a recomendação anterior deste relatório de aguardar novos testes manuais como condição para o encerramento da implementação; não transforma cenários não executados em cenários aprovados.
+
+### Evidências consideradas
+
+- CI do HEAD de código: [40381007017 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40381007017). Todas as etapas do job `validate` passaram: instalação, Prisma, migrações PostgreSQL, restrições de vínculo ativo e concorrência, TypeScript, lint, testes unitários, build de produção e E2E de autenticação com PostgreSQL/SMTP de teste.
+- CI da revisão documental: [40381810541 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40381810541).
+- O E2E automatizado inclui login de candidato por e-mail/CPF, recuperação de senha de candidato e empresa, confirmação empresarial, convites/reenvio/aceite/recusa/cancelamento/expiração, concorrência e isolamento entre empresas, logout e bloqueio de conta após falhas consecutivas.
+- A suíte de cadastro empresarial cobre CNPJ vazio/omitido; o CI aplica a migração de CNPJ opcional em PostgreSQL efêmero. O responsável também relatou validação local prévia do cadastro sem CNPJ.
+
+### Estado final e limitações explícitas
+
+- **Estado da SPEC-001:** implementada/encerrada no escopo desta entrega, por decisão explícita do responsável de dispensar novos testes manuais e aceitar a evidência automatizada disponível.
+- **Não afirmar como executado:** comparação manual de todas as telas com protótipos, inspeção completa de tema/contraste, leitor de tela ou revisão exaustiva de todas as APIs protegidas.
+- **Pendências operacionais para antes do lançamento em produção:** validar/configurar SMTP real e URL HTTPS canônica; confirmar que o proxy confiável sobrescreve `X-Forwarded-For`; agendar e monitorar as rotinas de retenção; executar os controles de segurança operacional aplicáveis ao ambiente. A CI com SMTP de teste não comprova entrega real de e-mail.
+- **Risco residual:** mensagens genéricas de convite reduzem, mas não eliminam completamente, inferências sobre elegibilidade de e-mails. A revisão não equivale a pentest independente.
+- **Controle de entrega:** a PR #37 permanece aberta em Draft. Nenhum merge ou deploy foi realizado ou autorizado por este registro.
+
+O encerramento da implementação não representa certificação de prontidão de produção. As limitações acima permanecem visíveis para a decisão de lançamento e não bloqueiam o encerramento documental da SPEC-001 conforme a decisão do responsável.
+
+## Revisão final e estado efetivo da PR — 26/10/2026
+
+Esta seção é a referência mais recente para o estado da entrega e prevalece sobre registros históricos anteriores que mencionem a PR #37 como Draft ou a SPEC-001 como aguardando testes manuais.
+
+- **SPEC-001:** encerrada no escopo de implementação, conforme decisão explícita do responsável de não executar novos testes manuais. Cenários não executados continuam classificados como não verificados; a decisão não equivale a aprovação de acessibilidade completa, pentest ou homologação de produção.
+- **PR #37:** aberta, **Ready for review** (não Draft), destino `desenvolvimento-do-projeto`, branch `feat/recruiter-dashboard-brand-polish`. Não foi mergeada e não houve deploy.
+- **HEAD revisado:** `99c04a2c052f2805664a9fb55bd91ab939711a88`.
+- **CI do HEAD documental final antes desta atualização:** [40382747411 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40382747411). Todas as etapas do job `validate` passaram, incluindo Prisma/migrações PostgreSQL, restrições de integridade e concorrência, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP de teste. Como esta seção gera um novo commit documental, a CI correspondente a esse novo commit deve ser verificada após a gravação; a execução 40382747411 não deve ser apresentada como CI do commit que contém esta própria seção.
+- **Antes de produção:** ainda é necessário configurar/verificar SMTP real, `APP_BASE_URL` HTTPS, proxy confiável que sobrescreva `X-Forwarded-For`, e agendamento/monitoramento das rotinas de retenção. A CI não comprova esses requisitos operacionais.
+- **Próximo passo:** revisão da PR e decisão separada de merge pelo responsável. Esta atualização não autoriza merge nem deploy; a SPEC-002 não foi iniciada.

@@ -23,7 +23,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 |---|---|
 | ID | SPEC-001 |
 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | implementada; encerramento baseado em CI e testes automatizados aprovados, com dispensa explícita de novos testes manuais pelo responsável em 26/10/2026; limitações operacionais registradas no relatório de validação |
 | Estado do layout | protótipos de entrada/login, login de Candidato, login de Empresa, cadastro de Candidato, cadastro de Empresa, recuperação de senha, gestão de recrutadores e mensagens de autenticação aprovados visualmente em 25/10/2026; SVGs estáticos de referência |
 | Capacidade | Cadastro de usuário/empresa, autenticação, recuperação de senha, autorização por perfil e vínculo organizacional de recrutador |
 
@@ -43,7 +43,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 ### Incluído
 - Apresentar login por e-mail e senha e opções de criação de conta como Usuário ou Empresa.
 - Autenticar usuários existentes e permitir recuperação de senha conforme RF-02.
-- Permitir cadastro de conta de Empresa conforme RF-17, restrito inicialmente a empresas brasileiras que informem um CNPJ com exatamente 14 dígitos. A validação verifica apenas a quantidade de dígitos após remover pontuação de formatação; não verifica dígitos verificadores nem consulta a existência do CNPJ em fonte oficial ou serviço externo. Empresas estrangeiras ou sem CNPJ estão fora do escopo inicial. A conta permanece inativa até a confirmação do e-mail corporativo.
+- Permitir cadastro de conta de Empresa conforme RF-17. O CNPJ é opcional no cadastro inicial; quando informado, deve conter exatamente 14 dígitos após remover a pontuação de formatação. A validação não verifica dígitos verificadores nem consulta a existência do CNPJ em fonte oficial ou serviço externo. O cadastro continua restrito inicialmente a empresas brasileiras. A conta permanece inativa até a confirmação do e-mail corporativo.
 - Identificar o perfil autenticado e aplicar permissões correspondentes.
 - Permitir que Empresa autenticada cadastre ou associe usuários com perfil de Recrutador nas configurações.
 - Manter o vínculo do Recrutador com a Empresa responsável.
@@ -134,9 +134,9 @@ O comportamento deriva de UC-07 e RB-46. Quando o e-mail já pertencer a uma con
 1. Credenciais devem ser validadas antes de conceder acesso (RB-21).
 2. A senha deve conter no mínimo 10 caracteres, incluindo pelo menos uma letra maiúscula, uma letra minúscula e um número; símbolo não é obrigatório.
 3. Após 10 tentativas consecutivas incorretas de login, a conta é bloqueada temporariamente por 15 minutos; o desbloqueio ocorre automaticamente ao fim do prazo ou por recuperação de senha válida.
-4. O cadastro de Empresa exige razão social, identificador oficial e e-mail corporativo de contato; nome fantasia é opcional.
-5. A liberação das funcionalidades organizacionais depende da confirmação do e-mail corporativo; o CNPJ é aceito quando contém exatamente 14 dígitos, sem verificação de existência ou dígitos verificadores.
-6. Não permitir novo cadastro de Empresa com identificador oficial já associado a outra Empresa; orientar recuperação ou associação à conta existente.
+4. O cadastro de Empresa exige razão social e e-mail corporativo de contato; nome fantasia e CNPJ são opcionais.
+5. A liberação das funcionalidades organizacionais depende da confirmação do e-mail corporativo. Se informado, o CNPJ deve conter exatamente 14 dígitos; não há verificação de dígitos verificadores nem consulta de existência.
+6. Quando informado, o CNPJ não pode estar associado a outra Empresa; orientar recuperação ou associação à conta existente. A ausência de CNPJ não impede o cadastro.
 7. A Empresa cadastra e vincula Recrutadores nas próprias configurações, conforme RF-17 e RB-46.
 8. Quando o e-mail informado já pertencer a uma conta, a Empresa autenticada e autorizada pode solicitar o vínculo por convite enviado ao e-mail da conta; o titular deve dar aceite explícito antes da efetivação.
 9. O convite tem validade de 7 dias e link de uso único. A Empresa pode reenviar o convite enquanto pendente; o reenvio invalida o link anterior. A Empresa também pode cancelar o convite enquanto pendente. O titular pode recusá-lo; convites não respondidos expiram ao fim dos 7 dias. Os estados são `Pendente`, `Recusado`, `Expirado` e `Cancelado`.
@@ -242,7 +242,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 - **OPEN-001:** resolvida; candidatos podem iniciar recuperação por e-mail ou CPF, e contas de Empresa por e-mail. O sistema envia link ao e-mail cadastrado, válido por 30 minutos e de uso único; uma nova solicitação invalida o link anterior. As mensagens não confirmam se o identificador existe. Limite de 3 solicitações por conta e por IP em 15 minutos; ao atingir o limite, bloqueio por 15 minutos.
 - **OPEN-002:** resolvida; a sessão expira após 60 minutos sem atividade, inclusive com “manter conectado” habilitado. Essa opção permite recuperar a sessão sem novo login por até 30 dias, conforme condições de uso; não elimina a expiração por inatividade. Logout, troca/redefinição de senha e bloqueio/desativação invalidam as sessões.
 - **OPEN-003:** resolvida; senha com mínimo de 10 caracteres, pelo menos uma letra maiúscula, uma minúscula e um número, sem símbolo obrigatório; bloqueio temporário após 10 tentativas consecutivas incorretas por 15 minutos, com desbloqueio automático ao fim do prazo ou por recuperação de senha válida.
-- **OPEN-004:** resolvida; o cadastro inicial aceita apenas empresas brasileiras com CNPJ de exatamente 14 dígitos após remoção da pontuação de formatação. Não valida dígitos verificadores nem consulta a existência do CNPJ. Empresas estrangeiras ou sem CNPJ estão fora do escopo inicial. A conta empresarial é ativada após a confirmação do e-mail corporativo. O comportamento de cadastro duplicado e associação à conta existente permanece conforme a regra funcional documentada.
+- **OPEN-004:** decisão atualizada em 26/10/2026 conforme aprovação explícita: CNPJ é opcional no cadastro inicial. Quando informado, deve conter exatamente 14 dígitos após remoção da pontuação de formatação; não valida dígitos verificadores nem consulta a existência do CNPJ. O cadastro continua restrito inicialmente a empresas brasileiras. A conta empresarial é ativada após a confirmação do e-mail corporativo. CNPJ duplicado é recusado quando fornecido; sua ausência não impede o cadastro.
 - **OPEN-005:** resolvida; convites de recrutador têm uso único e prazo documentado, podem ser reenviados ou cancelados, e permitem aceite, recusa e expiração. Se o e-mail não tiver conta elegível, é criada uma conta pendente, ativada somente após definição de senha e aceite explícito do vínculo. A autorização da Empresa é revalidada no aceite; o fluxo não permite assumir ou administrar vínculos de outra Empresa. Os eventos relevantes são auditados conforme OPEN-006.
 - **OPEN-006:** eventos de auditoria e prazo de retenção.
 
@@ -259,6 +259,17 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 **Nota de verificação:** Definition of Done permanece parcial. A rastreabilidade completa e a localização formal dos layouts em `docs/layout/` não foram confirmadas nesta execução; os protótipos de referência existentes estão em `docs/Identidade Visual/`. O aceite manual de telas também permanece pendente.
 
 ---
+
+
+## 8. Registro de encerramento — 26/10/2026
+
+**Decisão do responsável:** encerrar a implementação da SPEC-001 sem realizar novos testes manuais. A dispensa de testes manuais foi solicitada explicitamente pelo responsável nesta data; ela não deve ser interpretada como evidência de que todos os cenários visuais, de acessibilidade ou operacionais foram executados.
+
+**Evidência de aceite técnico:** CI [40381007017](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40381007017) aprovada para o HEAD de código, incluindo migrações PostgreSQL, restrições de integridade e concorrência, TypeScript, lint, testes unitários, build de produção e E2E de autenticação com PostgreSQL e SMTP de teste. CI documental [40381810541](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40381810541) também aprovada. O E2E cobre os fluxos prioritários de autenticação/recuperação, confirmação empresarial, convites, isolamento entre empresas, logout e bloqueio por falhas.
+
+**Limites aceitos para encerramento da implementação, sem declarar validação operacional:** não foram executados novos testes manuais; SMTP real, URL HTTPS canônica, proxy confiável e agendamento/monitoramento de retenção continuam dependentes da configuração do ambiente de implantação. A CI usa infraestrutura de teste e não comprova esses itens em produção. A revisão estática e os testes disponíveis não equivalem a pentest nem a uma prova exaustiva de autorização de todas as APIs.
+
+**Resultado:** a SPEC-001 fica marcada como implementada/encerrada no escopo desta entrega com base na evidência automatizada e na decisão explícita de dispensar testes manuais. As limitações operacionais acima permanecem registradas como condições a tratar antes de disponibilizar o sistema em produção; não devem ser descritas como testes aprovados. Este registro não autoriza merge nem deploy.
 
 # SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato
 

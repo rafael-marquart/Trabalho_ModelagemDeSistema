@@ -34,7 +34,7 @@ export default function RecruiterLoginPage() {
   return <main className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div>
     
-    <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" /></Link>
+    <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" /></Link>
     <section className="auth-card" aria-labelledby="recruiter-login-title">
       <Link className="back-link" href="/">← Voltar ao início</Link>
       <p className="eyebrow">Área do recrutador</p><h1 id="recruiter-login-title">Acesse sua conta de recrutador.</h1>

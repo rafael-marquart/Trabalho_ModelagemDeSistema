@@ -168,7 +168,7 @@ export default function CompanyRecruitersPage() {
     <div className="company-dashboard">
       <header className="company-topbar">
         <Link className="company-brand" href="/empresa" aria-label="Acessa Vagas — área da empresa">
-          <img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" />
+          <img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" />
         </Link>
         <span className="company-topbar-label">Área da empresa</span>
         <div className="company-topbar-actions">

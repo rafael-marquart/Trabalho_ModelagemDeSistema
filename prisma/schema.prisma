@@ -52,7 +52,7 @@ model Company {
   id               String                @id @default(cuid())
   legalName        String
   tradeName        String?
-  officialId       String                @unique
+  officialId       String?               @unique
   contactEmail     String
   emailConfirmedAt DateTime?
   accountUserId    String                @unique
