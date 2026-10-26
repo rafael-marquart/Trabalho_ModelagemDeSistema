@@ -541,3 +541,37 @@ Após a revisão dos achados, foram aplicadas correções de baixo risco na bran
 - Adicionada suíte `src/app/api/recruiter/invitations/route.test.ts` para verificar resposta com dados do recrutador autenticado e rejeição de usuários anônimos ou de outros perfis antes de consultar dados.
 
 CI do HEAD `f0c64b029addbdf064b3dc9469161a763d87a899`: execução [40281964106 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40281964106). O job `validate` concluiu com sucesso em schema/cliente Prisma, migrações PostgreSQL, restrições de vínculo ativo e concorrência, TypeScript, lint, testes unitários, build de produção e E2E de autenticação com PostgreSQL e SMTP de teste. A suíte nova `src/app/api/recruiter/invitations/route.test.ts` foi incluída na execução aprovada. Isso confirma o CI configurado, mas não comprova entrega real de SMTP nem validação manual da interface. Permanecem pendentes a inspeção visual em navegador, URL HTTPS canônica, configuração efetiva do proxy confiável e execução/monitoramento programado de retenção.
+
+
+## Atualização de validação — 26/10/2026 — continuidade final da SPEC-001
+
+### HEAD e CI consultados
+
+- Branch revisada: `feat/recruiter-dashboard-brand-polish`.
+- HEAD remoto consultado: `b879087e54d35012e8aafeb66c131bf089978fcd`.
+- CI associado ao HEAD: [40381007017 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40381007017).
+- PR #37 permanece aberta em Draft, sem merge e sem deploy. A SPEC-002 não foi iniciada.
+- O CI verde demonstra sucesso da pipeline automatizada configurada no repositório; não substitui as verificações manuais e operacionais listadas abaixo.
+
+### Conferências estáticas adicionais
+
+- A função `src/lib/auth/cnpj.ts` normaliza o identificador removendo caracteres não numéricos e aceita somente quando a entrada de formato contém exatamente 14 dígitos. O comentário e a implementação indicam expressamente que não são verificados dígitos verificadores nem consultada fonte externa.
+- A rota de cadastro de Empresa transforma campo CNPJ ausente ou vazio em `NULL`; os testes cobrem ambas as formas e também aceitação de 14 zeros, rejeição de identificadores curtos e restrições de origem cruzada. Isso está alinhado à regra aprovada para CNPJ opcional e validação somente de formato.
+- A migração `20261026070000_company_cnpj_optional` remove a restrição `NOT NULL` de `Company.officialId`. O responsável confirmou que o cadastro local sem CNPJ passou a funcionar após aplicar a migração. A saída posterior de `prisma migrate status` não foi anexada, portanto não registro verificação independente do estado final da migração.
+- A página do painel do recrutador executa `getCurrentUser()` no servidor e redireciona usuários sem sessão ou sem perfil RECRUITER. A API `GET /api/recruiter/invitations` também valida a sessão/perfil antes de consultar dados, filtra vínculo ativo e convites pendentes não expirados pelo ID do recrutador autenticado e seleciona somente os campos apresentados no painel.
+- A suíte da API do painel verifica a resposta do recrutador autenticado e a rejeição de usuários anônimos, CANDIDATE, COMPANY e ADMIN antes de consultas aos dados. A revisão estática não equivale a uma matriz exaustiva de todas as rotas protegidas.
+- As referências de logo nos arquivos alterados da PR foram ajustadas para `/images/logo-acessa-vagas.png`. A validação visual já relatada pelo responsável cobre o layout geral em 1280, 768 e 390 px, mas não comprova a comparação detalhada de todas as telas com protótipos, os dois temas ou a inspeção por leitor de tela.
+
+### Evidência manual relatada pelo responsável
+
+O roteiro `docs/operacao/validacao-manual-spec-001.md` registra a recuperação de senha de ponta a ponta, incluindo e-mail no Mailpit, redefinição, login com a nova senha e rejeição da senha antiga; cadastro de empresa sem CNPJ após migração local; responsividade geral em três larguras; navegação por teclado/foco; e negação de acesso anônimo à área de candidato sem exibição de dados privados. Esses resultados são relatos explícitos da sessão, não resultados reproduzidos independentemente nesta revisão remota.
+
+### Pendências para encerramento formal
+
+- Continuam sem evidência suficiente os critérios manuais de comparação visual de todas as telas, tema claro/escuro, contraste, mensagens acessíveis e teste com leitor de tela.
+- O roteiro ainda contém cenários não confirmados de cadastro/login de candidato e empresa, confirmação de e-mail, casos completos de convite/reenvio/cancelamento/aceite/recusa e isolamento entre empresas.
+- A tentativa anônima na área de candidato não demonstra, por si só, a autorização de todas as APIs. A cobertura foi ampliada para a API do painel do recrutador, mas não se afirma cobertura exaustiva de todas as rotas.
+- Não há evidência de entrega real de SMTP em homologação/produção, URL HTTPS canônica, configuração efetiva de proxy confiável, nem agendamento e monitoramento da retenção em produção.
+- O risco residual de inferência sobre elegibilidade de e-mails em convites permanece documentado; mensagens genéricas não garantem proteção absoluta contra enumeração.
+- A SPEC-001 não deve ser declarada formalmente concluída até que os critérios pendentes recebam evidência, sejam explicitamente aceitos como pendência operacional/de lançamento, ou tenham uma decisão documentada do responsável. A PR permanece Draft.
+
