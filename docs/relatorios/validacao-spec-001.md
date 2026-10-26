@@ -317,3 +317,33 @@ A implementação de solicitações neutras de convite mantém a resposta públi
 As execuções confirmam apenas a automação configurada no repositório. Não foram realizadas nesta revisão: homologação com SMTP real, validação do proxy confiável real e de `X-Forwarded-For`, configuração/agendamento de retenção em produção, testes manuais de acessibilidade/dispositivos, homologação externa ou pentest independente. A SPEC-001 permanece em validação e não é declarada formalmente concluída.
 
 Esta atualização do relatório é documental. A execução de CI disparada pelo novo commit documental deve ser verificada separadamente; esta seção não antecipa seu resultado.
+
+## Fechamento funcional — resultado desta execução
+
+**Ambiente:** este executor não tem checkout local do repositório nem acesso de rede para cloná-lo. Portanto, os comandos abaixo foram confirmados pelo CI remoto; o Compose local foi documentado, mas não iniciado aqui.
+
+- `npx prisma migrate deploy` — **PASSOU no CI** (PostgreSQL 15).
+- `npm run db:generate` — **PASSOU no CI**.
+- `npm run typecheck` — **PASSOU no CI**.
+- `npm run lint` — **PASSOU no CI**.
+- `npm test` — **PASSOU no CI**.
+- `npm run build` — **PASSOU no CI**.
+- `node scripts/auth-e2e.mjs` — **PASSOU no CI**, com SMTP de captura.
+- `docker compose up -d postgres mailpit` e execução manual do app — **NÃO EXECUTADOS neste ambiente**.
+
+| Fluxo | Resultado verificado |
+|---|---|
+| Cadastro candidato e login por e-mail | **OK no E2E**; cadastro e autenticação por API cobertos. |
+| Login de candidato por CPF válido | **NÃO VERIFICADO** no E2E nem manualmente. |
+| Cadastro de empresa, confirmação por e-mail e login | **OK no E2E**; interface não testada manualmente. |
+| Recuperação de senha de candidato, uso único e login com nova senha | **OK no E2E**. |
+| Recuperação de senha de empresa | **NÃO VERIFICADO** nesta execução. |
+| Convite de recrutador novo, definir senha e aceitar | **OK no E2E**; interface não testada manualmente. |
+| Reenvio, cancelamento, recusa e encerramento de vínculo | **OK no E2E**. |
+| Logout e sessão expirada/invalidada | **OK no E2E** para revogação e bloqueio de acesso. |
+
+**Divergências visuais identificadas por comparação dos textos/estrutura dos SVGs com os componentes (sem screenshot/pixel diff):** (1) entrada atual escolhe o perfil e encaminha para páginas separadas, enquanto o SVG combina escolha e formulário; (2) cadastro de candidato não pede data de nascimento; (3) cadastro de empresa não tem campo separado para responsável e inclui nome fantasia; (4) gestão de recrutadores tem navegação reduzida em relação ao menu do protótipo; (5) recuperação implementa seleção candidato/empresa e redefinição na mesma rota, além do formulário representado no SVG. Não alteradas: corrigir os campos ausentes exigiria mudanças de modelo/escopo, e a comparação visual real requer abrir o app em navegador.
+
+**Arquivos alterados nesta etapa:** `compose.yaml`, `.env.example`, `README.md`, `docs/Specs.md` e este relatório. A configuração Mailpit captura e-mails localmente em `http://localhost:8025`; SMTP `127.0.0.1:1025`, `APP_BASE_URL=http://localhost:3000`.
+
+**Pendências que impedem declarar verificação ponta a ponta completa:** execução local real do Compose/app; teste manual das telas e dos fluxos; login por CPF e recuperação de senha de empresa ainda sem evidência confirmada. A SPEC-001 está funcionalmente validada por CI em grande parte, mas a confirmação final manual permanece pendente. A PR #36 continua Draft; sem merge, deploy ou início da SPEC-002.
