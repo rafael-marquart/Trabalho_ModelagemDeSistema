@@ -47,6 +47,23 @@ describe("list active recruiter links", () => {
     });
   });
 
+  const unauthorizedUsers = [
+    { label: "anonymous", user: null },
+    { label: "candidate", user: { id: "candidate-1", role: "CANDIDATE", isActive: true } },
+    { label: "recruiter", user: { id: "recruiter-1", role: "RECRUITER", isActive: true } },
+    { label: "admin", user: { id: "admin-1", role: "ADMIN", isActive: true } }
+  ];
+
+  it.each(unauthorizedUsers)("rejects $label access without querying recruiter links", async ({ user }) => {
+    getCurrentUserMock.mockResolvedValueOnce(user);
+
+    const response = await GET();
+
+    expect(response.status).toBe(401);
+    expect(prismaMock.company.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.recruiterLink.findMany).not.toHaveBeenCalled();
+  });
+
   it("rejects users who are not companies", async () => {
     getCurrentUserMock.mockResolvedValueOnce({ id: "candidate-1", role: "CANDIDATE", isActive: true });
 

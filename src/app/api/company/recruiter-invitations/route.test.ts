@@ -70,6 +70,38 @@ describe("send recruiter invitation", () => {
       body: JSON.stringify({ email, fullName: "Nome do Recrutador" })
     });
 
+  const unauthorizedUsers = [
+    { label: "anonymous", user: null },
+    { label: "candidate", user: { id: "candidate-1", role: "CANDIDATE", isActive: true } },
+    { label: "recruiter", user: { id: "recruiter-1", role: "RECRUITER", isActive: true } },
+    { label: "admin", user: { id: "admin-1", role: "ADMIN", isActive: true } }
+  ];
+
+  it.each(unauthorizedUsers)("rejects $label access to invitation listing without side effects", async ({ user }) => {
+    getCurrentUserMock.mockResolvedValueOnce(user);
+
+    const response = await GET();
+
+    expect(response.status).toBe(401);
+    expect(prismaMock.company.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.recruiterInvitation.findMany).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it.each(unauthorizedUsers)("rejects $label invitation creation without side effects", async ({ user }) => {
+    getCurrentUserMock.mockResolvedValueOnce(user);
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(401);
+    expect(prismaMock.company.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.user.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(sendEmailMock).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
   it("lists expired pending invitations as expired without mutating state during GET", async () => {
     prismaMock.recruiterInvitation.findMany.mockResolvedValueOnce([
       {

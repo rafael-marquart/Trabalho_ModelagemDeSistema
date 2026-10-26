@@ -112,6 +112,25 @@ describe("cancel recruiter invitation", () => {
     expect(prismaMock.company.findUnique).not.toHaveBeenCalled();
   });
 
+  const unauthorizedUsers = [
+    { label: "anonymous", user: null },
+    { label: "candidate", user: { id: "candidate-1", role: "CANDIDATE", isActive: true } },
+    { label: "recruiter", user: { id: "recruiter-1", role: "RECRUITER", isActive: true } },
+    { label: "admin", user: { id: "admin-1", role: "ADMIN", isActive: true } }
+  ];
+
+  it.each(unauthorizedUsers)("rejects $label cancellation without mutation or audit", async ({ user }) => {
+    getCurrentUserMock.mockResolvedValueOnce(user);
+
+    const response = await POST(makeRequest());
+
+    expect(response.status).toBe(401);
+    expect(prismaMock.company.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(tx.recruiterInvitation.updateMany).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
   it("rejects cross-origin requests before authentication", async () => {
     rejectOriginMock.mockReturnValueOnce(new Response("blocked", { status: 403 }));
 
