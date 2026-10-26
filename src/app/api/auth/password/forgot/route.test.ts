@@ -225,4 +225,20 @@ describe("password recovery request", () => {
     expect(sendEmailMock).not.toHaveBeenCalled();
   });
 
+  it("rejects cross-origin recovery before looking up an account or creating a token", async () => {
+    const request = new Request("https://acessavagas.example/api/auth/password/forgot", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: "https://attacker.example" },
+      body: JSON.stringify({ profile: "candidate", identifier: "person@example.com" })
+    });
+
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(403);
+    expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(tx.passwordResetToken.create).not.toHaveBeenCalled();
+    expect(sendEmailMock).not.toHaveBeenCalled();
+  });
+
 });
