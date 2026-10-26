@@ -306,6 +306,22 @@ describe("recruiter invitation response", () => {
     await expect(POST(makeRequest())).rejects.toThrow("audit database unavailable");
   });
 
+  it("rejects a neutral placeholder request without looking up or mutating an account", async () => {
+    prismaMock.recruiterInvitation.findUnique.mockResolvedValueOnce({
+      ...invitation,
+      recipientUserId: null
+    });
+
+    const response = await POST(makeRequest());
+
+    expect(response.status).toBe(400);
+    expect(prismaMock.user.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(tx.recruiterInvitation.updateMany).not.toHaveBeenCalled();
+    expect(tx.recruiterLink.create).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
   it("rejects a cross-origin request before authentication", async () => {
     rejectOriginMock.mockReturnValueOnce(new Response("blocked", { status: 403 }));
 
