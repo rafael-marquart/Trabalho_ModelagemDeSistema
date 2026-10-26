@@ -30,7 +30,7 @@ export default function RecruiterInvitationPage() {
         body: JSON.stringify({ token, action, ...(password ? { password } : {}) })
       });
       const result = await response.json();
-      if (response.status === 401) {
+      if (response.status === 401 && !(action === "accept" && password)) {
         const loginUrl = new URL("/recrutador/login", window.location.origin);
         loginUrl.searchParams.set("token", token);
         loginUrl.searchParams.set("action", action);
