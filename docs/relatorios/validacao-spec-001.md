@@ -196,3 +196,13 @@ A evidência existente cobre substancialmente os 14 critérios funcionais no CI 
 Validações externas — SMTP de homologação, proxy real, agendamento de retenção e revisão manual de acessibilidade — permanecem **não executadas**. Esta tabela não as converte em testes aprovados nem as inclui automaticamente como horas de código. A decisão de conclusão funcional deve considerar os critérios obrigatórios, evidência disponível e qualquer risco concreto encontrado nesta rodada.
 
 **Meta de esforço vigente:** 4–8 horas técnicas para a rodada de fechamento. Não reiniciar a revisão completa sem falha concreta ou novo requisito.
+
+## Atualização de evidências — HEAD `8073d24543df803f96ebdc68b2f66778d5127115` — 26/10/2026
+
+- CI de push: [40252366637 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40252366637).
+- CI do PR: [40252371339 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40252371339).
+- A execução do PR confirmou sucesso em todas as etapas: validação e geração do Prisma Client, migrações PostgreSQL, restrição de vínculo ativo único, teste de concorrência, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL/SMTP de captura.
+- Cobertura de autorização foi revisada nos 13 arquivos de testes de rotas de API. Há verificações específicas de perfil inadequado, origem cruzada, empresa inativa/ausente, convite/vínculo pertencente a outra empresa, convite dirigido a outro recrutador, sessão/redefinição e falhas sem efeitos colaterais. A cobertura não é uma matriz exaustiva de cada combinação papel × rota; manter essa limitação explícita.
+- Adicionados testes específicos para encerramento de vínculo e cancelamento de convite quando a conta da empresa está inativa. Ambos esperam resposta 403 e confirmam ausência de transação, mutação e auditoria indevida.
+- A revisão de requisitos confirmou que RF-04 a RF-40 cobrem funcionalidades mais amplas do produto. Não as declarar implementadas pela SPEC-001 apenas porque a fundação de autenticação e autorização passou; manter a decisão de escopo vinculada aos critérios específicos da SPEC-001.
+- **Estado:** evidência automatizada atualizada e verde. As validações externas/manuais listadas acima continuam pendentes; a CI não as substitui. PR #36 continua aberta em Draft, sem merge, deploy ou início da SPEC-002.
