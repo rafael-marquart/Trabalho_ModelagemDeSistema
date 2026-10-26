@@ -31,11 +31,52 @@ A aplicação está sendo construída incrementalmente na raiz deste repositóri
 
 ### Executar localmente
 
-1. Instale Node.js 20.9+ e PostgreSQL 15+.
-2. Execute `npm install`.
-3. Copie `.env.example` para `.env` e configure `DATABASE_URL`.
-4. Execute `npm run db:generate` e `npm run db:migrate`.
-5. Execute `npm run dev` e abra http://localhost:3000.
+**Pré-requisitos:** Docker com Docker Compose, Node.js 20.9+ e npm.
+
+1. Clone o repositório e instale as dependências:
+   ```bash
+   npm install
+   ```
+2. Inicie o PostgreSQL e o Mailpit (captura local de e-mails):
+   ```bash
+   docker compose up -d postgres mailpit
+   docker compose ps
+   ```
+3. Copie o arquivo de exemplo e mantenha os valores locais padrão:
+   ```bash
+   cp .env.example .env
+   ```
+   No Windows PowerShell, use `Copy-Item .env.example .env`.
+4. Gere o Prisma Client e aplique as migrações versionadas:
+   ```bash
+   npm run db:generate
+   npx prisma migrate deploy
+   ```
+5. Inicie a aplicação em outro terminal:
+   ```bash
+   npm run dev
+   ```
+6. Abra a aplicação em http://localhost:3000 e a caixa de entrada de e-mails em http://localhost:8025.
+
+#### E-mail de desenvolvimento (Mailpit)
+
+O serviço Mailpit captura mensagens SMTP e **não envia e-mails para destinatários externos**. Use os seguintes valores no `.env` quando a aplicação Next.js estiver rodando diretamente na máquina host:
+
+| Variável | Valor local |
+|---|---|
+| `SMTP_HOST` | `127.0.0.1` |
+| `SMTP_PORT` | `1025` |
+| `SMTP_SECURE` | `false` |
+| `SMTP_USER` | vazio |
+| `SMTP_PASSWORD` | vazio |
+| `SMTP_FROM` | `Acessa Vagas <nao-responda@acessavagas.local>` |
+| `APP_BASE_URL` | `http://localhost:3000` |
+
+- A interface web do Mailpit fica em **http://localhost:8025**. Abra-a depois de solicitar confirmação de empresa, recuperação de senha ou convite de recrutador; os links de teste estarão nas mensagens capturadas.
+- A porta SMTP local é `1025`; a interface web é `8025`. Não use `localhost` como `SMTP_HOST` se a aplicação for movida para outro container: nesse caso, use o nome do serviço `mailpit` na rede Docker.
+- O banco local usa a porta `5432`, banco `acessa_vagas`, usuário/senha `postgres`. Esses valores são apenas para desenvolvimento local sem dados reais.
+- Para parar os serviços: `docker compose down`. Para apagar também o banco de desenvolvimento: `docker compose down -v` (isso exclui permanentemente os dados locais).
+- O script `node scripts/auth-e2e.mjs` inicia seu próprio servidor SMTP de captura para E2E e usa `AUTH_E2E_PORT`/`AUTH_E2E_SMTP_PORT`; não depende do Mailpit nem envia mensagens externas.
 
 ### Estado da implementação
 
