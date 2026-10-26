@@ -343,3 +343,29 @@ Esta atualização do relatório é documental. A execução de CI disparada pel
 **Divergências visuais** (comparação de textos/estrutura, sem screenshot): (1) entrada atual escolhe perfil e encaminha para páginas separadas, enquanto o SVG combina escolha e formulário; (2) cadastro de candidato não pede data de nascimento; (3) cadastro de empresa não tem campo separado para responsável e inclui nome fantasia; (4) menu de recrutadores é reduzido; (5) recuperação reúne seleção de perfil e redefinição além do formulário no SVG. Não alteradas: campos ausentes exigem mudanças de modelo/escopo; comparação pixel a pixel exige navegador.
 **Arquivos alterados:** `compose.yaml`, `.env.example`, `README.md`, `docs/Specs.md` e este relatório. Mailpit: `http://localhost:8025`; SMTP `127.0.0.1:1025`; `APP_BASE_URL=http://localhost:3000`.
 **Pendência restante:** iniciar Compose/app localmente e testar manualmente as telas, links no Mailpit e diferenças visuais. Login por CPF e recuperação de senha de empresa agora passaram no E2E automatizado. A SPEC-001 tem validação automatizada substancial, mas a interface ainda não foi verificada manualmente. PR #36 continua Draft; sem merge, deploy ou início da SPEC-002.
+
+## Confirmação final de CI e estado da branch — 26/10/2026
+
+**HEAD atual da branch/PR:** `0599c42c09a3e13fc1e85f536e8661d7ca911b2c` — `docs: vincular roteiro manual da SPEC-001 no README` (documentação).  
+**Último HEAD com código/testes:** `2c9fce50275c5531df0587e14f5f58da050f6271` — `test: cover CPF login and company password recovery`. O HEAD `8073d24543df803f96ebdc68b2f66778d5127115` e o commit documental `b74ac9b2e512b33c64c6fff3391998cf3ef19f42` são evidências históricas válidas, mas não são os HEADs mais recentes da branch.
+
+### Pipelines confirmados para o HEAD de código/testes
+
+- Push [40261466174 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40261466174), SHA `2c9fce50275c5531df0587e14f5f58da050f6271`.
+- Pull Request [40261472178 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40261472178), mesmo SHA.
+- Os jobs `validate` terminaram sem etapas falhas: Prisma, migrações PostgreSQL, restrição de vínculo ativo, teste SQL de concorrência, TypeScript, lint, testes unitários, build de produção e E2E. O log registra 27 arquivos de teste aprovados, lint com 14 avisos e zero erros, e a mensagem final de sucesso do E2E.
+
+### Pipelines confirmados para o HEAD documental atual
+
+- Push [40262633947 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40262633947), SHA `0599c42c09a3e13fc1e85f536e8661d7ca911b2c`.
+- Pull Request [40262637997 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40262637997), mesmo SHA.
+- Em ambos, todas as etapas de `validate` concluíram com sucesso, incluindo os testes unitários, build e E2E com PostgreSQL e SMTP de captura. Os logs registram 27 arquivos e 222 testes unitários aprovados, lint com 14 avisos e zero erros, e E2E concluído com sucesso para login/recuperação de candidato, confirmação e recuperação de empresa, convites, isolamento multiempresa, concorrência, logout e bloqueio de conta.
+
+### Revisão limitada e pendências
+
+- A inspeção de `src/app/api/auth/register/candidate/route.test.ts` no HEAD atual confirmou que já existem testes explícitos para JSON malformado e rejeição de origem cruzada, verificando a ausência de hash de senha e escrita no banco. Não foi necessário criar commit adicional para essa lacuna.
+- A cobertura integrada de autorização e isolamento foi ampliada, mas não é uma matriz exaustiva de cada combinação papel × rota. Os critérios de SPEC-001 devem continuar separados das funcionalidades mais amplas de outras Specs.
+- Não foram executados nem comprovados: configuração de produção de `APP_BASE_URL`, entrega por SMTP real/homologação, comportamento atrás do proxy confiável real, agendamento/monitoramento das rotinas de retenção em produção, testes manuais de acessibilidade/navegadores/dispositivos, homologação externa ou pentest independente.
+- O CI confirma apenas os testes automatizados configurados no repositório. A validação manual do navegador e a conferência dos links capturados no Mailpit continuam pendentes conforme `docs/operacao/validacao-manual-spec-001.md`.
+
+**Estado:** os CIs do HEAD de código/testes e do HEAD documental atual estão verdes. A PR #36 permanece aberta e em Draft; sem merge, deploy ou início da SPEC-002. Esta atualização documental também precisará passar pelo seu próprio CI antes que o relatório seja considerado atualizado com evidência final.
