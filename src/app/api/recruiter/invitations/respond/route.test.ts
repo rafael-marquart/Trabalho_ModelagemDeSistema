@@ -139,6 +139,39 @@ describe("recruiter invitation response", () => {
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
 
+  const wrongRoleUsers = [
+    { label: "candidate", user: { id: "candidate-1", role: "CANDIDATE", isActive: true } },
+    { label: "company", user: { id: "company-user-1", role: "COMPANY", isActive: true } },
+    { label: "admin", user: { id: "admin-1", role: "ADMIN", isActive: true } }
+  ];
+
+  it.each(wrongRoleUsers)("rejects $label sessions before looking up the invitation or writing audit events", async ({ user }) => {
+    getCurrentUserMock.mockResolvedValueOnce(user);
+
+    const response = await POST(makeRequest());
+
+    expect(response.status).toBe(401);
+    expect(prismaMock.recruiterInvitation.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.user.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(tx.recruiterInvitation.updateMany).not.toHaveBeenCalled();
+    expect(tx.recruiterLink.create).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it("rejects acceptance from an inactive recruiter session without consuming the invitation", async () => {
+    getCurrentUserMock.mockResolvedValueOnce({ ...user, isActive: false });
+
+    const response = await POST(makeRequest());
+
+    expect(response.status).toBe(403);
+    expect(prismaMock.recruiterInvitation.findUnique).toHaveBeenCalledTimes(1);
+    expect(tx.recruiterInvitation.updateMany).not.toHaveBeenCalled();
+    expect(tx.recruiterLink.create).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
   it("does not create a link if the recruiter becomes linked before acceptance", async () => {
     tx.recruiterLink.findFirst.mockResolvedValueOnce({ id: "existing-link" });
 
