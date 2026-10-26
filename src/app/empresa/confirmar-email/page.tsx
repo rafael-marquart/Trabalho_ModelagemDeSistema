@@ -53,9 +53,9 @@ export default function ConfirmCompanyEmailPage() {
         <p className={status === "error" ? "form-error" : status === "success" ? "form-success" : "muted"} role={status === "error" ? "alert" : "status"} aria-live="polite">
           {message}
         </p>
-        {status !== "success" && status !== "error" && (
-          <button className="primary-button" type="button" onClick={confirmEmail} disabled={submitting || !token}>
-            {submitting ? "Confirmando…" : "Confirmar e-mail"}
+        {status !== "success" && token.length >= 20 && token.length <= 200 && (
+          <button className="primary-button" type="button" onClick={confirmEmail} disabled={submitting}>
+            {submitting ? "Confirmando…" : status === "error" ? "Tentar novamente" : "Confirmar e-mail"}
           </button>
         )}
         {status === "error" && <p className="auth-footer"><Link href="/empresa/reenviar-confirmacao">Solicitar novo link de confirmação</Link></p>}
