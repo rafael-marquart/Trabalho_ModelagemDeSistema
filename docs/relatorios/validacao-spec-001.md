@@ -206,3 +206,14 @@ Validações externas — SMTP de homologação, proxy real, agendamento de rete
 - Adicionados testes específicos para encerramento de vínculo e cancelamento de convite quando a conta da empresa está inativa. Ambos esperam resposta 403 e confirmam ausência de transação, mutação e auditoria indevida.
 - A revisão de requisitos confirmou que RF-04 a RF-40 cobrem funcionalidades mais amplas do produto. Não as declarar implementadas pela SPEC-001 apenas porque a fundação de autenticação e autorização passou; manter a decisão de escopo vinculada aos critérios específicos da SPEC-001.
 - **Estado:** evidência automatizada atualizada e verde. As validações externas/manuais listadas acima continuam pendentes; a CI não as substitui. PR #36 continua aberta em Draft, sem merge, deploy ou início da SPEC-002.
+
+
+## Atualização de evidências — HEAD `ed74230dfc674350a9ceddaad9088fd2a24e285f` — 26/10/2026
+
+- CI de push: [40253143930 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253143930).
+- CI da PR: [40253150227 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253150227).
+- A correção evita revelar se um recrutador já possui vínculo ativo com outra empresa: a tentativa de convite recebe mensagem genérica, sem divulgar o estado organizacional do destinatário.
+- A cobertura foi reforçada no teste da rota e no E2E para verificar a mensagem genérica, rejeição HTTP 409 e ausência de criação de convite/envio de e-mail na tentativa rejeitada.
+- As verificações automatizadas do workflow passaram para este HEAD: validação/geração Prisma, migrações PostgreSQL, integridade e concorrência de vínculo ativo, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP de captura.
+- A evidência confirma apenas os cenários automatizados exercitados. SMTP real, proxy de homologação/produção, agendamento/monitoramento de retenção, revisão manual completa de acessibilidade e pentest independente continuam não executados.
+- PR #36 permanece aberta em Draft. Sem merge, deploy ou início da SPEC-002.
