@@ -23,7 +23,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 |---|---|
 | ID | SPEC-001 |
 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | implementada; encerramento baseado em CI e testes automatizados aprovados, com dispensa explícita de novos testes manuais pelo responsável em 26/10/2026; limitações operacionais registradas no relatório de validação |
 | Estado do layout | protótipos de entrada/login, login de Candidato, login de Empresa, cadastro de Candidato, cadastro de Empresa, recuperação de senha, gestão de recrutadores e mensagens de autenticação aprovados visualmente em 25/10/2026; SVGs estáticos de referência |
 | Capacidade | Cadastro de usuário/empresa, autenticação, recuperação de senha, autorização por perfil e vínculo organizacional de recrutador |
 
@@ -259,6 +259,17 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 **Nota de verificação:** Definition of Done permanece parcial. A rastreabilidade completa e a localização formal dos layouts em `docs/layout/` não foram confirmadas nesta execução; os protótipos de referência existentes estão em `docs/Identidade Visual/`. O aceite manual de telas também permanece pendente.
 
 ---
+
+
+## 8. Registro de encerramento — 26/10/2026
+
+**Decisão do responsável:** encerrar a implementação da SPEC-001 sem realizar novos testes manuais. A dispensa de testes manuais foi solicitada explicitamente pelo responsável nesta data; ela não deve ser interpretada como evidência de que todos os cenários visuais, de acessibilidade ou operacionais foram executados.
+
+**Evidência de aceite técnico:** CI [40381007017](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40381007017) aprovada para o HEAD de código, incluindo migrações PostgreSQL, restrições de integridade e concorrência, TypeScript, lint, testes unitários, build de produção e E2E de autenticação com PostgreSQL e SMTP de teste. CI documental [40381810541](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40381810541) também aprovada. O E2E cobre os fluxos prioritários de autenticação/recuperação, confirmação empresarial, convites, isolamento entre empresas, logout e bloqueio por falhas.
+
+**Limites aceitos para encerramento da implementação, sem declarar validação operacional:** não foram executados novos testes manuais; SMTP real, URL HTTPS canônica, proxy confiável e agendamento/monitoramento de retenção continuam dependentes da configuração do ambiente de implantação. A CI usa infraestrutura de teste e não comprova esses itens em produção. A revisão estática e os testes disponíveis não equivalem a pentest nem a uma prova exaustiva de autorização de todas as APIs.
+
+**Resultado:** a SPEC-001 fica marcada como implementada/encerrada no escopo desta entrega com base na evidência automatizada e na decisão explícita de dispensar testes manuais. As limitações operacionais acima permanecem registradas como condições a tratar antes de disponibilizar o sistema em produção; não devem ser descritas como testes aprovados. Este registro não autoriza merge nem deploy.
 
 # SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato
 
