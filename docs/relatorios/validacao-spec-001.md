@@ -428,3 +428,23 @@ Executar a validação manual descrita em `docs/operacao/validacao-manual-spec-0
 - Roteiro manual atualizado para usar a branch `feat/recruiter-dashboard-brand-polish` e verificar o logo nos cadastros e o CNPJ opcional.
 - Permanecem pendentes: inspeção visual final no navegador; teclado/foco, mensagens acessíveis, contraste e responsividade manual; conferir divergências contra protótipos aprovados; SMTP real, URL HTTPS canônica, proxy confiável real e operação programada de retenção, que não são demonstrados pelo CI local.
 - Esta atualização não declara a SPEC-001 formalmente concluída, não integra a PR #37 e não inicia a SPEC-002.
+
+
+## Revisão complementar de recuperação de senha e convites — 26/10/2026
+
+### Evidências de testes revisadas
+
+- Recuperação de senha: a suíte de rota cobre token de uso único armazenado por hash, identificador inexistente, resposta pública genérica, falha de e-mail, limite por conta/IP, cooldown integral, entrada malformada e bloqueio de origem cruzada. O reset cobre sessão invalidada, auditoria transacional, token usado/expirado, conta inativa, concorrência, JSON inválido e origem cruzada.
+- Convites de recrutador: a suíte cobre criação e reenvio, token de uso único, placeholders neutros, falha de entrega, isolamento de empresa, empresa inativa, cancelamento/expiração, aceitação/recusa, ativação de primeiro acesso, conta destinatária incorreta, concorrência serializável, restrição de vínculo único e auditoria.
+- Revisão estática das rotas correspondentes não revelou, nesta rodada, uma falha funcional confirmada que justificasse alterar o comportamento aprovado sem evidência adicional. Isso não equivale a auditoria independente nem a teste manual de todas as combinações.
+- CI no HEAD `9d255a33efdf6b151c6a21dc8b961b65e138b736`: push [40279165511 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40279165511) e PR [40279169688 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40279169688). Todas as etapas de validação, build e E2E concluíram com sucesso.
+
+### Achado residual a manter explícito
+
+- A implementação de convites usa uma resposta HTTP 202 e texto genérico para os casos de convite elegível e neutro, mas a listagem autenticada da empresa mostra o estado do registro criado e os fluxos posteriores podem produzir resultados distintos. Isso é necessário em parte para o funcionamento do painel; não se deve afirmar que há proteção absoluta contra inferência de elegibilidade de e-mail. Não ampliei esse escopo nem alterei respostas sem decisão de produto, pois poderia mudar o fluxo de convite já testado manualmente.
+
+### Estado desta rodada
+
+- Revisão estática de rotas de recuperação, reset, confirmação de e-mail, reenvio de confirmação, convite, cancelamento, vínculo e resposta ao convite concluída.
+- Revisão dos nomes e cenários cobertos nas suítes de recuperação/reset e convites concluída.
+- Restam as verificações que exigem o navegador e o ambiente operacional real: inspeção visual/acessibilidade/responsividade; entrega real de SMTP e URL canônica; configuração de proxy confiável; e operação programada de retenção. A SPEC-001 permanece sem declaração formal de encerramento, a PR #37 permanece Draft e não foi feito merge/deploy nem iniciada SPEC-002.
