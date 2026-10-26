@@ -262,3 +262,13 @@ Validações externas — SMTP de homologação, proxy real, agendamento de rete
 - Os dois eventos de CI concluíram com sucesso para o HEAD citado. Isso confirma a pipeline automatizada configurada (Prisma/migrações e integridade PostgreSQL, TypeScript, lint, testes, build e E2E); não substitui homologação externa ou validações manuais.
 - Permanecem os limites já registrados: enumeração de e-mail não totalmente mitigada; autorização sem matriz exaustiva de cada papel × rota; SMTP real, proxy real, rotinas de retenção em produção, revisão manual de acessibilidade e pentest independente não executados.
 - PR #36 permanece aberta em Draft, sem merge, deploy ou início da SPEC-002.
+
+## Atualização de evidências — HEAD de código/testes `6962dee146ca15341a4d87d3bca5fcad9906eb4d` — 26/10/2026
+
+- CI da PR para o HEAD: [40256334808 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40256334808).
+- CI de push para o mesmo HEAD: [40256330678 — em execução na hora desta atualização](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40256330678); não registrar como aprovado até concluir.
+- Foram acrescentados testes de regressão de origem cruzada nos fluxos de recuperação de senha, redefinição de senha e confirmação de e-mail empresarial. Cada teste espera HTTP 403 e confirma que a rota não consulta nem consome token, não inicia transação e, no fluxo de recuperação, não envia e-mail.
+- A PR CI verde executou a pipeline configurada: Prisma/migrações PostgreSQL, integridade/concorrência, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL/SMTP de captura.
+- O teste de origem cruzada complementa os testes já existentes de JSON malformado, sessão/papel incorreto, concorrência e ausência de efeitos colaterais. Ele não substitui a validação real da configuração de origem no ambiente de produção.
+- Permanecem pendentes: mitigação completa de enumeração de e-mail (decisão de produto/arquitetura), matriz exaustiva papel × rota, SMTP real, configuração real de proxy, agendamento/monitoramento de retenção em produção, revisão manual de acessibilidade e pentest independente.
+- PR #36 permanece aberta em Draft, sem merge, deploy ou início da SPEC-002.
