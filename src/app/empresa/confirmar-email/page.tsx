@@ -5,35 +5,41 @@ import ThemeToggle from "@/components/theme-toggle";
 import { useEffect, useState } from "react";
 
 export default function ConfirmCompanyEmailPage() {
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
-  const [message, setMessage] = useState("Validando o link de confirmação…");
+  const [token, setToken] = useState("");
+  const [status, setStatus] = useState<"ready" | "loading" | "success" | "error">("ready");
+  const [message, setMessage] = useState("Selecione o botão abaixo para confirmar o e-mail corporativo.");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const token = new URLSearchParams(window.location.search).get("token");
-    if (!token) {
+    const value = new URLSearchParams(window.location.search).get("token") || "";
+    setToken(value);
+    if (value.length < 20 || value.length > 200) {
       setStatus("error");
       setMessage("O link é inválido ou expirou. Solicite uma nova confirmação.");
-      return;
     }
+  }, []);
 
-    let cancelled = false;
-    fetch("/api/auth/company/verify-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token })
-    }).then(async response => {
+  async function confirmEmail() {
+    if (submitting || status === "success" || token.length < 20 || token.length > 200) return;
+    setSubmitting(true);
+    setStatus("loading");
+    setMessage("Validando o link de confirmação…");
+    try {
+      const response = await fetch("/api/auth/company/verify-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token })
+      });
       const result = await response.json();
-      if (cancelled) return;
       setStatus(response.ok ? "success" : "error");
       setMessage(result.message || "Não foi possível confirmar o e-mail.");
-    }).catch(() => {
-      if (cancelled) return;
+    } catch {
       setStatus("error");
       setMessage("Não foi possível conectar ao serviço. Tente novamente.");
-    });
-
-    return () => { cancelled = true; };
-  }, []);
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <main className="auth-page">
@@ -44,9 +50,14 @@ export default function ConfirmCompanyEmailPage() {
       <section className="auth-card" aria-labelledby="confirm-title">
         <p className="eyebrow">Verificação da empresa</p>
         <h1 id="confirm-title">Confirmação de e-mail corporativo</h1>
-        <p className={status === "error" ? "form-error" : "muted"} role={status === "error" ? "alert" : "status"} aria-live="polite">
+        <p className={status === "error" ? "form-error" : status === "success" ? "form-success" : "muted"} role={status === "error" ? "alert" : "status"} aria-live="polite">
           {message}
         </p>
+        {status !== "success" && status !== "error" && (
+          <button className="primary-button" type="button" onClick={confirmEmail} disabled={submitting || !token}>
+            {submitting ? "Confirmando…" : "Confirmar e-mail"}
+          </button>
+        )}
         {status === "error" && <p className="auth-footer"><Link href="/empresa/reenviar-confirmacao">Solicitar novo link de confirmação</Link></p>}
         {status !== "loading" && <p className="auth-footer"><Link href="/empresa/login">Ir para o acesso da empresa</Link></p>}
       </section>
