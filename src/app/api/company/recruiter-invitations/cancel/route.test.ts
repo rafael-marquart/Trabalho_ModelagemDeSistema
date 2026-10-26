@@ -152,6 +152,21 @@ describe("cancel recruiter invitation", () => {
     expect(getCurrentUserMock).not.toHaveBeenCalled();
   });
 
+  it("rejects malformed JSON before opening a transaction", async () => {
+    const request = new Request("https://acessavagas.example/api/company/recruiter-invitations/cancel", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: "https://acessavagas.example" },
+      body: "{"
+    });
+
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(400);
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(tx.recruiterInvitation.updateMany).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
   it("rejects malformed invitation identifiers", async () => {
     const response = await POST(makeRequest(""));
 
