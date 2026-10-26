@@ -412,3 +412,10 @@ A última alteração de código/testes é o HEAD acima; esta revisão é docume
 ### Próxima ação de fechamento
 
 Executar a validação manual descrita em `docs/operacao/validacao-manual-spec-001.md`, registrar resultados reais e só então consolidar uma decisão formal sobre a conclusão da SPEC-001. A PR #37 permanece Draft; não houve merge dessa PR, deploy ou início da SPEC-002 nesta revisão.
+
+## Ajuste de cadastro empresarial — CNPJ opcional — 26/10/2026
+
+- O campo CNPJ no cadastro de empresa foi alterado para opcional: o rótulo passa a ser `CNPJ (opcional)` e o texto auxiliar explicativo foi removido.
+- A mudança não ficou restrita à interface: a API aceita ausência de CNPJ, a coluna `Company.officialId` passou a aceitar `NULL` e foi adicionada a migração `20261026070000_company_cnpj_optional`. A restrição de unicidade permanece para os CNPJs informados; PostgreSQL permite múltiplos valores `NULL` em uma coluna única.
+- Quando o CNPJ é informado, a validação anterior de formato/quantidade de dígitos continua aplicada. O sistema não consulta fontes externas para confirmar a existência do CNPJ.
+- Foi adicionado teste de rota para cadastro sem CNPJ. A validação automatizada do novo HEAD ainda precisa terminar antes de registrar o resultado como aprovado; não foi executada validação manual do formulário nesta atualização.
