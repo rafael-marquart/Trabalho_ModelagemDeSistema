@@ -124,3 +124,11 @@ O HEAD documental `7893af35f67239a517ac90ed90b66bfbcda02af8` teve CI de push e C
 A revisão por rota identifica verificações de papel, estado ativo, escopo empresarial e proteção de origem nos fluxos relevantes, mas não substitui a matriz E2E completa de todos os papéis em todas as rotas protegidas. Permanecem pendentes: essa matriz sistemática e regressões direcionadas onde faltar evidência; validação de SMTP real e falhas de provedor; verificação de `APP_BASE_URL` e `X-Forwarded-For` na topologia de proxy real; agendamento/monitoramento das duas rotinas de retenção; inspeção manual de teclado, foco, leitor de tela, contraste, zoom/reflow e temas claro/escuro; e sincronização editável com Figma (não bloqueante conforme o estado documentado). Não houve pentest independente.
 
 O PR #36 permanece aberto e em Draft. Não fazer merge, não publicar em produção, não retirar Draft e não iniciar a SPEC-002 antes de fechar as pendências bloqueantes e obter aprovação explícita do responsável pelo projeto.
+
+
+## Revisão adicional de cobertura — 26/10/2026
+
+- Os testes unitários atuais de `src/app/api/auth/register/candidate/route.test.ts` cobrem normalização, hash da senha, CPF inválido, auditoria, falha transacional e conflito de unicidade.
+- Na revisão do arquivo, não foram encontrados cenários explícitos para JSON malformado nem para requisição de origem cruzada no cadastro de candidato. A implementação chama `rejectCrossOriginRequest` e trata falha de parsing do JSON, mas esses dois comportamentos não têm teste dedicado nesse arquivo.
+- Esta é uma lacuna de cobertura identificada, não um defeito confirmado na implementação. A tentativa de adicionar os dois testes não foi aplicada; portanto, nenhum teste adicional deve ser considerado presente até que haja commit verificável.
+- Os CIs do HEAD documental anterior `776525635ed6c483ce23d14841c255106254f506` passaram: push [40247853756](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40247853756) e PR [40247856572](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40247856572). Esta nota é uma revisão documental posterior e ainda precisará de seu próprio CI se for gravada como novo commit.
