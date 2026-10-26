@@ -169,6 +169,17 @@ describe("getCurrentUser", () => {
     expect(prismaMock.session.updateMany).not.toHaveBeenCalled();
   });
 
+  it("invalidates a session when the account is temporarily locked", async () => {
+    prismaMock.session.findUnique.mockResolvedValueOnce({
+      ...validSession(),
+      user: { ...currentUser, lockedUntil: new Date(Date.now() + 15 * 60 * 1000) }
+    });
+
+    await expect(getCurrentUser()).resolves.toBeNull();
+    expect(prismaMock.session.deleteMany).toHaveBeenCalledWith({ where: { id: "session-1" } });
+    expect(prismaMock.session.updateMany).not.toHaveBeenCalled();
+  });
+
   it("does not refresh a session belonging to an inactive user", async () => {
     prismaMock.session.findUnique.mockResolvedValueOnce({
       ...validSession(),
