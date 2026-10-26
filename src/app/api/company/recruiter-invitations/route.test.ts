@@ -254,6 +254,9 @@ describe("send recruiter invitation", () => {
     expect(prismaMock.$transaction).toHaveBeenCalled();
     expect(sendEmailMock).not.toHaveBeenCalled();
     expect(tx.recruiterInvitation.create).toHaveBeenCalledWith({ data: expect.objectContaining({ recipientUserId: null, recipientEmail: "recruiter@example.com" }), select: { id: true } });
+    await expect(response.json()).resolves.toMatchObject({
+      message: "Se os dados corresponderem a um recrutador elegível, as instruções serão enviadas ao e-mail informado."
+    });
   });
 
   it("records a neutral placeholder when a recruiter is linked to another company", async () => {

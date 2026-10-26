@@ -922,6 +922,16 @@ async function main() {
       select: { id: true }
     });
     assert.equal(forbiddenSecondCompanyInvitation, null, "eligibility-neutral placeholder must not create an actionable cross-company invitation");
+
+    const secondCompanyInvitationsResponse = await fetch(`${BASE_URL}/api/company/recruiter-invitations`, {
+      headers: { cookie: secondCompanyCookie },
+      redirect: "manual"
+    });
+    const secondCompanyInvitationsBody = await expectStatus(secondCompanyInvitationsResponse, 200, "company B lists the neutral invitation request");
+    const neutralRequest = JSON.parse(secondCompanyInvitationsBody).invitations.find((item) => item.recipient.email === RECRUITER_EMAIL);
+    assert.equal(neutralRequest?.status, "PENDING", "the company-facing list must show a neutral pending row without linking the existing recruiter");
+    assert.equal(neutralRequest?.recipient.fullName, "Recrutador de Teste E2E", "the neutral row uses only the name submitted by the company");
+
     const forbiddenSecondCompanyInviteAuditCount = await prisma.auditEvent.count({
       where: { actorUserId: secondCompanyAccount.id, eventType: "RECRUITER_INVITATION_SENT" }
     });
