@@ -203,7 +203,7 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [ ] Cadastro oferece Usuário ou Empresa, sem cadastro independente de Recrutador.
 - [x] Credenciais válidas autenticam e encaminham conforme o perfil.
 - [x] Credenciais inválidas não autenticam.
-- [ ] Recuperação permite redefinição quando a solicitação é válida.
+- [x] Recuperação permite redefinição quando a solicitação é válida.
 - [x] Operações protegidas verificam autorização no backend.
 - [x] Sessão expirada ou invalidada não executa operações protegidas.
 - [x] Empresa autorizada consegue cadastrar/associar Recrutador por convite com aceite explícito.
@@ -215,7 +215,7 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [ ] Mensagens não expõem credenciais ou dados pessoais desnecessários.
 
 
-**Nota de verificação:** os itens marcados foram cobertos por testes automatizados e pelo CI verde do commit funcional `8cb2e981211c1124e2858c7f9c71ba0c06a07ae9` (Prisma/migrações, typecheck, lint, testes unitários, build e E2E). Os itens desmarcados não foram confirmados integralmente nesta execução; em particular, não foi realizado teste manual de interface nem o fluxo completo de recuperação de senha de Empresa.
+**Nota de verificação (26/10/2026):** os itens marcados foram cobertos por testes automatizados e pelo CI verde do HEAD `2c9fce50275c5531df0587e14f5f58da050f6271` ([execução 40261466174](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40261466174)). O E2E agora verifica explicitamente login de candidato com CPF formatado, recuperação de senha de candidato e empresa, redefinição, rejeição de reutilização do link e login com a nova senha. Os itens desmarcados continuam sem confirmação integral; as telas não foram testadas manualmente no navegador.
 
 ## 12. Casos de teste derivados
 
