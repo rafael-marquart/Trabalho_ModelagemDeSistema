@@ -51,7 +51,7 @@ export default function RecruiterInvitationPage() {
     <main className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div>
       <Link className="brand auth-brand" href="/">
-        <img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" />
+        <img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" />
       </Link>
       <section className="auth-card" aria-labelledby="invitation-title">
         <p className="eyebrow">Vínculo organizacional</p>
