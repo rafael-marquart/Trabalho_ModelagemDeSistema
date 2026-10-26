@@ -369,3 +369,25 @@ Esta atualização do relatório é documental. A execução de CI disparada pel
 - O CI confirma apenas os testes automatizados configurados no repositório. A validação manual do navegador e a conferência dos links capturados no Mailpit continuam pendentes conforme `docs/operacao/validacao-manual-spec-001.md`.
 
 **Estado:** os CIs do HEAD de código/testes e do HEAD documental atual estão verdes. A PR #36 permanece aberta e em Draft; sem merge, deploy ou início da SPEC-002. Esta atualização documental também precisará passar pelo seu próprio CI antes que o relatório seja considerado atualizado com evidência final.
+
+
+## Confirmação de CI para HEAD 197c6f4fdf26231ef2e96d16eca61f2d7873e62d — 26/10/2026
+
+**Branch:** `feat/initial-app-foundation`  
+**HEAD de código/testes confirmado:** `197c6f4fdf26231ef2e96d16eca61f2d7873e62d` — `Explain duplicate candidate registration fields`.  
+**PR #36:** aberta, em Draft, sem merge.
+
+### CI verificado para o mesmo SHA
+
+- **Push:** [40269472725 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40269472725), SHA `197c6f4fdf26231ef2e96d16eca61f2d7873e62d`.
+- **Pull Request:** [40269476486 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40269476486), SHA `197c6f4fdf26231ef2e96d16eca61f2d7873e62d`.
+
+Os dois workflows executaram o job `validate` e todas as etapas terminaram com sucesso: inicialização dos serviços PostgreSQL, checkout, instalação de dependências, validação/geração do Prisma, migrações PostgreSQL, verificação da restrição de vínculo ativo e do cenário de concorrência, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP local de captura. Os logs registram **27 arquivos e 222 testes unitários aprovados**, lint com **14 avisos e zero erros**, build concluído e a mensagem final de sucesso do E2E: `Auth E2E passed: candidate email/CPF login and recovery; company verification and password recovery; recruiter invitation/resend/accept/refuse/cancel; multi-company isolation and concurrency; logout; account lockout.`
+
+Os erros de unicidade e serialização registrados pelo PostgreSQL nos cenários concorrentes foram produzidos durante os testes de restrição/concorrência; os jobs terminaram com sucesso. Isso não equivale a validação de carga ou teste de intrusão independente.
+
+### Escopo e limitações
+
+Esta seção confirma a CI automatizada para o HEAD indicado, não declara a SPEC-001 formalmente concluída. Não foram executados nesta revisão: entrega/homologação com SMTP real, validação do proxy confiável real e de `X-Forwarded-For`, agendamento/monitoramento de retenção em produção, teste manual de navegador e comparação visual final, acessibilidade manual em navegadores/dispositivos, homologação externa ou pentest independente. O fluxo de recuperação de senha foi exercitado com SMTP local de captura.
+
+A última alteração de código/testes é o HEAD acima; esta revisão é documental e não altera a implementação. O CI disparado por este commit documental deverá ser verificado separadamente antes de ser citado como aprovado.
