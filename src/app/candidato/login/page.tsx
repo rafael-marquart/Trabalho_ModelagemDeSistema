@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AuthSplitLayout from "@/components/auth-split-layout";
@@ -11,7 +11,14 @@ export default function CandidateLoginPage() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("cadastro") === "sucesso") {
+      setNotice("Cadastro recebido. Se necessário, confirme seu e-mail e entre com suas credenciais.");
+    }
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -54,7 +61,8 @@ export default function CandidateLoginPage() {
           <label className="checkbox-label"><input type="checkbox" checked={rememberMe} onChange={event => setRememberMe(event.target.checked)} /> Manter conectado</label>
           <Link href="/recuperar-senha">Esqueci minha senha</Link>
         </div>
-        {error && <p className="form-error" role="alert">{error}</p>}
+        {notice && <p className="form-success" role="status" aria-live="polite">{notice}</p>}
+        {error && <p className="form-error" role="alert">{error}</p>
         <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar na plataforma  →"}</button>
       </form>
     </AuthSplitLayout>
