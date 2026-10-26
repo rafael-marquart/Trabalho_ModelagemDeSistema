@@ -157,3 +157,13 @@ O PR #36 permanece aberto e em Draft. Não fazer merge, não publicar em produç
 - **Validações externas/manuais pendentes:** SMTP real; `APP_BASE_URL` e `X-Forwarded-For` na topologia de proxy real; agendadores/monitoramento das rotinas de retenção; testes manuais de teclado, foco, leitor de tela, zoom/reflow e temas claro/escuro. Não houve pentest independente.
 - **Estimativa de calendário:** aproximadamente 1–3 dias úteis de trabalho focado se o ambiente de homologação, SMTP e configuração operacional estiverem acessíveis e as verificações manuais não encontrarem bloqueadores. Se dependências externas ou aprovações demorarem, o prazo total passa a depender delas. A estimativa não é garantia.
 - **Estado de controle:** PR #36 permanece aberta em Draft. Sem merge, deploy, remoção de Draft ou início da SPEC-002. Encerramento depende de evidência suficiente para os critérios de aceite e aprovação explícita do responsável.
+
+## Ajuste de plano: fechamento limitado a 4–8 horas — 26/10/2026
+
+O plano de fechamento foi reduzido ao esforço técnico combinado de **4–8 horas**, focando a conclusão funcional da SPEC-001. Não ampliar indefinidamente o escopo de validação.
+
+- No HEAD `5c53b4025dbd08224c5c2b5891dfa25abb950f5a`, CI de push [40251558528 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40251558528) e CI da PR [40251561375 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40251561375).
+- Plano: (1) mapear os 14 critérios de aceite às evidências já existentes; (2) fechar as lacunas essenciais de autorização por papel/tenant, concorrência e auditoria; (3) corrigir falhas concretas e executar CI; (4) registrar cada critério como comprovado, falhou ou dependente de validação externa; (5) apresentar decisão objetiva de conclusão funcional.
+- SMTP real, proxy real, rotinas de produção, acessibilidade manual e pentest permanecem explicitamente não executados até haver ambiente/acesso. Não afirmar aprovação dessas verificações, mas também não transformar dependências externas em trabalho técnico interno sem fim; só impedem a conclusão funcional quando estiverem vinculadas a critério obrigatório ou risco conhecido que exija bloqueio.
+- Estimativa de calendário anterior de 1–3 dias úteis substituída pelo objetivo de **4–8 horas técnicas**, conforme solicitação do responsável. Essa é uma meta de esforço, não garantia sobre tempo de espera de CI ou dependências externas.
+- PR #36 permanece aberta em Draft, sem merge/deploy/início da SPEC-002.
