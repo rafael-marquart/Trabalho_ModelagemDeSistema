@@ -294,7 +294,7 @@ export default function CompanyRecruitersPage() {
                     </tr>
                   ))}
 
-                  {invitations.map(invitation => (
+                  {invitations.filter(invitation => invitation.status !== "ACCEPTED").map(invitation => (
                     <tr key={"invitation-" + invitation.id}>
                       <td>
                         <strong>{invitation.recipient.fullName}</strong>
