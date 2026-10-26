@@ -58,6 +58,46 @@ describe("candidate registration", () => {
     });
   });
 
+  it("rejects malformed JSON before hashing or writing to the database", async () => {
+    const request = new Request("https://acessavagas.example/api/auth/register/candidate", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{"
+    });
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(400);
+    expect(hashPasswordMock).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(tx.user.create).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it("rejects a cross-origin request before hashing or writing to the database", async () => {
+    const request = new Request("https://acessavagas.example/api/auth/register/candidate", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        origin: "https://attacker.example"
+      },
+      body: JSON.stringify({
+        fullName: "Pessoa Candidata",
+        email: "pessoa@example.com",
+        cpf: "529.982.247-25",
+        password: "StrongPassword123"
+      })
+    });
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(403);
+    expect(hashPasswordMock).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(tx.user.create).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
   it("rejects an invalid CPF before hashing or writing to the database", async () => {
     const response = await POST(makeRequest({ cpf: "111.111.111-11" }));
 
