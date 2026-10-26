@@ -167,4 +167,19 @@ describe("password reset", () => {
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
 
+  it("rejects cross-origin reset before looking up or consuming a token", async () => {
+    const request = new Request("https://acessavagas.example/api/auth/password/reset", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: "https://attacker.example" },
+      body: JSON.stringify({ token: "one-time-reset-token-value", password: "NewPassword123", confirmPassword: "NewPassword123" })
+    });
+
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(403);
+    expect(prismaMock.passwordResetToken.findUnique).not.toHaveBeenCalled();
+    expect(hashPasswordMock).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
 });
