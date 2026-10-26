@@ -39,7 +39,16 @@ export async function POST(request: Request) {
   } catch (error) {
     // Unique constraints also protect against simultaneous registrations.
     if (typeof error === "object" && error !== null && "code" in error && error.code === "P2002") {
-      return NextResponse.json({ message: "Não foi possível criar a conta com os dados informados." }, { status: 409 });
+      const target = "meta" in error && typeof error.meta === "object" && error.meta !== null && "target" in error.meta
+        ? error.meta.target
+        : undefined;
+      const fields = Array.isArray(target) ? target.map(String) : typeof target === "string" ? [target] : [];
+      const message = fields.some((field) => field.toLowerCase().includes("email"))
+        ? "Este e-mail já está cadastrado. Entre na conta existente ou use outro e-mail."
+        : fields.some((field) => field.toLowerCase().includes("cpf"))
+          ? "Este CPF já está associado a uma conta. Confira os dados ou entre na conta existente."
+          : "Já existe uma conta com um dos dados informados. Confira o e-mail e o CPF.";
+      return NextResponse.json({ message }, { status: 409 });
     }
     throw error;
   }
