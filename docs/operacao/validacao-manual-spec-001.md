@@ -6,7 +6,7 @@ Este roteiro complementa a CI e os testes E2E. Use somente dados fictícios: Mai
 
 - Git, Node.js 20.9+ e npm.
 - Docker Desktop (ou Docker Engine) iniciado.
-- Acesso ao repositório e à branch `feat/initial-app-foundation`.
+- Acesso ao repositório e à branch `feat/recruiter-dashboard-brand-polish`.
 
 Na pasta do repositório, abra um terminal e execute:
 
@@ -72,8 +72,9 @@ Use dados fictícios inéditos para evitar conflito com contas já existentes.
 
 ## 4. Cadastro, confirmação e login de empresa
 
-- [ ] Abra `/empresa/cadastro` e preencha os campos com dados fictícios.
-- [ ] Envie o cadastro e confirme uma mensagem neutra de orientação.
+- [ ] Abra `/empresa/cadastro` e preencha os campos com dados fictícios. Confirme que o CNPJ está rotulado como opcional, que o texto auxiliar antigo não aparece e que o cadastro pode ser enviado deixando o CNPJ vazio. Faça também um teste com CNPJ informado em formato aceito.
+- [ ] Envie o cadastro sem CNPJ e confirme uma mensagem neutra de orientação.
+- [ ] Confirme que um CNPJ inválido, quando preenchido, é rejeitado com mensagem clara; o campo vazio deve ser aceito.
 - [ ] Abra o Mailpit e encontre a mensagem de confirmação de e-mail.
 - [ ] Abra o link de confirmação e confirme o resultado esperado na aplicação.
 - [ ] Entre em `/empresa/login` com o e-mail corporativo de teste e a senha.
