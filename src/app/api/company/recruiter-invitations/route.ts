@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
         select: { id: true }
       });
       if (existing) {
-        await tx.recruiterInvitation.update({ where: { id: existing.id }, data: { recipientUserId: recipient.id, tokenHash, expiresAt, sentByUserId: user.id, respondedAt: null, recipientName: parsed.data.fullName, recipientEmail: email }, select: { id: true } });
+        await tx.recruiterInvitation.update({ where: { id: existing.id }, data: { tokenHash, expiresAt, sentByUserId: user.id, respondedAt: null, recipientName: parsed.data.fullName, recipientEmail: email }, select: { id: true } });
       } else {
         await tx.recruiterInvitation.create({ data: { companyId: company.id, recipientUserId: null, recipientName: parsed.data.fullName, recipientEmail: email, sentByUserId: user.id, tokenHash, expiresAt }, select: { id: true } });
       }
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
       orderBy: { createdAt: "desc" }
     });
     const invitation = pending
-      ? await tx.recruiterInvitation.update({ where: { id: pending.id }, data: { tokenHash, expiresAt, sentByUserId: user.id, respondedAt: null, recipientName: parsed.data.fullName, recipientEmail: email }, select: { id: true } })
+      ? await tx.recruiterInvitation.update({ where: { id: pending.id }, data: { recipientUserId: recipient.id, tokenHash, expiresAt, sentByUserId: user.id, respondedAt: null, recipientName: parsed.data.fullName, recipientEmail: email }, select: { id: true } })
       : await tx.recruiterInvitation.create({ data: { companyId: company.id, recipientUserId: recipient.id, recipientName: parsed.data.fullName, recipientEmail: email, sentByUserId: user.id, tokenHash, expiresAt }, select: { id: true } });
 
     await tx.auditEvent.create({
