@@ -1,12 +1,35 @@
 # Matriz de validação — SPEC-001
 
-**Revisão:** 25/10/2026 — atualização após cobertura E2E de mutações anônimas de recrutadores  
+**Revisão histórica:** 25/10/2026 — conteúdo anterior preservado abaixo para rastreabilidade  
 **Branch:** `feat/initial-app-foundation`  
-**HEAD de código/testes:** `4a98eb6bba42ba7e46144d9f2db85b8276c9002b` (adiciona E2E para rejeitar mutações anônimas de convite, cancelamento de convite e encerramento de vínculo, incluindo assert de que tentativa anônima não cria conta de recrutador).  
+**HEAD de código/testes registrado na revisão histórica:** `4a98eb6bba42ba7e46144d9f2db85b8276c9002b`.  
 **CI histórico do HEAD de código/testes `62e4af93442b443590e103cdda6e845be5373ebf`:** push [40243954634](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40243954634) e Pull Request [40243959357](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40243959357), ambos aprovados.  
 **CI do HEAD atual de código/testes:** execução [40246387590](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40246387590) concluída com sucesso; todas as etapas do workflow `validate`, incluindo testes unitários, build de produção e E2E com PostgreSQL/SMTP local, passaram.  
 **Pull request:** [#36](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/pull/36) — permanece Draft  
 **Objetivo:** separar implementação existente, evidência automatizada disponível e validações ainda necessárias. Esta matriz não substitui os critérios de aceite da `docs/Specs.md` nem declara a SPEC-001 concluída.
+
+## Atualização de autorização — 26/10/2026
+
+# Atualização de validação — 26/10/2026
+
+**HEAD de código/testes validado:** `ac2d746bb4f35a3cf934ddea8fa6323909302759`.  
+**CI de push:** [40247620336 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40247620336).  
+**CI da PR:** [40247624328 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40247624328).  
+**Estado da PR #36:** aberta, Draft, sem merge.  
+**Escopo:** esta atualização registra evidência automatizada; não declara a SPEC-001 concluída.
+
+## Cobertura adicionada no HEAD atual
+
+- As rotas `GET/POST /api/company/recruiter-invitations`, cancelamento de convite, listagem de vínculos e encerramento de vínculo agora têm cenários tabulares para sessões anônimas e papéis incorretos (CANDIDATE, RECRUITER e ADMIN quando aplicável).
+- Os testes verificam não apenas a resposta de negação, mas também a ausência de consultas/mutações relevantes, transações, envio de e-mail e eventos de auditoria em operações não autorizadas.
+- A rota de resposta a convites inclui cenários para sessões com papéis incorretos (CANDIDATE, COMPANY e ADMIN) e para sessão de recrutador inativa. Os asserts confirmam rejeição antes de consultar/reivindicar o convite, criar vínculo, mutar dados ou registrar auditoria.
+- O workflow `validate` passou para o HEAD acima, tanto no evento `push` quanto em `pull_request`. Isso valida a pipeline automatizada configurada no repositório, não substitui homologação externa ou verificações manuais.
+
+## Limites que permanecem
+
+- A cobertura de autorização foi ampliada especificamente nas rotas de convites e vínculos descritas acima; **não** deve ser interpretada como uma matriz exaustiva de todas as rotas protegidas do sistema.
+- Permanecem pendentes a configuração e entrega real de SMTP em homologação/produção, a configuração efetiva do proxy confiável, o agendamento de rotinas de retenção em produção, verificações manuais de acessibilidade/navegadores/dispositivos, homologação externa e teste de invasão independente.
+- A SPEC-001 permanece em implementação/validação incremental. Não houve merge, deploy nem início da SPEC-002.
 
 ## Revisão complementar de CI e autorização — 25/10/2026
 
