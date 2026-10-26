@@ -517,3 +517,15 @@ A revisão estática das páginas ligadas à entrada, autenticação, confirmaç
 O roteiro manual da SPEC-001 pede conferir o PNG corrigido nas telas de login, cadastro, recuperação, empresa e recrutador. Portanto, a uniformidade da referência do logo **não está confirmada no código**. Não alterei esses arquivos nesta rodada de inspeção: a correção deve manter o PNG aprovado como fonte de identidade visual, mas a aparência final, escala, recorte e comportamento nos temas claro/escuro ainda exigem verificação visual no navegador.
 
 Essa constatação é uma pendência de consistência visual/documental, não uma falha do CI nem evidência de defeito no fluxo de autenticação.
+
+
+## Inspeção adicional — guarda de rota do painel do recrutador — 26/10/2026
+
+A comparação estática do painel atual com sua implementação anterior identificou uma mudança de comportamento relevante:
+
+- A página `src/app/recrutador/page.tsx` deixou de ser um Server Component que chama `getCurrentUser()` e redireciona usuários sem sessão/perfil RECRUITER para `/recrutador/login`; agora é um Client Component que renderiza a estrutura do painel e busca os dados via `/api/recruiter/invitations`.
+- A rota de API valida a sessão e o perfil RECRUITER antes de consultar e devolver vínculos/convites. Nesta inspeção, não foi identificada exposição dos dados protegidos pela API a usuários não autorizados.
+- Ainda assim, a guarda de navegação da página foi removida: quem não está autenticado pode receber a estrutura visual do painel e uma mensagem de falha em vez de ser redirecionado ao login. Em caso de falha na requisição, os cartões também permanecem no estado visual de carregamento, embora a mensagem de erro seja exibida.
+- Não foi localizada uma suíte específica `route.test.ts` para a nova rota `/api/recruiter/invitations` na branch revisada. O CI geral passou, mas isso não comprova cobertura específica dos cenários de autorização e resposta dessa rota.
+
+Classificação: pendência de comportamento/robustez e cobertura de testes; não foi observada exposição confirmada de dados privados. Não alterei o código nesta rodada, pois o objetivo solicitado foi continuar a inspeção. Recomenda-se restaurar uma guarda de rota no servidor ou adotar um mecanismo equivalente de redirecionamento, tratar explicitamente o estado de falha da interface e adicionar testes para a API antes de considerar a revisão funcional completa.
