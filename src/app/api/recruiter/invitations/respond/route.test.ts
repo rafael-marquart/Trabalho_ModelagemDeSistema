@@ -314,4 +314,19 @@ describe("recruiter invitation response", () => {
     expect(response.status).toBe(403);
     expect(getCurrentUserMock).not.toHaveBeenCalled();
   });
+
+  it("rejects malformed JSON before resolving a session or querying an invitation", async () => {
+    const response = await POST(new Request("https://acessavagas.example/api/recruiter/invitations/respond", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: "https://acessavagas.example" },
+      body: "{"
+    }));
+
+    expect(response.status).toBe(400);
+    expect(getCurrentUserMock).not.toHaveBeenCalled();
+    expect(prismaMock.recruiterInvitation.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.user.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
 });
