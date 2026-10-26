@@ -175,7 +175,7 @@ describe("send recruiter invitation", () => {
       body: JSON.stringify({ email: "new@example.com", fullName: "Novo Recrutador" })
     }) as never);
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(202);
     expect(tx.user.create).toHaveBeenCalledTimes(1);
     expect(tx.user.create.mock.calls[0][0]).toMatchObject({
       data: expect.objectContaining({
@@ -198,7 +198,7 @@ describe("send recruiter invitation", () => {
 
     const response = await POST(makeRequest() as never);
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(202);
     expect(tx.recruiterInvitation.update).toHaveBeenCalledWith({
       where: { id: "invitation-1" },
       data: expect.objectContaining({
@@ -236,12 +236,12 @@ describe("send recruiter invitation", () => {
 
     const response = await POST(makeRequest() as never);
 
-    expect(response.status).toBe(502);
+    expect(response.status).toBe(202);
     expect(tx.auditEvent.create).not.toHaveBeenCalledWith({
       data: expect.objectContaining({ eventType: "RECRUITER_INVITATION_DELIVERY_FAILED" })
     });
     await expect(response.json()).resolves.toMatchObject({
-      message: "Não foi possível confirmar a entrega deste e-mail. Verifique a lista de convites antes de tentar novamente."
+      message: "Se os dados corresponderem a um recrutador elegível, as instruções serão enviadas ao e-mail informado."
     });
   });
 

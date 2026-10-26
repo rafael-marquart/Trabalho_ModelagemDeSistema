@@ -543,7 +543,7 @@ async function main() {
       email: RECRUITER_EMAIL,
       fullName: "Recrutador de Teste E2E"
     }, { cookie: companyCookie });
-    await expectStatus(invite, 201, "recruiter invitation");
+    await expectStatus(invite, 202, "recruiter invitation");
     const firstInvitationToken = extractEmailToken(emailCount, "/recrutador/convite");
 
     emailCount = SMTP_MESSAGES.length;
@@ -551,7 +551,7 @@ async function main() {
       email: RECRUITER_EMAIL,
       fullName: "Recrutador de Teste E2E"
     }, { cookie: companyCookie });
-    await expectStatus(resend, 200, "recruiter invitation resend");
+    await expectStatus(resend, 202, "recruiter invitation resend");
     const currentInvitationToken = extractEmailToken(emailCount, "/recrutador/convite");
     assert.notEqual(currentInvitationToken, firstInvitationToken, "resending must issue a new invitation token");
 
@@ -692,7 +692,7 @@ async function main() {
       email: RECRUITER_EMAIL,
       fullName: "Nome informado pela empresa"
     }, { cookie: companyCookie });
-    await expectStatus(cancelInvite, 201, "new invitation before cancellation");
+    await expectStatus(cancelInvite, 202, "new invitation before cancellation");
     const cancelToken = extractEmailToken(emailCount, "/recrutador/convite");
     const pendingToCancel = await prisma.recruiterInvitation.findFirst({
       where: { companyId: companyAccount.company.id, recipientUserId: recruiterAccount.id, status: "PENDING" },
@@ -763,7 +763,7 @@ async function main() {
       email: RECRUITER_EMAIL,
       fullName: "Recrutador de Teste E2E"
     }, { cookie: companyCookie });
-    await expectStatus(refuseInvite, 201, "new invitation before refusal");
+    await expectStatus(refuseInvite, 202, "new invitation before refusal");
     const refusalToken = extractEmailToken(emailCount, "/recrutador/convite");
     const refusal = await postJson("/api/recruiter/invitations/respond", { token: refusalToken, action: "refuse" });
     await expectStatus(refusal, 200, "recruiter refuses invitation");
@@ -786,7 +786,7 @@ async function main() {
       email: RECRUITER_EMAIL,
       fullName: "Recrutador de Teste E2E"
     }, { cookie: companyCookie });
-    await expectStatus(expireInvite, 201, "new invitation before expiration audit test");
+    await expectStatus(expireInvite, 202, "new invitation before expiration audit test");
     const expireToken = extractEmailToken(emailCount, "/recrutador/convite");
     const expiringInvitation = await prisma.recruiterInvitation.findFirst({
       where: { companyId: companyAccount.company.id, recipientUserId: recruiterAccount.id, status: "PENDING" },
@@ -835,7 +835,7 @@ async function main() {
       email: RECRUITER_EMAIL,
       fullName: "Recrutador de Teste E2E"
     }, { cookie: companyCookie });
-    await expectStatus(relinkInvite, 201, "new invitation before relinking");
+    await expectStatus(relinkInvite, 202, "new invitation before relinking");
     const relinkToken = extractEmailToken(emailCount, "/recrutador/convite");
     const relinkInvitation = await prisma.recruiterInvitation.findUnique({
       where: { tokenHash: digest(relinkToken) },
@@ -909,19 +909,19 @@ async function main() {
     }, { cookie: secondCompanyCookie });
     const activeLinkInviteFailure = await expectStatus(
       secondCompanyInviteActiveRecruiter,
-      409,
-      "second company cannot invite a recruiter who is actively linked elsewhere"
+      202,
+      "second company invitation response must not disclose recipient eligibility"
     );
     assert.equal(
       JSON.parse(activeLinkInviteFailure).message,
-      "Não foi possível processar o convite com os dados informados.",
-      "invitation response must not disclose whether the recipient has an active link to another company"
+      "Se os dados corresponderem a um recrutador elegível, as instruções serão enviadas ao e-mail informado.",
+      "invitation response must be generic for an ineligible recipient"
     );
     const forbiddenSecondCompanyInvitation = await prisma.recruiterInvitation.findFirst({
       where: { companyId: secondCompanyAccount.company.id, recipientUserId: recruiterAccount.id },
       select: { id: true }
     });
-    assert.equal(forbiddenSecondCompanyInvitation, null, "rejected invitation must not create a cross-company invitation record");
+    assert.equal(forbiddenSecondCompanyInvitation, null, "eligibility-neutral placeholder must not create an actionable cross-company invitation");
     const forbiddenSecondCompanyInviteAuditCount = await prisma.auditEvent.count({
       where: { actorUserId: secondCompanyAccount.id, eventType: "RECRUITER_INVITATION_SENT" }
     });
@@ -943,7 +943,7 @@ async function main() {
       email: CROSS_COMPANY_INVITATION_EMAIL,
       fullName: "Recrutador de Teste de Isolamento"
     }, { cookie: companyCookie });
-    await expectStatus(crossCompanyCancelInvite, 201, "company A creates invitation for cross-company cancellation test");
+    await expectStatus(crossCompanyCancelInvite, 202, "company A creates invitation for cross-company cancellation test");
     const crossCompanyCancelToken = extractEmailToken(emailCount, "/recrutador/convite");
     const crossCompanyInvitationRecipient = await prisma.user.findUnique({
       where: { email: CROSS_COMPANY_INVITATION_EMAIL },

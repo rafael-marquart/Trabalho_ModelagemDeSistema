@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
     });
     return { invitation, wasResent: Boolean(pending) };
   });
-  const { invitation } = invitationResult
+  const { invitation } = invitationResult;
   const baseUrl = getPublicBaseUrl(request);
   try {
     if (!baseUrl) throw new Error("APP_BASE_URL is required to send production email links");
