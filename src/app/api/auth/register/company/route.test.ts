@@ -87,6 +87,49 @@ describe("company registration", () => {
     }));
   });
 
+  it("rejects malformed JSON before hashing, creating tokens, or touching the database", async () => {
+    const request = new Request("https://acessavagas.example/api/auth/register/company", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{"
+    });
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(400);
+    expect(hashPasswordMock).not.toHaveBeenCalled();
+    expect(createTokenMock).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(sendEmailMock).not.toHaveBeenCalled();
+    expect(prismaMock.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it("rejects a cross-origin request before hashing, creating tokens, or touching the database", async () => {
+    const request = new Request("https://acessavagas.example/api/auth/register/company", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        origin: "https://attacker.example"
+      },
+      body: JSON.stringify({
+        legalName: "Empresa Exemplo Ltda",
+        tradeName: "Exemplo",
+        officialId: "11.222.333/0001-81",
+        contactEmail: "contato@exemplo.com",
+        password: "StrongPassword123"
+      })
+    });
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(403);
+    expect(hashPasswordMock).not.toHaveBeenCalled();
+    expect(createTokenMock).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(sendEmailMock).not.toHaveBeenCalled();
+    expect(prismaMock.auditEvent.create).not.toHaveBeenCalled();
+  });
+
   it("rejects an identifier that is too short after normalization", async () => {
     const response = await POST(makeRequest({ officialId: "12-34" }));
 
