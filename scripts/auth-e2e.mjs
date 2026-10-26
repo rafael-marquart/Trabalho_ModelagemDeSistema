@@ -305,6 +305,17 @@ async function main() {
     });
     assert.ok(account && account.role === "CANDIDATE" && account.isActive, "registered account must be active candidate");
 
+    // Candidate login must work with CPF as well as email, including formatted CPF input.
+    const cpfLogin = await postJson("/api/auth/login", {
+      profile: "candidate",
+      identifier: "529.982.247-25",
+      password: OLD_PASSWORD,
+      rememberMe: false
+    });
+    const cpfLoginBody = await expectStatus(cpfLogin, 200, "candidate login by CPF");
+    assert.equal(JSON.parse(cpfLoginBody).redirectTo, "/candidato");
+    assert.match(cpfLogin.headers.get("set-cookie") || "", /acessa_session=/, "CPF login must issue a session cookie");
+
     const firstLogin = await postJson("/api/auth/login", {
       profile: "candidate",
       identifier: EMAIL,
@@ -525,10 +536,42 @@ async function main() {
     });
     assert.ok(activatedCompany?.isActive && activatedCompany.company?.emailConfirmedAt, "email verification must activate the company account");
 
-    const companyLogin = await postJson("/api/auth/login", {
+    // Company password recovery must deliver a usable one-time link and accept the new password.
+    emailCount = SMTP_MESSAGES.length;
+    const companyRecovery = await postJson("/api/auth/password/forgot", {
+      profile: "company",
+      identifier: COMPANY_EMAIL
+    });
+    const companyRecoveryBody = await expectStatus(companyRecovery, 200, "company password recovery request");
+    assert.match(companyRecoveryBody, /Se os dados corresponderem a uma conta elegível/);
+    assert.ok(SMTP_MESSAGES.length > emailCount, "company password recovery must send an email to the test SMTP server");
+    const companyRecoveryToken = extractEmailToken(emailCount, "/recuperar-senha");
+
+    const companyPasswordReset = await postJson("/api/auth/password/reset", {
+      token: companyRecoveryToken,
+      password: NEW_PASSWORD,
+      confirmPassword: NEW_PASSWORD
+    });
+    await expectStatus(companyPasswordReset, 200, "company password reset");
+    const reusedCompanyRecovery = await postJson("/api/auth/password/reset", {
+      token: companyRecoveryToken,
+      password: NEW_PASSWORD,
+      confirmPassword: NEW_PASSWORD
+    });
+    await expectStatus(reusedCompanyRecovery, 400, "company recovery token reuse");
+
+    const oldCompanyPasswordLogin = await postJson("/api/auth/login", {
       profile: "company",
       identifier: COMPANY_EMAIL,
       password: COMPANY_PASSWORD,
+      rememberMe: false
+    });
+    await expectStatus(oldCompanyPasswordLogin, 401, "old company password after reset");
+
+    const companyLogin = await postJson("/api/auth/login", {
+      profile: "company",
+      identifier: COMPANY_EMAIL,
+      password: NEW_PASSWORD,
       rememberMe: false
     });
     const companyLoginBody = await expectStatus(companyLogin, 200, "company login after verification");
@@ -1093,7 +1136,7 @@ async function main() {
     assert.ok(lockedCandidate?.lockedUntil && lockedCandidate.lockedUntil > new Date(), "ten consecutive failures must persist an active account lock");
     assert.equal(lockedCandidate.failedLoginCount, 0, "the locked account counter is reset after the threshold is reached");
 
-    process.stdout.write("Auth E2E passed: candidate auth/recovery and session revocation; company verification; recruiter invitation/resend/accept/refuse/cancel; multi-company isolation and concurrency; logout; account lockout.\n");
+    process.stdout.write("Auth E2E passed: candidate email/CPF login and recovery; company verification and password recovery; recruiter invitation/resend/accept/refuse/cancel; multi-company isolation and concurrency; logout; account lockout.\n");
   } finally {
     try {
       await cleanupTestData();
