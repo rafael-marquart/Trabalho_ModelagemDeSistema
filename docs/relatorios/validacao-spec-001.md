@@ -633,3 +633,14 @@ O responsável determinou explicitamente que não serão realizados novos testes
 - **Controle de entrega:** a PR #37 permanece aberta em Draft. Nenhum merge ou deploy foi realizado ou autorizado por este registro.
 
 O encerramento da implementação não representa certificação de prontidão de produção. As limitações acima permanecem visíveis para a decisão de lançamento e não bloqueiam o encerramento documental da SPEC-001 conforme a decisão do responsável.
+
+## Revisão final e estado efetivo da PR — 26/10/2026
+
+Esta seção é a referência mais recente para o estado da entrega e prevalece sobre registros históricos anteriores que mencionem a PR #37 como Draft ou a SPEC-001 como aguardando testes manuais.
+
+- **SPEC-001:** encerrada no escopo de implementação, conforme decisão explícita do responsável de não executar novos testes manuais. Cenários não executados continuam classificados como não verificados; a decisão não equivale a aprovação de acessibilidade completa, pentest ou homologação de produção.
+- **PR #37:** aberta, **Ready for review** (não Draft), destino `desenvolvimento-do-projeto`, branch `feat/recruiter-dashboard-brand-polish`. Não foi mergeada e não houve deploy.
+- **HEAD revisado:** `99c04a2c052f2805664a9fb55bd91ab939711a88`.
+- **CI do HEAD documental final antes desta atualização:** [40382747411 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40382747411). Todas as etapas do job `validate` passaram, incluindo Prisma/migrações PostgreSQL, restrições de integridade e concorrência, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP de teste. Como esta seção gera um novo commit documental, a CI correspondente a esse novo commit deve ser verificada após a gravação; a execução 40382747411 não deve ser apresentada como CI do commit que contém esta própria seção.
+- **Antes de produção:** ainda é necessário configurar/verificar SMTP real, `APP_BASE_URL` HTTPS, proxy confiável que sobrescreva `X-Forwarded-For`, e agendamento/monitoramento das rotinas de retenção. A CI não comprova esses requisitos operacionais.
+- **Próximo passo:** revisão da PR e decisão separada de merge pelo responsável. Esta atualização não autoriza merge nem deploy; a SPEC-002 não foi iniciada.
