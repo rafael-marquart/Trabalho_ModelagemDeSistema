@@ -575,3 +575,39 @@ O roteiro `docs/operacao/validacao-manual-spec-001.md` registra a recuperação 
 - O risco residual de inferência sobre elegibilidade de e-mails em convites permanece documentado; mensagens genéricas não garantem proteção absoluta contra enumeração.
 - A SPEC-001 não deve ser declarada formalmente concluída até que os critérios pendentes recebam evidência, sejam explicitamente aceitos como pendência operacional/de lançamento, ou tenham uma decisão documentada do responsável. A PR permanece Draft.
 
+
+
+## Auditoria adicional de autenticação e convites — 26/10/2026
+
+### CI verificado por etapas
+
+O workflow associado ao HEAD de código `b879087e54d35012e8aafeb66c131bf089978fcd` é a execução [40381007017 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40381007017). A consulta aos passos confirma sucesso em: instalação de dependências; validação do schema Prisma e geração do cliente; migrações em PostgreSQL; verificação da restrição de vínculo ativo de recrutador e de concorrência; TypeScript; lint; testes unitários; build de produção; e E2E de autenticação com PostgreSQL e SMTP de teste. A execução documental posterior `27f7d762fe2ad0a95407594b58c82d2b8fd2adb4` não apresentou workflow associado na consulta realizada, por isso não é descrita como CI aprovado.
+
+### Sessão e autenticação — revisão estática adicional
+
+- `src/lib/auth/session.ts` armazena o hash do token de sessão, configura cookie `HttpOnly`, `SameSite=Lax`, `Secure` em produção, e aplica expiração por inatividade de 60 minutos e expiração absoluta de até 30 dias para sessão lembrada. A leitura da sessão rejeita usuário inativo, conta temporariamente bloqueada e sessão expirada; a atualização condicional evita renovar uma sessão revogada por concorrência.
+- A criação da sessão e o evento de auditoria de login bem-sucedido estão na mesma transação; a sessão não é criada se a auditoria falhar. A verificação de `passwordChangedAt` sob bloqueio evita criar sessão a partir de credenciais verificadas antes de uma redefinição concorrente.
+- `src/app/api/auth/login/route.ts` serializa tentativas por IP e por conta. Mantém o bloqueio de conta após 10 falhas consecutivas por 15 minutos e acrescenta limiares graduais por IP em janela de 15 minutos (30, 50, 80 e 120 falhas, com cooldowns de 1 minuto, 5 minutos, 15 minutos e 1 hora, respectivamente). A implementação usa hashes para chaves de IP/identificador.
+- Limite operacional importante: a origem do IP é o cabeçalho `X-Forwarded-For`; o código documenta que o proxy de produção deve sobrescrever esse cabeçalho. A proteção por IP não deve ser considerada operacionalmente validada até que a topologia e a configuração do proxy confiável sejam verificadas no ambiente de implantação.
+
+### Cadastro empresarial — regra do CNPJ
+
+- `src/lib/auth/cnpj.ts` aceita exatamente 14 dígitos após normalização e não valida dígitos verificadores nem consulta fonte externa, conforme a decisão aprovada.
+- O teste de cadastro empresarial cobre CNPJ ausente/vazio, normalização do identificador informado, JSON malformado e rejeição de origem cruzada. A migração torna `Company.officialId` anulável; o responsável relatou que o cadastro sem CNPJ funcionou após aplicação local da migração.
+- A verificação independente de `prisma migrate status` após a migração não foi anexada. O CI mais recente aplicou as migrações em banco PostgreSQL efêmero com sucesso, mas isso não confirma o estado do banco local nem de produção.
+
+### Convites e autorização organizacional
+
+- A rota de listagem de convites empresariais filtra pela empresa associada ao usuário autenticado e retorna o snapshot de nome/e-mail fornecido no convite; convites pendentes vencidos são apresentados como expirados sem mutação no GET.
+- A rota de cancelamento exige usuário COMPANY, conta ativa e registro de convite pertencente à empresa autenticada; a atualização de estado e o evento de auditoria ocorrem na mesma transação. A suíte cobre tentativa de cancelamento de convite de outra empresa e rejeição de empresa inativa.
+- A resposta ao convite valida token de uso único por hash, destinatário, papel de recrutador, estado e expiração; no aceite, revalida a empresa e impede segundo vínculo ativo. A revisão estática não substitui execução manual de todos os estados de convite.
+- A API do painel do recrutador exige perfil RECRUITER antes de consultar vínculo e convites, filtra pelo usuário atual e seleciona apenas os campos necessários ao painel. A suíte específica verifica acesso anônimo e perfis diferentes.
+- O isolamento organizacional foi conferido nas rotas lidas e nos testes disponíveis, mas não se declara uma matriz exaustiva de todas as APIs da aplicação, nem teste de invasão.
+
+### Estado após esta rodada
+
+- Nenhuma falha adicional de código foi confirmada que justificasse alterar regras de negócio nesta execução.
+- Evidência automatizada do HEAD de código: aprovada no CI 40381007017.
+- Evidência manual já relatada: recuperação de senha ponta a ponta, CNPJ opcional após migração local, layout geral em 1280/768/390 px, teclado/foco básico e bloqueio de acesso anônimo à área de candidato.
+- Permanecem pendentes: comparação visual detalhada de todas as telas com os protótipos, tema claro/escuro e contraste, teste com leitor de tela, fluxos manuais de cadastro/confirmacão e convite ainda não relatados como concluídos, revisão de todas as APIs protegidas, SMTP real, URL HTTPS canônica, proxy confiável e execução/monitoramento de retenção em ambiente operacional.
+- A SPEC-001 continua sem encerramento formal. As pendências operacionais podem ser aceitas como condições de lançamento somente mediante decisão explícita e registro de responsável/ambiente; não foram convertidas silenciosamente em critérios concluídos.
