@@ -529,3 +529,15 @@ A comparação estática do painel atual com sua implementação anterior identi
 - Não foi localizada uma suíte específica `route.test.ts` para a nova rota `/api/recruiter/invitations` na branch revisada. O CI geral passou, mas isso não comprova cobertura específica dos cenários de autorização e resposta dessa rota.
 
 Classificação: pendência de comportamento/robustez e cobertura de testes; não foi observada exposição confirmada de dados privados. Não alterei o código nesta rodada, pois o objetivo solicitado foi continuar a inspeção. Recomenda-se restaurar uma guarda de rota no servidor ou adotar um mecanismo equivalente de redirecionamento, tratar explicitamente o estado de falha da interface e adicionar testes para a API antes de considerar a revisão funcional completa.
+
+
+## Correções aplicadas após a inspeção estática — 26/10/2026
+
+Após a revisão dos achados, foram aplicadas correções de baixo risco na branch de trabalho:
+
+- Substituídas as referências restantes ao SVG pelo PNG aprovado em login de recrutador, gestão de recrutadores, tela de convite, confirmação de e-mail corporativo e reenvio de confirmação.
+- Restaurada a guarda de navegação do painel do recrutador no Server Component: a página consulta a sessão e redireciona usuários sem sessão ou sem perfil RECRUITER para `/recrutador/login`. A interface interativa foi separada em `recruiter-dashboard-client.tsx`.
+- Corrigido o estado de falha do painel para que, quando a API não responder corretamente, os cartões deixem de exibir carregamento indefinido e apresentem mensagem de falha.
+- Adicionada suíte `src/app/api/recruiter/invitations/route.test.ts` para verificar resposta com dados do recrutador autenticado e rejeição de usuários anônimos ou de outros perfis antes de consultar dados.
+
+Estas alterações aguardam validação pelo CI da branch. A existência dos testes não é, por si só, evidência de que passaram. A inspeção visual em navegador continua pendente, assim como SMTP real, URL HTTPS canônica, proxy confiável e execução programada de retenção.
