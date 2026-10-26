@@ -472,3 +472,37 @@ Executar a validação manual descrita em `docs/operacao/validacao-manual-spec-0
 - A SPEC-001 não está pronta para encerramento formal: faltam validação manual da interface, evidência operacional de SMTP/URL HTTPS/proxy/rotina de retenção e fechamento rastreável dos critérios ainda desmarcados.
 - A PR #37 permanece aberta em Draft. Nenhum merge, deploy ou trabalho de implementação da SPEC-002 foi iniciado nesta rodada.
 - Próximo passo: executar a lista manual em ambiente local e registrar resultados verificáveis; em paralelo, conferir a rastreabilidade de RF/RB/RNF/UC/modelo/driver/ADR sem marcar itens sem evidência.
+
+## Revisão remota adicional — rastreabilidade SPEC-001 — 26/10/2026
+
+### Rastreabilidade cruzada conferida
+
+A comparação entre a SPEC-001, `docs/mapa-specs.md` e os documentos de baseline confirmou que as referências principais existem e são coerentes para o escopo desta Spec:
+
+- RF-01, RF-02, RF-03, RF-17 e RF-40 constam em `docs/Requisitos/RF.md`.
+- RB-12, RB-21, RB-22, RB-27 e RB-46 constam em `docs/Requisitos/RB.md`.
+- RNF-07, RNF-08, RNF-09 e RNF-14 constam em `docs/Requisitos/RNF.md`.
+- UC-00 e UC-07 existem em `docs/Casos De Uso/`; UC-00 cobre autenticação, seleção de cadastro e perfil, e UC-07 inclui a administração dos recrutadores.
+- O modelo conceitual registra RECRUTADOR como perfil de USUARIO vinculado à EMPRESA, consistente com a decisão documentada.
+- DA-02 consta nos Drivers Arquiteturais e sua tabela de rastreabilidade associa RF-01/02/03/40, RNF-07/08, RB-12/21/22 e ADR-002/004.
+- ADR-002 e ADR-004 existem em `docs/ADRs/ADRs.md` e registram, respectivamente, autorização centralizada no backend e arquitetura em camadas.
+- A entrada SPEC-001 de `docs/mapa-specs.md` contém o mesmo conjunto principal de IDs. Essa conferência de existência e alinhamento não representa prova de que todas as combinações de requisitos estão exaustivamente cobertas por testes.
+
+### Critérios e evidências remanescentes
+
+- Em `docs/Specs.md`, seguem desmarcados os critérios de aceite para entrada/login, opções de cadastro e mensagens sem exposição indevida. Não foram marcados como concluídos sem evidência funcional e/ou manual apropriada.
+- O Definition of Done da SPEC-001 continua parcial quanto à localização formal dos layouts em `docs/layout/` e ao registro explícito de todas as verificações necessárias. Os protótipos existentes em `docs/Identidade Visual/` são a referência visual aprovada; a ausência de uma cópia em `docs/layout/` não foi tratada como autorização para duplicar ou reorganizar os artefatos.
+- O roteiro `docs/operacao/validacao-manual-spec-001.md` contém 36 verificações ainda não marcadas como executadas. São itens que exigem ambiente local, navegador e/ou interação humana e não podem ser inferidos de CI.
+- As lacunas operacionais permanecem: SMTP real, URL HTTPS canônica, configuração efetiva do proxy confiável e agendamento/monitoramento da rotina de retenção.
+- O achado residual de privacidade dos convites permanece documentado: mensagens genéricas não eliminam absolutamente toda inferência sobre elegibilidade de e-mail. Nenhuma alteração de comportamento foi feita.
+
+### CI do HEAD documental
+
+- HEAD: `b01f1a17ec2ffd7ab15f98fbc2edb2e3ae924de1`.
+- Execução [40280553459 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40280553459).
+- O job `validate` concluiu com sucesso: Prisma schema/client, migrações PostgreSQL, verificações da restrição de vínculo único incluindo concorrência, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP de teste.
+- Esse CI comprova apenas a pipeline automatizada configurada. Não substitui inspeção visual/acessibilidade manual, SMTP real, validação de infraestrutura, homologação externa ou pentest.
+
+### Conclusão da revisão remota
+
+A conferência remota adicional de rastreabilidade da SPEC-001 foi executada. Não surgiu evidência suficiente para alterar regra de negócio, reabrir decisão aprovada ou modificar comportamento. A SPEC-001 continua sem condições para encerramento formal porque há critérios de aceite desmarcados, roteiro manual pendente e verificações operacionais não comprovadas. A PR #37 continua aberta em Draft; não houve merge, deploy nem início da SPEC-002 nesta rodada.
