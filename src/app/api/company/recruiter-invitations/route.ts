@@ -170,9 +170,9 @@ export async function POST(request: NextRequest) {
       : await tx.recruiterInvitation.create({ data: { companyId: company.id, recipientUserId: recipient.id, recipientName: parsed.data.fullName, recipientEmail: email, sentByUserId: user.id, tokenHash, expiresAt }, select: { id: true } });
 
     await tx.auditEvent.create({
-      data: { actorUserId: user.id, eventType: pending ? "RECRUITER_INVITATION_RESENT" : "RECRUITER_INVITATION_SENT", subjectType: "RecruiterInvitation", subjectId: invitation.id }
+      data: { actorUserId: user.id, eventType: pending?.recipientUserId === recipient.id ? "RECRUITER_INVITATION_RESENT" : "RECRUITER_INVITATION_SENT", subjectType: "RecruiterInvitation", subjectId: invitation.id }
     });
-    return { invitation, wasResent: Boolean(pending) };
+    return { invitation };
   });
   const { invitation } = invitationResult;
   const baseUrl = getPublicBaseUrl(request);
