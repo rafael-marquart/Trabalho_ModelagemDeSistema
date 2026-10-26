@@ -435,3 +435,19 @@ button, input, select { font: inherit; }
   .recruiter-invitation-row { align-items:flex-start; flex-wrap:wrap; }
   .recruiter-invitation-row .status-pill { margin-left:54px; }
 }
+
+/* Company welcome actions: keep navigation and logout aligned */
+.company-home-actions { display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin-top:26px; }
+.company-home-actions form { margin:0; }
+.company-home-actions .primary-button,
+.company-home-actions .secondary-button,
+.company-home-actions .company-manage-recruiters { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:48px; margin:0; }
+.company-home-actions .company-manage-recruiters { width:auto; padding:0 20px; text-decoration:none; }
+.company-home-actions .company-manage-recruiters span { font-size:18px; line-height:1; }
+.company-home-actions .company-manage-recruiters:hover { text-decoration:none; filter:brightness(1.04); }
+@media (max-width:480px) {
+  .company-home-actions { align-items:stretch; flex-direction:column; }
+  .company-home-actions .primary-button,
+  .company-home-actions .secondary-button,
+  .company-home-actions .company-manage-recruiters { width:100%; }
+}
