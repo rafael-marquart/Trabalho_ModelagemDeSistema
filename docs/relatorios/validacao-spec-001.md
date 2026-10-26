@@ -252,3 +252,13 @@ Validações externas — SMTP de homologação, proxy real, agendamento de rete
 - Os testes de regressão de JSON malformado também cobrem recuperação de senha, confirmação de e-mail empresarial, envio de convite e cancelamento de convite; estes verificam rejeição controlada e ausência dos efeitos colaterais pertinentes à rota.
 - A execução verde comprova apenas a pipeline automatizada configurada. A enumeração de e-mail permanece parcialmente mitigada, e continuam não executadas as validações externas/manuais de SMTP real, proxy real, agendamento/monitoramento de retenção em produção, acessibilidade manual e pentest independente.
 - PR #36 permanece aberta em Draft, sem merge ou deploy. A SPEC-002 não foi iniciada.
+
+## Atualização de evidências — HEAD de código/testes `bced0e5a2bba07c344ecc65674e1108c3f7b5416` — 26/10/2026
+
+- CI de push: [40255438113 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40255438113).
+- CI da PR: [40255441446 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40255441446).
+- Foi adicionado teste de regressão para JSON malformado no login: a rota retorna HTTP 400 e o teste confirma que não consulta a conta, não inicia transação, não verifica senha e não cria sessão.
+- O conjunto de regressões para JSON malformado cobre agora cadastro, login, recuperação/redefinição de senha, reenvio/confirmação de e-mail empresarial, criação/cancelamento de convite, resposta ao convite e encerramento de vínculo, com asserts de ausência dos efeitos colaterais relevantes por rota.
+- Os dois eventos de CI concluíram com sucesso para o HEAD citado. Isso confirma a pipeline automatizada configurada (Prisma/migrações e integridade PostgreSQL, TypeScript, lint, testes, build e E2E); não substitui homologação externa ou validações manuais.
+- Permanecem os limites já registrados: enumeração de e-mail não totalmente mitigada; autorização sem matriz exaustiva de cada papel × rota; SMTP real, proxy real, rotinas de retenção em produção, revisão manual de acessibilidade e pentest independente não executados.
+- PR #36 permanece aberta em Draft, sem merge, deploy ou início da SPEC-002.
