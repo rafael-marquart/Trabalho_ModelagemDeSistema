@@ -201,18 +201,21 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 - [ ] Entrada apresenta login por e-mail e senha.
 - [ ] Cadastro oferece Usuário ou Empresa, sem cadastro independente de Recrutador.
-- [ ] Credenciais válidas autenticam e encaminham conforme o perfil.
-- [ ] Credenciais inválidas não autenticam.
+- [x] Credenciais válidas autenticam e encaminham conforme o perfil.
+- [x] Credenciais inválidas não autenticam.
 - [ ] Recuperação permite redefinição quando a solicitação é válida.
-- [ ] Operações protegidas verificam autorização no backend.
-- [ ] Sessão expirada ou invalidada não executa operações protegidas.
-- [ ] Empresa autorizada consegue cadastrar/associar Recrutador por convite com aceite explícito.
-- [ ] Um Recrutador não mantém mais de um vínculo empresarial ativo.
-- [ ] Empresa consegue excluir Recrutador da própria página, encerrando o vínculo sem apagar conta nem histórico.
-- [ ] Recrutador permanece vinculado à Empresa responsável enquanto o vínculo estiver ativo.
-- [ ] Empresa não consegue administrar vínculo de outra Empresa.
-- [ ] Alterações relevantes são rastreáveis.
+- [x] Operações protegidas verificam autorização no backend.
+- [x] Sessão expirada ou invalidada não executa operações protegidas.
+- [x] Empresa autorizada consegue cadastrar/associar Recrutador por convite com aceite explícito.
+- [x] Um Recrutador não mantém mais de um vínculo empresarial ativo.
+- [x] Empresa consegue excluir Recrutador da própria página, encerrando o vínculo sem apagar conta nem histórico.
+- [x] Recrutador permanece vinculado à Empresa responsável enquanto o vínculo estiver ativo.
+- [x] Empresa não consegue administrar vínculo de outra Empresa.
+- [x] Alterações relevantes são rastreáveis.
 - [ ] Mensagens não expõem credenciais ou dados pessoais desnecessários.
+
+
+**Nota de verificação:** os itens marcados foram cobertos por testes automatizados e pelo CI verde do commit funcional `8cb2e981211c1124e2858c7f9c71ba0c06a07ae9` (Prisma/migrações, typecheck, lint, testes unitários, build e E2E). Os itens desmarcados não foram confirmados integralmente nesta execução; em particular, não foi realizado teste manual de interface nem o fluxo completo de recuperação de senha de Empresa.
 
 ## 12. Casos de teste derivados
 
@@ -245,13 +248,15 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 ## 14. Definition of Done
 
-- [ ] Texto revisado e aprovado pelo responsável humano.
+- [x] Texto revisado e aprovado pelo responsável humano.
 - [ ] Rastreabilidade de RF, RB, RNF, casos de uso, modelo, driver e ADR conferida.
-- [ ] Questões em aberto decididas ou mantidas explicitamente como pendências.
+- [x] Questões em aberto decididas ou mantidas explicitamente como pendências.
 - [ ] Layouts aplicáveis anexados em docs/layout/ e aprovados separadamente.
-- [ ] Critérios de aceitação e testes revisados.
-- [ ] Invariantes de autenticação, autorização e vínculo organizacional verificáveis.
+- [x] Critérios de aceitação e testes revisados.
+- [x] Invariantes de autenticação, autorização e vínculo organizacional verificáveis.
 - [ ] Nenhuma implementação iniciada antes da aprovação do texto e do layout.
+
+**Nota de verificação:** Definition of Done permanece parcial. A rastreabilidade completa e a localização formal dos layouts em `docs/layout/` não foram confirmadas nesta execução; os protótipos de referência existentes estão em `docs/Identidade Visual/`. O aceite manual de telas também permanece pendente.
 
 ---
 
