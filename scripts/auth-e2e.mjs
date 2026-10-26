@@ -907,7 +907,16 @@ async function main() {
       email: RECRUITER_EMAIL,
       fullName: "Recrutador de Teste E2E"
     }, { cookie: secondCompanyCookie });
-    await expectStatus(secondCompanyInviteActiveRecruiter, 409, "second company cannot invite a recruiter who is actively linked elsewhere");
+    const activeLinkInviteFailure = await expectStatus(
+      secondCompanyInviteActiveRecruiter,
+      409,
+      "second company cannot invite a recruiter who is actively linked elsewhere"
+    );
+    assert.equal(
+      JSON.parse(activeLinkInviteFailure).message,
+      "Não foi possível processar o convite com os dados informados.",
+      "invitation response must not disclose whether the recipient has an active link to another company"
+    );
     const forbiddenSecondCompanyInvitation = await prisma.recruiterInvitation.findFirst({
       where: { companyId: secondCompanyAccount.company.id, recipientUserId: recruiterAccount.id },
       select: { id: true }
