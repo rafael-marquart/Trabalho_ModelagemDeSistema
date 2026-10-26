@@ -225,7 +225,7 @@ Validações externas — SMTP de homologação, proxy real, agendamento de rete
 
 - CI de push: [40253143930 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253143930).
 - CI da PR: [40253150227 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40253150227).
-- A correção evita revelar se um recrutador já possui vínculo ativo com outra empresa: a tentativa de convite recebe mensagem genérica, sem divulgar o estado organizacional do destinatário.
+- A correção remove a divulgação explícita do vínculo na mensagem de conflito e retorna texto genérico; ela não elimina todos os sinais de enumeração, como diferenças de status HTTP e a listagem de convites (limite residual detalhado nas atualizações posteriores).
 - A cobertura foi reforçada no teste da rota e no E2E para verificar a mensagem genérica, rejeição HTTP 409 e ausência de criação de convite/envio de e-mail na tentativa rejeitada.
 - As verificações automatizadas do workflow passaram para este HEAD: validação/geração Prisma, migrações PostgreSQL, integridade e concorrência de vínculo ativo, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP de captura.
 - A evidência confirma apenas os cenários automatizados exercitados. SMTP real, proxy de homologação/produção, agendamento/monitoramento de retenção, revisão manual completa de acessibilidade e pentest independente continuam não executados.
