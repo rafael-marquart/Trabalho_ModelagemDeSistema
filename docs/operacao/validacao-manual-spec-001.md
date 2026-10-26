@@ -137,3 +137,35 @@ docker compose down
 ```
 
 Isso mantém os dados locais. Só use `docker compose down -v` se quiser apagar permanentemente o volume do banco de desenvolvimento e tiver certeza de que não precisa dos dados.
+
+
+## Registro de execução manual — 26/10/2026
+
+Resultados confirmados pelo responsável durante a sessão de validação; este registro não substitui a execução dos itens ainda não verificados.
+
+### Confirmados
+- [x] O fluxo de recuperação de senha foi executado: solicitação, recebimento do e-mail no Mailpit, abertura do link, redefinição, login com a nova senha e rejeição da senha antiga.
+- [x] O cadastro de empresa aceita CNPJ vazio após aplicação da migração `20261026070000_company_cnpj_optional` no banco local.
+- [x] O layout foi considerado adequado nas larguras de 1280 px, 768 px e 390 px.
+- [x] Navegação por teclado: ordem de Tab considerada lógica, foco visível, Shift+Tab funcional; o logo recebe foco e Enter navega à página inicial, comportamento esperado para o link.
+- [x] A tentativa anônima de abrir a área de candidato foi negada sem exibir informação privada, conforme relato durante o teste.
+
+### CI e migração
+- CI consultado para o commit `473e7b1ae80dcf213e45cf35a33707629c412734`: sucesso.
+- A verificação local `npx.cmd prisma migrate status` identificou a migração `20261026070000_company_cnpj_optional` pendente; após aplicá-la, o responsável confirmou que o cadastro sem CNPJ passou a funcionar. O resultado posterior de `migrate status` não foi anexado a este registro.
+
+### Ainda não confirmados manualmente
+- [ ] Todas as telas comparadas com os protótipos, incluindo tema claro/escuro e contraste.
+- [ ] Teste com leitor de tela e anúncio acessível de erros.
+- [ ] Fluxos completos de cadastro/login de candidato e empresa, incluindo confirmação de e-mail, além dos cenários específicos listados nas seções anteriores que não foram relatados como concluídos.
+- [ ] Todos os cenários de convites, reenvio/cancelamento, aceite/recusa e isolamento entre empresas.
+- [ ] Matriz de autorização das APIs protegidas; o teste anônimo de uma página não comprova autorização de todas as rotas.
+
+### Limites operacionais fora da validação local
+- [ ] Entrega real de SMTP em homologação/produção.
+- [ ] URL HTTPS canônica e configuração efetiva do proxy confiável.
+- [ ] Agendamento e monitoramento da rotina de retenção em produção.
+- [ ] Homologação externa e teste de invasão independente.
+- [ ] Revisão/decisão do risco residual de inferência sobre elegibilidade de convites documentado em `docs/relatorios/validacao-spec-001.md`.
+
+A SPEC-001 não deve ser marcada como formalmente concluída apenas com este registro: os itens acima continuam pendentes até que haja evidência ou decisão documentada.
