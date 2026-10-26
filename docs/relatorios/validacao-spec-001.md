@@ -293,3 +293,27 @@ Validações externas — SMTP de homologação, proxy real, agendamento de rete
 - **Correção de privacidade validada no HEAD funcional anterior:** solicitações de convite retornam resposta genérica HTTP 202; registros neutros não vinculam a conta do destinatário nem enviam e-mail; tokens neutros são recusados; falhas de SMTP invalidam o token tentado; e placeholders são convertidos em convite real quando a conta se torna elegível.
 - **Estado da entrega:** a PR #36 permanece aberta em Draft, sem merge ou deploy. A SPEC-001 não é declarada formalmente concluída.
 - **Pendências externas ao CI:** entrega de e-mail por SMTP real e links HTTPS canônicos, validação do proxy confiável e de `X-Forwarded-For`, agendamento/monitoramento das rotinas de retenção, aceite manual de acessibilidade/temas e homologação de segurança independente. Essas etapas exigem infraestrutura e evidência operacional; não podem ser consideradas concluídas apenas com CI verde.
+
+
+## Evidência confirmada — 26/10/2026 (HEAD documental `9810e1f`)
+
+Esta seção registra apenas execuções concluídas e associadas aos SHAs indicados.
+
+- **HEAD de código/testes:** `ea6d1bb13aaf5d2924a68f45fdccd05f97762624`.
+- **CI de push do HEAD de código/testes:** [40259775324 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40259775324).
+- **CI da PR do HEAD de código/testes:** [40259780023 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40259780023).
+- **HEAD documental validado antes desta atualização:** `9810e1f38a06f73bb3cf9ab2ea5adc0cdabfc52e`.
+- **CI de push desse HEAD documental:** [40259989977 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40259989977).
+- **CI da PR desse HEAD documental:** [40259994239 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40259994239).
+
+### Etapas e evidências inspecionadas
+
+Nos dois workflows do HEAD documental, o job `validate` terminou com sucesso em todas as etapas: validação/geração do Prisma, migrações PostgreSQL (incluindo `20261026030000_privacy_neutral_recruiter_invitation`), verificações da restrição de vínculo ativo e concorrência, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP local de captura. O lint reportou 14 avisos e zero erros. A suíte registrou **27 arquivos de teste e 221 testes aprovados**. O log E2E terminou com a confirmação de sucesso para autenticação/recuperação de candidato e revogação de sessão, confirmação empresarial, convites/reenvio/aceite/recusa/cancelamento, isolamento multiempresa, concorrência, logout e bloqueio de conta.
+
+A implementação de solicitações neutras de convite mantém a resposta pública genérica HTTP 202; registros sem destinatário elegível não ficam associados a um `recipientUserId`, não geram envio de e-mail nem evento de convite enviado. A transição de placeholder para convite elegível é coberta por teste, assim como a rejeição de convites sem destinatário associado. Os logs do PostgreSQL incluem violações de unicidade e conflitos de serialização esperados pelos testes de concorrência; o job concluiu com sucesso.
+
+### Limitações operacionais mantidas
+
+As execuções confirmam apenas a automação configurada no repositório. Não foram realizadas nesta revisão: homologação com SMTP real, validação do proxy confiável real e de `X-Forwarded-For`, configuração/agendamento de retenção em produção, testes manuais de acessibilidade/dispositivos, homologação externa ou pentest independente. A SPEC-001 permanece em validação e não é declarada formalmente concluída.
+
+Esta atualização do relatório é documental. A execução de CI disparada pelo novo commit documental deve ser verificada separadamente; esta seção não antecipa seu resultado.
