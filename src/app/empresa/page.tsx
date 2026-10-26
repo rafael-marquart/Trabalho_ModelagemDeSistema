@@ -11,7 +11,7 @@ export default async function CompanyHomePage() {
     <main className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div>
       <div className="entry-content">
-        <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" /></Link>
+        <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" /></Link>
         <section className="auth-card">
           <p className="eyebrow">Área da empresa</p>
           <h1>Bem-vinda ao Acessa Vagas.</h1>
