@@ -58,7 +58,10 @@ button, input, select { font: inherit; }
 .entry-options { display: grid; gap: 14px; margin-top: 32px; }
 .choice-card { display: flex; align-items: center; gap: 16px; padding: 19px; border: 1px solid var(--line); border-radius: 16px; background: #fff; transition: border-color .18s, transform .18s, box-shadow .18s; }
 .choice-card:hover { border-color: #b7a3e9; box-shadow: 0 10px 30px rgba(54,35,93,.07); text-decoration: none; transform: translateY(-1px); }
-.choice-icon { display: grid; flex: 0 0 46px; place-items: center; width: 46px; height: 46px; border-radius: 13px; color: var(--purple); background: var(--purple-soft); font-size: 23px; }
+.choice-icon { display: grid; flex: 0 0 46px; place-items: center; width: 46px; height: 46px; border-radius: 15px; color: var(--purple); background: var(--purple-soft); }
+.choice-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.candidate-icon { border-radius: 50%; }
+.company-icon { border-radius: 15px; }
 .company-icon { color: #286c69; background: #e5f4f1; }
 .choice-copy { display: grid; gap: 5px; min-width: 0; }
 .choice-copy strong { color: var(--ink); font-size: 15px; }
@@ -116,6 +119,8 @@ button, input, select { font: inherit; }
 /* Shared theme controls and token-driven surfaces; SVG prototypes remain the visual source of truth. */
 .theme-control-host { display: flex; justify-content: flex-end; margin: 0 0 14px; }
 .entry-panel > .theme-control-host { width: min(100%, 470px); justify-self: center; }
+.auth-page > .theme-control-host { width: 100%; margin: 0 0 18px; }
+.auth-page > .theme-control-host .theme-toggle { flex: 0 0 auto; }
 .theme-toggle {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   min-height: 40px; padding: 8px 12px; border: 1px solid #8b8499; border-radius: 999px;
@@ -261,7 +266,7 @@ button, input, select { font: inherit; }
   position: relative; display: flex; align-items: center; justify-content: center;
   min-width: 0; padding: 88px 40px 64px; background: var(--surface);
 }
-.auth-split-content .theme-control-host { top: 24px; right: 32px; }
+.auth-split-content .theme-control-host { position: absolute; top: 24px; right: 32px; z-index: 2; margin: 0; }
 .auth-split-card { width: min(100%, 500px); }
 .auth-role-switch {
   display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 6px; margin: 0 0 40px;
