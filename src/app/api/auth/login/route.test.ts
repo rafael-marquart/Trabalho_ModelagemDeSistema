@@ -1,0 +1,304 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const { prismaMock, verifyPasswordMock, createSessionMock } = vi.hoisted(() => ({
+  prismaMock: {
+    user: { findFirst: vi.fn() },
+    $transaction: vi.fn(),
+    auditEvent: { create: vi.fn() }
+  },
+  verifyPasswordMock: vi.fn(),
+  createSessionMock: vi.fn()
+}));
+
+vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
+vi.mock("@/lib/auth/password", () => ({ verifyPassword: verifyPasswordMock }));
+vi.mock("@/lib/auth/session", () => ({ createSession: createSessionMock }));
+
+import { POST } from "./route";
+
+describe("login", () => {
+  const user = {
+    id: "candidate-1",
+    email: "person@example.com",
+    cpf: "52998224725",
+    role: "CANDIDATE",
+    isActive: true,
+    passwordHash: "stored-hash",
+    failedLoginCount: 0,
+    lastFailedLoginAt: null,
+    lockedUntil: null,
+    passwordChangedAt: new Date("2026-01-01T00:00:00.000Z")
+  };
+  const tx = {
+    $executeRaw: vi.fn(),
+    user: { findFirst: vi.fn(), findUnique: vi.fn(), update: vi.fn() },
+loginAttempt: { count: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
+    loginBlock: { findUnique: vi.fn(), upsert: vi.fn() },
+    session: { deleteMany: vi.fn() }
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    tx.user.findFirst.mockResolvedValue(user);
+    prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => callback(tx));
+    tx.$executeRaw.mockResolvedValue([]);
+    tx.user.findUnique.mockResolvedValue(user);
+    tx.user.update.mockResolvedValue(user);
+    tx.loginAttempt.count.mockResolvedValue(0);
+    tx.loginAttempt.findFirst.mockResolvedValue({ createdAt: new Date() });
+    tx.loginAttempt.create.mockResolvedValue({ id: "attempt-1" });
+    tx.loginBlock.findUnique.mockResolvedValue(null);
+    tx.loginBlock.upsert.mockResolvedValue({ ipKey: "hashed-ip", blockedUntil: new Date(), cooldownSeconds: 60 });
+    tx.session.deleteMany.mockResolvedValue({ count: 1 });
+    verifyPasswordMock.mockResolvedValue(true);
+    createSessionMock.mockResolvedValue(true);
+    prismaMock.auditEvent.create.mockResolvedValue({ id: "audit-1" });
+  });
+
+  const makeRequest = (overrides: Record<string, unknown> = {}) =>
+    new Request("https://acessavagas.example/api/auth/login", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-forwarded-for": "192.0.2.10" },
+      body: JSON.stringify({
+        profile: "candidate",
+        identifier: "PERSON@example.com",
+        password: "StrongPassword123",
+        rememberMe: false,
+        ...overrides
+      })
+    });
+
+  it("serializes the credential check, resets failures, creates a session, and audits success", async () => {
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(200);
+    expect(tx.$executeRaw).toHaveBeenCalled();
+    expect(tx.user.findUnique).toHaveBeenCalledWith({ where: { id: "candidate-1" } });
+    expect(verifyPasswordMock).toHaveBeenCalledWith("stored-hash", "StrongPassword123");
+    expect(tx.user.update).toHaveBeenCalledWith({
+      where: { id: "candidate-1" },
+      data: { failedLoginCount: 0, lastFailedLoginAt: null, lockedUntil: null }
+    });
+    expect(createSessionMock).toHaveBeenCalledWith("candidate-1", false, user.passwordChangedAt);
+    // Successful-login audit is written atomically inside createSession.
+    expect(prismaMock.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it("increments consecutive failures and never creates a session for a wrong password", async () => {
+    verifyPasswordMock.mockResolvedValueOnce(false);
+    tx.user.findUnique.mockResolvedValueOnce({ ...user, failedLoginCount: 4, lastFailedLoginAt: new Date(Date.now() - 60_000) });
+
+    const response = await POST(makeRequest({ password: "WrongPassword123" }) as never);
+
+    expect(response.status).toBe(401);
+    expect(tx.loginAttempt.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ succeeded: false })
+    });
+    expect(tx.user.update).toHaveBeenCalledWith({
+      where: { id: "candidate-1" },
+      data: { failedLoginCount: 5, lastFailedLoginAt: expect.any(Date) }
+    });
+    expect(createSessionMock).not.toHaveBeenCalled();
+    expect(prismaMock.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it("locks the account for 15 minutes on the tenth consecutive failure", async () => {
+    verifyPasswordMock.mockResolvedValueOnce(false);
+    tx.user.findUnique.mockResolvedValueOnce({ ...user, failedLoginCount: 9, lastFailedLoginAt: new Date(Date.now() - 60_000) });
+
+    const response = await POST(makeRequest({ password: "WrongPassword123" }) as never);
+
+    expect(response.status).toBe(401);
+    expect(tx.user.update).toHaveBeenCalledWith({
+      where: { id: "candidate-1" },
+      data: { failedLoginCount: 0, lastFailedLoginAt: null, lockedUntil: expect.any(Date) }
+    });
+    const lock = tx.user.update.mock.calls[0][0].data.lockedUntil as Date;
+    expect(tx.session.deleteMany).toHaveBeenCalledWith({ where: { userId: "candidate-1" } });
+    expect(lock.getTime()).toBeGreaterThan(Date.now() + 14 * 60 * 1000);
+    expect(lock.getTime()).toBeLessThanOrEqual(Date.now() + 15 * 60 * 1000 + 1000);
+  });
+
+  it("resets a stale failure counter when the previous failure is outside 15 minutes", async () => {
+    verifyPasswordMock.mockResolvedValueOnce(false);
+    tx.user.findUnique.mockResolvedValueOnce({
+      ...user,
+      failedLoginCount: 9,
+      lastFailedLoginAt: new Date(Date.now() - 16 * 60 * 1000)
+    });
+
+    const response = await POST(makeRequest({ password: "WrongPassword123" }) as never);
+
+    expect(response.status).toBe(401);
+    expect(tx.user.update).toHaveBeenCalledWith({
+      where: { id: "candidate-1" },
+      data: { failedLoginCount: 1, lastFailedLoginAt: expect.any(Date) }
+    });
+  });
+
+  it("does not verify credentials for a locked account", async () => {
+    tx.user.findUnique.mockResolvedValueOnce({
+      ...user,
+      lockedUntil: new Date(Date.now() + 60_000)
+    });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(401);
+    expect(verifyPasswordMock).not.toHaveBeenCalled();
+    expect(tx.user.update).not.toHaveBeenCalled();
+    expect(createSessionMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects a valid password if session creation detects that the password changed concurrently", async () => {
+    createSessionMock.mockResolvedValueOnce(false);
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(401);
+    expect(prismaMock.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it("does not verify a password for an inactive account", async () => {
+    tx.user.findUnique.mockResolvedValueOnce({ ...user, isActive: false });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(401);
+    expect(verifyPasswordMock).not.toHaveBeenCalled();
+    expect(createSessionMock).not.toHaveBeenCalled();
+    expect(tx.user.update).not.toHaveBeenCalled();
+  });
+
+  it("does not authenticate a user whose role does not match the selected profile", async () => {
+    tx.user.findUnique.mockResolvedValueOnce({ ...user, role: "COMPANY" });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(401);
+    expect(verifyPasswordMock).not.toHaveBeenCalled();
+    expect(createSessionMock).not.toHaveBeenCalled();
+  });
+
+  it("does not increment the failure counter again while the account is locked", async () => {
+    tx.user.findUnique.mockResolvedValueOnce({
+      ...user,
+      failedLoginCount: 0,
+      lockedUntil: new Date(Date.now() + 60_000)
+    });
+
+    const response = await POST(makeRequest({ password: "WrongPassword123" }) as never);
+
+    expect(response.status).toBe(401);
+    expect(verifyPasswordMock).not.toHaveBeenCalled();
+    expect(tx.user.update).not.toHaveBeenCalled();
+    expect(createSessionMock).not.toHaveBeenCalled();
+  });
+
+  it("keeps an active IP cooldown after the rolling failure window has emptied", async () => {
+    tx.loginAttempt.count.mockResolvedValue(0);
+    tx.loginBlock.findUnique.mockResolvedValue({
+      blockedUntil: new Date(Date.now() + 10 * 60 * 1000),
+      cooldownSeconds: 3600
+    });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(429);
+    expect(Number(response.headers.get("retry-after"))).toBe(3600);
+    expect(tx.user.findFirst).not.toHaveBeenCalled();
+    expect(verifyPasswordMock).not.toHaveBeenCalled();
+    expect(tx.loginBlock.upsert).toHaveBeenCalledWith({
+      where: { ipKey: expect.any(String) },
+      create: { ipKey: expect.any(String), blockedUntil: expect.any(Date), cooldownSeconds: 3600 },
+      update: { blockedUntil: expect.any(Date), cooldownSeconds: 3600 }
+    });
+    expect(tx.loginAttempt.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ succeeded: false })
+    });
+  });
+
+  it("applies the first graduated IP cooldown before account lookup and records blocked attempts", async () => {
+    tx.loginAttempt.count.mockResolvedValueOnce(30);
+
+    const response = await POST(makeRequest({ identifier: "unknown@example.com" }) as never);
+
+    expect(response.status).toBe(429);
+    expect(Number(response.headers.get("retry-after"))).toBeGreaterThan(0);
+    expect(Number(response.headers.get("retry-after"))).toBeLessThanOrEqual(60);
+    expect(await response.json()).toEqual({
+      message: "Não foi possível entrar com os dados informados. Aguarde antes de tentar novamente."
+    });
+    expect(tx.loginAttempt.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ succeeded: false })
+    });
+    expect(tx.user.findFirst).not.toHaveBeenCalled();
+    expect(verifyPasswordMock).not.toHaveBeenCalled();
+    expect(createSessionMock).not.toHaveBeenCalled();
+  });
+
+  it("escalates the IP cooldown as rolling-window failures increase", async () => {
+    for (const [failures, maxCooldown] of [[50, 300], [80, 900], [120, 3600]]) {
+      vi.clearAllMocks();
+      prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => callback(tx));
+      tx.$executeRaw.mockResolvedValue([]);
+      tx.loginAttempt.count.mockResolvedValueOnce(failures);
+      tx.loginAttempt.create.mockResolvedValue({ id: "blocked-attempt" });
+
+      const response = await POST(makeRequest() as never);
+
+      expect(response.status).toBe(429);
+      expect(Number(response.headers.get("retry-after"))).toBeGreaterThan(0);
+      expect(Number(response.headers.get("retry-after"))).toBeLessThanOrEqual(maxCooldown);
+      expect(tx.user.findFirst).not.toHaveBeenCalled();
+    }
+  });
+
+  it("rejects malformed login input before database access", async () => {
+    const response = await POST(makeRequest({ profile: "invalid-profile" }) as never);
+
+    expect(response.status).toBe(400);
+    expect(tx.user.findFirst).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
+  it("rejects cross-origin login before querying accounts", async () => {
+    const response = await POST(new Request("https://acessavagas.example/api/auth/login", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: "https://attacker.example" },
+      body: JSON.stringify({ profile: "candidate", identifier: "person@example.com", password: "StrongPassword123" })
+    }) as never);
+
+    expect(response.status).toBe(403);
+    expect(tx.user.findFirst).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
+
+  it("rejects a request from a different origin before querying accounts", async () => {
+    const response = await POST(new Request("https://acessavagas.example/api/auth/login", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: "https://other-origin.example" },
+      body: JSON.stringify({ profile: "candidate", identifier: "person@example.com", password: "StrongPassword123" })
+    }) as never);
+
+    expect(response.status).toBe(403);
+    expect(tx.user.findFirst).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
+  it("rejects syntactically malformed JSON before database access", async () => {
+    const response = await POST(new Request("https://acessavagas.example/api/auth/login", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-forwarded-for": "192.0.2.10" },
+      body: "{"
+    }) as never);
+
+    expect(response.status).toBe(400);
+    expect(tx.user.findFirst).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(verifyPasswordMock).not.toHaveBeenCalled();
+    expect(createSessionMock).not.toHaveBeenCalled();
+  });
+
+});

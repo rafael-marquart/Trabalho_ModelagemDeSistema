@@ -24,7 +24,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 | ID | SPEC-001 |
 |
 | Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | aprovação parcial: entrada/login, login de Candidato e login de Empresa aprovados em 25/10/2026; demais áreas pendentes de aprovação ou protótipo |
+| Estado do layout | protótipos de entrada/login, login de Candidato, login de Empresa, cadastro de Candidato, cadastro de Empresa, recuperação de senha, gestão de recrutadores e mensagens de autenticação aprovados visualmente em 25/10/2026; SVGs estáticos de referência |
 | Capacidade | Cadastro de usuário/empresa, autenticação, recuperação de senha, autorização por perfil e vínculo organizacional de recrutador |
 
 ## 2. Rastreabilidade
@@ -43,7 +43,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 ### Incluído
 - Apresentar login por e-mail e senha e opções de criação de conta como Usuário ou Empresa.
 - Autenticar usuários existentes e permitir recuperação de senha conforme RF-02.
-- Permitir cadastro de conta de Empresa conforme RF-17.
+- Permitir cadastro de conta de Empresa conforme RF-17, restrito inicialmente a empresas brasileiras que informem um CNPJ com exatamente 14 dígitos. A validação verifica apenas a quantidade de dígitos após remover pontuação de formatação; não verifica dígitos verificadores nem consulta a existência do CNPJ em fonte oficial ou serviço externo. Empresas estrangeiras ou sem CNPJ estão fora do escopo inicial. A conta permanece inativa até a confirmação do e-mail corporativo.
 - Identificar o perfil autenticado e aplicar permissões correspondentes.
 - Permitir que Empresa autenticada cadastre ou associe usuários com perfil de Recrutador nas configurações.
 - Manter o vínculo do Recrutador com a Empresa responsável.
@@ -65,13 +65,13 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 | Entrada/login e seleção de perfil | Login e escolha entre cadastro como Usuário ou Empresa | Aprovado em 25/10/2026 |
 | Login de Candidato | Autenticação de candidato | Aprovado em 25/10/2026 |
 | Login de Empresa | Autenticação de empresa | Aprovado em 25/10/2026 |
-| Cadastro de Usuário/Candidato | Iniciar criação de conta de candidato | Protótipo disponível — aprovação pendente |
-| Cadastro de Empresa | Iniciar criação de conta organizacional | Protótipo disponível — aprovação pendente |
-| Recuperação de senha | Iniciar recuperação de senha | Protótipo disponível — aprovação pendente |
-| Configurações da Empresa — Recrutadores | Cadastrar ou associar recrutador à Empresa autenticada | Pendente de protótipo |
-| Mensagens de autenticação | Informar falha ou bloqueio sem expor dados indevidos | Pendente de protótipo |
+| Cadastro de Usuário/Candidato | Iniciar criação de conta de candidato | Aprovado em 25/10/2026 |
+| Cadastro de Empresa | Iniciar criação de conta organizacional | Aprovado em 25/10/2026 |
+| Recuperação de senha | Iniciar recuperação de senha | Aprovado em 25/10/2026 |
+| Configurações da Empresa — Recrutadores | Cadastrar ou associar recrutador à Empresa autenticada | Aprovado em 25/10/2026 (`Gestao-Recrutadores.svg`) |
+| Mensagens de autenticação | Informar falha ou bloqueio sem expor dados indevidos | Aprovado em 25/10/2026 (`Mensagens-Autenticacao.svg`) |
 
-A lista identifica áreas funcionais, não define quantidade final de páginas ou composição visual. Os protótipos existentes estão em `docs/Identidade Visual/`; referências adicionais devem ser registradas junto à Spec correspondente e aprovadas separadamente.
+A lista identifica áreas funcionais, não define quantidade final de páginas ou composição visual. Os protótipos SVG listados estão aprovados visualmente; são referências estáticas. Por decisão do responsável em 25/10/2026, os SVGs mantidos em `docs/Identidade Visual/` são a fonte de referência visual enquanto a conta Figma estiver sem cota. A sincronização da fonte editável permanece pendente, mas não bloqueia a implementação que utilize fielmente esses artefatos versionados.
 
 ## 4. Dependências
 
@@ -116,14 +116,15 @@ A decisão aprovada define recuperação de candidato por e-mail ou CPF e recupe
 
 ### 5.4 Cadastro de Recrutador
 1. Uma Empresa autenticada e autorizada acessa as próprias configurações. **Não existe papel de Administrador associado à Empresa**; o perfil Administrador é reservado à moderação/gestão da plataforma.
-2. A Empresa abre a área de Recrutadores e informa os dados necessários.
-3. O sistema valida os dados e cria ou associa uma conta USUARIO com perfil de Recrutador.
-4. O sistema mantém o vínculo com a Empresa que realizou o cadastro.
-5. O sistema registra a alteração conforme as regras aplicáveis.
+2. A Empresa abre a área de Recrutadores e informa nome e e-mail.
+3. Se o e-mail pertencer a uma conta elegível de Recrutador, o sistema envia um convite de uso único; o titular deve aceitar explicitamente o vínculo.
+4. Se o e-mail ainda não pertencer a uma conta, o sistema cria uma conta RECRUITER inativa com credencial aleatória não divulgada e envia um link de uso único. A pessoa define sua senha e aceita explicitamente o vínculo pelo link.
+5. Para uma conta recém-criada, a ativação e o vínculo são concluídos atomicamente após o aceite. O convite expira em 7 dias e pode ser reenviado ou cancelado enquanto estiver pendente.
+6. O sistema registra a alteração conforme as regras aplicáveis.
 6. A Empresa pode excluir um Recrutador da própria página de Recrutadores. A operação encerra o vínculo desse Recrutador com a Empresa solicitante, revoga as permissões decorrentes do vínculo e registra a alteração para auditoria; não exclui a conta pessoal do usuário nem apaga seu histórico de ações.
 7. A Empresa não pode administrar vínculos de Recrutadores pertencentes a outra organização.
 
-O comportamento deriva de UC-07 e RB-46. Quando o e-mail já pertencer a uma conta, a Empresa envia um convite ao e-mail dessa conta e o titular deve aceitá-lo explicitamente. O convite é válido por 7 dias; a Empresa pode reenviá-lo, invalidando o link anterior, ou cancelá-lo enquanto estiver pendente. O titular pode recusá-lo, e um convite sem resposta expira após 7 dias. O link do convite é de uso único. Um Recrutador pode estar associado ativamente a apenas uma Empresa por vez; se já estiver vinculado a uma Empresa, não poderá aceitar convite de outra até que o vínculo existente seja encerrado. O convite não transfere nem encerra por si só um vínculo existente. O perfil Administrador é exclusivo da plataforma e não participa da administração da conta Empresa.
+O comportamento deriva de UC-07 e RB-46. Quando o e-mail já pertencer a uma conta elegível de Recrutador, a Empresa envia um convite ao e-mail dessa conta e o titular deve aceitá-lo explicitamente. Quando o e-mail ainda não pertencer a uma conta, a Empresa informa nome e e-mail; o sistema cria conta RECRUITER inativa, marcada como pendente de ativação, com senha aleatória que não é revelada nem enviada, e envia link de uso único. A pessoa define sua senha e aceita explicitamente o vínculo pelo link; a ativação da conta e a criação do vínculo são concluídas atomicamente. O convite é válido por 7 dias; a Empresa pode reenviá-lo, invalidando o link anterior, ou cancelá-lo enquanto estiver pendente. O titular pode recusá-lo, e um convite sem resposta expira após 7 dias. O link do convite é de uso único. Um Recrutador pode estar associado ativamente a apenas uma Empresa por vez; se já estiver vinculado a uma Empresa, não poderá aceitar convite de outra até que o vínculo existente seja encerrado. O convite não transfere nem encerra por si só um vínculo existente. O perfil Administrador é exclusivo da plataforma e não participa da administração da conta Empresa.
 
 
 
@@ -134,7 +135,7 @@ O comportamento deriva de UC-07 e RB-46. Quando o e-mail já pertencer a uma con
 2. A senha deve conter no mínimo 10 caracteres, incluindo pelo menos uma letra maiúscula, uma letra minúscula e um número; símbolo não é obrigatório.
 3. Após 10 tentativas consecutivas incorretas de login, a conta é bloqueada temporariamente por 15 minutos; o desbloqueio ocorre automaticamente ao fim do prazo ou por recuperação de senha válida.
 4. O cadastro de Empresa exige razão social, identificador oficial e e-mail corporativo de contato; nome fantasia é opcional.
-5. A liberação das funcionalidades organizacionais depende da validação do identificador oficial e da confirmação do e-mail corporativo.
+5. A liberação das funcionalidades organizacionais depende da confirmação do e-mail corporativo; o CNPJ é aceito quando contém exatamente 14 dígitos, sem verificação de existência ou dígitos verificadores.
 6. Não permitir novo cadastro de Empresa com identificador oficial já associado a outra Empresa; orientar recuperação ou associação à conta existente.
 7. A Empresa cadastra e vincula Recrutadores nas próprias configurações, conforme RF-17 e RB-46.
 8. Quando o e-mail informado já pertencer a uma conta, a Empresa autenticada e autorizada pode solicitar o vínculo por convite enviado ao e-mail da conta; o titular deve dar aceite explícito antes da efetivação.
@@ -200,18 +201,21 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 - [ ] Entrada apresenta login por e-mail e senha.
 - [ ] Cadastro oferece Usuário ou Empresa, sem cadastro independente de Recrutador.
-- [ ] Credenciais válidas autenticam e encaminham conforme o perfil.
-- [ ] Credenciais inválidas não autenticam.
-- [ ] Recuperação permite redefinição quando a solicitação é válida.
-- [ ] Operações protegidas verificam autorização no backend.
-- [ ] Sessão expirada ou invalidada não executa operações protegidas.
-- [ ] Empresa autorizada consegue cadastrar/associar Recrutador por convite com aceite explícito.
-- [ ] Um Recrutador não mantém mais de um vínculo empresarial ativo.
-- [ ] Empresa consegue excluir Recrutador da própria página, encerrando o vínculo sem apagar conta nem histórico.
-- [ ] Recrutador permanece vinculado à Empresa responsável enquanto o vínculo estiver ativo.
-- [ ] Empresa não consegue administrar vínculo de outra Empresa.
-- [ ] Alterações relevantes são rastreáveis.
+- [x] Credenciais válidas autenticam e encaminham conforme o perfil.
+- [x] Credenciais inválidas não autenticam.
+- [x] Recuperação permite redefinição quando a solicitação é válida.
+- [x] Operações protegidas verificam autorização no backend.
+- [x] Sessão expirada ou invalidada não executa operações protegidas.
+- [x] Empresa autorizada consegue cadastrar/associar Recrutador por convite com aceite explícito.
+- [x] Um Recrutador não mantém mais de um vínculo empresarial ativo.
+- [x] Empresa consegue excluir Recrutador da própria página, encerrando o vínculo sem apagar conta nem histórico.
+- [x] Recrutador permanece vinculado à Empresa responsável enquanto o vínculo estiver ativo.
+- [x] Empresa não consegue administrar vínculo de outra Empresa.
+- [x] Alterações relevantes são rastreáveis.
 - [ ] Mensagens não expõem credenciais ou dados pessoais desnecessários.
+
+
+**Nota de verificação (26/10/2026):** os itens marcados foram cobertos por testes automatizados e pelo CI verde do HEAD `2c9fce50275c5531df0587e14f5f58da050f6271` ([execução 40261466174](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40261466174)). O E2E agora verifica explicitamente login de candidato com CPF formatado, recuperação de senha de candidato e empresa, redefinição, rejeição de reutilização do link e login com a nova senha. Os itens desmarcados continuam sem confirmação integral; as telas não foram testadas manualmente no navegador.
 
 ## 12. Casos de teste derivados
 
@@ -238,19 +242,21 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 - **OPEN-001:** resolvida; candidatos podem iniciar recuperação por e-mail ou CPF, e contas de Empresa por e-mail. O sistema envia link ao e-mail cadastrado, válido por 30 minutos e de uso único; uma nova solicitação invalida o link anterior. As mensagens não confirmam se o identificador existe. Limite de 3 solicitações por conta e por IP em 15 minutos; ao atingir o limite, bloqueio por 15 minutos.
 - **OPEN-002:** resolvida; a sessão expira após 60 minutos sem atividade, inclusive com “manter conectado” habilitado. Essa opção permite recuperar a sessão sem novo login por até 30 dias, conforme condições de uso; não elimina a expiração por inatividade. Logout, troca/redefinição de senha e bloqueio/desativação invalidam as sessões.
 - **OPEN-003:** resolvida; senha com mínimo de 10 caracteres, pelo menos uma letra maiúscula, uma minúscula e um número, sem símbolo obrigatório; bloqueio temporário após 10 tentativas consecutivas incorretas por 15 minutos, com desbloqueio automático ao fim do prazo ou por recuperação de senha válida.
-- **OPEN-004:** resolvida; razão social, identificador oficial e e-mail corporativo de contato obrigatórios; nome fantasia opcional. Validar o identificador oficial e confirmar separadamente o e-mail corporativo; liberar funcionalidades organizacionais somente após ambas as verificações. Impedir cadastro duplicado pelo identificador oficial e orientar recuperação/associação à conta existente. A Empresa cadastra/vincula Recrutadores conforme RF-17/RB-46. Permanecem a especificação dos procedimentos de validação, o tratamento de empresas sem o identificador adotado e os detalhes de associação tratados na OPEN-005.
-- **OPEN-005:** resolvida; se o e-mail já pertencer a uma conta, a Empresa autenticada e autorizada pode solicitar vínculo por convite enviado ao e-mail da conta, exigindo aceite explícito do titular. O vínculo só se efetiva após o aceite e nova validação da autorização da Empresa. Até lá, o convite permanece pendente; a Empresa não recebe dados adicionais da conta. O aceite não autoriza automaticamente transferir ou administrar vínculos de outra Empresa. Prazo, cancelamento/reenvio, recusa/expiração e regras para múltiplos vínculos permanecem sem decisão. Eventos de convite e vínculo são relevantes para auditoria; lista e retenção ficam na OPEN-006.
+- **OPEN-004:** resolvida; o cadastro inicial aceita apenas empresas brasileiras com CNPJ de exatamente 14 dígitos após remoção da pontuação de formatação. Não valida dígitos verificadores nem consulta a existência do CNPJ. Empresas estrangeiras ou sem CNPJ estão fora do escopo inicial. A conta empresarial é ativada após a confirmação do e-mail corporativo. O comportamento de cadastro duplicado e associação à conta existente permanece conforme a regra funcional documentada.
+- **OPEN-005:** resolvida; convites de recrutador têm uso único e prazo documentado, podem ser reenviados ou cancelados, e permitem aceite, recusa e expiração. Se o e-mail não tiver conta elegível, é criada uma conta pendente, ativada somente após definição de senha e aceite explícito do vínculo. A autorização da Empresa é revalidada no aceite; o fluxo não permite assumir ou administrar vínculos de outra Empresa. Os eventos relevantes são auditados conforme OPEN-006.
 - **OPEN-006:** eventos de auditoria e prazo de retenção.
 
 ## 14. Definition of Done
 
-- [ ] Texto revisado e aprovado pelo responsável humano.
+- [x] Texto revisado e aprovado pelo responsável humano.
 - [ ] Rastreabilidade de RF, RB, RNF, casos de uso, modelo, driver e ADR conferida.
-- [ ] Questões em aberto decididas ou mantidas explicitamente como pendências.
+- [x] Questões em aberto decididas ou mantidas explicitamente como pendências.
 - [ ] Layouts aplicáveis anexados em docs/layout/ e aprovados separadamente.
-- [ ] Critérios de aceitação e testes revisados.
-- [ ] Invariantes de autenticação, autorização e vínculo organizacional verificáveis.
+- [x] Critérios de aceitação e testes revisados.
+- [x] Invariantes de autenticação, autorização e vínculo organizacional verificáveis.
 - [ ] Nenhuma implementação iniciada antes da aprovação do texto e do layout.
+
+**Nota de verificação:** Definition of Done permanece parcial. A rastreabilidade completa e a localização formal dos layouts em `docs/layout/` não foram confirmadas nesta execução; os protótipos de referência existentes estão em `docs/Identidade Visual/`. O aceite manual de telas também permanece pendente.
 
 ---
 

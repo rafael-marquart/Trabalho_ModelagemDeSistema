@@ -1,0 +1,70 @@
+"use client";
+
+import React, { FormEvent, useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import AuthSplitLayout from "@/components/auth-split-layout";
+
+export default function CandidateLoginPage() {
+  const router = useRouter();
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("cadastro") === "sucesso") {
+      setNotice("Cadastro concluído. Entre com seu e-mail ou CPF e senha para acessar sua conta.");
+    }
+  }, []);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profile: "candidate", identifier, password, rememberMe })
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        setError(result.message || "Não foi possível entrar. Tente novamente.");
+        return;
+      }
+      router.push(result.redirectTo);
+      router.refresh();
+    } catch {
+      setError("Não foi possível conectar ao serviço. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <AuthSplitLayout
+      profile="candidate"
+      eyebrow="Área do candidato"
+      title="Entrar como candidato"
+      description="Acesse suas vagas e acompanhe suas candidaturas."
+      footer={<p className="auth-footer">Ainda não tem uma conta? <Link href="/candidato/cadastro">Cadastre-se</Link></p>}
+    >
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <label htmlFor="identifier">E-mail ou CPF</label>
+        <input id="identifier" autoComplete="username" value={identifier} onChange={event => setIdentifier(event.target.value)} required />
+        <label htmlFor="password">Senha</label>
+        <input id="password" type="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required />
+        <div className="form-options">
+          <label className="checkbox-label"><input type="checkbox" checked={rememberMe} onChange={event => setRememberMe(event.target.checked)} /> Manter conectado</label>
+          <Link href="/recuperar-senha">Esqueci minha senha</Link>
+        </div>
+        {notice && <p className="form-success" role="status" aria-live="polite">{notice}</p>}
+        {error && <p className="form-error" role="alert">{error}</p>}
+        <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar na plataforma  →"}</button>
+      </form>
+    </AuthSplitLayout>
+  );
+}
