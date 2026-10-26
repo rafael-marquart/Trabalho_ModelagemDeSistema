@@ -285,3 +285,11 @@ Validações externas — SMTP de homologação, proxy real, agendamento de rete
 - **Resultado técnico:** a lacuna anterior de enumeração por status HTTP e ausência de linha na listagem foi mitigada no fluxo da aplicação e passou no CI acima. Isso não elimina inferências externas baseadas no recebimento real de e-mail nem substitui a validação de privacidade no ambiente operacional.
 - Permanecem pendentes as verificações que exigem ambiente/acesso: SMTP real e links HTTPS canônicos, proxy confiável/`X-Forwarded-For`, agendamento/alertas das rotinas de retenção e revisão manual de acessibilidade nos temas claro/escuro. A cobertura de autorização é por cenários de risco, não uma matriz exaustiva de todo papel × rota.
 - PR #36 permanece aberta em Draft. Sem merge, deploy ou início da SPEC-002.
+
+## Verificação final da correção de privacidade — CI 40259994239
+
+- **Commit validado:** `9810e1f38a06f73bb3cf9ab2ea5adc0cdabfc52e` (HEAD de `feat/initial-app-foundation` no momento desta execução).
+- **CI:** [run 40259994239 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40259994239). O job `validate` concluiu com sucesso: validação/geração Prisma, migrações PostgreSQL, restrições de integridade e concorrência, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP local de captura.
+- **Correção de privacidade validada no HEAD funcional anterior:** solicitações de convite retornam resposta genérica HTTP 202; registros neutros não vinculam a conta do destinatário nem enviam e-mail; tokens neutros são recusados; falhas de SMTP invalidam o token tentado; e placeholders são convertidos em convite real quando a conta se torna elegível.
+- **Estado da entrega:** a PR #36 permanece aberta em Draft, sem merge ou deploy. A SPEC-001 não é declarada formalmente concluída.
+- **Pendências externas ao CI:** entrega de e-mail por SMTP real e links HTTPS canônicos, validação do proxy confiável e de `X-Forwarded-For`, agendamento/monitoramento das rotinas de retenção, aceite manual de acessibilidade/temas e homologação de segurança independente. Essas etapas exigem infraestrutura e evidência operacional; não podem ser consideradas concluídas apenas com CI verde.
