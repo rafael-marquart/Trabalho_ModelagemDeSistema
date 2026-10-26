@@ -1,5 +1,7 @@
 # Roteiro de validação manual — SPEC-001
 
+> **Decisão de encerramento — 26/10/2026:** o responsável decidiu não realizar novos testes manuais. Este roteiro fica preservado como referência histórica; os itens não marcados continuam sem confirmação manual e não devem ser interpretados como executados. O encerramento da implementação foi registrado com base na CI e nos testes automatizados, com limitações operacionais documentadas em `docs/relatorios/validacao-spec-001.md`.
+
 Este roteiro complementa a CI e os testes E2E. Use somente dados fictícios: Mailpit captura e-mails localmente, mas os dados do banco permanecem no seu computador. Não use senhas reais.
 
 ## 1. Pré-requisitos
