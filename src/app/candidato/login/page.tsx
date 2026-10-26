@@ -62,7 +62,7 @@ export default function CandidateLoginPage() {
           <Link href="/recuperar-senha">Esqueci minha senha</Link>
         </div>
         {notice && <p className="form-success" role="status" aria-live="polite">{notice}</p>}
-        {error && <p className="form-error" role="alert">{error}</p>
+        {error && <p className="form-error" role="alert">{error}</p>}
         <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar na plataforma  →"}</button>
       </form>
     </AuthSplitLayout>
