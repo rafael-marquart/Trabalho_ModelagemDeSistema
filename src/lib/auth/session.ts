@@ -100,6 +100,7 @@ export async function getCurrentUser() {
   if (
     !session ||
     !session.user.isActive ||
+    Boolean(session.user.lockedUntil && session.user.lockedUntil > now) ||
     session.expiresAt <= now ||
     session.absoluteExpiresAt <= now
   ) {
