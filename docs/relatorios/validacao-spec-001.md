@@ -506,3 +506,14 @@ A comparação entre a SPEC-001, `docs/mapa-specs.md` e os documentos de baselin
 ### Conclusão da revisão remota
 
 A conferência remota adicional de rastreabilidade da SPEC-001 foi executada. Não surgiu evidência suficiente para alterar regra de negócio, reabrir decisão aprovada ou modificar comportamento. A SPEC-001 continua sem condições para encerramento formal porque há critérios de aceite desmarcados, roteiro manual pendente e verificações operacionais não comprovadas. A PR #37 continua aberta em Draft; não houve merge, deploy nem início da SPEC-002 nesta rodada.
+
+## Inspeção adicional — consistência das referências de logo — 26/10/2026
+
+A revisão estática das páginas ligadas à entrada, autenticação, confirmação de conta e gestão de recrutadores encontrou uma divergência entre as referências de imagem no código:
+
+- As páginas inicial, cadastro de candidato, cadastro de empresa, área da empresa, painel do recrutador, login de candidato/empresa e recuperação de senha usam `/images/logo-acessa-vagas.png`.
+- As páginas de login do recrutador, convite de recrutador, gestão de recrutadores da empresa, confirmação de e-mail corporativo e reenvio de confirmação ainda referenciam `/images/logo-acessa-vagas.svg`.
+
+O roteiro manual da SPEC-001 pede conferir o PNG corrigido nas telas de login, cadastro, recuperação, empresa e recrutador. Portanto, a uniformidade da referência do logo **não está confirmada no código**. Não alterei esses arquivos nesta rodada de inspeção: a correção deve manter o PNG aprovado como fonte de identidade visual, mas a aparência final, escala, recorte e comportamento nos temas claro/escuro ainda exigem verificação visual no navegador.
+
+Essa constatação é uma pendência de consistência visual/documental, não uma falha do CI nem evidência de defeito no fluxo de autenticação.
