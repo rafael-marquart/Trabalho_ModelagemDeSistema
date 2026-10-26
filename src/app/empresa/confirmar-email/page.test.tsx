@@ -57,7 +57,7 @@ describe("company email confirmation page", () => {
       }));
     });
 
-    expect(await screen.findByRole("status")).toHaveTextContent("Sua conta empresarial está ativada.");
+    expect((await screen.findByRole("status")).textContent).toContain("Sua conta empresarial está ativada.");
     expect(screen.queryByRole("button", { name: "Confirmar e-mail" })).toBeNull();
   });
 
@@ -72,6 +72,6 @@ describe("company email confirmation page", () => {
     fireEvent.click(retry);
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
-    expect(await screen.findByRole("status")).toHaveTextContent("E-mail confirmado.");
+    expect((await screen.findByRole("status")).textContent).toContain("E-mail confirmado.");
   });
 });
