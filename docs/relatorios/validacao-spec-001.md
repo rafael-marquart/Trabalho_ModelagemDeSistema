@@ -299,8 +299,8 @@ Validações externas — SMTP de homologação, proxy real, agendamento de rete
 
 Esta seção registra apenas execuções concluídas e associadas aos SHAs indicados.
 
-- **HEAD de código/testes:** `ea6d1bb13aaf5d2924a68f45fdccd05f97762624`.
-- **CI de push do HEAD de código/testes:** [40259775324 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40259775324).
+- **HEAD de código/testes:** `2c9fce50275c5531df0587e14f5f58da050f6271`.
+- **CI de push do HEAD de código/testes:** [40261466174 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40261466174).
 - **CI da PR do HEAD de código/testes:** [40259780023 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40259780023).
 - **HEAD documental validado antes desta atualização:** `9810e1f38a06f73bb3cf9ab2ea5adc0cdabfc52e`.
 - **CI de push desse HEAD documental:** [40259989977 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40259989977).
@@ -308,7 +308,7 @@ Esta seção registra apenas execuções concluídas e associadas aos SHAs indic
 
 ### Etapas e evidências inspecionadas
 
-Nos dois workflows do HEAD documental, o job `validate` terminou com sucesso em todas as etapas: validação/geração do Prisma, migrações PostgreSQL (incluindo `20261026030000_privacy_neutral_recruiter_invitation`), verificações da restrição de vínculo ativo e concorrência, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP local de captura. O lint reportou 14 avisos e zero erros. A suíte registrou **27 arquivos de teste e 221 testes aprovados**. O log E2E terminou com a confirmação de sucesso para autenticação/recuperação de candidato e revogação de sessão, confirmação empresarial, convites/reenvio/aceite/recusa/cancelamento, isolamento multiempresa, concorrência, logout e bloqueio de conta.
+Na execução [40261466174](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40261466174), o job `validate` terminou com sucesso em todas as etapas: validação/geração do Prisma, migrações PostgreSQL, verificações da restrição de vínculo ativo e concorrência, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP local de captura. O lint reportou 14 avisos e zero erros. A suíte registrou **27 arquivos de teste e 222 testes aprovados**. O E2E confirma agora também login de candidato por CPF formatado e recuperação de senha de empresa, incluindo envio ao SMTP de teste, redefinição, rejeição de reutilização do link e login com a nova senha.
 
 A implementação de solicitações neutras de convite mantém a resposta pública genérica HTTP 202; registros sem destinatário elegível não ficam associados a um `recipientUserId`, não geram envio de e-mail nem evento de convite enviado. A transição de placeholder para convite elegível é coberta por teste, assim como a rejeição de convites sem destinatário associado. Os logs do PostgreSQL incluem violações de unicidade e conflitos de serialização esperados pelos testes de concorrência; o job concluiu com sucesso.
 
@@ -332,14 +332,14 @@ Esta atualização do relatório é documental. A execução de CI disparada pel
 | Fluxo | Resultado verificado |
 |---|---|
 | Cadastro candidato e login por e-mail | **OK no E2E**; API coberta, interface não testada. |
-| Login de candidato por CPF válido | **NÃO VERIFICADO**. |
+| Login de candidato por CPF válido | **OK no E2E** com CPF formatado; interface não testada. |
 | Cadastro de empresa, confirmação por e-mail e login | **OK no E2E**; interface não testada. |
 | Recuperação de senha de candidato, uso único e nova senha | **OK no E2E**. |
-| Recuperação de senha de empresa | **NÃO VERIFICADO**. |
+| Recuperação de senha de empresa | **OK no E2E**: e-mail de teste, redefinição, link de uso único e login com nova senha; interface não testada. |
 | Convite novo, definir senha e aceitar | **OK no E2E**; interface não testada. |
 | Reenvio, cancelamento, recusa e encerramento de vínculo | **OK no E2E**. |
 | Logout e sessão expirada/invalidada | **OK no E2E** para revogação/bloqueio de acesso. |
 
 **Divergências visuais** (comparação de textos/estrutura, sem screenshot): (1) entrada atual escolhe perfil e encaminha para páginas separadas, enquanto o SVG combina escolha e formulário; (2) cadastro de candidato não pede data de nascimento; (3) cadastro de empresa não tem campo separado para responsável e inclui nome fantasia; (4) menu de recrutadores é reduzido; (5) recuperação reúne seleção de perfil e redefinição além do formulário no SVG. Não alteradas: campos ausentes exigem mudanças de modelo/escopo; comparação pixel a pixel exige navegador.
 **Arquivos alterados:** `compose.yaml`, `.env.example`, `README.md`, `docs/Specs.md` e este relatório. Mailpit: `http://localhost:8025`; SMTP `127.0.0.1:1025`; `APP_BASE_URL=http://localhost:3000`.
-**Pendências funcionais para verificação completa:** iniciar Compose/app localmente e testar manualmente as telas; confirmar login por CPF e recuperação de senha de empresa. A SPEC-001 tem validação automatizada substancial, mas não foi totalmente verificada manualmente. PR #36 continua Draft; sem merge, deploy ou início da SPEC-002.
+**Pendência restante:** iniciar Compose/app localmente e testar manualmente as telas, links no Mailpit e diferenças visuais. Login por CPF e recuperação de senha de empresa agora passaram no E2E automatizado. A SPEC-001 tem validação automatizada substancial, mas a interface ainda não foi verificada manualmente. PR #36 continua Draft; sem merge, deploy ou início da SPEC-002.
