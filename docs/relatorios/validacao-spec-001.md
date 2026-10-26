@@ -200,7 +200,7 @@ Classificação baseada nos testes e evidências registrados no repositório; "c
 | 11 | Recrutador permanece ligado à Empresa responsável enquanto ativo | E2E consulta vínculo após aceite e após nova associação | Comprovado nos fluxos centrais |
 | 12 | Empresa não administra vínculo de outra Empresa | E2E de isolamento de listagem e cancelamento cruzado; testes de mutações fora do escopo | Comprovado nos cenários centrais |
 | 13 | Alterações relevantes ficam auditáveis | E2E verifica eventos de envio, reenvio, aceite, cancelamento, recusa, expiração e encerramento, incluindo contagem em concorrência | Comprovado para os eventos exercitados |
-| 14 | Mensagens não expõem credenciais/dados pessoais desnecessários | Tokens armazenados como hash, respostas anti-enumeração, snapshot do convite sem perfil atual, mensagens de autenticação e testes de rota | Comprovado nos fluxos cobertos; revisão de logs/provedor real não executada |
+| 14 | Mensagens não expõem credenciais/dados pessoais desnecessários | Tokens armazenados como hash, respostas genéricas em alguns fluxos, snapshot do convite sem perfil atual e testes de rota | Parcial: a enumeração de e-mail não está totalmente mitigada; revisão de logs/provedor real não executada |
 
 ### Decisão desta rodada
 
