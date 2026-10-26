@@ -30,7 +30,7 @@ export async function POST(request: Request) {
   if (!invitation || invitation.status !== "PENDING" || !invitation.recipientUserId) {
     return NextResponse.json({ message: "Convite inválido, já respondido ou expirado." }, { status: 400 });
   }
-  const recipientUserId = recipientUserId;
+  const recipientUserId = invitation.recipientUserId;
 
   const pendingSetup = !user && parsed.data.action === "accept";
   if (user && (user.role !== "RECRUITER" || user.id !== recipientUserId)) {
