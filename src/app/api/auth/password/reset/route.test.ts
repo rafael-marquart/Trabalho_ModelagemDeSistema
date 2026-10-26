@@ -154,4 +154,17 @@ describe("password reset", () => {
     expect(response.status).toBe(400);
     expect(prismaMock.passwordResetToken.findUnique).not.toHaveBeenCalled();
   });
+  it("rejects malformed JSON before querying or consuming a reset token", async () => {
+    const response = await POST(new Request("https://acessavagas.example/api/auth/password/reset", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{"
+    }) as never);
+
+    expect(response.status).toBe(400);
+    expect(prismaMock.passwordResetToken.findUnique).not.toHaveBeenCalled();
+    expect(hashPasswordMock).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
 });
