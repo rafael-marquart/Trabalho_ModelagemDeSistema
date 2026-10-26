@@ -611,3 +611,25 @@ O workflow associado ao HEAD de código `b879087e54d35012e8aafeb66c131bf089978fc
 - Evidência manual já relatada: recuperação de senha ponta a ponta, CNPJ opcional após migração local, layout geral em 1280/768/390 px, teclado/foco básico e bloqueio de acesso anônimo à área de candidato.
 - Permanecem pendentes: comparação visual detalhada de todas as telas com os protótipos, tema claro/escuro e contraste, teste com leitor de tela, fluxos manuais de cadastro/confirmacão e convite ainda não relatados como concluídos, revisão de todas as APIs protegidas, SMTP real, URL HTTPS canônica, proxy confiável e execução/monitoramento de retenção em ambiente operacional.
 - A SPEC-001 continua sem encerramento formal. As pendências operacionais podem ser aceitas como condições de lançamento somente mediante decisão explícita e registro de responsável/ambiente; não foram convertidas silenciosamente em critérios concluídos.
+
+
+## Decisão final de encerramento da SPEC-001 — 26/10/2026
+
+O responsável determinou explicitamente que não serão realizados novos testes manuais e autorizou concluir a SPEC-001 com base no trabalho já realizado e nas evidências automatizadas. Este registro substitui a recomendação anterior deste relatório de aguardar novos testes manuais como condição para o encerramento da implementação; não transforma cenários não executados em cenários aprovados.
+
+### Evidências consideradas
+
+- CI do HEAD de código: [40381007017 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40381007017). Todas as etapas do job `validate` passaram: instalação, Prisma, migrações PostgreSQL, restrições de vínculo ativo e concorrência, TypeScript, lint, testes unitários, build de produção e E2E de autenticação com PostgreSQL/SMTP de teste.
+- CI da revisão documental: [40381810541 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40381810541).
+- O E2E automatizado inclui login de candidato por e-mail/CPF, recuperação de senha de candidato e empresa, confirmação empresarial, convites/reenvio/aceite/recusa/cancelamento/expiração, concorrência e isolamento entre empresas, logout e bloqueio de conta após falhas consecutivas.
+- A suíte de cadastro empresarial cobre CNPJ vazio/omitido; o CI aplica a migração de CNPJ opcional em PostgreSQL efêmero. O responsável também relatou validação local prévia do cadastro sem CNPJ.
+
+### Estado final e limitações explícitas
+
+- **Estado da SPEC-001:** implementada/encerrada no escopo desta entrega, por decisão explícita do responsável de dispensar novos testes manuais e aceitar a evidência automatizada disponível.
+- **Não afirmar como executado:** comparação manual de todas as telas com protótipos, inspeção completa de tema/contraste, leitor de tela ou revisão exaustiva de todas as APIs protegidas.
+- **Pendências operacionais para antes do lançamento em produção:** validar/configurar SMTP real e URL HTTPS canônica; confirmar que o proxy confiável sobrescreve `X-Forwarded-For`; agendar e monitorar as rotinas de retenção; executar os controles de segurança operacional aplicáveis ao ambiente. A CI com SMTP de teste não comprova entrega real de e-mail.
+- **Risco residual:** mensagens genéricas de convite reduzem, mas não eliminam completamente, inferências sobre elegibilidade de e-mails. A revisão não equivale a pentest independente.
+- **Controle de entrega:** a PR #37 permanece aberta em Draft. Nenhum merge ou deploy foi realizado ou autorizado por este registro.
+
+O encerramento da implementação não representa certificação de prontidão de produção. As limitações acima permanecem visíveis para a decisão de lançamento e não bloqueiam o encerramento documental da SPEC-001 conforme a decisão do responsável.
