@@ -1,19 +1,127 @@
+"use client";
+
 import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
-import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth/session";
+import { useEffect, useState } from "react";
 
-export default async function RecruiterHomePage() {
-  const user = await getCurrentUser();
-  if (!user || user.role !== "RECRUITER") redirect("/recrutador/login");
-  return <main className="auth-page">
-      <div className="theme-control-host"><ThemeToggle /></div>
-    <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" /></Link>
-    <section className="auth-card">
-      <p className="eyebrow">Área do recrutador</p>
-      <h1>Bem-vindo(a) ao Acessa Vagas.</h1>
-      <p className="muted">Use o link recebido por e-mail para revisar, aceitar ou recusar um convite de vínculo com uma empresa.</p>
-      <form action="/api/auth/logout" method="post"><button className="primary-button" type="submit">Sair da conta</button></form>
-    </section>
-  </main>;
+type Overview = {
+  link: { id: string; createdAt: string; companyName: string } | null;
+  invitations: { id: string; createdAt: string; expiresAt: string; companyName: string }[];
+};
+
+function formatDate(value: string) {
+  return new Date(value).toLocaleDateString("pt-BR");
+}
+
+export default function RecruiterHomePage() {
+  const [overview, setOverview] = useState<Overview | null>(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/recruiter/invitations", { cache: "no-store" })
+      .then(async response => {
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || "Não foi possível carregar seus vínculos.");
+        if (active) setOverview(result);
+      })
+      .catch(() => {
+        if (active) setError("Não foi possível carregar seus vínculos. Atualize a página para tentar novamente.");
+      });
+    return () => { active = false; };
+  }, []);
+
+  return (
+    <main className="recruiter-dashboard">
+      <header className="recruiter-topbar">
+        <Link className="recruiter-brand" href="/" aria-label="Acessa Vagas — início">
+          <img className="brand-logo recruiter-brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" />
+        </Link>
+        <span className="recruiter-topbar-label">Área do recrutador</span>
+        <div className="recruiter-topbar-actions">
+          <ThemeToggle />
+          <form action="/api/auth/logout" method="post">
+            <button className="secondary-button" type="submit">Sair da conta</button>
+          </form>
+        </div>
+      </header>
+
+      <div className="recruiter-dashboard-body">
+        <aside className="recruiter-sidebar">
+          <p className="recruiter-sidebar-title">SEU ESPAÇO</p>
+          <div className="recruiter-nav-item" aria-current="page"><span aria-hidden="true">▦</span> Visão geral</div>
+        </aside>
+
+        <section className="recruiter-content" aria-labelledby="recruiter-home-title">
+          <div className="recruiter-heading">
+            <div>
+              <p className="eyebrow">Área do recrutador</p>
+              <h1 id="recruiter-home-title">Seu espaço no Acessa Vagas</h1>
+              <p className="muted">Acompanhe seus vínculos organizacionais e os convites recebidos.</p>
+            </div>
+          </div>
+
+          {error && <p className="company-message form-error" role="alert">{error}</p>}
+
+          <div className="recruiter-overview-grid">
+            <article className="recruiter-overview-card recruiter-primary-card">
+              <div className="recruiter-card-icon" aria-hidden="true">⌂</div>
+              <p className="recruiter-card-kicker">VÍNCULO ATUAL</p>
+              {overview === null ? (
+                <p className="muted">Carregando suas informações…</p>
+              ) : overview.link ? (
+                <>
+                  <h2>{overview.link.companyName}</h2>
+                  <span className="status-pill status-active">Vínculo ativo</span>
+                  <p className="muted">Vinculado desde {formatDate(overview.link.createdAt)}.</p>
+                </>
+              ) : (
+                <>
+                  <h2>Nenhuma empresa vinculada</h2>
+                  <p className="muted">Quando aceitar um convite válido, a empresa aparecerá aqui.</p>
+                </>
+              )}
+            </article>
+
+            <article className="recruiter-overview-card">
+              <div className="recruiter-card-icon" aria-hidden="true">✉</div>
+              <p className="recruiter-card-kicker">CONVITES PENDENTES</p>
+              <h2>{overview === null ? "—" : overview.invitations.length}</h2>
+              <p className="muted">Convites aguardando sua resposta.</p>
+            </article>
+          </div>
+
+          <section className="recruiter-invitations-panel" aria-labelledby="recruiter-invitations-title">
+            <div className="recruiter-panel-heading">
+              <div>
+                <h2 id="recruiter-invitations-title">Convites recebidos</h2>
+                <p className="muted">Para aceitar ou recusar, abra o link de uso único enviado ao seu e-mail.</p>
+              </div>
+            </div>
+            {overview === null ? (
+              <p className="muted">Carregando convites…</p>
+            ) : overview.invitations.length === 0 ? (
+              <div className="recruiter-empty-state">
+                <span aria-hidden="true">✓</span>
+                <div><strong>Você está em dia</strong><p className="muted">Não há convites pendentes no momento.</p></div>
+              </div>
+            ) : (
+              <ul className="recruiter-invitation-list">
+                {overview.invitations.map(invitation => (
+                  <li key={invitation.id} className="recruiter-invitation-row">
+                    <div className="recruiter-invitation-symbol" aria-hidden="true">↗</div>
+                    <div className="recruiter-invitation-details">
+                      <strong>{invitation.companyName}</strong>
+                      <p className="muted">Recebido em {formatDate(invitation.createdAt)} · válido até {formatDate(invitation.expiresAt)}</p>
+                    </div>
+                    <span className="status-pill status-pending">Aguardando resposta</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </section>
+      </div>
+    </main>
+  );
 }
