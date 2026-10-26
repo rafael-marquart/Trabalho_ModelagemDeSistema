@@ -299,6 +299,27 @@ describe("send recruiter invitation", () => {
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
 
+  it.each([
+    { label: "malformed JSON", body: "{" },
+    { label: "invalid email", body: JSON.stringify({ email: "not-an-email", fullName: "Nome válido" }) },
+    { label: "missing recipient name", body: JSON.stringify({ email: "recruiter@example.com", fullName: " " }) }
+  ])("rejects $label before looking up a recipient or creating an invitation", async ({ body }) => {
+    const request = new Request("https://acessavagas.example/api/company/recruiter-invitations", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: "https://acessavagas.example" },
+      body
+    });
+
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(400);
+    expect(prismaMock.user.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.recruiterLink.findFirst).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(sendEmailMock).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+
   it("rejects cross-origin requests before authentication", async () => {
     rejectOriginMock.mockReturnValueOnce(new Response("blocked", { status: 403 }));
 
