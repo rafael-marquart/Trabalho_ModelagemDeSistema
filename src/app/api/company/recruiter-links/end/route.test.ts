@@ -104,13 +104,25 @@ describe("end recruiter link", () => {
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
 
-  it("rejects an inactive company or missing company record", async () => {
+  it("rejects a missing company record", async () => {
     prismaMock.company.findUnique.mockResolvedValueOnce(null);
 
     const response = await POST(makeRequest());
 
     expect(response.status).toBe(403);
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
+  it("rejects an inactive company account before attempting to end a link", async () => {
+    getCurrentUserMock.mockResolvedValueOnce({ ...companyUser, isActive: false });
+
+    const response = await POST(makeRequest());
+
+    expect(response.status).toBe(403);
+    expect(prismaMock.company.findUnique).toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(tx.recruiterLink.updateMany).not.toHaveBeenCalled();
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
   });
 
   it("rejects cross-origin requests before authentication", async () => {
