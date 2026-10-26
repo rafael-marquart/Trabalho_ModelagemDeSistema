@@ -11,6 +11,7 @@ import { getPublicBaseUrl } from "@/lib/security/public-base-url";
 
 const schema = z.object({ email: z.string().trim().email().max(254), fullName: z.string().trim().min(2).max(160) });
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+const genericMessage = "Se os dados corresponderem a um recrutador elegível, as instruções serão enviadas ao e-mail informado.";
 
 export async function GET() {
   const user = await getCurrentUser();
@@ -61,9 +62,28 @@ export async function POST(request: NextRequest) {
     where: { email },
     select: { id: true, email: true, role: true, isActive: true, pendingActivation: true }
   });
-  if (recipient && recipient.role !== "RECRUITER") {
-    return NextResponse.json({ message: "Não foi possível processar o convite com os dados informados." }, { status: 409 });
-  }
+
+  const recordNeutralRequest = async () => {
+    const { tokenHash } = createOneTimeToken();
+    const expiresAt = new Date(Date.now() + SEVEN_DAYS);
+    await prisma.$transaction(async tx => {
+      const lockKey = "recruiter-invitation-request:" + company.id + ":" + email;
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`;
+      const existing = await tx.recruiterInvitation.findFirst({
+        where: { companyId: company.id, recipientEmail: email, recipientUserId: null, status: "PENDING", expiresAt: { gt: new Date() } },
+        select: { id: true }
+      });
+      if (existing) {
+        await tx.recruiterInvitation.update({ where: { id: existing.id }, data: { tokenHash, expiresAt, sentByUserId: user.id, respondedAt: null, recipientName: parsed.data.fullName, recipientEmail: email }, select: { id: true } });
+      } else {
+        await tx.recruiterInvitation.create({ data: { companyId: company.id, recipientUserId: null, recipientName: parsed.data.fullName, recipientEmail: email, sentByUserId: user.id, tokenHash, expiresAt }, select: { id: true } });
+      }
+      await tx.auditEvent.create({ data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_REQUEST_RECEIVED", subjectType: "Company", subjectId: company.id } });
+    });
+    return NextResponse.json({ ok: true, message: genericMessage }, { status: 202 });
+  };
+
+  if (recipient && recipient.role !== "RECRUITER") return recordNeutralRequest();
   if (!recipient) {
     const initialSecret = randomBytes(32).toString("base64url");
     const passwordHash = await hashPassword(initialSecret);
@@ -87,20 +107,18 @@ export async function POST(request: NextRequest) {
       });
     } catch (error) {
       if (typeof error === "object" && error !== null && "code" in error && error.code === "P2002") {
-        return NextResponse.json({ message: "Não foi possível processar o convite com os dados informados. Atualize a lista e tente novamente." }, { status: 409 });
+        recipient = await prisma.user.findUnique({
+          where: { email },
+          select: { id: true, email: true, role: true, isActive: true, pendingActivation: true }
+        });
+        if (!recipient || recipient.role !== "RECRUITER" || (!recipient.isActive && !recipient.pendingActivation)) return recordNeutralRequest();
       }
       throw error;
     }
   }
-  if (!recipient.isActive && !recipient.pendingActivation) {
-    return NextResponse.json({ message: "A conta de recrutador não está habilitada para receber convites." }, { status: 409 });
-  }
+  if (!recipient.isActive && !recipient.pendingActivation) return recordNeutralRequest();
   const activeLink = await prisma.recruiterLink.findFirst({ where: { recruiterId: recipient.id, active: true }, select: { id: true } });
-  if (activeLink) {
-    // Do not disclose whether the address belongs to a recruiter or whether
-    // that person is linked to another company. Keep the response generic.
-    return NextResponse.json({ message: "Não foi possível processar o convite com os dados informados." }, { status: 409 });
-  }
+  if (activeLink) return recordNeutralRequest();
 
   const { token, tokenHash } = createOneTimeToken();
   const expiresAt = new Date(Date.now() + SEVEN_DAYS);
@@ -156,7 +174,7 @@ export async function POST(request: NextRequest) {
     });
     return { invitation, wasResent: Boolean(pending) };
   });
-  const { invitation, wasResent } = invitationResult;
+  const { invitation } = invitationResult
   const baseUrl = getPublicBaseUrl(request);
   try {
     if (!baseUrl) throw new Error("APP_BASE_URL is required to send production email links");
@@ -166,24 +184,17 @@ export async function POST(request: NextRequest) {
       text: `A empresa ${company.legalName} convidou você para se vincular à organização. Aceite ou recuse em até 7 dias: ${baseUrl}/recrutador/convite?token=${token}\n\nSe você ainda não tem uma conta ativa, poderá definir sua senha antes de aceitar o vínculo. Se não esperava este convite, pode recusá-lo ou ignorar esta mensagem.`
     });
   } catch {
-    const failedAt = new Date();
-    const cancellationApplied = await prisma.$transaction(async tx => {
-      // Guard by tokenHash as well as status: a stale failed send must not cancel a newer resend.
+    const replacement = createOneTimeToken();
+    await prisma.$transaction(async tx => {
       const changed = await tx.recruiterInvitation.updateMany({
         where: { id: invitation.id, tokenHash, status: "PENDING" },
-        data: { status: "CANCELLED", respondedAt: failedAt }
+        data: { tokenHash: replacement.tokenHash }
       });
-      if (changed.count === 1) {
-        await tx.auditEvent.create({ data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_DELIVERY_FAILED", subjectType: "RecruiterInvitation", subjectId: invitation.id } });
-        await tx.auditEvent.create({ data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_CANCELLED_AFTER_DELIVERY_FAILURE", subjectType: "RecruiterInvitation", subjectId: invitation.id } });
-      }
-      return changed.count === 1;
+      if (changed.count === 1) await tx.auditEvent.create({
+        data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_DELIVERY_FAILED", subjectType: "RecruiterInvitation", subjectId: invitation.id }
+      });
     });
-    return NextResponse.json({
-      message: cancellationApplied
-        ? "Não foi possível enviar o e-mail; o convite foi cancelado. Tente enviar novamente."
-        : "Não foi possível confirmar a entrega deste e-mail. Verifique a lista de convites antes de tentar novamente."
-    }, { status: 502 });
+    return NextResponse.json({ ok: true, message: genericMessage }, { status: 202 });
   }
-  return NextResponse.json({ ok: true, message: wasResent ? "Convite reenviado; o link anterior foi invalidado." : "Convite enviado." }, { status: wasResent ? 200 : 201 });
+  return NextResponse.json({ ok: true, message: genericMessage }, { status: 202 });
 }

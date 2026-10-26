@@ -141,7 +141,7 @@ describe("send recruiter invitation", () => {
   it("normalizes the recipient, serializes invitation creation, and sends a one-time link", async () => {
     const response = await POST(makeRequest() as never);
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(202);
     expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
       where: { email: "recruiter@example.com" },
       select: { id: true, email: true, role: true, isActive: true, pendingActivation: true }
@@ -212,18 +212,18 @@ describe("send recruiter invitation", () => {
       select: { id: true }
     });
     expect(response.headers.get("content-type")).toContain("application/json");
-    await expect(response.json()).resolves.toMatchObject({ message: "Convite reenviado; o link anterior foi invalidado." });
+    await expect(response.json()).resolves.toMatchObject({ message: "Se os dados corresponderem a um recrutador elegível, as instruções serão enviadas ao e-mail informado." });
   });
 
-  it("cancels the newly created pending invitation and audits a delivery failure", async () => {
+  it("keeps the public invitation response generic when email delivery fails", async () => {
     sendEmailMock.mockRejectedValueOnce(new Error("SMTP unavailable"));
 
     const response = await POST(makeRequest() as never);
 
-    expect(response.status).toBe(502);
+    expect(response.status).toBe(202);
     expect(tx.recruiterInvitation.updateMany).toHaveBeenCalledWith({
       where: { id: "invitation-1", tokenHash: "token-hash", status: "PENDING" },
-      data: { status: "CANCELLED", respondedAt: expect.any(Date) }
+      data: { tokenHash: expect.any(String) }
     });
     expect(tx.auditEvent.create).toHaveBeenCalledWith({
       data: expect.objectContaining({ eventType: "RECRUITER_INVITATION_DELIVERY_FAILED" })
@@ -245,27 +245,29 @@ describe("send recruiter invitation", () => {
     });
   });
 
-  it("rejects an email belonging to a non-recruiter account", async () => {
+  it("records a neutral placeholder for an email belonging to a non-recruiter account", async () => {
     prismaMock.user.findUnique.mockResolvedValueOnce({ id: "candidate-1", email: "recruiter@example.com", role: "CANDIDATE", isActive: true, pendingActivation: false });
 
     const response = await POST(makeRequest() as never);
 
-    expect(response.status).toBe(409);
-    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(response.status).toBe(202);
+    expect(prismaMock.$transaction).toHaveBeenCalled();
     expect(sendEmailMock).not.toHaveBeenCalled();
+    expect(tx.recruiterInvitation.create).toHaveBeenCalledWith({ data: expect.objectContaining({ recipientUserId: null, recipientEmail: "recruiter@example.com" }), select: { id: true } });
   });
 
-  it("does not disclose whether an existing recruiter is linked to another company", async () => {
+  it("records a neutral placeholder when a recruiter is linked to another company", async () => {
     prismaMock.recruiterLink.findFirst.mockResolvedValueOnce({ id: "active-link-elsewhere" });
 
     const response = await POST(makeRequest() as never);
 
-    expect(response.status).toBe(409);
+    expect(response.status).toBe(202);
     await expect(response.json()).resolves.toMatchObject({
-      message: "Não foi possível processar o convite com os dados informados."
+      message: "Se os dados corresponderem a um recrutador elegível, as instruções serão enviadas ao e-mail informado."
     });
-    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).toHaveBeenCalled();
     expect(sendEmailMock).not.toHaveBeenCalled();
+    expect(tx.recruiterInvitation.create).toHaveBeenCalledWith({ data: expect.objectContaining({ recipientUserId: null, recipientEmail: "recruiter@example.com" }), select: { id: true } });
   });
 
   it("rejects an inactive company account before sending or mutating invitations", async () => {

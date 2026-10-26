@@ -81,7 +81,7 @@ model RecruiterLink {
 model RecruiterInvitation {
   id              String           @id @default(cuid())
   companyId       String
-  recipientUserId String
+  recipientUserId String?
   recipientName   String
   recipientEmail  String
   sentByUserId    String?
@@ -92,7 +92,7 @@ model RecruiterInvitation {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   company         Company          @relation(fields: [companyId], references: [id], onDelete: Restrict)
-  recipient       User             @relation("InvitationsTo", fields: [recipientUserId], references: [id], onDelete: Restrict)
+  recipient       User?            @relation("InvitationsTo", fields: [recipientUserId], references: [id], onDelete: Restrict)
   sentBy          User?            @relation("InvitationsSent", fields: [sentByUserId], references: [id], onDelete: Restrict)
 
   @@index([companyId, status])

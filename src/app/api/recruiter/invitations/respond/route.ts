@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   const now = new Date();
   const tokenHash = hashOneTimeToken(parsed.data.token);
   const invitation = await prisma.recruiterInvitation.findUnique({ where: { tokenHash } });
-  if (!invitation || invitation.status !== "PENDING") {
+  if (!invitation || invitation.status !== "PENDING" || !invitation.recipientUserId) {
     return NextResponse.json({ message: "Convite inválido, já respondido ou expirado." }, { status: 400 });
   }
 
