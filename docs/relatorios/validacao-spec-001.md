@@ -144,3 +144,16 @@ O PR #36 permanece aberto e em Draft. Não fazer merge, não publicar em produç
 - A página de confirmação exige ação explícita da pessoa antes de consumir o token, e permite nova tentativa após falha temporária. Há testes de UI para estes comportamentos.
 - Este resultado valida o HEAD citado no pipeline automatizado; não representa homologação SMTP externa, configuração real de proxy, acessibilidade manual, pentest ou aprovação formal de conclusão. Essas pendências operacionais permanecem abertas.
 - O PR #36 permanece aberto em Draft. Nenhum merge, deploy ou início da SPEC-002 foi realizado.
+
+## Atualização de status e estimativa — 26/10/2026
+
+**HEAD de referência:** `b626afdaa5bbdd467af4c06b95de19fc7493cf82`.
+
+- CI de push: [40251342990 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40251342990).
+- CI do PR: [40251346333 — sucesso](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40251346333).
+- As verificações automatizadas do workflow atual passaram: validação/geração Prisma, migrações PostgreSQL, integridade e concorrência de vínculo ativo, TypeScript, lint, testes unitários, build de produção e E2E com PostgreSQL e SMTP local.
+- **Progresso estimado:** implementação funcional principal substancialmente concluída; a SPEC permanece em fase de fechamento de evidências e homologação, não formalmente concluída. Como estimativa de planejamento (não métrica automatizada), cerca de 80–90% da implementação e 65–75% do fechamento/validação.
+- **Trabalho de código ainda previsto:** completar a matriz sistemática de autorização por papel/rota/tenant e revisar transições concorrentes de tokens e auditoria onde ainda não houver evidência suficiente.
+- **Validações externas/manuais pendentes:** SMTP real; `APP_BASE_URL` e `X-Forwarded-For` na topologia de proxy real; agendadores/monitoramento das rotinas de retenção; testes manuais de teclado, foco, leitor de tela, zoom/reflow e temas claro/escuro. Não houve pentest independente.
+- **Estimativa de calendário:** aproximadamente 1–3 dias úteis de trabalho focado se o ambiente de homologação, SMTP e configuração operacional estiverem acessíveis e as verificações manuais não encontrarem bloqueadores. Se dependências externas ou aprovações demorarem, o prazo total passa a depender delas. A estimativa não é garantia.
+- **Estado de controle:** PR #36 permanece aberta em Draft. Sem merge, deploy, remoção de Draft ou início da SPEC-002. Encerramento depende de evidência suficiente para os critérios de aceite e aprovação explícita do responsável.
