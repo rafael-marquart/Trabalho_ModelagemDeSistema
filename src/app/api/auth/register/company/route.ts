@@ -79,10 +79,16 @@ export async function POST(request: Request) {
   } catch (error) {
     // The database unique constraints are the final guard against concurrent duplicates.
     if (typeof error === "object" && error !== null && "code" in error && error.code === "P2002") {
-      return NextResponse.json(
-        { message: "Não foi possível criar a conta com os dados informados." },
-        { status: 409 }
-      );
+      const target = "meta" in error && typeof error.meta === "object" && error.meta !== null && "target" in error.meta
+        ? error.meta.target
+        : undefined;
+      const fields = Array.isArray(target) ? target.map(String) : typeof target === "string" ? [target] : [];
+      const message = fields.some((field) => field.toLowerCase().includes("email"))
+        ? "Este e-mail já está cadastrado. Entre na conta existente ou use outro e-mail."
+        : fields.some((field) => field.toLowerCase().includes("officialid") || field.toLowerCase().includes("cnpj"))
+          ? "Este CNPJ já está associado a uma conta. Confira os dados ou entre em contato com o suporte."
+          : "Já existe uma conta com um dos dados informados. Confira o e-mail e o CNPJ.";
+      return NextResponse.json({ message }, { status: 409 });
     }
     throw error;
   }
