@@ -19,7 +19,7 @@ type RecruiterLink = {
 };
 
 const labels: Record<Invitation["status"], string> = {
-  PENDING: "Convite pendente",
+  PENDING: "Solicitação pendente",
   REFUSED: "Recusado",
   EXPIRED: "Expirado",
   CANCELLED: "Cancelado",
@@ -239,7 +239,7 @@ export default function CompanyRecruitersPage() {
 
           <section className="recruiter-table-panel" aria-labelledby="people-title">
             <h2 id="people-title" className="section-heading">Pessoas vinculadas</h2>
-            <p className="muted">Os estados indicam se o acesso está ativo ou depende de uma ação da pessoa convidada.</p>
+            <p className="muted">A lista apresenta as solicitações e os vínculos da empresa; o envio não confirma a elegibilidade do e-mail informado.</p>
             <div className="table-scroll">
               <table className="recruiter-table">
                 <caption className="visually-hidden">Vínculos ativos e convites de recrutadores da empresa</caption>
