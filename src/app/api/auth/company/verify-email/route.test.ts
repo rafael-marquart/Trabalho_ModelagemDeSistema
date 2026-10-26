@@ -164,4 +164,18 @@ describe("company email verification", () => {
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
 
+  it("rejects cross-origin verification before looking up or consuming a token", async () => {
+    const request = new Request("https://acessavagas.example/api/auth/company/verify-email", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: "https://attacker.example" },
+      body: JSON.stringify({ token: "verification-token-long-enough" })
+    });
+
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(403);
+    expect(prismaMock.companyEmailVerificationToken.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+
 });
