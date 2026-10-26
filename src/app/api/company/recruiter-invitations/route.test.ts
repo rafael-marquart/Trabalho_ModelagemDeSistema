@@ -255,6 +255,19 @@ describe("send recruiter invitation", () => {
     expect(sendEmailMock).not.toHaveBeenCalled();
   });
 
+  it("does not disclose whether an existing recruiter is linked to another company", async () => {
+    prismaMock.recruiterLink.findFirst.mockResolvedValueOnce({ id: "active-link-elsewhere" });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(409);
+    await expect(response.json()).resolves.toMatchObject({
+      message: "Não foi possível processar o convite com os dados informados."
+    });
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(sendEmailMock).not.toHaveBeenCalled();
+  });
+
   it("rejects an inactive company account before sending or mutating invitations", async () => {
     getCurrentUserMock.mockResolvedValueOnce({ ...companyUser, isActive: false });
 
