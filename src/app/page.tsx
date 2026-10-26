@@ -32,7 +32,9 @@ export default function HomePage() {
 
           <div className="entry-options">
             <Link className="choice-card" href="/candidato/login">
-              <span className="choice-icon" aria-hidden="true">↗</span>
+              <span className="choice-icon candidate-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="8" r="4" /><path d="M4.5 21v-1.5a7.5 7.5 0 0 1 15 0V21z" /></svg>
+              </span>
               <span className="choice-copy">
                 <strong>Sou candidato</strong>
                 <span>Encontre vagas que combinam com você.</span>
@@ -40,7 +42,9 @@ export default function HomePage() {
               <span className="choice-arrow" aria-hidden="true">→</span>
             </Link>
             <Link className="choice-card" href="/empresa/login">
-              <span className="choice-icon company-icon" aria-hidden="true">▦</span>
+              <span className="choice-icon company-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><rect x="4" y="3" width="16" height="18" rx="3" /><path d="M8 7h2m4 0h2M8 11h2m4 0h2M10 21v-5h4v5" /></svg>
+              </span>
               <span className="choice-copy">
                 <strong>Sou empresa</strong>
                 <span>Encontre talentos e gerencie suas vagas.</span>
