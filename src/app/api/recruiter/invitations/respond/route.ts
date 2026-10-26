@@ -30,9 +30,10 @@ export async function POST(request: Request) {
   if (!invitation || invitation.status !== "PENDING" || !invitation.recipientUserId) {
     return NextResponse.json({ message: "Convite inválido, já respondido ou expirado." }, { status: 400 });
   }
+  const recipientUserId = recipientUserId;
 
   const pendingSetup = !user && parsed.data.action === "accept";
-  if (user && (user.role !== "RECRUITER" || user.id !== invitation.recipientUserId)) {
+  if (user && (user.role !== "RECRUITER" || user.id !== recipientUserId)) {
     return NextResponse.json({ message: "Entre na conta de recrutador destinatária do convite." }, { status: 401 });
   }
   if (!user && parsed.data.action !== "refuse" && !pendingSetup) {
@@ -40,7 +41,7 @@ export async function POST(request: Request) {
   }
 
   const recipient = await prisma.user.findUnique({
-    where: { id: invitation.recipientUserId },
+    where: { id: recipientUserId },
     select: { id: true, role: true, isActive: true, pendingActivation: true }
   });
   if (!recipient || recipient.role !== "RECRUITER" || (pendingSetup && !recipient.pendingActivation)) {
@@ -56,7 +57,7 @@ export async function POST(request: Request) {
   if (invitation.expiresAt <= now) {
     await prisma.$transaction(async tx => {
       const changed = await tx.recruiterInvitation.updateMany({
-        where: { id: invitation.id, recipientUserId: invitation.recipientUserId, tokenHash, status: "PENDING", expiresAt: { lte: now } },
+        where: { id: invitation.id, recipientUserId: recipientUserId, tokenHash, status: "PENDING", expiresAt: { lte: now } },
         data: { status: "EXPIRED", respondedAt: now }
       });
       if (changed.count === 1) await tx.auditEvent.create({
@@ -72,12 +73,12 @@ export async function POST(request: Request) {
       if (parsed.data.action === "accept") {
         const company = await tx.company.findUnique({ where: { id: invitation.companyId }, select: { id: true, accountUser: { select: { isActive: true } } } });
         if (!company || !company.accountUser.isActive) return "COMPANY_NOT_ACTIVE" as const;
-        const active = await tx.recruiterLink.findFirst({ where: { recruiterId: invitation.recipientUserId, active: true }, select: { id: true } });
+        const active = await tx.recruiterLink.findFirst({ where: { recruiterId: recipientUserId, active: true }, select: { id: true } });
         if (active) return "RECRUITER_ALREADY_LINKED" as const;
       }
 
       const claimed = await tx.recruiterInvitation.updateMany({
-        where: { id: invitation.id, recipientUserId: invitation.recipientUserId, status: "PENDING", expiresAt: { gt: now }, tokenHash },
+        where: { id: invitation.id, recipientUserId: recipientUserId, status: "PENDING", expiresAt: { gt: now }, tokenHash },
         data: { status: parsed.data.action === "accept" ? "ACCEPTED" : "REFUSED", respondedAt: now }
       });
       if (claimed.count !== 1) return "STALE" as const;
@@ -85,16 +86,16 @@ export async function POST(request: Request) {
       if (parsed.data.action === "accept") {
         if (pendingSetup) {
           const activated = await tx.user.updateMany({
-            where: { id: invitation.recipientUserId, role: "RECRUITER", isActive: false, pendingActivation: true },
+            where: { id: recipientUserId, role: "RECRUITER", isActive: false, pendingActivation: true },
             data: { passwordHash: newPasswordHash!, isActive: true, pendingActivation: false, passwordChangedAt: now }
           });
           if (activated.count !== 1) throw new Error("RECRUITER_ACTIVATION_RACE");
         }
-        await tx.recruiterLink.create({ data: { companyId: invitation.companyId, recruiterId: invitation.recipientUserId } });
+        await tx.recruiterLink.create({ data: { companyId: invitation.companyId, recruiterId: recipientUserId } });
       }
       await tx.auditEvent.create({
         data: {
-          actorUserId: user?.id ?? invitation.recipientUserId,
+          actorUserId: user?.id ?? recipientUserId,
           eventType: parsed.data.action === "accept" ? (pendingSetup ? "RECRUITER_ACCOUNT_ACTIVATED_AND_INVITATION_ACCEPTED" : "RECRUITER_INVITATION_ACCEPTED") : "RECRUITER_INVITATION_REFUSED",
           subjectType: "RecruiterInvitation",
           subjectId: invitation.id
