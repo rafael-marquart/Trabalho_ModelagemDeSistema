@@ -11,7 +11,7 @@ Este roteiro complementa a CI e os testes E2E. Use somente dados fictícios: Mai
 Na pasta do repositório, abra um terminal e execute:
 
 ```bash
-git switch feat/initial-app-foundation
+git switch feat/recruiter-dashboard-brand-polish
 git pull
 npm install
 docker compose up -d postgres mailpit
@@ -53,7 +53,7 @@ Se algum comando falhar, copie a mensagem de erro completa e pare nesse ponto; n
 
 ## 2. Conferência de entrada e tema
 
-- [ ] A página inicial carrega sem erro e o logotipo Acessa Vagas aparece.
+- [ ] A página inicial e as telas de cadastro de candidato/empresa carregam sem erro e exibem o PNG corrigido do logo Acessa Vagas. Confira também as telas de login, recuperação, empresa e recrutador para garantir consistência.
 - [ ] Os links levam às páginas corretas de candidato, empresa e recrutador.
 - [ ] Alternar tema claro/escuro não quebra o layout nem oculta controles.
 - [ ] É possível percorrer os controles principais com Tab e Shift+Tab; o foco é visível.
@@ -63,7 +63,7 @@ Se algum comando falhar, copie a mensagem de erro completa e pare nesse ponto; n
 
 Use dados fictícios inéditos para evitar conflito com contas já existentes.
 
-- [ ] Abra `/candidato/cadastro`, preencha nome, e-mail de teste, CPF de teste e senha conforme as regras exibidas.
+- [ ] Abra `/candidato/cadastro`, confira que o PNG corrigido do logo aparece, e preencha nome, e-mail de teste, CPF de teste e senha conforme as regras exibidas.
 - [ ] Confirme que senhas divergentes mostram erro acessível e não enviam o formulário.
 - [ ] Cadastre a conta e confirme o redirecionamento para login com mensagem de sucesso.
 - [ ] Entre em `/candidato/login` com e-mail e senha; confirme que chega à área de candidato.
