@@ -16,7 +16,7 @@ export default function CandidateLoginPage() {
 
   useEffect(() => {
     if (new URLSearchParams(window.location.search).get("cadastro") === "sucesso") {
-      setNotice("Cadastro recebido. Se necessário, confirme seu e-mail e entre com suas credenciais.");
+      setNotice("Cadastro concluído. Entre com seu e-mail ou CPF e senha para acessar sua conta.");
     }
   }, []);
 
