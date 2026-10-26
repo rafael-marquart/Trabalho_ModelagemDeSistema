@@ -133,3 +133,14 @@ O PR #36 permanece aberto e em Draft. Não fazer merge, não publicar em produç
 - Durante a implementação, serão executados apenas testes essenciais para confirmar funcionalidades e evitar regressões. A bateria ampliada ficará para o final do projeto; isso não invalida a suíte já existente nem significa que as verificações manuais/externas foram realizadas.
 - Dependências externas/manuais ainda não verificadas: SMTP real em homologação/produção; `APP_BASE_URL` e `X-Forwarded-For` na topologia de proxy real; agendamento/monitoramento de retenção em produção; acessibilidade manual e testes em navegadores/dispositivos; homologação externa e pentest independente. A sincronização editável do Figma é não bloqueante enquanto os SVGs versionados forem a referência visual.
 - **Estado funcional:** a implementação principal da SPEC-001 está integrada à branch e a CI está verde. A conclusão formal depende de confirmar o aceite do responsável e decidir quais verificações externas/manuais serão feitas na etapa final de validação. PR #36 continua aberta em Draft; sem merge, deploy ou início da SPEC-002.
+
+
+## Atualização de validação — 26/10/2026, HEAD `63f83cbf28c0a7d36a6d04943338a982262629cf`
+
+- CI de push: [execução 40251081535](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40251081535) — **sucesso**.
+- CI do PR: [execução 40251086099](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40251086099) — **sucesso**.
+- Etapas verificadas na execução da PR: validação e geração do Prisma Client, migrações PostgreSQL, restrição de vínculo ativo único e concorrência, TypeScript, lint, testes unitários, build de produção e E2E de autenticação com PostgreSQL e SMTP local — todas concluídas com sucesso.
+- A falha do HEAD anterior `251e0927d7e5987a6da797a20563edd0210519e9` era `ReferenceError: React is not defined` nos testes da página de confirmação empresarial. O import explícito de React foi incluído no commit atual; as duas execuções de CI confirmam a correção.
+- A página de confirmação exige ação explícita da pessoa antes de consumir o token, e permite nova tentativa após falha temporária. Há testes de UI para estes comportamentos.
+- Este resultado valida o HEAD citado no pipeline automatizado; não representa homologação SMTP externa, configuração real de proxy, acessibilidade manual, pentest ou aprovação formal de conclusão. Essas pendências operacionais permanecem abertas.
+- O PR #36 permanece aberto em Draft. Nenhum merge, deploy ou início da SPEC-002 foi realizado.
