@@ -33,7 +33,8 @@ describe("login", () => {
     $executeRaw: vi.fn(),
     user: { findFirst: vi.fn(), findUnique: vi.fn(), update: vi.fn() },
 loginAttempt: { count: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
-    loginBlock: { findUnique: vi.fn(), upsert: vi.fn() }
+    loginBlock: { findUnique: vi.fn(), upsert: vi.fn() },
+    session: { deleteMany: vi.fn() }
   };
 
   beforeEach(() => {
@@ -48,6 +49,7 @@ loginAttempt: { count: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
     tx.loginAttempt.create.mockResolvedValue({ id: "attempt-1" });
     tx.loginBlock.findUnique.mockResolvedValue(null);
     tx.loginBlock.upsert.mockResolvedValue({ ipKey: "hashed-ip", blockedUntil: new Date(), cooldownSeconds: 60 });
+    tx.session.deleteMany.mockResolvedValue({ count: 1 });
     verifyPasswordMock.mockResolvedValue(true);
     createSessionMock.mockResolvedValue(true);
     prismaMock.auditEvent.create.mockResolvedValue({ id: "audit-1" });
@@ -112,6 +114,7 @@ loginAttempt: { count: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
       data: { failedLoginCount: 0, lastFailedLoginAt: null, lockedUntil: expect.any(Date) }
     });
     const lock = tx.user.update.mock.calls[0][0].data.lockedUntil as Date;
+    expect(tx.session.deleteMany).toHaveBeenCalledWith({ where: { userId: "candidate-1" } });
     expect(lock.getTime()).toBeGreaterThan(Date.now() + 14 * 60 * 1000);
     expect(lock.getTime()).toBeLessThanOrEqual(Date.now() + 15 * 60 * 1000 + 1000);
   });
