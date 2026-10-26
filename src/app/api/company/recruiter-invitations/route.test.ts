@@ -215,6 +215,27 @@ describe("send recruiter invitation", () => {
     await expect(response.json()).resolves.toMatchObject({ message: "Se os dados corresponderem a um recrutador elegível, as instruções serão enviadas ao e-mail informado." });
   });
 
+  it("converts an existing neutral placeholder into a real invitation when the recipient is eligible", async () => {
+    tx.recruiterInvitation.findFirst.mockResolvedValueOnce({ id: "neutral-request-1", recipientUserId: null });
+
+    const response = await POST(makeRequest() as never);
+
+    expect(response.status).toBe(202);
+    expect(tx.recruiterInvitation.update).toHaveBeenCalledWith({
+      where: { id: "neutral-request-1" },
+      data: expect.objectContaining({
+        recipientUserId: "recruiter-1",
+        tokenHash: "token-hash",
+        recipientEmail: "recruiter@example.com"
+      }),
+      select: { id: true }
+    });
+    expect(tx.auditEvent.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ eventType: "RECRUITER_INVITATION_SENT" })
+    });
+    expect(sendEmailMock).toHaveBeenCalled();
+  });
+
   it("keeps the public invitation response generic when email delivery fails", async () => {
     createTokenMock
       .mockReturnValueOnce({ token: "original-token", tokenHash: "original-token-hash" })
