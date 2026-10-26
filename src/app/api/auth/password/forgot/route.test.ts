@@ -206,4 +206,23 @@ describe("password recovery request", () => {
     expect(sendEmailMock).toHaveBeenCalled();
   });
 
+
+  it("keeps malformed recovery input generic and performs no account lookup or mutation", async () => {
+    const request = new Request("https://acessavagas.example/api/auth/password/forgot", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-forwarded-for": "192.0.2.10" },
+      body: "{"
+    });
+
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      message: "Se os dados corresponderem a uma conta elegível, enviaremos instruções ao e-mail cadastrado."
+    });
+    expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(sendEmailMock).not.toHaveBeenCalled();
+  });
+
 });
