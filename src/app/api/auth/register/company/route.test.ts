@@ -99,6 +99,17 @@ describe("company registration", () => {
     }));
   });
 
+  it("allows company registration when the CNPJ property is omitted", async () => {
+    const response = await POST(makeRequest({ officialId: undefined }));
+
+    expect(response.status).toBe(201);
+    expect(tx.user.create).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        company: { create: expect.objectContaining({ officialId: null }) }
+      })
+    }));
+  });
+
   it("rejects malformed JSON before hashing, creating tokens, or touching the database", async () => {
     const request = new Request("https://acessavagas.example/api/auth/register/company", {
       method: "POST",
