@@ -46,7 +46,7 @@ export default function ConfirmCompanyEmailPage() {
     <main className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div>
       <Link className="brand auth-brand" href="/">
-        <img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" />
+        <img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" />
       </Link>
       <section className="auth-card" aria-labelledby="confirm-title">
         <p className="eyebrow">Verificação da empresa</p>
