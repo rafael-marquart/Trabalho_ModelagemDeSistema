@@ -35,7 +35,7 @@ export default function RecruiterHomePage() {
     <main className="recruiter-dashboard">
       <header className="recruiter-topbar">
         <Link className="recruiter-brand" href="/" aria-label="Acessa Vagas — início">
-          <img className="brand-logo recruiter-brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" />
+          <img className="brand-logo recruiter-brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" />
         </Link>
         <span className="recruiter-topbar-label">Área do recrutador</span>
         <div className="recruiter-topbar-actions">
