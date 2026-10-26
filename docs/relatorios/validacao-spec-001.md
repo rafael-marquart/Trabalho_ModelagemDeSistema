@@ -167,3 +167,32 @@ O plano de fechamento foi reduzido ao esforço técnico combinado de **4–8 hor
 - SMTP real, proxy real, rotinas de produção, acessibilidade manual e pentest permanecem explicitamente não executados até haver ambiente/acesso. Não afirmar aprovação dessas verificações, mas também não transformar dependências externas em trabalho técnico interno sem fim; só impedem a conclusão funcional quando estiverem vinculadas a critério obrigatório ou risco conhecido que exija bloqueio.
 - Estimativa de calendário anterior de 1–3 dias úteis substituída pelo objetivo de **4–8 horas técnicas**, conforme solicitação do responsável. Essa é uma meta de esforço, não garantia sobre tempo de espera de CI ou dependências externas.
 - PR #36 permanece aberta em Draft, sem merge/deploy/início da SPEC-002.
+
+## Matriz objetiva dos 14 critérios de aceite — rodada de fechamento
+
+Classificação baseada nos testes e evidências registrados no repositório; "comprovado nos cenários centrais" não significa cobertura exaustiva de toda combinação possível.
+
+| # | Critério | Evidência existente | Estado nesta revisão |
+|---:|---|---|---|
+| 1 | Entrada/login por e-mail e senha | Testes de rota de login e E2E de candidato, empresa e recrutador | Comprovado nos fluxos centrais |
+| 2 | Cadastro Usuário/Empresa; sem cadastro independente de Recrutador | Testes de cadastro e E2E de convite/ativação de recrutador pela Empresa | Comprovado nos fluxos centrais |
+| 3 | Credenciais válidas autenticam e encaminham por perfil | E2E verifica redirecionamentos de candidato, empresa e recrutador | Comprovado |
+| 4 | Credenciais inválidas não autenticam | Testes de login, senha antiga após reset e bloqueio | Comprovado |
+| 5 | Recuperação redefine senha com solicitação válida | E2E recebe token pelo SMTP de captura, confere hash armazenado, redefine senha e rejeita reutilização | Comprovado no ambiente de teste |
+| 6 | Backend autoriza operações protegidas | E2E cobre chamadas anônimas, candidato e recrutador nas rotas empresariais e confirma ausência de efeitos colaterais; testes por rota | Comprovado nos cenários cobertos; sem matriz exaustiva de toda rota/papel |
+| 7 | Sessão expirada/revogada não executa operação protegida | E2E verifica revogação após redefinição/logout e expiração persistida | Comprovado nos cenários centrais |
+| 8 | Empresa convida recrutador com aceite explícito | E2E cobre convite, definição de senha, aceite e ativação | Comprovado |
+| 9 | Recrutador não tem mais de um vínculo ativo | Restrição PostgreSQL e teste de concorrência; E2E verifica exatamente um vínculo ativo após aceite concorrente | Comprovado |
+| 10 | Empresa encerra vínculo próprio sem apagar conta/histórico | E2E verifica vínculo inativo e conta do recrutador preservada | Comprovado |
+| 11 | Recrutador permanece ligado à Empresa responsável enquanto ativo | E2E consulta vínculo após aceite e após nova associação | Comprovado nos fluxos centrais |
+| 12 | Empresa não administra vínculo de outra Empresa | E2E de isolamento de listagem e cancelamento cruzado; testes de mutações fora do escopo | Comprovado nos cenários centrais |
+| 13 | Alterações relevantes ficam auditáveis | E2E verifica eventos de envio, reenvio, aceite, cancelamento, recusa, expiração e encerramento, incluindo contagem em concorrência | Comprovado para os eventos exercitados |
+| 14 | Mensagens não expõem credenciais/dados pessoais desnecessários | Tokens armazenados como hash, respostas anti-enumeração, snapshot do convite sem perfil atual, mensagens de autenticação e testes de rota | Comprovado nos fluxos cobertos; revisão de logs/provedor real não executada |
+
+### Decisão desta rodada
+
+A evidência existente cobre substancialmente os 14 critérios funcionais no CI e em E2E. A principal ressalva automatizada é a cobertura não exaustiva da autorização por todas as combinações de papel e rota; não há evidência de falha funcional conhecida nesses cenários, mas eles não devem ser declarados testados se não foram executados.
+
+Validações externas — SMTP de homologação, proxy real, agendamento de retenção e revisão manual de acessibilidade — permanecem **não executadas**. Esta tabela não as converte em testes aprovados nem as inclui automaticamente como horas de código. A decisão de conclusão funcional deve considerar os critérios obrigatórios, evidência disponível e qualquer risco concreto encontrado nesta rodada.
+
+**Meta de esforço vigente:** 4–8 horas técnicas para a rodada de fechamento. Não reiniciar a revisão completa sem falha concreta ou novo requisito.
