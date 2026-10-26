@@ -216,14 +216,17 @@ describe("send recruiter invitation", () => {
   });
 
   it("keeps the public invitation response generic when email delivery fails", async () => {
+    createTokenMock
+      .mockReturnValueOnce({ token: "original-token", tokenHash: "original-token-hash" })
+      .mockReturnValueOnce({ token: "replacement-token", tokenHash: "replacement-token-hash" });
     sendEmailMock.mockRejectedValueOnce(new Error("SMTP unavailable"));
 
     const response = await POST(makeRequest() as never);
 
     expect(response.status).toBe(202);
     expect(tx.recruiterInvitation.updateMany).toHaveBeenCalledWith({
-      where: { id: "invitation-1", tokenHash: "token-hash", status: "PENDING" },
-      data: { tokenHash: expect.any(String) }
+      where: { id: "invitation-1", tokenHash: "original-token-hash", status: "PENDING" },
+      data: { tokenHash: "replacement-token-hash" }
     });
     expect(tx.auditEvent.create).toHaveBeenCalledWith({
       data: expect.objectContaining({ eventType: "RECRUITER_INVITATION_DELIVERY_FAILED" })
