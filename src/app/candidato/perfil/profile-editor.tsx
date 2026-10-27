@@ -47,6 +47,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   const [educationInstitution, setEducationInstitution] = useState("");
   const [educationStatus, setEducationStatus] = useState(educationStatuses[0]);
   const [linkUrl, setLinkUrl] = useState("");
+  const [accessibilityResource, setAccessibilityResource] = useState("");
   const [documentCategory, setDocumentCategory] = useState<"COURSE" | "CERTIFICATION">("COURSE");
   const [documentName, setDocumentName] = useState("");
   const [documentFile, setDocumentFile] = useState<File | null>(null);
@@ -115,6 +116,15 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     if (profile.education.some(item => item.toLocaleLowerCase() === entry.toLocaleLowerCase())) { setError("Essa formação já foi adicionada."); return; }
     setProfile(current => ({ ...current, education: [...current.education, entry] }));
     setEducationCourse(""); setEducationInstitution(""); setError("");
+  }
+  function addAccessibilityResource() {
+    const value = accessibilityResource.trim();
+    if (!value) { setError("Informe o recurso de acessibilidade antes de adicioná-lo."); return; }
+    if (profile.essentialAccessibilityResources.some(item => item.toLocaleLowerCase() === value.toLocaleLowerCase())) {
+      setError("Esse recurso de acessibilidade já foi adicionado."); return;
+    }
+    setProfile(current => ({ ...current, essentialAccessibilityResources: [...current.essentialAccessibilityResources, value] }));
+    setAccessibilityResource(""); setError("");
   }
   function addProfessionalLink() {
     const value = linkUrl.trim();
@@ -197,8 +207,22 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
       <label className="profile-section-title" htmlFor={section.key}>{section.title}</label>
       <p className="muted">{section.hint}</p>
       {section.key === "essentialAccessibilityResources" && <p className="profile-privacy-note">Estas informações são autodeclaradas. Não é necessário anexar laudos médicos.</p>}
-      <textarea id={section.key} value={asText(profile[section.key])} onChange={event => updateList(section.key, event.target.value)}
-        rows={4} placeholder="Digite uma informação por linha" disabled={loading || saving} />
+      {section.key === "essentialAccessibilityResources" ? <>
+        <div className="profile-link-controls">
+          <label className="profile-link-url-label" htmlFor="accessibilityResourceInput">Recurso necessário
+            <input id="accessibilityResourceInput" value={accessibilityResource} onChange={event => setAccessibilityResource(event.target.value)}
+              maxLength={300} placeholder="Ex.: elevador, mesa adaptada, leitor de tela" disabled={loading || saving} />
+          </label>
+          <button type="button" className="secondary-button" onClick={addAccessibilityResource} disabled={loading || saving}>Adicionar recurso</button>
+        </div>
+        <ul className="profile-chip-list">{profile.essentialAccessibilityResources.map(item => <li key={item}>
+          <span>{item}</span>
+          <button type="button" className="secondary-button" onClick={() => setProfile(current => ({
+            ...current, essentialAccessibilityResources: current.essentialAccessibilityResources.filter(value => value !== item)
+          }))} disabled={loading || saving} aria-label={`Remover recurso: ${item}`}>Remover</button>
+        </li>)}</ul>
+      </> : <textarea id={section.key} value={asText(profile[section.key])} onChange={event => updateList(section.key, event.target.value)}
+        rows={4} placeholder="Digite uma informação por linha" disabled={loading || saving} />}
     </section>)}
     <section className="profile-section">
       <label className="profile-section-title" htmlFor="profileLanguages">Idiomas</label>
@@ -217,7 +241,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     </section>
     <section className="profile-section">
       <h2>Links profissionais</h2>
-      <p className="muted">Escolha o tipo de link, cole o endereço completo e adicione-o à lista. Use links públicos do seu portfólio profissional.</p>
+      <p className="muted">Cole o endereço completo do perfil profissional e adicione-o à lista. Use links públicos do seu portfólio profissional.</p>
       <div className="profile-link-controls">
         <label className="profile-link-url-label">Endereço do perfil profissional<input type="url" inputMode="url" autoComplete="url" value={linkUrl} onChange={event => setLinkUrl(event.target.value)} maxLength={2048} placeholder="https://www.linkedin.com/in/seu-perfil" disabled={loading || saving} /></label>
         <button type="button" className="secondary-button" onClick={addProfessionalLink} disabled={loading || saving}>Adicionar link</button>
