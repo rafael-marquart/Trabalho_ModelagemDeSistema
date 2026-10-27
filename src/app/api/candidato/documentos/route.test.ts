@@ -1,7 +1,12 @@
+// @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { prismaMock, getCurrentUserMock, mkdirMock, writeFileMock, unlinkMock } = vi.hoisted(() => ({
-  prismaMock: { candidateProfile: { upsert: vi.fn(), findUnique: vi.fn() }, candidateProfileDocument: { create: vi.fn(), findMany: vi.fn() } },
+  prismaMock: {
+    $transaction: vi.fn(), auditEvent: { create: vi.fn() },
+    candidateProfile: { upsert: vi.fn(), findUnique: vi.fn() },
+    candidateProfileDocument: { create: vi.fn(), findMany: vi.fn() }
+  },
   getCurrentUserMock: vi.fn(),
   mkdirMock: vi.fn(),
   writeFileMock: vi.fn(),
@@ -18,6 +23,8 @@ describe("candidate documents collection API", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     getCurrentUserMock.mockResolvedValue(candidate);
+    prismaMock.$transaction.mockImplementation(async (callback: (tx: typeof prismaMock) => Promise<unknown>) => callback(prismaMock));
+    prismaMock.auditEvent.create.mockResolvedValue({});
     prismaMock.candidateProfile.upsert.mockResolvedValue({ id: "profile-1" });
     prismaMock.candidateProfileDocument.findMany.mockResolvedValue([]);
     prismaMock.candidateProfileDocument.create.mockResolvedValue({
@@ -92,5 +99,11 @@ describe("candidate documents collection API", () => {
     const body = await response.json();
     expect(body.document).toMatchObject({ id: "document-1", mimeType: "application/pdf" });
     expect(JSON.stringify(body)).not.toContain("storedName");
+    expect(prismaMock.auditEvent.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        actorUserId: "candidate-1", eventType: "CANDIDATE_PROFILE_DOCUMENT_ADDED", metadata: { category: "COURSE" }
+      })
+    });
+    expect(JSON.stringify(prismaMock.auditEvent.create.mock.calls)).not.toContain("Certificado de curso");
   });
 });

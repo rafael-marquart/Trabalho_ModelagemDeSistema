@@ -1,7 +1,11 @@
+// @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { prismaMock, getCurrentUserMock, readFileMock, unlinkMock } = vi.hoisted(() => ({
-  prismaMock: { candidateProfileDocument: { findFirst: vi.fn(), delete: vi.fn() } },
+  prismaMock: {
+    $transaction: vi.fn(), auditEvent: { create: vi.fn() },
+    candidateProfileDocument: { findFirst: vi.fn(), delete: vi.fn() }
+  },
   getCurrentUserMock: vi.fn(),
   readFileMock: vi.fn(),
   unlinkMock: vi.fn()
@@ -15,7 +19,7 @@ import { DELETE, GET } from "./route";
 describe("candidate document item API", () => {
   const candidate = { id: "candidate-1", role: "CANDIDATE" };
   const document = {
-    id: "document-1", candidateProfileId: "profile-1", storedName: "safe-random-id",
+    id: "document-1", candidateProfileId: "profile-1", storedName: "safe-random-id", category: "COURSE",
     originalName: "certificação.pdf", mimeType: "application/pdf", sizeBytes: 5,
     candidateProfile: { userId: "candidate-1" }
   };
@@ -24,6 +28,8 @@ describe("candidate document item API", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     getCurrentUserMock.mockResolvedValue(candidate);
+    prismaMock.$transaction.mockImplementation(async (callback: (tx: typeof prismaMock) => Promise<unknown>) => callback(prismaMock));
+    prismaMock.auditEvent.create.mockResolvedValue({});
     prismaMock.candidateProfileDocument.findFirst.mockResolvedValue(document);
     prismaMock.candidateProfileDocument.delete.mockResolvedValue(document);
     readFileMock.mockResolvedValue(Buffer.from("%PDF-"));
@@ -78,6 +84,9 @@ describe("candidate document item API", () => {
     expect(response.status).toBe(200);
     expect(prismaMock.candidateProfileDocument.delete).toHaveBeenCalledWith({ where: { id: "document-1" } });
     expect(unlinkMock).toHaveBeenCalledWith(expect.stringContaining("safe-random-id"));
+    expect(prismaMock.auditEvent.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ actorUserId: "candidate-1", eventType: "CANDIDATE_PROFILE_DOCUMENT_REMOVED", subjectId: "document-1" })
+    });
     await expect(response.json()).resolves.toEqual({ ok: true });
   });
 });

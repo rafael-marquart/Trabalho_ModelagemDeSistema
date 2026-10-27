@@ -47,7 +47,16 @@ export async function DELETE(request: Request, context: Context) {
     where: { id, candidateProfile: { userId: user.id } }
   });
   if (!document) return NextResponse.json({ message: "Arquivo não encontrado." }, { status: 404 });
-  await prisma.candidateProfileDocument.delete({ where: { id: document.id } });
+  await prisma.$transaction(async (tx) => {
+    await tx.candidateProfileDocument.delete({ where: { id: document.id } });
+    await tx.auditEvent.create({
+      data: {
+        actorUserId: user.id, eventType: "CANDIDATE_PROFILE_DOCUMENT_REMOVED",
+        subjectType: "CandidateProfileDocument", subjectId: document.id,
+        metadata: { category: document.category }
+      }
+    });
+  });
   await unlink(path.join(storageDirectory(), document.storedName)).catch(() => undefined);
   return NextResponse.json({ ok: true });
 }

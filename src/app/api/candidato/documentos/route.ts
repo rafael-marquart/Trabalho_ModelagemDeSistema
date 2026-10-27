@@ -80,13 +80,24 @@ export async function POST(request: Request) {
   await mkdir(directory, { recursive: true });
   try {
     await writeFile(path.join(directory, storedName), bytes, { flag: "wx", mode: 0o600 });
-    const document = await prisma.candidateProfileDocument.create({
-      data: {
-        candidateProfileId: profile.id, category, displayName: displayName.trim(),
-        originalName: path.basename(file.name).slice(0, 200), storedName,
-        mimeType: extension === ".doc" ? "application/msword" : mime!, sizeBytes: bytes.byteLength
-      },
-      select: { id: true, category: true, displayName: true, originalName: true, mimeType: true, sizeBytes: true, createdAt: true }
+    // Metadata and audit event are written atomically; if either fails the stored file is removed below.
+    const document = await prisma.$transaction(async (tx) => {
+      const created = await tx.candidateProfileDocument.create({
+        data: {
+          candidateProfileId: profile.id, category, displayName: displayName.trim(),
+          originalName: path.basename(file.name).slice(0, 200), storedName,
+          mimeType: extension === ".doc" ? "application/msword" : mime!, sizeBytes: bytes.byteLength
+        },
+        select: { id: true, category: true, displayName: true, originalName: true, mimeType: true, sizeBytes: true, createdAt: true }
+      });
+      await tx.auditEvent.create({
+        data: {
+          actorUserId: user.id, eventType: "CANDIDATE_PROFILE_DOCUMENT_ADDED",
+          subjectType: "CandidateProfileDocument", subjectId: created.id,
+          metadata: { category }
+        }
+      });
+      return created;
     });
     return NextResponse.json({ document }, { status: 201 });
   } catch (error) {
