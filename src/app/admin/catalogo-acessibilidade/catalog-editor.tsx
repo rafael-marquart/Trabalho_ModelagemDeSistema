@@ -52,7 +52,10 @@ export default function CatalogEditor() {
     setError(""); setNotice(""); setSavingCode(option.code);
     try {
       const response = await fetch("/api/admin/catalogo-acessibilidade", {
-        method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(option)
+        method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+          code: option.code, name: option.name, description: option.description,
+          group: option.group, isMandatory: option.isMandatory, isActive: option.isActive
+        })
       });
       const data = await response.json();
       if (!response.ok) { setError(data.message || "Não foi possível atualizar a opção."); return; }
