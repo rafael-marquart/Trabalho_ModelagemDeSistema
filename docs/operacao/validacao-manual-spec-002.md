@@ -18,6 +18,7 @@ Veja os comandos de subida do ambiente no README (seção de execução local). 
 | 1.6 | Idiomas: adicionar Inglês/Avançado; depois "Outro" com idioma digitado | Itens listados; duplicado é recusado |
 | 1.7 | Experiências: preencher cargo, empresa e período e "Adicionar experiência"; tentar sem empresa | Item aparece como "cargo · empresa · período"; sem cargo ou empresa mostra erro; não existe campo Competências |
 | 1.8 | Cursos e certificações: adicionar só pelo nome | Adiciona sem exigir arquivo |
+| 1.8b | Preferências de trabalho: marcar Híbrido e Remoto, preencher cidade, estado, endereço e transporte; salvar e recarregar | Valores persistem; tudo é opcional; estado/endereço sem cidade dá erro |
 | 1.9 | Link profissional inválido (`abc`) e válido (`https://exemplo.com`) | Inválido recusado com mensagem; válido aceito |
 | 1.10 | Recarregar a página | Tudo o que foi salvo volta, com formação e idiomas legíveis |
 

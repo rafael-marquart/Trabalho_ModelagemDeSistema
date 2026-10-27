@@ -199,8 +199,8 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 ## 11. Critérios de aceitação
 
-- [x] Entrada apresenta login por e-mail e senha.
-- [x] Cadastro oferece Usuário ou Empresa, sem cadastro independente de Recrutador.
+- [ ] Entrada apresenta login por e-mail e senha.
+- [ ] Cadastro oferece Usuário ou Empresa, sem cadastro independente de Recrutador.
 - [x] Credenciais válidas autenticam e encaminham conforme o perfil.
 - [x] Credenciais inválidas não autenticam.
 - [x] Recuperação permite redefinição quando a solicitação é válida.
@@ -212,12 +212,10 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [x] Recrutador permanece vinculado à Empresa responsável enquanto o vínculo estiver ativo.
 - [x] Empresa não consegue administrar vínculo de outra Empresa.
 - [x] Alterações relevantes são rastreáveis.
-- [x] Mensagens não expõem credenciais ou dados pessoais desnecessários.
+- [ ] Mensagens não expõem credenciais ou dados pessoais desnecessários.
 
 
 **Nota de verificação (26/10/2026):** os itens marcados foram cobertos por testes automatizados e pelo CI verde do HEAD `2c9fce50275c5531df0587e14f5f58da050f6271` ([execução 40261466174](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40261466174)). O E2E agora verifica explicitamente login de candidato com CPF formatado, recuperação de senha de candidato e empresa, redefinição, rejeição de reutilização do link e login com a nova senha. Os itens desmarcados continuam sem confirmação integral; as telas não foram testadas manualmente no navegador.
-
-> Evidência: testes Vitest e E2E (`scripts/auth-e2e.mjs`) verdes na CI (run 40543960398). Permanecem abertos: indicação de insuficiência de dados (RB-16), que depende da SPEC-007, e validação com tecnologias assistivas, que exige teste manual.
 
 ## 12. Casos de teste derivados
 
@@ -304,7 +302,8 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 - Organizar o catálogo oficial em grupos arquitetônicos, de comunicação e tecnológicos, com códigos estáveis, descrição, estado ativo/inativo e propriedade explícita de obrigatoriedade.
 - Permitir, opcionalmente, anexar comprovantes de cursos e certificações (PDF, DOC, DOCX, JPG ou PNG, até 10 MB), em armazenamento privado, visíveis apenas ao candidato proprietário. O anexo nunca é exigido para registrar o curso ou a certificação e não se aplica a laudos médicos.
 - Registrar formação/escolaridade, idiomas e experiências profissionais como entradas estruturadas (formação: nível, curso/área, instituição e situação; idioma: idioma e nível; experiência: cargo, empresa e período opcional).
-- Decisão de 27/10/2026: a categoria "competências" da OPEN-007 foi retirada do perfil nesta Spec. A SPEC-007, que hoje usa competências e conhecimentos no perfil técnico (T), deve definir de onde virão esses dados (por exemplo, derivados de cursos, certificações e experiências) ou reintroduzir a categoria.
+- Decisão de 27/10/2026: a categoria "competências" da OPEN-007 foi retirada do perfil nesta Spec. A SPEC-007, que usa competências e conhecimentos no perfil técnico (T), derivará esses dados do que o candidato já registra: escolaridade (nível de formação e curso, quando houver), cursos, certificações e experiências profissionais. A regra de derivação pertence à SPEC-007.
+- Registrar preferências de trabalho e deslocamento, todas opcionais (OPEN-007.3): modalidades aceitas (presencial, híbrido, remoto; pode marcar mais de uma), cidade, estado, endereço ou bairro e meio de transporte principal (caminhada, bicicleta, carro, ônibus ou metrô/trem). Esses dados alimentam o fator D da SPEC-007; quando ausentes, a SPEC-007 indica dados insuficientes.
 - Permitir seleção de opções oficiais e descrição livre para necessidades não contempladas; a descrição livre não cria uma opção oficial automaticamente.
 - Validar no backend que, quando a pessoa candidata declara necessidades, haja ao menos uma opção selecionada ou uma descrição livre. A declaração continua opcional.
 - Disponibilizar administração do catálogo apenas a ADMIN, com auditoria e desativação sem exclusão física.
@@ -420,23 +419,26 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 
 ## 11. Critérios de aceitação
 
-- [ ] Candidato autenticado consulta seu perfil.
-- [ ] Candidato cadastra e atualiza todas as categorias aprovadas na OPEN-007: dados pessoais básicos da conta, formação/escolaridade, idiomas, necessidades funcionais, recursos indispensáveis, experiências profissionais, cursos, certificações e links profissionais.
-- [ ] Candidato declara necessidades por autodeclaração.
-- [ ] Necessidades são organizadas nas categorias conceituais do vetor e catálogo oficial inicial contém os 16 códigos aprovados na OPEN-008.
-- [ ] Candidato pode selecionar opções oficiais e/ou descrever necessidade não contemplada; o texto livre não cria opção oficial.
-- [ ] Backend recusa declaração NEEDS_DECLARED sem opção selecionada nem descrição livre e recusa NO_NEEDS_DECLARED quando há necessidades informadas.
-- [ ] Somente ADMIN pode cadastrar/editar/desativar opções; alterações do catálogo são auditadas e opções desativadas preservam referências históricas.
-- [ ] Nome e e-mail da conta são reutilizados sem exigir preenchimento duplicado no perfil; CPF não bloqueia o salvamento.
-- [ ] Formação/escolaridade, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria.
-- [ ] Necessidades funcionais e recursos indispensáveis não exigem declaração universal; “não informado” é distinguido de “declarado que não possui necessidade”, e a autodeclaração não exige nem armazena laudo.
+- [x] Candidato autenticado consulta seu perfil.
+- [x] Candidato cadastra e atualiza todas as categorias aprovadas na OPEN-007: dados pessoais básicos da conta, formação/escolaridade, idiomas, necessidades funcionais, recursos indispensáveis, experiências profissionais, cursos, certificações e links profissionais.
+- [x] Candidato declara necessidades por autodeclaração.
+- [x] Necessidades são organizadas nas categorias conceituais do vetor e catálogo oficial inicial contém os 16 códigos aprovados na OPEN-008.
+- [x] Candidato pode selecionar opções oficiais e/ou descrever necessidade não contemplada; o texto livre não cria opção oficial.
+- [x] Backend recusa declaração NEEDS_DECLARED sem opção selecionada nem descrição livre e recusa NO_NEEDS_DECLARED quando há necessidades informadas.
+- [x] Somente ADMIN pode cadastrar/editar/desativar opções; alterações do catálogo são auditadas e opções desativadas preservam referências históricas.
+- [x] Nome e e-mail da conta são reutilizados sem exigir preenchimento duplicado no perfil; CPF não bloqueia o salvamento.
+- [x] Preferências de trabalho e deslocamento (modalidades, cidade, estado, endereço e transporte) são opcionais, validadas no servidor e persistidas.
+- [x] Formação/escolaridade, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria.
+- [x] Necessidades funcionais e recursos indispensáveis não exigem declaração universal; “não informado” é distinguido de “declarado que não possui necessidade”, e a autodeclaração não exige nem armazena laudo.
 - [ ] A ausência de dados necessários à análise de uma vaga é indicada sem presumir compatibilidade, conforme RB-16, sem tornar automaticamente esses dados obrigatórios para salvar o perfil.
-- [ ] Um candidato não consulta nem altera perfil privado de outro.
-- [ ] Dados de acessibilidade não são expostos sem autorização.
-- [ ] Atualizações preservam integridade da associação entre candidato e necessidades.
-- [ ] Alterações relevantes são rastreáveis.
-- [ ] O sistema não exige nem armazena laudo médico como condição para declarar necessidades.
+- [x] Um candidato não consulta nem altera perfil privado de outro.
+- [x] Dados de acessibilidade não são expostos sem autorização.
+- [x] Atualizações preservam integridade da associação entre candidato e necessidades.
+- [x] Alterações relevantes são rastreáveis.
+- [x] O sistema não exige nem armazena laudo médico como condição para declarar necessidades.
 - [ ] Mensagens de validação são perceptíveis por tecnologias assistivas.
+
+> Evidência: testes Vitest e E2E (`scripts/auth-e2e.mjs`) verdes na CI. Permanecem abertos: indicação de insuficiência de dados (RB-16), que depende da SPEC-007, e validação com tecnologias assistivas, que exige teste manual.
 
 ## 12. Casos de teste derivados
 

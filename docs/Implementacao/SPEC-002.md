@@ -24,6 +24,8 @@
 - Links profissionais são validados como URLs HTTP/HTTPS.
 - Foram adicionados casos automatizados para validação da declaração condicional e rejeição de links não HTTP/HTTPS. Os testes permanecem sem execução.
 
+- Preferências de trabalho e deslocamento (OPEN-007.3): coluna JSON `workPreferences` (migração `20261027170000_spec_002_work_preferences`) com modalidades, cidade, estado, endereço e transporte principal; todos opcionais, validados no servidor e auditados apenas como categoria.
+
 ## Limites e pendências preservados
 
 - Não implementa algoritmo de compatibilidade nem afirma que o perfil é suficiente para uma vaga; essa responsabilidade pertence à SPEC-007.
@@ -50,7 +52,7 @@
 
 ## Revisão de 27/10/2026
 
-- Experiências profissionais voltaram à tela como entradas estruturadas (`role`, `company`, `period`); registros antigos em texto são lidos com o texto no cargo. O campo Competências foi retirado da tela, do contrato da API e da validação (a coluna `skills` permanece no banco, sem uso, para evitar migração). Impacto: a SPEC-007 usa competências no perfil técnico e precisará definir a fonte desses dados. Cursos e certificações podem ser registrados só com o nome, e o anexo é opcional.
+- Experiências profissionais voltaram à tela como entradas estruturadas (`role`, `company`, `period`); registros antigos em texto são lidos com o texto no cargo. O campo Competências foi retirado da tela, do contrato da API e da validação (a coluna `skills` permanece no banco, sem uso, para evitar migração). Impacto: a SPEC-007 usa competências no perfil técnico e as derivará de escolaridade (nível e curso), cursos, certificações e experiências. Cursos e certificações podem ser registrados só com o nome, e o anexo é opcional.
 - Formação e idiomas passaram a ser objetos estruturados (formação: `level`, `course`, `institution`, `status`; idioma: `language`, `level`), validados no servidor com listas fechadas de nível e situação. Registros antigos em texto "campo — campo" são lidos de forma compatível e convertidos no próximo salvamento; a detecção de mudança para auditoria compara JSON canônico (chaves ordenadas).
 - Rótulos sem controle associado foram corrigidos; botões de remover e baixar identificam o item; a troca da declaração de necessidades pede confirmação quando há seleções.
 - Envio e remoção de anexos geram auditoria (`CANDIDATE_PROFILE_DOCUMENT_ADDED` / `_REMOVED`), registrando só a categoria.
