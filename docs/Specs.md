@@ -701,8 +701,8 @@ Este bloco detalha SPEC-004, SPEC-005 e SPEC-006. As questões pendentes são re
 | Campo | Valor |
 |---|---|
 | ID | SPEC-004 |
-| Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada em 27/10/2026, exceto o tratamento de divergências recorrentes (seção 5.5), adiado |
+| Estado do layout | aprovado pelo responsável em 27/10/2026, sobre as telas implementadas (sem protótipo anexado em docs/layout/); a área da empresa deve convergir para o painel com menu lateral aprovado como referência, a ser tratado junto com a SPEC-005 |
 | Capacidade | Registrar, consultar e atualizar informações de acessibilidade física, digital e atitudinal da Empresa |
 
 ## 2. Rastreabilidade
@@ -870,7 +870,7 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [x] Informações gerais da Empresa são distintas dos critérios específicos da vaga e não geram aplicabilidade automática.
 - [x] A infraestrutura geral não preenche automaticamente TRAVA_CRITICA_VAGA nem calcula compatibilidade.
 
-> Evidência: testes Vitest (esquema, rota, serviço e tela) e E2E (`scripts/auth-e2e.mjs`). Os quatro critérios de divergência recorrente (RB-08, OPEN-019) permanecem abertos: o procedimento de registro, análise administrativa e decisão foi adiado para etapa própria, em decisão de 27/10/2026. O sistema não aplica nenhuma alteração automática por divergência.
+> Evidência: testes Vitest (esquema, rota, serviço e tela), E2E (`scripts/auth-e2e.mjs`) verdes na CI e roteiro manual executado pelo responsável em 27/10/2026, com os ajustes aplicados. Os quatro critérios de divergência recorrente (RB-08, OPEN-019) permanecem abertos: o procedimento de registro, análise administrativa e decisão foi adiado para etapa própria, em decisão de 27/10/2026. O sistema não aplica nenhuma alteração automática por divergência.
 
 ## 12. Casos de teste derivados
 
@@ -1526,7 +1526,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 
 | Spec | Estado do texto | Estado do layout | Revisão humana |
 |---|---|---|---|
-| SPEC-004 — Gerenciar infraestrutura de acessibilidade da empresa | especificada | pendente | aguardando |
+| SPEC-004 — Gerenciar infraestrutura de acessibilidade da empresa | especificada; implementada (exceto divergências recorrentes) | aprovado em 27/10/2026 sobre as telas implementadas | concluída em 27/10/2026 |
 | SPEC-005 — Cadastrar e gerenciar vagas próprias | especificada | pendente | aguardando |
 | SPEC-006 — Importar, ingerir e normalizar vagas externas | especificada | não se aplica ao núcleo; interface opcional pendente | aguardando |
 

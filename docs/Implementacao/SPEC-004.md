@@ -30,3 +30,5 @@
 - Vitest, ESLint e `tsc --noEmit` executados em 27/10/2026.
 - O E2E cobre: acesso anônimo recusado, leitura vazia como "não informado", bloqueio por item obrigatório pendente, origem cruzada, empresa não escolhida pelo corpo, persistência, atualização e auditoria sem valores. Roda na CI com PostgreSQL.
 - Teste manual: ver `docs/operacao/validacao-manual-spec-004.md`.
+- Teste manual executado pelo responsável em 27/10/2026; ajustes aplicados (Tab passa por cada opção via `ChoiceGroup`, observações mais afastadas). Layout aprovado na mesma data.
+- SPEC-004 encerrada em 27/10/2026, exceto o tratamento de divergências recorrentes (seção 5.5), adiado para etapa própria.
