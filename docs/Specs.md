@@ -199,8 +199,8 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 ## 11. Critérios de aceitação
 
-- [ ] Entrada apresenta login por e-mail e senha.
-- [ ] Cadastro oferece Usuário ou Empresa, sem cadastro independente de Recrutador.
+- [x] Entrada apresenta login por e-mail e senha.
+- [x] Cadastro oferece Usuário ou Empresa, sem cadastro independente de Recrutador.
 - [x] Credenciais válidas autenticam e encaminham conforme o perfil.
 - [x] Credenciais inválidas não autenticam.
 - [x] Recuperação permite redefinição quando a solicitação é válida.
@@ -212,10 +212,12 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [x] Recrutador permanece vinculado à Empresa responsável enquanto o vínculo estiver ativo.
 - [x] Empresa não consegue administrar vínculo de outra Empresa.
 - [x] Alterações relevantes são rastreáveis.
-- [ ] Mensagens não expõem credenciais ou dados pessoais desnecessários.
+- [x] Mensagens não expõem credenciais ou dados pessoais desnecessários.
 
 
 **Nota de verificação (26/10/2026):** os itens marcados foram cobertos por testes automatizados e pelo CI verde do HEAD `2c9fce50275c5531df0587e14f5f58da050f6271` ([execução 40261466174](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40261466174)). O E2E agora verifica explicitamente login de candidato com CPF formatado, recuperação de senha de candidato e empresa, redefinição, rejeição de reutilização do link e login com a nova senha. Os itens desmarcados continuam sem confirmação integral; as telas não foram testadas manualmente no navegador.
+
+> Evidência: testes Vitest e E2E (`scripts/auth-e2e.mjs`) verdes na CI (run 40543960398). Permanecem abertos: indicação de insuficiência de dados (RB-16), que depende da SPEC-007, e validação com tecnologias assistivas, que exige teste manual.
 
 ## 12. Casos de teste derivados
 
