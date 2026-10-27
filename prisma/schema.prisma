@@ -72,8 +72,29 @@ model CandidateProfile {
   createdAt                       DateTime                       @default(now())
   updatedAt                       DateTime                       @updatedAt
   user                            User                           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  documents                       CandidateProfileDocument[]
 
   @@index([updatedAt])
+}
+
+model CandidateProfileDocument {
+  id                String          @id @default(cuid())
+  candidateProfileId String
+  category          CandidateDocumentCategory
+  displayName       String
+  originalName      String
+  storedName        String          @unique
+  mimeType          String
+  sizeBytes         Int
+  createdAt         DateTime        @default(now())
+  candidateProfile  CandidateProfile @relation(fields: [candidateProfileId], references: [id], onDelete: Cascade)
+
+  @@index([candidateProfileId, category, createdAt])
+}
+
+enum CandidateDocumentCategory {
+  COURSE
+  CERTIFICATION
 }
 
 enum AccessibilityNeedGroup {
