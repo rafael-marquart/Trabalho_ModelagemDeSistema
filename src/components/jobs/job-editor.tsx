@@ -11,6 +11,7 @@ type Form = {
   locationCity: string; locationState: string; locationAddress: string; deadline: string;
   salaryMin: string; salaryMax: string; accessibility: Record<string, InfrastructureStatus>;
 };
+const MISSING_FIELDS = "Falta preencher ou corrigir algum campo. Os campos com problema estão indicados em vermelho, acima nesta página.";
 const empty: Form = { title: "", description: "", requirements: "", modality: "", locationCity: "", locationState: "", locationAddress: "", deadline: "", salaryMin: "", salaryMax: "", accessibility: {} };
 
 function parseMoney(text: string): number | null | "invalid" {
@@ -48,6 +49,12 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
     return () => { active = false; };
   }, [jobId]);
 
+  useEffect(() => {
+    if (!Object.keys(issues).length) return;
+    const first = document.querySelector<HTMLElement>(".job-form .field-error");
+    if (first && typeof first.scrollIntoView === "function") first.scrollIntoView({ block: "center", behavior: "smooth" });
+  }, [issues]);
+
   const readOnly = status === "CLOSED";
   const published = status === "OPEN" || status === "PAUSED";
   function set<K extends keyof Form>(key: K, value: Form[K]) {
@@ -78,11 +85,11 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
   }
   function showFailure(data: { message?: string; issues?: Record<string, string> }) {
     setIssues(data.issues ?? {});
-    setError(data.issues && Object.keys(data.issues).length ? "Revise os campos indicados abaixo." : data.message || "Não foi possível salvar a vaga.");
+    setError(data.issues && Object.keys(data.issues).length ? MISSING_FIELDS : data.message || "Não foi possível salvar a vaga.");
   }
 
   async function save() {
-    const body = payload(); if (!body) { setError("Revise os campos indicados abaixo."); return null; }
+    const body = payload(); if (!body) { setError(MISSING_FIELDS); return null; }
     const result = jobId ? await request(`/api/vagas/${jobId}`, "PUT", body) : await request("/api/vagas", "POST", body);
     if (!result.ok) { showFailure(result.data); return null; }
     return result.data.job as { id: string; status: JobStatusValue };
@@ -153,15 +160,16 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
         <div className="job-row">
           <label className="job-field"><span className="profile-section-title">Cidade{needsLocation ? " (obrigatória)" : ""}</span>
             <input type="text" value={form.locationCity} maxLength={TEXT_LIMITS.city} onChange={e => set("locationCity", e.target.value)} aria-invalid={Boolean(issues.locationCity)} aria-describedby={issues.locationCity ? "err-locationCity" : undefined} />
+            {fieldError("locationCity")}
           </label>
           <label className="job-field"><span className="profile-section-title">Estado{needsLocation ? " (obrigatório)" : ""}</span>
             <select value={form.locationState} onChange={e => set("locationState", e.target.value)} aria-invalid={Boolean(issues.locationState)} aria-describedby={issues.locationState ? "err-locationState" : undefined}>
               <option value="">Selecione</option>
               {brazilianStates.map(state => <option key={state} value={state}>{state}</option>)}
             </select>
+            {fieldError("locationState")}
           </label>
         </div>
-        {fieldError("locationCity")}{fieldError("locationState")}
         <label className="job-field"><span className="profile-section-title">Endereço (opcional)</span>
           <input type="text" value={form.locationAddress} maxLength={TEXT_LIMITS.address} onChange={e => set("locationAddress", e.target.value)} />
         </label>

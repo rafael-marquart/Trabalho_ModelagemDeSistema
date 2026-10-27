@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
   const user = await getCurrentUser();
   if (user && user.role !== "RECRUITER") {
-    return NextResponse.json({ message: "Entre na conta de recrutador destinatária do convite." }, { status: 401 });
+    return NextResponse.json({ message: "Você está conectado com outra conta (empresa ou candidato). Saia dela, ou use outra janela anônima, e abra o convite novamente." }, { status: 401 });
   }
   const now = new Date();
   const tokenHash = hashOneTimeToken(parsed.data.token);

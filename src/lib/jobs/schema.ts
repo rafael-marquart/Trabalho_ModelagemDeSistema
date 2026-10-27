@@ -61,8 +61,8 @@ export function validateForPublication(job: JobFields, today = todayInBrazil()):
   if (!effective(job.requirements)) issues.requirements = "Informe os requisitos da vaga.";
   if (!job.modality) issues.modality = "Escolha a modalidade de trabalho.";
   if (job.modality === "PRESENCIAL" || job.modality === "HIBRIDO") {
-    if (!effective(job.locationCity)) issues.locationCity = "Informe a cidade: vagas presenciais ou híbridas precisam de local de trabalho.";
-    if (!job.locationState) issues.locationState = "Informe o estado: vagas presenciais ou híbridas precisam de local de trabalho.";
+    if (!effective(job.locationCity)) issues.locationCity = "Informe a cidade do local de trabalho.";
+    if (!job.locationState) issues.locationState = "Informe o estado do local de trabalho.";
   }
   if (!job.deadline) issues.deadline = "Informe o prazo de inscrição.";
   else if (!isValidDate(job.deadline)) issues.deadline = "Informe uma data válida.";
