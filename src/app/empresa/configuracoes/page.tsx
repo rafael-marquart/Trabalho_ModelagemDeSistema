@@ -11,16 +11,12 @@ export default async function CompanySettingsPage() {
       <main className="company-content" aria-labelledby="settings-title">
         <header className="company-page-heading">
           <h1 id="settings-title">Configurações</h1>
-          <p className="muted">Informações e acessos da sua organização.</p>
+          <p className="muted">Informações da sua organização.</p>
         </header>
         <div className="company-card-grid">
           <Link className="company-card" href="/empresa/infraestrutura">
             <strong>Infraestrutura de acessibilidade</strong>
             <span className="muted">Registre o que a empresa oferece hoje: rampas, elevadores, sinalização e mais.</span>
-          </Link>
-          <Link className="company-card" href="/empresa/recrutadores">
-            <strong>Recrutadores</strong>
-            <span className="muted">Convide pessoas e gerencie quem atua nos processos seletivos.</span>
           </Link>
         </div>
       </main>

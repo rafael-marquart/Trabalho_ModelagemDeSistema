@@ -9,7 +9,7 @@
 - Vaga publicada ou pausada só é salva se continuar publicável.
 - Acessibilidade da vaga: os seis itens da infraestrutura da Empresa, cada um Presente, Ausente ou Não informado, sem valor padrão; é preciso escolher uma opção em todos para publicar.
 - Auditoria (`JOB_CREATED/UPDATED/PUBLISHED/PAUSED/REOPENED/CLOSED`) com ator, empresa, estados e nomes dos campos alterados, nunca o conteúdo da vaga.
-- Interface: menu lateral compartilhado da área da empresa (`CompanyShell`); Empresa: Início, Vagas, Configurações (infraestrutura e recrutadores passaram para Configurações); Recrutador: Visão geral e Vagas. Painel com abas (Publicadas, Rascunhos, Pausadas, Encerradas) e contagens, ações Editar/Pausar/Reabrir/Encerrar (com confirmação) e formulário de vaga com erros ao lado de cada campo.
+- Interface: menu lateral compartilhado da área da empresa (`CompanyShell`); Empresa: Início, Vagas, Recrutadores e Configurações (infraestrutura); Recrutador: Visão geral e Vagas. Painel com abas (Publicadas, Rascunhos, Pausadas, Encerradas) e contagens, ações Editar/Pausar/Reabrir/Encerrar (com confirmação) e formulário de vaga com erros ao lado de cada campo.
 
 ## Pontos que dependem de outras Specs
 

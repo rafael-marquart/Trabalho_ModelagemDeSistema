@@ -30,10 +30,15 @@ export default async function CompanyHomePage() {
             <strong>Nova vaga</strong>
             <span className="muted">Cadastre uma oportunidade e publique quando estiver pronta.</span>
           </Link>
+          <Link className="company-card" href="/empresa/recrutadores">
+            <span className="company-card-number" aria-hidden="true">👥</span>
+            <strong>Recrutadores</strong>
+            <span className="muted">Convide pessoas e gerencie quem atua nos processos seletivos.</span>
+          </Link>
           <Link className="company-card" href="/empresa/configuracoes">
             <span className="company-card-number" aria-hidden="true">⚙</span>
             <strong>Configurações</strong>
-            <span className="muted">Infraestrutura de acessibilidade e recrutadores.</span>
+            <span className="muted">Infraestrutura de acessibilidade da empresa.</span>
           </Link>
         </div>
       </main>

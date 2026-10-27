@@ -3,12 +3,13 @@ import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
 
 export type ShellRole = "COMPANY" | "RECRUITER";
-export type ShellSection = "home" | "jobs" | "settings";
+export type ShellSection = "home" | "jobs" | "recruiters" | "settings";
 
 const menus: Record<ShellRole, { key: ShellSection; label: string; href: string }[]> = {
   COMPANY: [
     { key: "home", label: "Início", href: "/empresa" },
     { key: "jobs", label: "Vagas", href: "/empresa/vagas" },
+    { key: "recruiters", label: "Recrutadores", href: "/empresa/recrutadores" },
     { key: "settings", label: "Configurações", href: "/empresa/configuracoes" }
   ],
   RECRUITER: [

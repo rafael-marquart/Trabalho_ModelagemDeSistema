@@ -5,7 +5,7 @@ Tempo estimado: 15 a 20 minutos. Antes, `git pull`, `npm run db:generate` e `npx
 | # | Passo | Resultado esperado |
 |---|---|---|
 | 1 | Abrir a área da empresa | Menu lateral com Início, Vagas e Configurações; cartões na página inicial |
-| 2 | Em Configurações | Cartões de Infraestrutura de acessibilidade e Recrutadores, que abrem com o mesmo menu |
+| 2 | Em Configurações | Cartão de Infraestrutura de acessibilidade; "Recrutadores" é um item próprio do menu lateral |
 | 3 | Vagas → "+ Nova vaga" → Salvar rascunho sem preencher nada | Rascunho criado; a página passa para a edição da vaga |
 | 4 | Clicar em "Publicar vaga" com o formulário incompleto | Nada é publicado; cada campo pendente mostra a mensagem ao lado (inclui os 6 itens de acessibilidade) |
 | 5 | Modalidade Presencial sem cidade/estado; prazo no passado | Mensagens de cidade, estado e prazo |
