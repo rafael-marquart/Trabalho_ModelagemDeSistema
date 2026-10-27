@@ -58,13 +58,6 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
-  async function loadDocuments() {
-    const response = await fetch("/api/candidato/documentos");
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Falha ao carregar arquivos.");
-    setDocuments(data.documents as ProfileDocument[]);
-  }
-
   useEffect(() => {
     let active = true;
     Promise.all([
@@ -232,7 +225,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
         <label className="profile-link-url-label">Endereço do link<input type="url" inputMode="url" autoComplete="url" value={linkUrl} onChange={event => setLinkUrl(event.target.value)} maxLength={2048} placeholder={linkType === "LinkedIn" ? "https://www.linkedin.com/in/seu-perfil" : linkType === "GitHub" ? "https://github.com/seu-usuario" : "https://..." } disabled={loading || saving} /></label>
         <button type="button" className="secondary-button" onClick={addProfessionalLink} disabled={loading || saving}>Adicionar link</button>
       </div>
-      <ul className="profile-document-list">{profile.professionalLinks.map(item => <li key={item}><div><strong>{professionalLinkTypes.find(type => item.toLocaleLowerCase().includes(type.toLocaleLowerCase())) || "Link profissional"}</strong><a href={item} target="_blank" rel="noreferrer">{item}</a></div><button type="button" className="secondary-button" onClick={() => setProfile(current => ({ ...current, professionalLinks: current.professionalLinks.filter((_,i) => i !== index) }))}>Remover</button></li>)}</ul>
+      <ul className="profile-document-list">{profile.professionalLinks.map((item, index) => <li key={item}><div><strong>Link profissional {index + 1}</strong><a href={item} target="_blank" rel="noreferrer">{item}</a></div><button type="button" className="secondary-button" onClick={() => setProfile(current => ({ ...current, professionalLinks: current.professionalLinks.filter((_,i) => i !== index) }))}>Remover</button></li>)}</ul>
     </section>
     <section className="profile-section">
       <h2>Cursos e certificações</h2>
