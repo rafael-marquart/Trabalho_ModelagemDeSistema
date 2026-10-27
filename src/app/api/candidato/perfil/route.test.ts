@@ -43,6 +43,31 @@ describe("candidate profile API", () => {
     expect(response.status).toBe(400);
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
+  it("requires a selected catalog option or free-text need when needs are declared", async () => {
+    const response = await PUT(new Request("https://example.test/api/candidato/perfil", {
+      method: "PUT", headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        education: [], skills: [], languages: [], professionalExperience: [], courses: [],
+        certifications: [], professionalLinks: [], accessibilityDeclaration: "NEEDS_DECLARED",
+        accessibilityNeeds: [], accessibilityNeedOptionCodes: [], essentialAccessibilityResources: []
+      })
+    }));
+    expect(response.status).toBe(400);
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+  it("rejects a professional link without a valid HTTP or HTTPS URL", async () => {
+    const response = await PUT(new Request("https://example.test/api/candidato/perfil", {
+      method: "PUT", headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        education: [], skills: [], languages: [], professionalExperience: [], courses: [],
+        certifications: [], professionalLinks: ["javascript:alert(1)"],
+        accessibilityDeclaration: "NOT_INFORMED", accessibilityNeeds: [],
+        accessibilityNeedOptionCodes: [], essentialAccessibilityResources: []
+      })
+    }));
+    expect(response.status).toBe(400);
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
   it("rejects cross-origin writes before database access", async () => {
     const response = await PUT(new Request("https://example.test/api/candidato/perfil", {
       method: "PUT", headers: { "content-type": "application/json", origin: "https://attacker.example" },
