@@ -484,3 +484,59 @@ button, input, select { font: inherit; }
   .profile-account-grid { grid-template-columns: 1fr; }
   .profile-actions .primary-button { width: 100%; }
 }
+
+
+/* Accessibility catalog selection and controlled administration */
+.accessibility-option-group {
+  display: grid; gap: 10px; min-width: 0; margin: 22px 0 0; padding: 16px;
+  border: 1px solid var(--line); border-radius: 12px;
+}
+.accessibility-option-group legend { padding: 0 7px; color: var(--ink); font-weight: 700; }
+.accessibility-option {
+  display: flex; align-items: flex-start; gap: 12px; padding: 13px;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--surface); cursor: pointer;
+}
+.accessibility-option input { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 2px; accent-color: var(--purple); }
+.accessibility-option-copy { display: grid; gap: 5px; min-width: 0; }
+.accessibility-option-copy strong { color: var(--ink); font-size: 14px; }
+.accessibility-option-copy > span { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.accessibility-option-code { color: var(--muted); font-size: 12px; font-weight: 500; }
+.accessibility-option-inactive { opacity: .8; border-style: dashed; }
+.accessibility-option-status { font-weight: 600; }
+.accessibility-declaration-label { margin-top: 24px; }
+.catalog-admin-content { width: min(100%, 1100px); margin: 0 auto; }
+.catalog-admin-header { margin: 18px 0 26px; }
+.catalog-admin-header h1 { margin: 0; font-family: "Manrope", sans-serif; font-size: clamp(30px, 4vw, 42px); }
+.catalog-admin-form { display: grid; gap: 14px; }
+.catalog-admin-grid { display: grid; grid-template-columns: minmax(130px, .6fr) minmax(180px, 1fr) minmax(180px, 1.4fr) minmax(170px, .8fr); gap: 12px; }
+.catalog-admin-form input, .catalog-admin-form select, .catalog-admin-form textarea,
+.catalog-admin-row input:not([type="checkbox"]), .catalog-admin-row select, .catalog-admin-row textarea {
+  width: 100%; min-height: 42px; padding: 10px 12px; border: 1px solid #8b8499; border-radius: 9px;
+  color: var(--ink); background: var(--surface); font: inherit;
+}
+.catalog-admin-form textarea, .catalog-admin-row textarea { min-height: 70px; resize: vertical; }
+.catalog-admin-card { margin-top: 18px; padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.catalog-admin-row { display: grid; grid-template-columns: 90px minmax(160px, .9fr) minmax(200px, 1.5fr) minmax(170px, .8fr); gap: 12px; align-items: start; }
+.catalog-admin-row + .catalog-admin-row { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+.catalog-admin-flags { display: grid; gap: 10px; font-size: 13px; }
+.catalog-admin-flags label { display: flex; align-items: center; gap: 8px; }
+.catalog-admin-flags input { width: 17px; height: 17px; accent-color: var(--purple); }
+.catalog-admin-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.catalog-admin-actions .primary-button { padding: 0 18px; }
+.catalog-admin-section-title { margin: 26px 0 10px; font-family: "Manrope", sans-serif; font-size: 20px; }
+@media (max-width: 850px) {
+  .catalog-admin-grid, .catalog-admin-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .catalog-admin-grid, .catalog-admin-row { grid-template-columns: minmax(0, 1fr); }
+  .catalog-admin-card { padding: 14px; }
+  .catalog-admin-actions { align-items: stretch; flex-direction: column; }
+}
+:root[data-theme="dark"] .accessibility-option,
+:root[data-theme="dark"] .catalog-admin-card { background: var(--surface); }
+:root[data-theme="dark"] .catalog-admin-form input,
+:root[data-theme="dark"] .catalog-admin-form select,
+:root[data-theme="dark"] .catalog-admin-form textarea,
+:root[data-theme="dark"] .catalog-admin-row input:not([type="checkbox"]),
+:root[data-theme="dark"] .catalog-admin-row select,
+:root[data-theme="dark"] .catalog-admin-row textarea { border-color: #847394; color: var(--ink); background: #2b2238; }
