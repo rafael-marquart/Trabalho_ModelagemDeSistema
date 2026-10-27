@@ -572,3 +572,28 @@ button, input, select { font: inherit; }
   .profile-document-list li { align-items:flex-start; flex-direction:column; }
   .profile-chip-list li { align-items:flex-start; }
 }
+
+
+/* Structured candidate education and professional links */
+.profile-education-controls, .profile-link-controls {
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);
+  gap:12px; align-items:end; margin-top:16px;
+}
+.profile-education-controls label, .profile-link-controls label {
+  display:grid; gap:7px; color:var(--ink); font-size:13px; font-weight:700;
+}
+.profile-education-controls select, .profile-education-controls input,
+.profile-link-controls select, .profile-link-controls input {
+  width:100%; min-height:44px; padding:10px 12px; border:1px solid #8b8499;
+  border-radius:9px; color:var(--ink); background:var(--surface); font:inherit;
+}
+.profile-education-controls .secondary-button, .profile-link-controls .secondary-button { min-height:44px; padding:0 14px; }
+.profile-link-controls { grid-template-columns:minmax(150px,.7fr) minmax(0,2fr) auto; }
+.profile-document-list a { overflow-wrap:anywhere; color:var(--accent); }
+:root[data-theme="dark"] .profile-education-controls select,
+:root[data-theme="dark"] .profile-education-controls input,
+:root[data-theme="dark"] .profile-link-controls select,
+:root[data-theme="dark"] .profile-link-controls input { border-color:#847394; color:var(--ink); background:#2b2238; }
+@media (max-width:650px) {
+  .profile-education-controls, .profile-link-controls { grid-template-columns:1fr; }
+}
