@@ -10,7 +10,7 @@ export default async function CandidateHomePage() {
     <main className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div>
       <div className="entry-content candidate-home-content">
-        <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" /></Link>
+        <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" /></Link>
         <section className="auth-card candidate-home-card">
           <p className="eyebrow">Área do candidato</p><h1>Olá, {user.fullName}.</h1>
           <p className="muted">Mantenha seu perfil atualizado para registrar sua formação, competências, experiências e necessidades de acessibilidade.</p>
