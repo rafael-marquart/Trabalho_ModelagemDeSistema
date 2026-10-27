@@ -245,6 +245,7 @@ async function cleanupTestData() {
       throw new Error(`E2E cleanup left ${remainingTestAuditEvents} audit event(s) behind`);
     }
     await tx.candidateProfile.deleteMany({ where: { userId: { in: userIds } } });
+    await tx.companyInfrastructure.deleteMany({ where: { companyId: { in: companyIds } } });
     await tx.company.deleteMany({ where: { id: { in: companyIds } } });
     await tx.user.deleteMany({ where: { id: { in: userIds } } });
   });
@@ -1200,6 +1201,43 @@ async function main() {
       select: { active: true, endedAt: true }
     });
     assert.ok(finalPreservedRecruiter?.isActive && finalEndedLink && !finalEndedLink.active && finalEndedLink.endedAt, "link termination must preserve the recruiter account and end only the owning company's link");
+
+    // SPEC-004: company accessibility infrastructure.
+    const infraUrl = `${BASE_URL}/api/company/infraestrutura`;
+    const infraCodes = ["RAMPS", "ELEVATORS", "ADAPTED_RESTROOMS", "SIGNAGE", "SCREEN_READERS", "INCLUSIVE_POLICIES"];
+    const putInfra = (payload, headers = {}) => fetch(infraUrl, {
+      method: "PUT",
+      headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, ...headers },
+      body: JSON.stringify(payload), redirect: "manual"
+    });
+    await expectStatus(await fetch(infraUrl, { redirect: "manual" }), 401, "anonymous infrastructure read");
+    await expectStatus(await putInfra({ answers: {} }), 401, "anonymous infrastructure save");
+    const anonymousInfraPage = await fetch(`${BASE_URL}/empresa/infraestrutura`, { redirect: "manual" });
+    assert.ok([302, 303, 307].includes(anonymousInfraPage.status), "anonymous infrastructure page must redirect to login");
+    await expectStatus(await fetch(`${BASE_URL}/empresa/infraestrutura`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company infrastructure page");
+
+    const emptyInfra = JSON.parse(await expectStatus(await fetch(infraUrl, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company reads empty infrastructure"));
+    assert.ok(infraCodes.every(code => emptyInfra.answers[code].status === "NOT_INFORMED"), "unregistered items must stay NOT_INFORMED");
+    const completeAnswers = Object.fromEntries(infraCodes.map(code => [code, { status: "PRESENT", note: "" }]));
+    const incomplete = { ...completeAnswers };
+    delete incomplete.SIGNAGE;
+    const incompleteResponse = await putInfra({ answers: incomplete }, { cookie: companyCookie });
+    const incompleteBody = JSON.parse(await expectStatus(incompleteResponse, 400, "pending required item blocks saving"));
+    assert.deepEqual(Object.keys(incompleteBody.issues), ["SIGNAGE"], "the pending item must be identified");
+    await expectStatus(await putInfra({ answers: completeAnswers }, { cookie: companyCookie, origin: "https://evil.example" }), 403, "cross-origin infrastructure save");
+    await expectStatus(await putInfra({ answers: completeAnswers, companyId: "another-company" }, { cookie: companyCookie }), 400, "body cannot choose the company");
+    assert.equal(await prisma.companyInfrastructure.count({ where: { companyId: companyAccount.company.id } }), 0, "rejected saves must not persist data");
+    const answersToSave = { ...completeAnswers, ELEVATORS: { status: "ABSENT", note: "Prédio de um andar" } };
+    await expectStatus(await putInfra({ answers: answersToSave }, { cookie: companyCookie }), 200, "company saves infrastructure");
+    const savedInfra = JSON.parse(await expectStatus(await fetch(infraUrl, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company reads saved infrastructure"));
+    assert.deepEqual(savedInfra.answers.ELEVATORS, { status: "ABSENT", note: "Prédio de um andar" });
+    assert.equal(await prisma.companyInfrastructure.count({ where: { companyId: companyAccount.company.id } }), 1);
+    await expectStatus(await putInfra({ answers: { ...answersToSave, RAMPS: { status: "ABSENT", note: "" } } }, { cookie: companyCookie }), 200, "company updates infrastructure");
+    const infraAudit = await prisma.auditEvent.findMany({
+      where: { actorUserId: companyAccount.id, eventType: { startsWith: "COMPANY_INFRASTRUCTURE" } }, select: { eventType: true, metadata: true }
+    });
+    assert.deepEqual(infraAudit.map(event => event.eventType).sort(), ["COMPANY_INFRASTRUCTURE_CREATED", "COMPANY_INFRASTRUCTURE_UPDATED"]);
+    assert.ok(!JSON.stringify(infraAudit).includes("Prédio de um andar"), "audit events must not contain declared notes");
 
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });

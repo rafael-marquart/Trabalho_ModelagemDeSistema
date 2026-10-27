@@ -728,6 +728,11 @@ Este bloco detalha SPEC-004, SPEC-005 e SPEC-006. As questões pendentes são re
 - Disponibilizar os dados registrados para usos autorizados, incluindo exibição relacionada às vagas e análise de compatibilidade.
 - Registrar alterações relevantes para rastreabilidade.
 
+### Decisões de implementação (27/10/2026)
+- O questionário contém os seis itens do UC-07 (rampas, elevadores, banheiros adaptados, sinalização acessível, leitores de tela e políticas inclusivas), distribuídos nas cinco categorias da OPEN-017; os seis são obrigatórios e exigem resposta "presente" ou "ausente". As sugestões adicionais da OPEN-017 não integram o escopo. Cada item aceita observação opcional de até 300 caracteres.
+- Somente a conta da Empresa registra e altera a infraestrutura; recrutadores vinculados não editam.
+- O tratamento de divergências recorrentes (seção 5.5) fica adiado para etapa própria.
+
 ### Fora do escopo
 - Cadastro e vínculo organizacional de Recrutadores, detalhado na SPEC-001, embora UC-07 também mencione essa capacidade.
 - Cadastro, edição e publicação de vagas, detalhados na SPEC-005.
@@ -848,22 +853,24 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 ## 11. Critérios de aceitação
 
-- [ ] Empresa autenticada consulta seu próprio mapeamento.
-- [ ] Empresa registra informações estruturadas de acessibilidade.
-- [ ] Itens obrigatórios pendentes são identificados e impedem o salvamento.
-- [ ] Dados válidos são persistidos associados à Empresa correta.
-- [ ] Empresa não altera dados de infraestrutura de outra organização sem autorização prevista.
-- [ ] Dados ausentes não são interpretados automaticamente como compatibilidade.
-- [ ] Atualizações preservam a integridade do vínculo organizacional.
-- [ ] Alterações relevantes são rastreáveis.
-- [ ] Dados podem ser disponibilizados a consumidores autorizados.
-- [ ] A capacidade não calcula nota pública nem compatibilidade.
+- [x] Empresa autenticada consulta seu próprio mapeamento.
+- [x] Empresa registra informações estruturadas de acessibilidade.
+- [x] Itens obrigatórios pendentes são identificados e impedem o salvamento.
+- [x] Dados válidos são persistidos associados à Empresa correta.
+- [x] Empresa não altera dados de infraestrutura de outra organização sem autorização prevista.
+- [x] Dados ausentes não são interpretados automaticamente como compatibilidade.
+- [x] Atualizações preservam a integridade do vínculo organizacional.
+- [x] Alterações relevantes são rastreáveis.
+- [x] Dados podem ser disponibilizados a consumidores autorizados.
+- [x] A capacidade não calcula nota pública nem compatibilidade.
 - [ ] Uma divergência registrada não provoca alteração automática das informações declaradas.
 - [ ] A decisão administrativa e sua justificativa ficam rastreáveis, com identificação do responsável.
 - [ ] Alterações decorrentes só são realizadas quando autorizadas pela decisão registrada e pelas regras aplicáveis.
 - [ ] A recorrência de relatos, isoladamente, não é tratada como comprovação de declaração incorreta.
-- [ ] Informações gerais da Empresa são distintas dos critérios específicos da vaga e não geram aplicabilidade automática.
-- [ ] A infraestrutura geral não preenche automaticamente TRAVA_CRITICA_VAGA nem calcula compatibilidade.
+- [x] Informações gerais da Empresa são distintas dos critérios específicos da vaga e não geram aplicabilidade automática.
+- [x] A infraestrutura geral não preenche automaticamente TRAVA_CRITICA_VAGA nem calcula compatibilidade.
+
+> Evidência: testes Vitest (esquema, rota, serviço e tela) e E2E (`scripts/auth-e2e.mjs`). Os quatro critérios de divergência recorrente (RB-08, OPEN-019) permanecem abertos: o procedimento de registro, análise administrativa e decisão foi adiado para etapa própria, em decisão de 27/10/2026. O sistema não aplica nenhuma alteração automática por divergência.
 
 ## 12. Casos de teste derivados
 
