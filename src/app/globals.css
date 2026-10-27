@@ -451,3 +451,36 @@ button, input, select { font: inherit; }
   .company-home-actions .secondary-button,
   .company-home-actions .company-manage-recruiters { width:100%; }
 }
+
+/* SPEC-002 candidate profile */
+.candidate-home-content { max-width: 760px; margin: 0 auto; }
+.candidate-home-card { width: 100%; max-width: 760px; }
+.candidate-home-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.candidate-profile-link { display: inline-flex; align-items: center; justify-content: center; gap: 12px; padding: 0 18px; }
+.candidate-profile-content { width: min(100%, 900px); margin: 0 auto; }
+.candidate-profile-content > .back-link { margin-top: 28px; }
+.candidate-profile-header { margin: 10px 0 28px; }
+.candidate-profile-header h1 { margin: 0; font-family: "Manrope", sans-serif; font-size: clamp(32px, 4vw, 44px); letter-spacing: -1.5px; }
+.candidate-profile-form { display: grid; gap: 16px; }
+.profile-section { min-width: 0; padding: clamp(20px, 3vw, 30px); border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.profile-section h2 { margin: 0; font-family: "Manrope", sans-serif; font-size: 19px; }
+.profile-section .muted { margin-top: 8px; }
+.profile-account-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+.profile-account-grid > div { display: grid; gap: 6px; min-width: 0; }
+.profile-account-grid span { color: var(--muted); font-size: 12px; }
+.profile-account-grid strong { overflow-wrap: anywhere; font-size: 14px; }
+.profile-section-title { display: block; color: var(--ink); font-weight: 700; font-size: 16px; }
+.profile-section textarea, .profile-section select { display: block; width: 100%; min-height: 46px; margin-top: 14px; padding: 12px 14px; border: 1px solid #8b8499; border-radius: 10px; color: var(--ink); background: var(--surface); font: inherit; line-height: 1.55; }
+.profile-section textarea { resize: vertical; }
+.profile-section textarea:focus-visible, .profile-section select:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+.profile-privacy-note { margin: 12px 0 0; padding: 12px 14px; border-radius: 10px; color: var(--muted); background: var(--purple-soft); font-size: 13px; line-height: 1.55; }
+.profile-actions { display: flex; justify-content: flex-end; }
+.profile-actions .primary-button { min-width: 180px; padding: 0 22px; }
+.profile-footnote { margin: 0 0 18px; font-size: 12px; }
+.candidate-home-actions form { margin: 0; }
+@media (max-width: 560px) {
+  .candidate-home-actions { align-items: stretch; flex-direction: column; }
+  .candidate-home-actions > *, .candidate-profile-link { width: 100%; }
+  .profile-account-grid { grid-template-columns: 1fr; }
+  .profile-actions .primary-button { width: 100%; }
+}
