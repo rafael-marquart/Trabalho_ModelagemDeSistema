@@ -53,6 +53,7 @@ model User {
   candidateProfile  CandidateProfile?
 
   @@index([role, isActive])
+  jobsCreated       Job[]    @relation("JobCreator")
 }
 
 model CandidateProfile {
@@ -131,6 +132,7 @@ model Company {
   invitations      RecruiterInvitation[]
   emailVerificationTokens CompanyEmailVerificationToken[]
   infrastructure   CompanyInfrastructure?
+  jobs             Job[]
   createdAt        DateTime              @default(now())
   updatedAt        DateTime              @updatedAt
 }
@@ -276,4 +278,48 @@ model CompanyEmailVerificationToken {
 
   @@index([companyId, createdAt])
   @@index([expiresAt])
+}
+
+enum JobStatus {
+  DRAFT
+  OPEN
+  PAUSED
+  CLOSED
+}
+
+enum JobModality {
+  PRESENCIAL
+  HIBRIDO
+  REMOTO
+}
+
+enum JobOrigin {
+  OWN
+}
+
+model Job {
+  id              String       @id @default(cuid())
+  companyId       String
+  createdByUserId String
+  status          JobStatus    @default(DRAFT)
+  origin          JobOrigin    @default(OWN)
+  title           String       @default("")
+  description     String       @default("")
+  requirements    String       @default("")
+  modality        JobModality?
+  locationCity    String       @default("")
+  locationState   String       @default("")
+  locationAddress String       @default("")
+  deadline        DateTime?    @db.Date
+  salaryMin       Decimal?     @db.Decimal(12, 2)
+  salaryMax       Decimal?     @db.Decimal(12, 2)
+  accessibility   Json         @default("{}")
+  publishedAt     DateTime?
+  closedAt        DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  company         Company      @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  createdBy       User         @relation("JobCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+
+  @@index([companyId, status])
 }

@@ -908,7 +908,8 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 |---|---|
 | ID | SPEC-005 |
 | Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | pendente |
+| Estado do layout | pendente de aprovação do responsável sobre as telas implementadas (menu lateral e painel de vagas da área da empresa; sem protótipo em docs/layout/) |
+| Decisões de implementação (27/10/2026) | a Empresa e o Recrutador vinculado gerenciam as vagas da Empresa (extensão do texto, que menciona o Recrutador); os critérios de acessibilidade da vaga são os seis itens da infraestrutura (SPEC-004), cada um Presente, Ausente ou Não informado, com escolha explícita para publicar; estados: rascunho, publicada, pausada e encerrada; a trava por candidaturas e a lista de candidatos ativos ao encerrar dependem das Specs de candidatura e estão isoladas em `src/lib/jobs/applications.ts` |
 | Capacidade | Criar, editar, publicar e gerenciar vagas cadastradas diretamente por uma Empresa |
 
 ## 2. Rastreabilidade

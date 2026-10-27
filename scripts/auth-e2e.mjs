@@ -187,12 +187,20 @@ async function cleanupTestData() {
       where: { OR: [{ companyId: { in: companyIds } }, { recipientUserId: { in: userIds } }, { sentByUserId: { in: userIds } }] },
       select: { id: true }
     });
+    const relatedJobs = await tx.job.findMany({
+      where: { OR: [{ companyId: { in: companyIds } }, { createdByUserId: { in: userIds } }] },
+      select: { id: true }
+    });
     const relatedSubjectIds = [
       ...auditSubjectIds,
+      ...relatedJobs.map(job => job.id),
       ...relatedLinks.map(link => link.id),
       ...relatedInvitations.map(invitation => invitation.id)
     ];
 
+    await tx.job.deleteMany({
+      where: { OR: [{ companyId: { in: companyIds } }, { createdByUserId: { in: userIds } }] }
+    });
     await tx.recruiterLink.deleteMany({
       where: { OR: [{ companyId: { in: companyIds } }, { recruiterId: { in: userIds } }] }
     });
@@ -1239,6 +1247,57 @@ async function main() {
     assert.deepEqual(infraAudit.map(event => event.eventType).sort(), ["COMPANY_INFRASTRUCTURE_CREATED", "COMPANY_INFRASTRUCTURE_UPDATED"]);
     assert.ok(!JSON.stringify(infraAudit).includes("Prédio de um andar"), "audit events must not contain declared notes");
 
+    // SPEC-005: own jobs management.
+    const jobsUrl = `${BASE_URL}/api/vagas`;
+    const jobHeaders = (cookie, extra = {}) => ({ "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie, ...extra });
+    const sendJob = (url, method, payload, cookie, extra = {}) => fetch(url, { method, headers: jobHeaders(cookie, extra), body: payload === undefined ? undefined : JSON.stringify(payload), redirect: "manual" });
+    await expectStatus(await fetch(jobsUrl, { redirect: "manual" }), 401, "anonymous jobs list");
+    await expectStatus(await sendJob(jobsUrl, "POST", {}, recruiterCookie), 403, "recruiter without active link cannot create jobs");
+    for (const path of ["/empresa/vagas", "/empresa/vagas/nova", "/empresa/configuracoes"]) {
+      const anonymousPage = await fetch(`${BASE_URL}${path}`, { redirect: "manual" });
+      assert.ok([302, 303, 307].includes(anonymousPage.status), `${path} must redirect anonymous visitors`);
+      await expectStatus(await fetch(`${BASE_URL}${path}`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, `company page ${path}`);
+    }
+    await expectStatus(await sendJob(jobsUrl, "POST", { title: "x" }, companyCookie, { origin: "https://evil.example" }), 403, "cross-origin job creation");
+    await expectStatus(await sendJob(jobsUrl, "POST", { title: "x", companyId: "other" }, companyCookie), 400, "body cannot choose the company of a job");
+    const secretTitle = "Titulo confidencial E2E";
+    const draftResponse = await sendJob(jobsUrl, "POST", { title: secretTitle }, companyCookie);
+    const draftJob = JSON.parse(await expectStatus(draftResponse, 201, "company creates an incomplete draft")).job;
+    assert.equal(draftJob.status, "DRAFT");
+    await expectStatus(await fetch(`${jobsUrl}/${draftJob.id}`, { headers: { cookie: secondCompanyCookie }, redirect: "manual" }), 404, "another company cannot read the job");
+    await expectStatus(await sendJob(`${jobsUrl}/${draftJob.id}`, "PUT", { title: "invasao" }, secondCompanyCookie), 404, "another company cannot edit the job");
+    await expectStatus(await sendJob(`${jobsUrl}/${draftJob.id}/acao`, "POST", { action: "close" }, secondCompanyCookie), 404, "another company cannot act on the job");
+    const blockedPublish = JSON.parse(await expectStatus(await sendJob(`${jobsUrl}/${draftJob.id}/acao`, "POST", { action: "publish" }, companyCookie), 400, "incomplete draft cannot be published"));
+    assert.ok(blockedPublish.issues.description && blockedPublish.issues["accessibility.RAMPS"], "publication issues must list missing fields");
+    const futureDeadline = `${new Date().getUTCFullYear() + 1}-12-31`;
+    const jobBody = {
+      title: secretTitle, description: "Descricao", requirements: "Requisitos", modality: "HIBRIDO", locationCity: "Recife", locationState: "PE",
+      deadline: futureDeadline, accessibility: Object.fromEntries(infraCodes.map(code => [code, code === "RAMPS" ? "PRESENT" : "NOT_INFORMED"]))
+    };
+    await expectStatus(await sendJob(`${jobsUrl}/${draftJob.id}`, "PUT", { ...jobBody, deadline: "2020-01-01" }, companyCookie), 200, "drafts accept any deadline");
+    const pastDeadline = JSON.parse(await expectStatus(await sendJob(`${jobsUrl}/${draftJob.id}/acao`, "POST", { action: "publish" }, companyCookie), 400, "past deadline blocks publication"));
+    assert.ok(pastDeadline.issues.deadline, "past deadline must be reported");
+    await expectStatus(await sendJob(`${jobsUrl}/${draftJob.id}`, "PUT", jobBody, companyCookie), 200, "company completes the draft");
+    const published = JSON.parse(await expectStatus(await sendJob(`${jobsUrl}/${draftJob.id}/acao`, "POST", { action: "publish" }, companyCookie), 200, "company publishes the job"));
+    assert.equal(published.job.status, "OPEN");
+    await expectStatus(await sendJob(`${jobsUrl}/${draftJob.id}/acao`, "POST", { action: "publish" }, companyCookie), 409, "published job cannot be published again");
+    await expectStatus(await sendJob(`${jobsUrl}/${draftJob.id}`, "PUT", { ...jobBody, title: "" }, companyCookie), 400, "published job must remain publishable");
+    await expectStatus(await sendJob(`${jobsUrl}/${draftJob.id}/acao`, "POST", { action: "pause" }, companyCookie), 200, "company pauses the job");
+    await expectStatus(await sendJob(`${jobsUrl}/${draftJob.id}/acao`, "POST", { action: "reopen" }, companyCookie), 200, "company reopens the job");
+    const listedJobs = JSON.parse(await expectStatus(await fetch(`${jobsUrl}?status=OPEN`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company lists open jobs"));
+    assert.equal(listedJobs.jobs.length, 1);
+    assert.equal(listedJobs.counts.OPEN, 1);
+    const otherList = JSON.parse(await expectStatus(await fetch(jobsUrl, { headers: { cookie: secondCompanyCookie }, redirect: "manual" }), 200, "other company lists its own jobs"));
+    assert.equal(otherList.jobs.length, 0, "jobs must not leak across companies");
+    await expectStatus(await sendJob(`${jobsUrl}/${draftJob.id}/acao`, "POST", { action: "close" }, companyCookie), 200, "company closes the job");
+    await expectStatus(await sendJob(`${jobsUrl}/${draftJob.id}`, "PUT", jobBody, companyCookie), 409, "closed job cannot be edited");
+    await expectStatus(await sendJob(`${jobsUrl}/${draftJob.id}/acao`, "POST", { action: "reopen" }, companyCookie), 409, "closed job cannot be reopened");
+    const jobAudit = await prisma.auditEvent.findMany({ where: { subjectType: "Job", subjectId: draftJob.id }, select: { eventType: true, metadata: true } });
+    for (const type of ["JOB_CREATED", "JOB_UPDATED", "JOB_PUBLISHED", "JOB_PAUSED", "JOB_REOPENED", "JOB_CLOSED"]) {
+      assert.ok(jobAudit.some(event => event.eventType === type), `audit must record ${type}`);
+    }
+    assert.ok(!JSON.stringify(jobAudit).includes(secretTitle) && !JSON.stringify(jobAudit).includes("Recife"), "job audit events must not contain job content");
+
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });
     assert.equal(companySessionsBeforeLogout, 1, "company login must have one active session before logout");
@@ -1277,7 +1336,7 @@ async function main() {
     assert.ok(lockedCandidate?.lockedUntil && lockedCandidate.lockedUntil > new Date(), "ten consecutive failures must persist an active account lock");
     assert.equal(lockedCandidate.failedLoginCount, 0, "the locked account counter is reset after the threshold is reached");
 
-    process.stdout.write("Auth E2E passed: candidate email/CPF login and recovery; company verification and password recovery; recruiter invitation/resend/accept/refuse/cancel; multi-company isolation and concurrency; logout; account lockout.\n");
+    process.stdout.write("Auth E2E passed: candidate email/CPF login and recovery; own jobs lifecycle and isolation; company verification and password recovery; recruiter invitation/resend/accept/refuse/cancel; multi-company isolation and concurrency; logout; account lockout.\n");
   } finally {
     try {
       await cleanupTestData();
