@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { prismaMock, getCurrentUserMock } = vi.hoisted(() => ({
-  prismaMock: { candidateProfile: { upsert: vi.fn() }, $transaction: vi.fn() },
+  prismaMock: { candidateProfile: { upsert: vi.fn(), findUnique: vi.fn() }, $transaction: vi.fn() },
   getCurrentUserMock: vi.fn()
 }));
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
@@ -18,7 +18,7 @@ describe("candidate profile API", () => {
   const tx = { candidateProfile: { findUnique: vi.fn(), upsert: vi.fn() }, auditEvent: { create: vi.fn() } };
   beforeEach(() => {
     vi.clearAllMocks(); getCurrentUserMock.mockResolvedValue(candidate);
-    prismaMock.candidateProfile.upsert.mockResolvedValue(blank);
+    prismaMock.candidateProfile.findUnique.mockResolvedValue(null);
     prismaMock.$transaction.mockImplementation(async (callback: (tx: typeof tx) => unknown) => callback(tx));
     tx.candidateProfile.findUnique.mockResolvedValue(null); tx.candidateProfile.upsert.mockResolvedValue(blank);
     tx.auditEvent.create.mockResolvedValue({});
@@ -28,7 +28,7 @@ describe("candidate profile API", () => {
     expect((await GET()).status).toBe(401);
     getCurrentUserMock.mockResolvedValueOnce({ ...candidate, role: "RECRUITER" });
     expect((await GET()).status).toBe(401);
-    expect(prismaMock.candidateProfile.upsert).not.toHaveBeenCalled();
+    expect(prismaMock.candidateProfile.findUnique).not.toHaveBeenCalled();
   });
   it("returns account identity without duplicate profile fields", async () => {
     const response = await GET();
