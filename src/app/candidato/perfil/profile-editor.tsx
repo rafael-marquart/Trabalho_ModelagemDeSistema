@@ -138,8 +138,8 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     setDocuments(current => current.filter(item => item.id !== document.id));
     setNotice("Arquivo removido.");
   }
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault(); setError(""); setNotice(""); setSaving(true);
+  async function handleSubmit(event?: FormEvent<HTMLFormElement>) {
+    event?.preventDefault(); setError(""); setNotice(""); setSaving(true);
     const keys = ["education", "skills", "languages", "professionalExperience", "courses", "certifications",
       "professionalLinks", "accessibilityDeclaration", "accessibilityNeeds", "accessibilityNeedOptionCodes",
       "essentialAccessibilityResources"] as const;
@@ -163,7 +163,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
       ...(value !== "NEEDS_DECLARED" ? { accessibilityNeeds: [], accessibilityNeedOptionCodes: [] } : {})
     }));
   };
-  return <form className="candidate-profile-form" onSubmit={handleSubmit} aria-busy={loading || saving || uploading}>
+  return <div className="candidate-profile-form" aria-busy={loading || saving || uploading}>
     <section className="profile-section">
       <h2>Dados da conta</h2><p className="muted">Nome e e-mail vêm da sua conta e não precisam ser preenchidos novamente.</p>
       <div className="profile-account-grid"><div><span>Nome</span><strong>{profile.fullName || accountName}</strong></div><div><span>E-mail</span><strong>{profile.email || accountEmail}</strong></div></div>
@@ -248,7 +248,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     </section>
     {error && <p className="form-error" role="alert">{error}</p>}
     {notice && <p className="form-success" role="status" aria-live="polite">{notice}</p>}
-    <div className="profile-actions"><button className="primary-button" type="submit" disabled={loading || saving || uploading}>{loading ? "Carregando perfil..." : saving ? "Salvando..." : "Salvar perfil"}</button></div>
+    <div className="profile-actions"><button className="primary-button" type="button" onClick={() => void handleSubmit()} disabled={loading || saving || uploading}>{loading ? "Carregando perfil..." : saving ? "Salvando..." : "Salvar perfil"}</button></div>
     <p className="muted profile-footnote">O perfil pode ser preenchido progressivamente. A ausência de informação não será tratada como confirmação de compatibilidade com uma vaga.</p>
-  </form>;
+  </div>;
 }
