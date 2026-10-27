@@ -8,7 +8,7 @@ const { prismaMock, getCurrentUserMock, readFileMock, unlinkMock } = vi.hoisted(
 }));
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
 vi.mock("@/lib/auth/session", () => ({ getCurrentUser: getCurrentUserMock }));
-vi.mock("node:fs/promises", () => ({ readFile: readFileMock, unlink: unlinkMock }));
+vi.mock("node:fs/promises", async (importOriginal) => ({ ...(await importOriginal<typeof import("node:fs/promises")>()), readFile: readFileMock, unlink: unlinkMock }));
 
 import { DELETE, GET } from "./route";
 
