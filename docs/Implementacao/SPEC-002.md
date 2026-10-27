@@ -72,4 +72,5 @@
 
 - Vitest, ESLint e `tsc --noEmit` executados localmente em 27/10/2026 (testes de rota, de componente e de esquema).
 - O E2E (`scripts/auth-e2e.mjs`) cobre perfil, catálogo e anexos: acesso anônimo recusado, validação da declaração, rejeição de texto antigo e de código inexistente, origem cruzada, persistência estruturada de formação/idiomas, auditoria sem valores, envio/lista/download/remoção de anexo com conteúdo validado. Depende de PostgreSQL e roda na CI.
-- Teste manual das telas, leitor de tela e aprovação formal do layout continuam pendentes e não foram marcados nos critérios de aceitação.
+- Teste manual do roteiro `docs/operacao/validacao-manual-spec-002.md` executado pelo responsável em 27/10/2026; ajustes aplicados. Layout aprovado pelo responsável na mesma data, sobre as telas implementadas.
+- SPEC-002 encerrada em 27/10/2026. Itens herdados: RB-06 e RB-16 na análise de vaga (SPEC-007) e fonte de competências (SPEC-007).

@@ -278,8 +278,8 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | Campo | Valor |
 |---|---|
 | ID | SPEC-002 |
-| Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada em 27/10/2026 |
+| Estado do layout | aprovado pelo responsável em 27/10/2026, sobre as telas implementadas (não há protótipo anexado em docs/layout/) |
 | Capacidade | Consultar, cadastrar e atualizar dados profissionais e necessidades funcionais de acessibilidade |
 
 ## 2. Rastreabilidade
@@ -436,9 +436,9 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 - [x] Atualizações preservam integridade da associação entre candidato e necessidades.
 - [x] Alterações relevantes são rastreáveis.
 - [x] O sistema não exige nem armazena laudo médico como condição para declarar necessidades.
-- [ ] Mensagens de validação são perceptíveis por tecnologias assistivas.
+- [x] Mensagens de validação são perceptíveis por tecnologias assistivas (mensagens com `role="alert"` dentro da seção do campo; roteiro manual executado pelo responsável em 27/10/2026, com os ajustes aplicados).
 
-> Evidência: testes Vitest e E2E (`scripts/auth-e2e.mjs`) verdes na CI. Permanece aberta apenas a validação com tecnologias assistivas, que exige teste manual. A indicação de dados insuficientes (RB-16) foi transferida para a SPEC-007.
+> Evidência: testes Vitest e E2E (`scripts/auth-e2e.mjs`) verdes na CI. O teste manual foi executado pelo responsável em 27/10/2026 e os problemas encontrados foram corrigidos. A indicação de dados insuficientes (RB-16) foi transferida para a SPEC-007.
 
 ## 12. Casos de teste derivados
 
@@ -682,7 +682,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | Spec | Estado do texto | Estado do layout | Revisão humana |
 |---|---|---|---|
 | SPEC-001 — Acessar a plataforma e identificar perfil organizacional | especificada | pendente | aguardando |
-| SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato | especificada | pendente | aguardando |
+| SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato | especificada; implementada | aprovado em 27/10/2026 sobre as telas implementadas | concluída em 27/10/2026 |
 | SPEC-003 — Disponibilizar recursos de acessibilidade da interface | especificada | pendente | aguardando |
 
 **Próxima etapa:** detalhar o Bloco 3. A revisão coletiva das questões em aberto pode ocorrer depois que todas as Specs estiverem detalhadas.
