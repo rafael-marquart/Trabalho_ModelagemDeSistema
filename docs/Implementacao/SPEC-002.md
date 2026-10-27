@@ -59,6 +59,8 @@
 - Testes de anexos executam em ambiente `node` (o `jsdom` travava o envio de formulário).
 - Acesso de administrador: `npm run admin:create` (variáveis `ADMIN_EMAIL`, `ADMIN_NAME`, `ADMIN_PASSWORD`) cria a conta, e `/admin/login` autentica o perfil `admin`. A página não é ligada à entrada pública, pois os protótipos aprovados não oferecem login público de administrador.
 
+- Primeira rodada de teste manual (27/10/2026): mensagens de erro passaram a aparecer dentro da seção do campo (com `role="alert"`); a mensagem de necessidades sem opção ficou específica; o campo de descrição livre passou a aceitar espaços; a seção de preferências de trabalho foi movida para depois de cursos e certificações; foi incluída instrução de uso das setas no grupo de declaração (o comportamento de Tab/setas dos botões de opção é o padrão do navegador e dos leitores de tela).
+
 ## Pendências de decisão
 
 - **RB-16 na análise de vaga:** critério transferido para a SPEC-007 em 27/10/2026, pois depende da vaga e do cálculo.

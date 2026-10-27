@@ -109,4 +109,31 @@ describe("candidate profile editor", () => {
       modalities: ["Híbrido", "Remoto"], city: "Recife", state: "PE", address: "", transportMode: "Ônibus"
     });
   });
+
+  it("shows validation messages inside the section they belong to", async () => {
+    await renderEditor();
+    fireEvent.click(screen.getByRole("button", { name: "Adicionar formação" }));
+    const message = screen.getByText("Informe o curso ou área e a instituição para adicionar a formação.");
+    expect(message.closest("section")?.querySelector("h2")?.textContent).toBe("Formação e escolaridade");
+    expect(message.getAttribute("role")).toBe("alert");
+  });
+
+  it("keeps spaces while typing the free-text need and explains what is missing when saving", async () => {
+    const fetchMock = await renderEditor();
+    fireEvent.click(screen.getByLabelText("Preciso de adaptações de acessibilidade"));
+    const field = screen.getByLabelText("Necessidade não contemplada pelo catálogo") as HTMLTextAreaElement;
+    fireEvent.change(field, { target: { value: "usa " } });
+    expect(field.value).toBe("usa ");
+    fireEvent.change(field, { target: { value: "" } });
+    fireEvent.click(screen.getByRole("button", { name: "Salvar perfil" }));
+    const message = await screen.findByText(/Marque ao menos uma opção do catálogo ou descreva a necessidade/);
+    expect(message.closest("section")?.querySelector("h2")?.textContent).toBe("Necessidades funcionais de acessibilidade");
+    expect(fetchMock.mock.calls.some((call) => (call as unknown as [string, RequestInit?])[1]?.method === "PUT")).toBe(false);
+  });
+
+  it("places work preferences after courses and certifications", async () => {
+    await renderEditor();
+    const titles = Array.from(document.querySelectorAll("h2")).map((heading) => heading.textContent);
+    expect(titles.indexOf("Preferências de trabalho e deslocamento")).toBe(titles.indexOf("Cursos e certificações") + 1);
+  });
 });
