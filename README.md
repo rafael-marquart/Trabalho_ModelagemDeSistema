@@ -58,6 +58,16 @@ A aplicação está sendo construída incrementalmente na raiz deste repositóri
    ```
 6. Abra a aplicação em http://localhost:3000 e a caixa de entrada de e-mails em http://localhost:8025.
 
+#### Conta de administrador (catálogo de acessibilidade)
+
+Para gerenciar o catálogo de necessidades em `/admin/catalogo-acessibilidade`, crie uma conta de administrador (apenas ambiente local):
+
+```bash
+ADMIN_EMAIL="admin@example.com" ADMIN_NAME="Administrador" ADMIN_PASSWORD="SenhaForte123" npm run admin:create
+```
+
+Depois acesse http://localhost:3000/admin/login. A página não é ligada à tela de entrada.
+
 #### E-mail de desenvolvimento (Mailpit)
 
 O serviço Mailpit captura mensagens SMTP e **não envia e-mails para destinatários externos**. Use os seguintes valores no `.env` quando a aplicação Next.js estiver rodando diretamente na máquina host:
