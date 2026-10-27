@@ -21,11 +21,13 @@ export async function GET(_request: Request, context: Context) {
   try {
     const bytes = await readFile(path.join(storageDirectory(), document.storedName));
     const safeName = document.originalName.replace(/[\r\n"\\]/g, "_");
+    const asciiName = safeName.replace(/[^\x20-\x7E]/g, "_");
+    const encodedName = encodeURIComponent(safeName);
     return new Response(bytes, {
       headers: {
         "Content-Type": document.mimeType,
         "Content-Length": String(document.sizeBytes),
-        "Content-Disposition": `attachment; filename="${safeName}"`,
+        "Content-Disposition": `attachment; filename="${asciiName}"; filename*=UTF-8''${encodedName}`,
         "X-Content-Type-Options": "nosniff",
         "Cache-Control": "private, no-store"
       }
