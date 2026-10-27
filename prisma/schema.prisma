@@ -22,6 +22,12 @@ enum InvitationStatus {
   ACCEPTED
 }
 
+enum AccessibilityDeclarationStatus {
+  NOT_INFORMED
+  NO_NEEDS_DECLARED
+  NEEDS_DECLARED
+}
+
 model User {
   id                String                @id @default(cuid())
   email             String                @unique
@@ -44,8 +50,72 @@ model User {
   invitationsSent   RecruiterInvitation[] @relation("InvitationsSent")
   invitationsTo     RecruiterInvitation[] @relation("InvitationsTo")
   auditEvents       AuditEvent[]          @relation("AuditActor")
+  candidateProfile  CandidateProfile?
 
   @@index([role, isActive])
+}
+
+model CandidateProfile {
+  id                              String                         @id @default(cuid())
+  userId                          String                         @unique
+  education                       Json                           @default("[]")
+  skills                          Json                           @default("[]")
+  languages                       Json                           @default("[]")
+  professionalExperience          Json                           @default("[]")
+  courses                         Json                           @default("[]")
+  certifications                  Json                           @default("[]")
+  professionalLinks               Json                           @default("[]")
+  workPreferences                 Json                           @default("{}")
+  accessibilityDeclaration        AccessibilityDeclarationStatus @default(NOT_INFORMED)
+  accessibilityNeeds              Json                           @default("[]")
+  accessibilityNeedOptionCodes    Json                           @default("[]")
+  essentialAccessibilityResources Json                           @default("[]")
+  createdAt                       DateTime                       @default(now())
+  updatedAt                       DateTime                       @updatedAt
+  user                            User                           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  documents                       CandidateProfileDocument[]
+
+  @@index([updatedAt])
+}
+
+model CandidateProfileDocument {
+  id                String          @id @default(cuid())
+  candidateProfileId String
+  category          CandidateDocumentCategory
+  displayName       String
+  originalName      String
+  storedName        String          @unique
+  mimeType          String
+  sizeBytes         Int
+  createdAt         DateTime        @default(now())
+  candidateProfile  CandidateProfile @relation(fields: [candidateProfileId], references: [id], onDelete: Cascade)
+
+  @@index([candidateProfileId, category, createdAt])
+}
+
+enum CandidateDocumentCategory {
+  COURSE
+  CERTIFICATION
+}
+
+enum AccessibilityNeedGroup {
+  ARCHITECTURAL
+  COMMUNICATION
+  TECHNOLOGICAL
+}
+
+model AccessibilityNeedOption {
+  code        String                @id
+  name        String
+  description String
+  group       AccessibilityNeedGroup
+  isMandatory Boolean               @default(false)
+  isActive    Boolean               @default(true)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  @@index([group, isActive])
+  @@index([isMandatory, isActive])
 }
 
 model Company {

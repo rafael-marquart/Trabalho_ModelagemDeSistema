@@ -244,6 +244,7 @@ async function cleanupTestData() {
     if (remainingTestAuditEvents !== 0) {
       throw new Error(`E2E cleanup left ${remainingTestAuditEvents} audit event(s) behind`);
     }
+    await tx.candidateProfile.deleteMany({ where: { userId: { in: userIds } } });
     await tx.company.deleteMany({ where: { id: { in: companyIds } } });
     await tx.user.deleteMany({ where: { id: { in: userIds } } });
   });
@@ -403,6 +404,108 @@ async function main() {
       redirect: "manual"
     });
     await expectStatus(newPage, 200, "candidate page after new login");
+
+    // SPEC-002: candidate profile, accessibility catalog and optional attachments.
+    const profileCookie = { cookie: `acessa_session=${newCookieMatch[1]}` };
+    const profileOrigin = { origin: PUBLIC_URL };
+    await expectStatus(await fetch(`${BASE_URL}/api/candidato/perfil`, { redirect: "manual" }), 401, "anonymous profile read");
+    await expectStatus(await fetch(`${BASE_URL}/api/candidato/catalogo-acessibilidade`, { redirect: "manual" }), 401, "anonymous catalog read");
+    await expectStatus(await fetch(`${BASE_URL}/api/candidato/documentos`, { redirect: "manual" }), 401, "anonymous document list");
+
+    const catalogBody = JSON.parse(await expectStatus(
+      await fetch(`${BASE_URL}/api/candidato/catalogo-acessibilidade`, { headers: profileCookie, redirect: "manual" }),
+      200, "candidate reads accessibility catalog"
+    ));
+    assert.equal(catalogBody.options.length, 16, "catalog must expose the 16 seeded options");
+    const catalogCode = catalogBody.options.find(option => option.isActive)?.code;
+    assert.ok(catalogCode, "catalog must contain an active option");
+
+    const emptyProfile = JSON.parse(await expectStatus(
+      await fetch(`${BASE_URL}/api/candidato/perfil`, { headers: profileCookie, redirect: "manual" }),
+      200, "candidate reads empty profile"
+    ));
+    assert.equal(emptyProfile.profile.accessibilityDeclaration, "NOT_INFORMED");
+    assert.deepEqual(emptyProfile.profile.education, []);
+
+    const profilePayload = {
+      education: [{ level: "Ensino superior (graduação)", course: "Sistemas — Noturno", institution: "Instituto Federal", status: "Concluído" }],
+      languages: [{ language: "Inglês", level: "Avançado" }],
+      professionalExperience: [{ role: "Atendente", company: "Loja Exemplo", period: "2022 a 2024" }], courses: ["Excel avançado"], certifications: [],
+      professionalLinks: ["https://example.test/perfil"],
+      workPreferences: { modalities: ["Híbrido", "Remoto"], city: "Recife", state: "PE", address: "", transportMode: "Ônibus" },
+      accessibilityDeclaration: "NEEDS_DECLARED",
+      accessibilityNeeds: [], accessibilityNeedOptionCodes: [catalogCode], essentialAccessibilityResources: ["Leitor de tela"]
+    };
+    const putProfile = (payload, headers = {}) => fetch(`${BASE_URL}/api/candidato/perfil`, {
+      method: "PUT",
+      headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, ...profileOrigin, ...headers },
+      body: JSON.stringify(payload), redirect: "manual"
+    });
+    await expectStatus(await putProfile(profilePayload), 401, "anonymous profile save");
+    await expectStatus(await putProfile({ ...profilePayload, accessibilityNeedOptionCodes: [], accessibilityNeeds: [] }, profileCookie),
+      400, "needs declared without any option is rejected");
+    await expectStatus(await putProfile({ ...profilePayload, education: ["Ensino médio — Geral"] }, profileCookie),
+      400, "legacy text education is rejected on save");
+    await expectStatus(await putProfile({ ...profilePayload, accessibilityNeedOptionCodes: ["ZZZ99"] }, profileCookie),
+      400, "unknown catalog code is rejected");
+    await expectStatus(await putProfile(profilePayload, { ...profileCookie, origin: "https://evil.example" }),
+      403, "cross-origin profile save is rejected");
+    await expectStatus(await putProfile(profilePayload, profileCookie), 200, "candidate saves structured profile");
+
+    const savedProfile = JSON.parse(await expectStatus(
+      await fetch(`${BASE_URL}/api/candidato/perfil`, { headers: profileCookie, redirect: "manual" }),
+      200, "candidate reads saved profile"
+    ));
+    assert.deepEqual(savedProfile.profile.education, profilePayload.education, "education must round-trip as structured objects");
+    assert.deepEqual(savedProfile.profile.professionalExperience, profilePayload.professionalExperience, "experiences must round-trip as structured objects");
+    assert.deepEqual(savedProfile.profile.workPreferences, profilePayload.workPreferences, "work preferences must round-trip");
+    await expectStatus(await putProfile({ ...profilePayload, workPreferences: { ...profilePayload.workPreferences, state: "XX" } }, profileCookie),
+      400, "unknown state is rejected");
+    assert.deepEqual(savedProfile.profile.languages, profilePayload.languages, "languages must round-trip as structured objects");
+    assert.deepEqual(savedProfile.profile.accessibilityNeedOptionCodes, [catalogCode]);
+
+    const profileAudit = await prisma.auditEvent.findMany({
+      where: { actorUserId: account.id, eventType: { startsWith: "CANDIDATE_PROFILE" } }, select: { metadata: true }
+    });
+    assert.ok(profileAudit.length >= 1, "saving the profile must create an audit event");
+    assert.ok(!JSON.stringify(profileAudit).includes("Leitor de tela"), "audit events must not contain declared values");
+
+    const pdfBytes = Buffer.from("%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n");
+    const uploadForm = (name, bytes, category = "COURSE") => {
+      const form = new FormData();
+      form.set("category", category); form.set("displayName", "Comprovante de curso");
+      form.set("file", new Blob([bytes]), name);
+      return form;
+    };
+    const upload = (form, headers) => fetch(`${BASE_URL}/api/candidato/documentos`, {
+      method: "POST", headers: { "x-forwarded-for": TEST_IP, ...profileOrigin, ...headers }, body: form, redirect: "manual"
+    });
+    await expectStatus(await upload(uploadForm("anon.pdf", pdfBytes), {}), 401, "anonymous upload");
+    await expectStatus(await upload(uploadForm("fake.pdf", Buffer.from("not a pdf")), profileCookie), 400, "upload with mismatched content");
+    await expectStatus(await upload(uploadForm("script.exe", pdfBytes), profileCookie), 400, "upload with forbidden extension");
+    const uploaded = JSON.parse(await expectStatus(await upload(uploadForm("curso.pdf", pdfBytes), profileCookie), 201, "valid upload"));
+    const documentId = uploaded.document.id;
+    const listed = JSON.parse(await expectStatus(
+      await fetch(`${BASE_URL}/api/candidato/documentos`, { headers: profileCookie, redirect: "manual" }), 200, "list documents"
+    ));
+    assert.equal(listed.documents.length, 1);
+    const download = await fetch(`${BASE_URL}/api/candidato/documentos/${documentId}`, { headers: profileCookie, redirect: "manual" });
+    await expectStatus(download.clone(), 200, "owner downloads own document");
+    assert.deepEqual(Buffer.from(await download.arrayBuffer()), pdfBytes, "downloaded bytes must match the upload");
+    await expectStatus(await fetch(`${BASE_URL}/api/candidato/documentos/${documentId}`, { redirect: "manual" }), 401, "anonymous download");
+    await expectStatus(await fetch(`${BASE_URL}/api/candidato/documentos/${documentId}`, {
+      method: "DELETE", headers: { ...profileOrigin }, redirect: "manual"
+    }), 401, "anonymous delete");
+    await expectStatus(await fetch(`${BASE_URL}/api/candidato/documentos/${documentId}`, {
+      method: "DELETE", headers: { ...profileCookie, ...profileOrigin }, redirect: "manual"
+    }), 200, "owner deletes own document");
+    await expectStatus(await fetch(`${BASE_URL}/api/candidato/documentos/${documentId}`, { headers: profileCookie, redirect: "manual" }),
+      404, "deleted document is gone");
+    const documentAudit = await prisma.auditEvent.findMany({
+      where: { actorUserId: account.id, eventType: { in: ["CANDIDATE_PROFILE_DOCUMENT_ADDED", "CANDIDATE_PROFILE_DOCUMENT_REMOVED"] } },
+      select: { eventType: true }
+    });
+    assert.equal(documentAudit.length, 2, "upload and removal must each create an audit event");
 
     // Company recruiter-management endpoints must reject anonymous callers and
     // authenticated users with the wrong role, including write operations.

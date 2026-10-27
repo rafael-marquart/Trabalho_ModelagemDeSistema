@@ -24,8 +24,12 @@ describe("loginSchema", () => {
   });
 
   it("rejects unknown profiles and empty credentials", () => {
-    expect(loginSchema.safeParse({ profile: "admin", identifier: "x", password: "y" }).success).toBe(false);
+    expect(loginSchema.safeParse({ profile: "superuser", identifier: "x", password: "y" }).success).toBe(false);
     expect(loginSchema.safeParse({ profile: "candidate", identifier: " ", password: "" }).success).toBe(false);
+  });
+
+  it("accepts the admin profile, which is only reachable from the unlisted /admin/login page", () => {
+    expect(loginSchema.safeParse({ profile: "admin", identifier: "admin@example.com", password: "y" }).success).toBe(true);
   });
 });
 

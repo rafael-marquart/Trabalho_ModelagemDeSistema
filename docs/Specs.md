@@ -278,8 +278,8 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | Campo | Valor |
 |---|---|
 | ID | SPEC-002 |
-| Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada em 27/10/2026 |
+| Estado do layout | aprovado pelo responsável em 27/10/2026, sobre as telas implementadas (não há protótipo anexado em docs/layout/) |
 | Capacidade | Consultar, cadastrar e atualizar dados profissionais e necessidades funcionais de acessibilidade |
 
 ## 2. Rastreabilidade
@@ -297,15 +297,23 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 ### Incluído
 - Permitir que candidato autenticado consulte seu perfil.
-- Cadastrar e atualizar as categorias aprovadas na OPEN-007: dados pessoais básicos (nome/e-mail reutilizados da conta), formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais.
+- Cadastrar e atualizar as categorias aprovadas na OPEN-007: dados pessoais básicos (nome/e-mail reutilizados da conta), formação/escolaridade, idiomas, experiências profissionais, cursos, certificações e links profissionais.
 - Permitir autodeclaração e atualização de necessidades funcionais de acessibilidade e recursos indispensáveis para acessibilidade.
-- Organizar necessidades nas categorias do vetor conceitual.
+- Organizar o catálogo oficial em grupos arquitetônicos, de comunicação e tecnológicos, com códigos estáveis, descrição, estado ativo/inativo e propriedade explícita de obrigatoriedade.
+- Permitir, opcionalmente, anexar comprovantes de cursos e certificações (PDF, DOC, DOCX, JPG ou PNG, até 10 MB), em armazenamento privado, visíveis apenas ao candidato proprietário. O anexo nunca é exigido para registrar o curso ou a certificação e não se aplica a laudos médicos.
+- Registrar formação/escolaridade, idiomas e experiências profissionais como entradas estruturadas (formação: nível, curso/área, instituição e situação; idioma: idioma e nível; experiência: cargo, empresa e período opcional).
+- Decisão de 27/10/2026: a categoria "competências" da OPEN-007 foi retirada do perfil nesta Spec. A SPEC-007, que usa competências e conhecimentos no perfil técnico (T), derivará esses dados do que o candidato já registra: escolaridade (nível de formação e curso, quando houver), cursos, certificações e experiências profissionais. A regra de derivação pertence à SPEC-007.
+- Registrar preferências de trabalho e deslocamento, todas opcionais (OPEN-007.3): modalidades aceitas (presencial, híbrido, remoto; pode marcar mais de uma), cidade, estado, endereço ou bairro e meio de transporte principal (caminhada, bicicleta, carro, ônibus ou metrô/trem). Esses dados alimentam o fator D da SPEC-007; quando ausentes, a SPEC-007 indica dados insuficientes.
+- Permitir seleção de opções oficiais e descrição livre para necessidades não contempladas; a descrição livre não cria uma opção oficial automaticamente.
+- Validar no backend que, quando a pessoa candidata declara necessidades, haja ao menos uma opção selecionada ou uma descrição livre. A declaração continua opcional.
+- Disponibilizar administração do catálogo apenas a ADMIN, com auditoria e desativação sem exclusão física.
 - Validar campos obrigatórios e informações mínimas definidas na baseline.
 - Proteger as informações de acessibilidade e registrar alterações relevantes.
 - Disponibilizar os dados para capacidades posteriores somente conforme autorização e finalidade.
 
 ### Fora do escopo
 - Cálculo de compatibilidade, pertencente à SPEC-007.
+- Classificação, pelo candidato, de quais necessidades são obrigatórias para uma vaga (RB-06): nesta Spec apenas o ADMIN marca a obrigatoriedade no catálogo; o uso na compatibilidade e a eventual indicação pelo candidato ficam para a SPEC-007.
 - Busca e filtros de vagas.
 - Armazenamento de laudos médicos: o sistema não armazena laudos; necessidades podem ser autodeclaradas.
 - Definição de campos internos, formatos, limites, cardinalidades e validações específicas ainda não aprovados; essas lacunas permanecem nas OPEN-007.1/007.2.
@@ -338,7 +346,7 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 1. Candidato abre a edição.
 2. Informa ou atualiza os dados previstos em RF-04/RF-19.
 3. O formulário reutiliza nome e e-mail mantidos na conta, sem exigir preenchimento duplicado; o cadastro da conta segue as regras próprias da SPEC-001. CPF não é obrigatório para salvar o perfil, pois a baseline não apresenta justificativa funcional aprovada para exigi-lo.
-4. Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais fazem parte do escopo aprovado na OPEN-007, podem ser preenchidos progressivamente e não bloqueiam o salvamento por categoria.
+4. Formação/escolaridade, idiomas, experiências profissionais, cursos, certificações e links profissionais fazem parte do escopo aprovado na OPEN-007, podem ser preenchidos progressivamente e não bloqueiam o salvamento por categoria.
 5. Necessidades funcionais de acessibilidade e recursos indispensáveis não exigem declaração universal. Quando declarados, podem ser informados por autodeclaração, sem exigir ou armazenar laudo; a interface distingue “não informado” de “declarado que não possui necessidade”.
 6. Dados válidos são persistidos, permitindo o preenchimento progressivo das categorias.
 7. Erros de validação definidos são indicados para correção, sem descarte silencioso das informações preenchidas.
@@ -346,10 +354,11 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 
 ### 5.3 Declarar necessidades de acessibilidade
 1. Candidato acessa a área de necessidades.
-2. Declara necessidades funcionais por autodeclaração.
-3. Sistema organiza os dados nas categorias do vetor: necessidades arquitetônicas, de comunicação e tecnológicas.
-4. Sistema valida o preenchimento conforme os requisitos de dados mínimos.
-5. Após confirmação e validação, persiste os dados com controles de acesso compatíveis com sua confidencialidade.
+2. Pode manter a declaração como não informada, declarar que não possui necessidades ou declarar necessidades funcionais por autodeclaração.
+3. Ao declarar necessidades, seleciona pelo menos uma opção do catálogo oficial ou descreve uma necessidade não contemplada; pode fazer ambos.
+4. O catálogo apresenta opções nos grupos arquitetônico, de comunicação e tecnológico. Opções desativadas não podem ser escolhidas por novos perfis; referências já existentes são preservadas até alteração da declaração.
+5. O backend valida a consistência entre o estado da declaração, as opções selecionadas e a descrição livre.
+6. Após confirmação e validação, persiste os dados com controles de acesso compatíveis com sua confidencialidade.
 
 ### 5.4 Atualizar necessidades
 1. Candidato consulta suas necessidades atuais e altera o que deseja.
@@ -364,7 +373,7 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 3. Dados profissionais e vetor devem permanecer associados ao candidato correto (RNF-09).
 4. O candidato só pode consultar/alterar o próprio perfil, salvo permissões explicitamente previstas pela baseline.
 5. O salvamento respeita RB-29 e o cadastro progressivo aprovado na OPEN-007.1. Nome e e-mail são reutilizados da conta, sem preenchimento duplicado no perfil; o cadastro da conta segue a SPEC-001. CPF não é obrigatório para salvar o perfil, pois não há justificativa funcional aprovada na baseline para exigi-lo.
-6. As categorias aprovadas na OPEN-007 — formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais — não bloqueiam o salvamento por categoria.
+6. As categorias aprovadas na OPEN-007 — formação/escolaridade, idiomas, experiências profissionais, cursos, certificações e links profissionais — não bloqueiam o salvamento por categoria.
 7. Necessidades funcionais e recursos indispensáveis não exigem declaração universal. A interface deve distinguir ausência de informação (“não informado”) de declaração de inexistência de necessidade; necessidades declaradas podem ser autodeclaradas sem exigir ou armazenar laudo.
 8. A ausência de dados necessários à análise de uma vaga deve ser indicada sem presumir compatibilidade, conforme RB-16, e não torna automaticamente esses dados obrigatórios para salvar o perfil.
 9. A distinção de necessidades obrigatórias deve ser preservada quando suportada pela baseline, pois RB-06 determina que sejam consideradas na compatibilidade.
@@ -410,20 +419,26 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 
 ## 11. Critérios de aceitação
 
-- [ ] Candidato autenticado consulta seu perfil.
-- [ ] Candidato cadastra e atualiza todas as categorias aprovadas na OPEN-007: dados pessoais básicos da conta, formação/escolaridade, competências, idiomas, necessidades funcionais, recursos indispensáveis, experiências profissionais, cursos, certificações e links profissionais.
-- [ ] Candidato declara necessidades por autodeclaração.
-- [ ] Necessidades são organizadas nas categorias conceituais do vetor.
-- [ ] Nome e e-mail da conta são reutilizados sem exigir preenchimento duplicado no perfil; CPF não bloqueia o salvamento.
-- [ ] Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria.
-- [ ] Necessidades funcionais e recursos indispensáveis não exigem declaração universal; “não informado” é distinguido de “declarado que não possui necessidade”, e a autodeclaração não exige nem armazena laudo.
-- [ ] A ausência de dados necessários à análise de uma vaga é indicada sem presumir compatibilidade, conforme RB-16, sem tornar automaticamente esses dados obrigatórios para salvar o perfil.
-- [ ] Um candidato não consulta nem altera perfil privado de outro.
-- [ ] Dados de acessibilidade não são expostos sem autorização.
-- [ ] Atualizações preservam integridade da associação entre candidato e necessidades.
-- [ ] Alterações relevantes são rastreáveis.
-- [ ] O sistema não exige nem armazena laudo médico como condição para declarar necessidades.
-- [ ] Mensagens de validação são perceptíveis por tecnologias assistivas.
+- [x] Candidato autenticado consulta seu perfil.
+- [x] Candidato cadastra e atualiza todas as categorias aprovadas na OPEN-007: dados pessoais básicos da conta, formação/escolaridade, idiomas, necessidades funcionais, recursos indispensáveis, experiências profissionais, cursos, certificações e links profissionais.
+- [x] Candidato declara necessidades por autodeclaração.
+- [x] Necessidades são organizadas nas categorias conceituais do vetor e catálogo oficial inicial contém os 16 códigos aprovados na OPEN-008.
+- [x] Candidato pode selecionar opções oficiais e/ou descrever necessidade não contemplada; o texto livre não cria opção oficial.
+- [x] Backend recusa declaração NEEDS_DECLARED sem opção selecionada nem descrição livre e recusa NO_NEEDS_DECLARED quando há necessidades informadas.
+- [x] Somente ADMIN pode cadastrar/editar/desativar opções; alterações do catálogo são auditadas e opções desativadas preservam referências históricas.
+- [x] Nome e e-mail da conta são reutilizados sem exigir preenchimento duplicado no perfil; CPF não bloqueia o salvamento.
+- [x] Preferências de trabalho e deslocamento (modalidades, cidade, estado, endereço e transporte) são opcionais, validadas no servidor e persistidas.
+- [x] Formação/escolaridade, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria.
+- [x] Necessidades funcionais e recursos indispensáveis não exigem declaração universal; “não informado” é distinguido de “declarado que não possui necessidade”, e a autodeclaração não exige nem armazena laudo.
+- Transferido para a SPEC-007 (decisão de 27/10/2026): a indicação de dados ausentes na análise de uma vaga (RB-16) depende da vaga e do cálculo de compatibilidade. Esta Spec garante apenas que esses dados não são obrigatórios para salvar o perfil.
+- [x] Um candidato não consulta nem altera perfil privado de outro.
+- [x] Dados de acessibilidade não são expostos sem autorização.
+- [x] Atualizações preservam integridade da associação entre candidato e necessidades.
+- [x] Alterações relevantes são rastreáveis.
+- [x] O sistema não exige nem armazena laudo médico como condição para declarar necessidades.
+- [x] Mensagens de validação são perceptíveis por tecnologias assistivas (mensagens com `role="alert"` dentro da seção do campo; roteiro manual executado pelo responsável em 27/10/2026, com os ajustes aplicados).
+
+> Evidência: testes Vitest e E2E (`scripts/auth-e2e.mjs`) verdes na CI. O teste manual foi executado pelo responsável em 27/10/2026 e os problemas encontrados foram corrigidos. A indicação de dados insuficientes (RB-16) foi transferida para a SPEC-007.
 
 ## 12. Casos de teste derivados
 
@@ -441,16 +456,16 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 | T-002-10 | Usar formulário com leitor de tela/teclado | Campos e erros identificáveis e operáveis |
 | T-002-11 | Consultar perfil com as categorias aprovadas | Categorias do perfil e dados de acessibilidade apresentados ao próprio candidato conforme autorização |
 | T-002-12 | Salvar perfil sem experiências, cursos, certificações ou links profissionais | Salvamento permitido, desde que as demais validações aplicáveis sejam satisfeitas |
-| T-002-13 | Categoria profissional ainda não preenchida é relevante para uma vaga | Insuficiência indicada sem presumir compatibilidade conforme RB-16 |
+| T-002-13 | Categoria profissional ainda não preenchida é relevante para uma vaga | Insuficiência indicada sem presumir compatibilidade conforme RB-16 (verificado na SPEC-007; nesta Spec, o perfil continua salvável sem a categoria) |
 
 ## 13. Questões em aberto
 
 As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decisões tomadas nesta Spec.
 
 - **OPEN-007 (decisão aprovada; resolvida):** o perfil inclui dados pessoais básicos (nome/e-mail reutilizados da conta), formação/escolaridade, competências, idiomas, necessidades funcionais de acessibilidade, recursos indispensáveis para acessibilidade, experiências profissionais, cursos, certificações e links profissionais. As categorias profissionais são preenchidas progressivamente; os detalhes internos e regras específicas permanecem sujeitos à baseline e às OPEN-007.1/007.2.
-- **OPEN-007.1 (decisão aprovada; resolvida):** nome e e-mail são reutilizados da conta, sem preenchimento duplicado no perfil; o cadastro da conta segue as regras da SPEC-001. CPF não é obrigatório para salvar o perfil. Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria, sem antecipar o escopo de categorias da OPEN-007. Necessidades funcionais e recursos indispensáveis não exigem declaração universal; necessidades podem ser autodeclaradas sem exigir/armazenar laudo, e “não informado” deve ser distinto de “declarado que não possui necessidade”. Dados necessários à análise de uma vaga que estejam ausentes são indicados como insuficiência sem presumir compatibilidade (RB-16).
+- **OPEN-007.1 (decisão aprovada; resolvida):** nome e e-mail são reutilizados da conta, sem preenchimento duplicado no perfil; o cadastro da conta segue as regras da SPEC-001. CPF não é obrigatório para salvar o perfil. Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria, sem antecipar o escopo de categorias da OPEN-007. A declaração de necessidades funcionais e recursos indispensáveis é opcional. Se a pessoa candidata optar por declarar necessidades de acessibilidade, deverá selecionar ao menos uma opção do catálogo ou preencher a descrição de uma necessidade não contemplada, podendo fazer ambos. Não se exige/armazenar laudo, e “não informado” deve ser distinto de “declarado que não possui necessidade”. Dados necessários à análise de uma vaga que estejam ausentes são indicados como insuficiência sem presumir compatibilidade (RB-16).
 - **OPEN-007.2 (decisão aprovada):** validação básica por categoria, respeitando o cadastro progressivo; formatos, limites e critérios específicos permanecem pendentes.
-- **OPEN-008 (decisão aprovada):** catálogo estruturado e extensível nas categorias arquitetônicas, de comunicação e tecnológicas, com distinção entre necessidades obrigatórias e não obrigatórias; lista inicial, significados operacionais e detalhes de representação permanecem pendentes.
+- **OPEN-008 (parcialmente resolvida; estrutura e lista inicial aprovadas):** catálogo estruturado e extensível nos grupos arquitetônico, de comunicação e tecnológico. Cada opção tem identificador estável, nome, descrição, grupo, estado e propriedade explícita de obrigatoriedade, com alterações restritas e rastreáveis. Lista inicial aprovada: arquitetônicas A01–A06 (rampa/acesso sem escadas, elevador acessível, portas/passagens adequadas, banheiro acessível, estação adaptada, sinalização tátil); comunicação C01–C04 (Libras, linguagem simples, comunicação escrita, comunicação alternativa/aumentativa); tecnológicas T01–T06 (leitor de tela, ampliação, contraste/ajustes visuais, comandos de voz, tecnologia assistiva própria, equipamento/software assistivo). A declaração de necessidades de acessibilidade é opcional; se iniciada, exige ao menos uma opção do catálogo ou uma descrição livre de necessidade não contemplada, podendo incluir ambos. A descrição livre não cria automaticamente opção oficial nem implica obrigatoriedade/compatibilidade. Desativação preserva referências históricas; existência da opção não afirma que a vaga/empresa fornece o recurso. Permanecem pendentes critérios de obrigatoriedade, controles administrativos detalhados e eventual fluxo de incorporação de declarações livres. Compatibilidade continua na SPEC-007.
 - **OPEN-009 (decisão aprovada):** histórico de alterações relevantes, sem exigir versionamento completo do perfil a cada modificação; retenção de um ano da OPEN-006 serve como referência para auditoria, enquanto campos definitivos, casos de preservação de valores anteriores/versões completas e aplicação exata ao histórico funcional permanecem pendentes.
 - **OPEN-010 (decisão aprovada):** associação 1:1 opcional para USUARIO e obrigatória para CANDIDATO; cada CANDIDATO pertence a exatamente um USUARIO, e cada USUARIO pode ter zero ou um CANDIDATO. O modelo conceitual deverá explicitar a cardinalidade. Momento de criação do perfil, desativação/exclusão, conversão entre perfis e definição técnica de chave/restrições permanecem pendentes.
 - **OPEN-011 (decisão aprovada):** após candidatura, Recrutador autenticado e autorizado da Empresa responsável pode consultar perfil profissional e necessidades de acessibilidade no contexto daquela candidatura, respeitando RB-26, RB-28, RF-30 e RB-46. A candidatura não concede acesso a perfis sem relação com a vaga ou de outras Empresas, nem implica exposição indiscriminada de todos os campos. Matriz definitiva de campos, distinções por categoria/etapa, restrições adicionais e eventual auditoria específica de acessos permanecem pendentes.
@@ -667,7 +682,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | Spec | Estado do texto | Estado do layout | Revisão humana |
 |---|---|---|---|
 | SPEC-001 — Acessar a plataforma e identificar perfil organizacional | especificada | pendente | aguardando |
-| SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato | especificada | pendente | aguardando |
+| SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato | especificada; implementada | aprovado em 27/10/2026 sobre as telas implementadas | concluída em 27/10/2026 |
 | SPEC-003 — Disponibilizar recursos de acessibilidade da interface | especificada | pendente | aguardando |
 
 **Próxima etapa:** detalhar o Bloco 3. A revisão coletiva das questões em aberto pode ocorrer depois que todas as Specs estiverem detalhadas.
@@ -1662,6 +1677,7 @@ Contratos conceituais, sem endpoints HTTP.
 - [ ] Barreira incompatível com necessidade obrigatória elimina a vaga independentemente do score.
 - [ ] Score usa pesos 50%/30%/20%.
 - [ ] Dados insuficientes não são convertidos em compatibilidade presumida.
+- [ ] A ausência de dados do perfil (incluindo categorias profissionais e preferências de trabalho e deslocamento) necessários à análise de uma vaga é indicada como insuficiência, sem presumir compatibilidade (RB-16) e sem exigir esses dados para salvar o perfil (transferido da SPEC-002).
 - [ ] Perfil incompleto gera indicação de complementação, conforme UC-13.
 - [ ] Resultado expõe fatores considerados.
 - [ ] Mesmas entradas e regras produzem resultado consistente.

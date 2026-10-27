@@ -14,7 +14,8 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "audit:retention": "node scripts/purge-audit-events.mjs",
-    "login-security:retention": "node scripts/purge-login-security-records.mjs"
+    "login-security:retention": "node scripts/purge-login-security-records.mjs",
+    "admin:create": "node scripts/create-admin.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.16.2",

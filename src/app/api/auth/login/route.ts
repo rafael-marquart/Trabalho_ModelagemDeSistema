@@ -41,7 +41,8 @@ export async function POST(request: NextRequest) {
   const normalizedCpf = normalizeCpf(input.identifier);
   const identifierKey = key(identifier);
   const ipKey = key(getClientIp(request));
-  const expectedRole = input.profile === "candidate" ? "CANDIDATE" : input.profile === "recruiter" ? "RECRUITER" : "COMPANY";
+  const roleByProfile = { candidate: "CANDIDATE", company: "COMPANY", recruiter: "RECRUITER", admin: "ADMIN" } as const;
+  const expectedRole = roleByProfile[input.profile];
 
   const outcome = await prisma.$transaction(async (tx) => {
     // Serialize attempts from the same IP so concurrent requests cannot all pass
@@ -177,6 +178,8 @@ export async function POST(request: NextRequest) {
   }
   return NextResponse.json({
     ok: true,
-    redirectTo: input.profile === "candidate" ? "/candidato" : input.profile === "recruiter" ? "/recrutador" : "/empresa"
+    redirectTo: {
+      candidate: "/candidato", company: "/empresa", recruiter: "/recrutador", admin: "/admin/catalogo-acessibilidade"
+    }[input.profile]
   });
 }

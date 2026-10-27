@@ -301,4 +301,23 @@ loginAttempt: { count: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
     expect(createSessionMock).not.toHaveBeenCalled();
   });
 
+  it("authenticates an administrator through the admin profile and redirects to the catalog", async () => {
+    const admin = { ...user, id: "admin-1", email: "admin@example.com", cpf: null, role: "ADMIN" };
+    tx.user.findFirst.mockResolvedValueOnce(admin);
+    tx.user.findUnique.mockResolvedValueOnce(admin);
+
+    const response = await POST(makeRequest({ profile: "admin", identifier: "admin@example.com" }) as never);
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({ ok: true, redirectTo: "/admin/catalogo-acessibilidade" });
+    expect(createSessionMock).toHaveBeenCalledWith("admin-1", false, user.passwordChangedAt);
+  });
+
+  it("does not let a candidate account sign in through the admin profile", async () => {
+    const response = await POST(makeRequest({ profile: "admin", identifier: "person@example.com" }) as never);
+
+    expect(response.status).toBe(401);
+    expect(createSessionMock).not.toHaveBeenCalled();
+  });
+
 });
