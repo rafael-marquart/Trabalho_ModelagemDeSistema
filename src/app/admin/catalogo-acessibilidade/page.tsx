@@ -11,7 +11,7 @@ export default async function AccessibilityCatalogAdminPage() {
     <main className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div>
       <div className="catalog-admin-content">
-        <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" /></Link>
+        <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" /></Link>
         <Link className="back-link" href="/">← Voltar ao início</Link>
       </div>
       <CatalogEditor />
