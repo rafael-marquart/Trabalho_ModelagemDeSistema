@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --ink: #1F1440;
-  --muted: #6B6380;
+  --ink: #261B38;
+  --muted: #6D647A;
   --purple: #6B29BF;
   --purple-dark: #4A148C;
-  --purple-soft: #F5F0FC;
-  --line: #E0D9EB;
-  --surface: #FFFFFF;
-  --background: #FBFAFE;
+  --purple-soft: #EEE7F6;
+  --line: #D9D0E4;
+  --surface: #F9F7FC;
+  --background: #F1EEF6;
   --danger: #B42318;
   --focus-ring: #6B29BF;
   --status-success-bg: #E4F6E9;
@@ -56,7 +56,7 @@ button, input, select { font: inherit; }
 .entry-content h2 { margin: 0; font-family: "Manrope", sans-serif; font-size: clamp(28px, 3vw, 36px); letter-spacing: -1px; }
 .muted { margin: 10px 0 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
 .entry-options { display: grid; gap: 14px; margin-top: 32px; }
-.choice-card { display: flex; align-items: center; gap: 16px; padding: 19px; border: 1px solid var(--line); border-radius: 16px; background: #fff; transition: border-color .18s, transform .18s, box-shadow .18s; }
+.choice-card { display: flex; align-items: center; gap: 16px; padding: 19px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); transition: border-color .18s, transform .18s, box-shadow .18s; }
 .choice-card:hover { border-color: #b7a3e9; box-shadow: 0 10px 30px rgba(54,35,93,.07); text-decoration: none; transform: translateY(-1px); }
 .choice-icon { display: grid; flex: 0 0 46px; place-items: center; width: 46px; height: 46px; border-radius: 15px; color: var(--purple); background: var(--purple-soft); }
 .choice-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -71,7 +71,7 @@ button, input, select { font: inherit; }
 .entry-divider::before, .entry-divider::after { height: 1px; flex: 1; background: var(--line); content: ""; }
 .signup-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px 22px; font-size: 13px; font-weight: 600; }
 .legal-note { margin: 38px 0 0; color: var(--muted); font-size: 11px; line-height: 1.7; text-align: center; }
-.auth-page { min-height: 100vh; padding: 30px clamp(22px, 5vw, 64px) 60px; background: radial-gradient(circle at 0% 100%, #F5F0FC 0, transparent 36%), var(--background); }
+.auth-page { min-height: 100vh; padding: 30px clamp(22px, 5vw, 64px) 60px; background: radial-gradient(circle at 0% 100%, #E8DDF5 0, transparent 38%), var(--background); }
 .auth-brand { color: var(--ink); }
 .auth-brand .brand-mark { color: white; background: var(--purple); }
 .auth-brand .brand-accent { color: var(--purple); }
@@ -80,7 +80,7 @@ button, input, select { font: inherit; }
 .auth-card h1 { font-size: clamp(29px, 4vw, 37px); letter-spacing: -1.2px; }
 .auth-form { display: grid; gap: 10px; margin-top: 28px; }
 .auth-form > label { margin-top: 8px; color: #403a51; font-size: 13px; font-weight: 600; }
-.auth-form input:not([type="checkbox"]), .auth-form select { width: 100%; min-height: 48px; padding: 12px 14px; border: 1px solid #8b8499; border-radius: 10px; color: var(--ink); background: #fff; }
+.auth-form input:not([type="checkbox"]), .auth-form select { width: 100%; min-height: 48px; padding: 12px 14px; border: 1px solid #8b8499; border-radius: 10px; color: var(--ink); background: var(--surface); }
 .auth-form input::placeholder { color: var(--muted); }
 .form-options { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0 12px; font-size: 12px; }
 .checkbox-label { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
@@ -597,3 +597,65 @@ button, input, select { font: inherit; }
 @media (max-width:650px) {
   .profile-education-controls, .profile-link-controls { grid-template-columns:1fr; }
 }
+
+
+/* Refined light theme: soft lavender-gray canvas, warm surfaces, restrained purple accents */
+:root:not([data-theme="dark"]) {
+  color-scheme: light;
+  --ink: #261B38;
+  --muted: #6D647A;
+  --purple: #6B29BF;
+  --purple-dark: #4A148C;
+  --purple-soft: #EEE7F6;
+  --line: #D9D0E4;
+  --surface: #F9F7FC;
+  --background: #F1EEF6;
+  --focus-ring: #6B29BF;
+}
+:root:not([data-theme="dark"]) body { color: var(--ink); background: var(--background); }
+:root:not([data-theme="dark"]) .page-shell,
+:root:not([data-theme="dark"]) .company-dashboard,
+:root:not([data-theme="dark"]) .recruiter-dashboard { background: var(--background); }
+:root:not([data-theme="dark"]) .entry-panel,
+:root:not([data-theme="dark"]) .auth-split-content { background: var(--background); }
+:root:not([data-theme="dark"]) .choice-card,
+:root:not([data-theme="dark"]) .auth-card,
+:root:not([data-theme="dark"]) .profile-section,
+:root:not([data-theme="dark"]) .invite-panel,
+:root:not([data-theme="dark"]) .recruiter-overview-card,
+:root:not([data-theme="dark"]) .recruiter-invitations-panel,
+:root:not([data-theme="dark"]) .catalog-admin-card,
+:root:not([data-theme="dark"]) .table-scroll { background: var(--surface); }
+:root:not([data-theme="dark"]) .auth-page {
+  background: radial-gradient(circle at 0% 100%, #E8DDF5 0, transparent 38%), var(--background);
+}
+:root:not([data-theme="dark"]) .auth-form input:not([type="checkbox"]),
+:root:not([data-theme="dark"]) .auth-form select,
+:root:not([data-theme="dark"]) .invite-form input,
+:root:not([data-theme="dark"]) .profile-section textarea,
+:root:not([data-theme="dark"]) .profile-section select,
+:root:not([data-theme="dark"]) .profile-language-controls select,
+:root:not([data-theme="dark"]) .profile-language-controls input,
+:root:not([data-theme="dark"]) .profile-document-form select,
+:root:not([data-theme="dark"]) .profile-document-form input:not([type="file"]),
+:root:not([data-theme="dark"]) .profile-education-controls select,
+:root:not([data-theme="dark"]) .profile-education-controls input,
+:root:not([data-theme="dark"]) .profile-link-controls select,
+:root:not([data-theme="dark"]) .profile-link-controls input,
+:root:not([data-theme="dark"]) .catalog-admin-form input,
+:root:not([data-theme="dark"]) .catalog-admin-form select,
+:root:not([data-theme="dark"]) .catalog-admin-form textarea,
+:root:not([data-theme="dark"]) .catalog-admin-row input:not([type="checkbox"]),
+:root:not([data-theme="dark"]) .catalog-admin-row select,
+:root:not([data-theme="dark"]) .catalog-admin-row textarea {
+  background: #FDFBFE;
+  border-color: #CFC3DD;
+}
+:root:not([data-theme="dark"]) .company-topbar,
+:root:not([data-theme="dark"]) .company-sidebar,
+:root:not([data-theme="dark"]) .recruiter-topbar,
+:root:not([data-theme="dark"]) .recruiter-sidebar { background: #F8F5FB; }
+:root:not([data-theme="dark"]) .recruiter-primary-card { background: linear-gradient(135deg, #F9F7FC, #EEE7F6); }
+:root:not([data-theme="dark"]) .recruiter-card-icon { background: #E8DDF5; }
+:root:not([data-theme="dark"]) .table-scroll { border-color: var(--line); }
+:root:not([data-theme="dark"]) .recruiter-table th { background: #EEE7F6; }
