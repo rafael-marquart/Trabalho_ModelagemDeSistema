@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { prismaMock, getCurrentUserMock, mkdirMock, writeFileMock, unlinkMock } = vi.hoisted(() => ({
-  prismaMock: { candidateProfile: { upsert: vi.fn() }, candidateProfileDocument: { create: vi.fn(), findMany: vi.fn() } },
+  prismaMock: { candidateProfile: { upsert: vi.fn(), findUnique: vi.fn() }, candidateProfileDocument: { create: vi.fn(), findMany: vi.fn() } },
   getCurrentUserMock: vi.fn(),
   mkdirMock: vi.fn(),
   writeFileMock: vi.fn(),
@@ -18,7 +18,6 @@ describe("candidate documents collection API", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     getCurrentUserMock.mockResolvedValue(candidate);
-    prismaMock.candidateProfile.findMany = vi.fn().mockResolvedValue([]);
     prismaMock.candidateProfile.upsert.mockResolvedValue({ id: "profile-1" });
     prismaMock.candidateProfileDocument.findMany.mockResolvedValue([]);
     prismaMock.candidateProfileDocument.create.mockResolvedValue({
