@@ -15,7 +15,11 @@ function detectedMime(bytes: Uint8Array): string | null {
   if (bytes.length >= 5 && new TextDecoder().decode(bytes.slice(0, 5)) === "%PDF-") return "application/pdf";
   if (bytes.length >= 8 && [0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a].every((v,i) => bytes[i] === v)) return "image/png";
   if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "image/jpeg";
-  if (bytes.length >= 8 && bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03 && bytes[3] === 0x04) return "application/zip";
+  if (bytes.length >= 8 && bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 0x03 && bytes[3] === 0x04) {
+    const zipDirectoryText = new TextDecoder("windows-1252").decode(bytes);
+    if (zipDirectoryText.includes("[Content_Types].xml") && zipDirectoryText.includes("word/")) return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    return "application/zip";
+  }
   if (bytes.length >= 8 && bytes[0] === 0xd0 && bytes[1] === 0xcf && bytes[2] === 0x11 && bytes[3] === 0xe0) return "application/msword";
   return null;
 }
@@ -65,7 +69,7 @@ export async function POST(request: Request) {
     ([".jpg", ".jpeg"].includes(extension) && mime === "image/jpeg") ||
     (extension === ".png" && mime === "image/png") ||
     (extension === ".doc" && mime === "application/msword") ||
-    (extension === ".docx" && mime === "application/zip");
+    (extension === ".docx" && mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
   if (!extensionMatches) return NextResponse.json({ message: "O conteúdo do arquivo não corresponde ao formato informado." }, { status: 400 });
 
   const profile = await prisma.candidateProfile.upsert({
@@ -80,8 +84,7 @@ export async function POST(request: Request) {
       data: {
         candidateProfileId: profile.id, category, displayName: displayName.trim(),
         originalName: path.basename(file.name).slice(0, 200), storedName,
-        mimeType: extension === ".docx" ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document" :
-          extension === ".doc" ? "application/msword" : mime!, sizeBytes: bytes.byteLength
+        mimeType: extension === ".doc" ? "application/msword" : mime!, sizeBytes: bytes.byteLength
       },
       select: { id: true, category: true, displayName: true, originalName: true, mimeType: true, sizeBytes: true, createdAt: true }
     });
