@@ -67,12 +67,33 @@ model CandidateProfile {
   professionalLinks               Json                           @default("[]")
   accessibilityDeclaration        AccessibilityDeclarationStatus @default(NOT_INFORMED)
   accessibilityNeeds              Json                           @default("[]")
+  accessibilityNeedOptionCodes    Json                           @default("[]")
   essentialAccessibilityResources Json                           @default("[]")
   createdAt                       DateTime                       @default(now())
   updatedAt                       DateTime                       @updatedAt
   user                            User                           @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   @@index([updatedAt])
+}
+
+enum AccessibilityNeedGroup {
+  ARCHITECTURAL
+  COMMUNICATION
+  TECHNOLOGICAL
+}
+
+model AccessibilityNeedOption {
+  code        String                @id
+  name        String
+  description String
+  group       AccessibilityNeedGroup
+  isMandatory Boolean               @default(false)
+  isActive    Boolean               @default(true)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  @@index([group, isActive])
+  @@index([isMandatory, isActive])
 }
 
 model Company {
