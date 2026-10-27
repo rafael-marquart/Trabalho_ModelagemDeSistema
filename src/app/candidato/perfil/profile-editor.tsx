@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 type Declaration = "NOT_INFORMED" | "NO_NEEDS_DECLARED" | "NEEDS_DECLARED";
 type NeedGroup = "ARCHITECTURAL" | "COMMUNICATION" | "TECHNOLOGICAL";
@@ -17,10 +17,13 @@ const empty: Profile = {
   courses: [], certifications: [], professionalLinks: [], accessibilityDeclaration: "NOT_INFORMED",
   accessibilityNeeds: [], accessibilityNeedOptionCodes: [], essentialAccessibilityResources: []
 };
-const sections: { key: keyof Profile; title: string; hint: string }[] = [
-  { key: "essentialAccessibilityResources", title: "Recursos de acessibilidade indispensáveis", hint: "Informe recursos funcionais necessários para realizar atividades profissionais, um por linha." }
+const textSections: { key: "skills" | "professionalExperience"; title: string; hint: string }[] = [
+  { key: "skills", title: "Competências", hint: "Informe suas competências profissionais, uma por linha." },
+  { key: "professionalExperience", title: "Experiências profissionais", hint: "Informe cada experiência em uma linha, por exemplo: cargo, empresa e período." }
 ];
-const educationLevels = ["Ensino fundamental", "Ensino médio", "Ensino técnico", "Ensino superior — graduação", "Pós-graduação", "Mestrado", "Doutorado", "Curso livre", "Outro"];
+// Entries are stored as "campo — campo" text, so the separator must not appear inside any field.
+const educationLevels = ["Ensino fundamental", "Ensino médio", "Ensino técnico", "Ensino superior (graduação)", "Pós-graduação", "Mestrado", "Doutorado", "Curso livre", "Outro"];
+function stripSeparator(value: string) { return value.replace(/\s*—\s*/g, " - ").trim(); }
 const educationStatuses = ["Concluído", "Em andamento", "Trancado", "Incompleto"];
 const groupLabels: Record<NeedGroup, string> = {
   ARCHITECTURAL: "Necessidades arquitetônicas",
@@ -48,6 +51,8 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   const [educationStatus, setEducationStatus] = useState(educationStatuses[0]);
   const [linkUrl, setLinkUrl] = useState("");
   const [accessibilityResource, setAccessibilityResource] = useState("");
+  const [courseName, setCourseName] = useState("");
+  const [certificationName, setCertificationName] = useState("");
   const [documentCategory, setDocumentCategory] = useState<"COURSE" | "CERTIFICATION">("COURSE");
   const [documentName, setDocumentName] = useState("");
   const [documentFile, setDocumentFile] = useState<File | null>(null);
@@ -97,7 +102,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     });
   }
   function addLanguage() {
-    const name = language === "Outro" ? otherLanguage.trim() : language;
+    const name = language === "Outro" ? stripSeparator(otherLanguage) : language;
     if (!name) { setError("Digite o nome do idioma."); return; }
     const entry = `${name} — ${languageLevel}`;
     if (profile.languages.some(item => item.toLocaleLowerCase() === entry.toLocaleLowerCase())) {
@@ -110,12 +115,26 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     setProfile(current => ({ ...current, languages: current.languages.filter(item => item !== entry) }));
   }
   function addEducation() {
-    const details = [educationLevel, educationCourse.trim(), educationInstitution.trim(), educationStatus].filter(Boolean);
-    if (!educationCourse.trim() || !educationInstitution.trim()) { setError("Informe o curso ou área e a instituição para adicionar a formação."); return; }
+    const course = stripSeparator(educationCourse);
+    const institution = stripSeparator(educationInstitution);
+    const details = [educationLevel, course, institution, educationStatus].filter(Boolean);
+    if (!course || !institution) { setError("Informe o curso ou área e a instituição para adicionar a formação."); return; }
     const entry = details.join(" — ");
     if (profile.education.some(item => item.toLocaleLowerCase() === entry.toLocaleLowerCase())) { setError("Essa formação já foi adicionada."); return; }
     setProfile(current => ({ ...current, education: [...current.education, entry] }));
     setEducationCourse(""); setEducationInstitution(""); setError("");
+  }
+  function addNamedEntry(key: "courses" | "certifications", rawValue: string, reset: () => void, label: string) {
+    const value = rawValue.trim();
+    if (!value) { setError(`Informe o nome ${label} antes de adicionar.`); return; }
+    if (profile[key].some(item => item.toLocaleLowerCase() === value.toLocaleLowerCase())) {
+      setError(`Esse item já foi adicionado em ${key === "courses" ? "cursos" : "certificações"}.`); return;
+    }
+    setProfile(current => ({ ...current, [key]: [...current[key], value] }));
+    reset(); setError("");
+  }
+  function removeNamedEntry(key: "courses" | "certifications", value: string) {
+    setProfile(current => ({ ...current, [key]: current[key].filter(item => item !== value) }));
   }
   function addAccessibilityResource() {
     const value = accessibilityResource.trim();
@@ -185,6 +204,11 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
 
   const selectedCodes = new Set(profile.accessibilityNeedOptionCodes);
   const selectedDeclaration = (value: Declaration) => {
+    const hasSelections = profile.accessibilityNeedOptionCodes.length > 0 || profile.accessibilityNeeds.length > 0;
+    if (value !== "NEEDS_DECLARED" && hasSelections &&
+      !window.confirm("Ao mudar esta resposta, as opções e a descrição de necessidades já marcadas serão removidas ao salvar. Deseja continuar?")) {
+      return;
+    }
     setProfile(current => ({
       ...current, accessibilityDeclaration: value,
       ...(value !== "NEEDS_DECLARED" ? { accessibilityNeeds: [], accessibilityNeedOptionCodes: [] } : {})
@@ -205,31 +229,16 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
         <label>Situação<select value={educationStatus} onChange={event => setEducationStatus(event.target.value)} disabled={loading || saving}>{educationStatuses.map(item => <option key={item} value={item}>{item}</option>)}</select></label>
         <button type="button" className="secondary-button" onClick={addEducation} disabled={loading || saving}>Adicionar formação</button>
       </div>
-      <ul className="profile-chip-list">{profile.education.map(item => <li key={item}><span>{item}</span><button type="button" className="secondary-button" onClick={() => setProfile(current => ({ ...current, education: current.education.filter(value => value !== item) }))} aria-label="Remover formação">Remover</button></li>)}</ul>
+      <ul className="profile-chip-list">{profile.education.map(item => <li key={item}><span>{item}</span><button type="button" className="secondary-button" onClick={() => setProfile(current => ({ ...current, education: current.education.filter(value => value !== item) }))} aria-label={`Remover formação: ${item}`}>Remover</button></li>)}</ul>
     </section>
-    {sections.map(section => <section className="profile-section" key={section.key}>
+    {textSections.map(section => <section className="profile-section" key={section.key}>
       <label className="profile-section-title" htmlFor={section.key}>{section.title}</label>
       <p className="muted">{section.hint}</p>
-      {section.key === "essentialAccessibilityResources" && <p className="profile-privacy-note">Estas informações são autodeclaradas. Não é necessário anexar laudos médicos.</p>}
-      {section.key === "essentialAccessibilityResources" ? <>
-        <div className="profile-link-controls">
-          <label className="profile-link-url-label" htmlFor="accessibilityResourceInput">Recurso necessário
-            <input id="accessibilityResourceInput" value={accessibilityResource} onChange={event => setAccessibilityResource(event.target.value)}
-              maxLength={300} placeholder="Ex.: elevador, mesa adaptada, leitor de tela" disabled={loading || saving} />
-          </label>
-          <button type="button" className="secondary-button" onClick={addAccessibilityResource} disabled={loading || saving}>Adicionar recurso</button>
-        </div>
-        <ul className="profile-chip-list">{profile.essentialAccessibilityResources.map(item => <li key={item}>
-          <span>{item}</span>
-          <button type="button" className="secondary-button" onClick={() => setProfile(current => ({
-            ...current, essentialAccessibilityResources: current.essentialAccessibilityResources.filter(value => value !== item)
-          }))} disabled={loading || saving} aria-label={`Remover recurso: ${item}`}>Remover</button>
-        </li>)}</ul>
-      </> : <textarea id={section.key} value={asText(profile[section.key])} onChange={event => updateList(section.key, event.target.value)}
-        rows={4} placeholder="Digite uma informação por linha" disabled={loading || saving} />}
+      <textarea id={section.key} value={asText(profile[section.key])} onChange={event => updateList(section.key, event.target.value)}
+        rows={4} placeholder="Digite uma informação por linha" disabled={loading || saving} />
     </section>)}
     <section className="profile-section">
-      <label className="profile-section-title" htmlFor="profileLanguages">Idiomas</label>
+      <h2>Idiomas</h2>
       <p className="muted">Selecione um idioma, informe seu nível e adicione quantos idiomas precisar.</p>
       <div className="profile-language-controls">
         <label>Idioma<select value={language} onChange={event => setLanguage(event.target.value)} disabled={loading || saving}>
@@ -255,7 +264,19 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     </section>
     <section className="profile-section">
       <h2>Cursos e certificações</h2>
-      <p className="muted">Adicione o nome e o arquivo correspondente. São aceitos PDF, DOC, DOCX, JPG e PNG, com até 10 MB por arquivo.</p>
+      <p className="muted">Informe o nome de cada curso ou certificação. Anexar o comprovante é opcional.</p>
+      <div className="profile-link-controls">
+        <label className="profile-link-url-label">Nome do curso<input value={courseName} onChange={event => setCourseName(event.target.value)} maxLength={160} placeholder="Ex.: Excel avançado" disabled={loading || saving} /></label>
+        <button type="button" className="secondary-button" onClick={() => addNamedEntry("courses", courseName, () => setCourseName(""), "do curso")} disabled={loading || saving}>Adicionar curso</button>
+      </div>
+      <ul className="profile-chip-list">{profile.courses.map(item => <li key={item}><span>{item}</span><button type="button" className="secondary-button" onClick={() => removeNamedEntry("courses", item)} aria-label={`Remover curso: ${item}`}>Remover</button></li>)}</ul>
+      <div className="profile-link-controls">
+        <label className="profile-link-url-label">Nome da certificação<input value={certificationName} onChange={event => setCertificationName(event.target.value)} maxLength={160} placeholder="Ex.: Certificação em gestão de projetos" disabled={loading || saving} /></label>
+        <button type="button" className="secondary-button" onClick={() => addNamedEntry("certifications", certificationName, () => setCertificationName(""), "da certificação")} disabled={loading || saving}>Adicionar certificação</button>
+      </div>
+      <ul className="profile-chip-list">{profile.certifications.map(item => <li key={item}><span>{item}</span><button type="button" className="secondary-button" onClick={() => removeNamedEntry("certifications", item)} aria-label={`Remover certificação: ${item}`}>Remover</button></li>)}</ul>
+      <h3 className="profile-subheading">Comprovantes (opcional)</h3>
+      <p className="muted">Se quiser, anexe o comprovante. São aceitos PDF, DOC, DOCX, JPG e PNG, com até 10 MB por arquivo. Não envie laudos ou documentos médicos.</p>
       <form className="profile-document-form" onSubmit={uploadDocument}>
         <label>Tipo<select value={documentCategory} onChange={event => setDocumentCategory(event.target.value as "COURSE" | "CERTIFICATION")} disabled={uploading}>
           <option value="COURSE">Curso</option><option value="CERTIFICATION">Certificação</option>
@@ -267,9 +288,8 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
       <p className="profile-privacy-note">Os arquivos ficam em armazenamento privado local, fora da pasta pública. Somente a conta proprietária pode baixá-los ou removê-los.</p>
       <ul className="profile-document-list">{documents.map(document => <li key={document.id}>
         <div><strong>{document.displayName}</strong><span>{document.category === "COURSE" ? "Curso" : "Certificação"} · {document.originalName} · {formatBytes(document.sizeBytes)}</span></div>
-        <div className="profile-document-actions"><a className="secondary-button" href={`/api/candidato/documentos/${encodeURIComponent(document.id)}`}>Baixar</a><button className="secondary-button" type="button" onClick={() => void deleteDocument(document)}>Remover</button></div>
+        <div className="profile-document-actions"><a className="secondary-button" href={`/api/candidato/documentos/${encodeURIComponent(document.id)}`} aria-label={`Baixar arquivo: ${document.displayName}`}>Baixar</a><button className="secondary-button" type="button" onClick={() => void deleteDocument(document)} aria-label={`Remover arquivo: ${document.displayName}`}>Remover</button></div>
       </li>)}</ul>
-      <p className="muted">Os nomes dos cursos e certificações antigos continuam no perfil para preservar dados já registrados.</p>
     </section>
     <section className="profile-section">
       <h2>Necessidades funcionais de acessibilidade</h2>
@@ -304,6 +324,24 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
           onChange={event => updateList("accessibilityNeeds", event.target.value)} rows={3}
           placeholder="Descreva somente a adaptação ou recurso funcional necessário" disabled={loading || saving} />
       </>}
+    </section>
+    <section className="profile-section">
+      <h2>Recursos de acessibilidade indispensáveis</h2>
+      <p className="muted">Informe recursos funcionais necessários para realizar atividades profissionais. Adicione um por vez.</p>
+      <p className="profile-privacy-note">Estas informações são autodeclaradas. Não é necessário anexar laudos médicos.</p>
+      <div className="profile-link-controls">
+        <label className="profile-link-url-label" htmlFor="accessibilityResourceInput">Recurso necessário
+          <input id="accessibilityResourceInput" value={accessibilityResource} onChange={event => setAccessibilityResource(event.target.value)}
+            maxLength={300} placeholder="Ex.: elevador, mesa adaptada, leitor de tela" disabled={loading || saving} />
+        </label>
+        <button type="button" className="secondary-button" onClick={addAccessibilityResource} disabled={loading || saving}>Adicionar recurso</button>
+      </div>
+      <ul className="profile-chip-list">{profile.essentialAccessibilityResources.map(item => <li key={item}>
+        <span>{item}</span>
+        <button type="button" className="secondary-button" onClick={() => setProfile(current => ({
+          ...current, essentialAccessibilityResources: current.essentialAccessibilityResources.filter(value => value !== item)
+        }))} disabled={loading || saving} aria-label={`Remover recurso: ${item}`}>Remover</button>
+      </li>)}</ul>
     </section>
     {error && <p className="form-error" role="alert">{error}</p>}
     {notice && <p className="form-success" role="status" aria-live="polite">{notice}</p>}

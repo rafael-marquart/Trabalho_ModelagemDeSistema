@@ -659,3 +659,5 @@ button, input, select { font: inherit; }
 :root:not([data-theme="dark"]) .recruiter-card-icon { background: #E1D5F0; }
 :root:not([data-theme="dark"]) .table-scroll { border-color: var(--line); }
 :root:not([data-theme="dark"]) .recruiter-table th { background: #EEE7F6; }
+
+.profile-subheading { margin: 26px 0 0; font-family: "Manrope", sans-serif; font-size: 16px; color: var(--ink); }
