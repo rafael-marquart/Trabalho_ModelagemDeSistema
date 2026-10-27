@@ -132,4 +132,22 @@ describe("candidate profile API", () => {
     expect(read.profile.professionalExperience).toEqual([{ role: "Analista na Empresa", company: "", period: "" }]);
     expect("skills" in read.profile).toBe(false);
   });
+  it("accepts optional work preferences, rejects invalid values and audits only the category", async () => {
+    const prefs = { modalities: ["Híbrido", "Remoto"], city: "Recife", state: "PE", address: "Boa Viagem", transportMode: "Ônibus" };
+    tx.candidateProfile.upsert.mockResolvedValueOnce({ ...blank, workPreferences: prefs });
+    expect((await put({ ...blank, workPreferences: prefs })).status).toBe(200);
+    expect(JSON.stringify(tx.auditEvent.create.mock.calls)).toContain("workPreferences");
+    expect(JSON.stringify(tx.auditEvent.create.mock.calls)).not.toContain("Boa Viagem");
+    expect((await put({ ...blank })).status).toBe(200);
+    expect((await put({ ...blank, workPreferences: { ...prefs, modalities: ["Telepático"] } })).status).toBe(400);
+    expect((await put({ ...blank, workPreferences: { ...prefs, state: "XX" } })).status).toBe(400);
+    expect((await put({ ...blank, workPreferences: { ...prefs, transportMode: "Foguete" } })).status).toBe(400);
+    expect((await put({ ...blank, workPreferences: { ...prefs, modalities: ["Remoto", "Remoto"] } })).status).toBe(400);
+    expect((await put({ ...blank, workPreferences: { modalities: [], state: "PE" } })).status).toBe(400);
+  });
+  it("returns empty work preferences for profiles saved before the field existed", async () => {
+    prismaMock.candidateProfile.findUnique.mockResolvedValueOnce({ ...blank, accessibilityNeedOptionCodes: [] });
+    const read = await (await GET()).json();
+    expect(read.profile.workPreferences).toEqual({ modalities: [], city: "", state: "", address: "", transportMode: "" });
+  });
 });

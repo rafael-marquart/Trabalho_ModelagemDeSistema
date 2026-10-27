@@ -1,8 +1,11 @@
 import { z } from "zod";
 
-import { educationLevels, educationStatuses, languageLevels, type EducationEntry, type ExperienceEntry, type LanguageEntry } from "@/lib/candidate-profile/options";
+import {
+  brazilianStates, educationLevels, educationStatuses, emptyWorkPreferences, languageLevels, transportModes, workModalities,
+  type EducationEntry, type ExperienceEntry, type LanguageEntry, type WorkPreferences
+} from "@/lib/candidate-profile/options";
 
-export type { EducationEntry, ExperienceEntry, LanguageEntry };
+export type { EducationEntry, ExperienceEntry, LanguageEntry, WorkPreferences };
 
 const educationEntrySchema = z.object({
   level: z.enum(educationLevels),
@@ -15,6 +18,18 @@ const experienceEntrySchema = z.object({
   company: z.string().trim().min(1, "Informe a empresa.").max(120),
   period: z.string().trim().max(80).default("")
 }).strict();
+const workPreferencesSchema = z.object({
+  modalities: z.array(z.enum(workModalities)).default([])
+    .refine((values) => new Set(values).size === values.length, "Não repita modalidades."),
+  city: z.string().trim().max(120).default(""),
+  state: z.enum([...brazilianStates, ""] as const).default(""),
+  address: z.string().trim().max(200).default(""),
+  transportMode: z.enum([...transportModes, ""] as const).default("")
+}).strict().superRefine((value, context) => {
+  if ((value.state || value.address) && !value.city) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ["city"], message: "Informe a cidade para registrar estado ou endereço." });
+  }
+});
 const languageEntrySchema = z.object({
   language: z.string().trim().min(1, "Informe o idioma.").max(80),
   level: z.enum([...languageLevels, ""] as const).default("")
@@ -40,6 +55,7 @@ export const candidateProfileInputSchema = z.object({
   courses: profileListSchema,
   certifications: profileListSchema,
   professionalLinks: professionalLinksSchema,
+  workPreferences: workPreferencesSchema.default(emptyWorkPreferences),
   accessibilityDeclaration: z.enum(["NOT_INFORMED", "NO_NEEDS_DECLARED", "NEEDS_DECLARED"]),
   accessibilityNeeds: profileListSchema,
   accessibilityNeedOptionCodes: optionCodeListSchema,
@@ -111,6 +127,11 @@ export function toExperienceList(value: unknown): ExperienceEntry[] {
   });
 }
 
+export function toWorkPreferences(value: unknown): WorkPreferences {
+  const parsed = workPreferencesSchema.safeParse(value ?? {});
+  return parsed.success ? parsed.data : { ...emptyWorkPreferences };
+}
+
 export function toEducationList(value: unknown): EducationEntry[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap((item): EducationEntry[] => {
@@ -138,7 +159,7 @@ export function canonicalJson(value: unknown): string {
 
 export function toProfileResponse(profile: {
   education: unknown; languages: unknown; professionalExperience: unknown;
-  courses: unknown; certifications: unknown; professionalLinks: unknown;
+  courses: unknown; certifications: unknown; professionalLinks: unknown; workPreferences: unknown;
   accessibilityDeclaration: "NOT_INFORMED" | "NO_NEEDS_DECLARED" | "NEEDS_DECLARED";
   accessibilityNeeds: unknown; accessibilityNeedOptionCodes: unknown;
   essentialAccessibilityResources: unknown; updatedAt: Date;
@@ -147,6 +168,7 @@ export function toProfileResponse(profile: {
     education: toEducationList(profile.education), languages: toLanguageList(profile.languages), professionalExperience: toExperienceList(profile.professionalExperience),
     courses: toStringList(profile.courses), certifications: toStringList(profile.certifications),
     professionalLinks: toStringList(profile.professionalLinks),
+    workPreferences: toWorkPreferences(profile.workPreferences),
     accessibilityDeclaration: profile.accessibilityDeclaration,
     accessibilityNeeds: toStringList(profile.accessibilityNeeds),
     accessibilityNeedOptionCodes: toStringList(profile.accessibilityNeedOptionCodes),

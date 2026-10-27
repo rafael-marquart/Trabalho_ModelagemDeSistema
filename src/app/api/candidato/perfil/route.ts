@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
 import {
-  candidateProfileInputSchema, canonicalJson, toEducationList, toExperienceList, toLanguageList, toProfileResponse, toStringList
+  candidateProfileInputSchema, canonicalJson, toEducationList, toExperienceList, toLanguageList, toProfileResponse, toWorkPreferences, toStringList
 } from "@/lib/candidate-profile/schema";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 
@@ -14,14 +14,14 @@ export async function GET() {
     where: { userId: user.id },
     select: {
       education: true, languages: true, professionalExperience: true,
-      courses: true, certifications: true, professionalLinks: true,
+      courses: true, certifications: true, professionalLinks: true, workPreferences: true,
       accessibilityDeclaration: true, accessibilityNeeds: true, accessibilityNeedOptionCodes: true,
       essentialAccessibilityResources: true, updatedAt: true
     }
   });
   const emptyProfile = {
     education: [], languages: [], professionalExperience: [], courses: [],
-    certifications: [], professionalLinks: [], accessibilityDeclaration: "NOT_INFORMED" as const,
+    certifications: [], professionalLinks: [], workPreferences: {}, accessibilityDeclaration: "NOT_INFORMED" as const,
     accessibilityNeeds: [], accessibilityNeedOptionCodes: [], essentialAccessibilityResources: [], updatedAt: new Date(0)
   };
   return NextResponse.json({
@@ -45,6 +45,7 @@ export async function PUT(request: Request) {
     education: input.education, languages: input.languages,
     professionalExperience: input.professionalExperience, courses: input.courses,
     certifications: input.certifications, professionalLinks: input.professionalLinks,
+    workPreferences: input.workPreferences,
     accessibilityDeclaration: input.accessibilityDeclaration,
     accessibilityNeeds: input.accessibilityNeeds,
     accessibilityNeedOptionCodes: input.accessibilityNeedOptionCodes,
@@ -57,7 +58,7 @@ export async function PUT(request: Request) {
         where: { userId: user.id },
         select: {
           education: true, languages: true, professionalExperience: true,
-          courses: true, certifications: true, professionalLinks: true,
+          courses: true, certifications: true, professionalLinks: true, workPreferences: true,
           accessibilityDeclaration: true, accessibilityNeeds: true,
           accessibilityNeedOptionCodes: true, essentialAccessibilityResources: true
         }
@@ -80,7 +81,7 @@ export async function PUT(request: Request) {
         where: { userId: user.id }, create: { userId: user.id, ...fields }, update: fields,
         select: {
           education: true, languages: true, professionalExperience: true,
-          courses: true, certifications: true, professionalLinks: true,
+          courses: true, certifications: true, professionalLinks: true, workPreferences: true,
           accessibilityDeclaration: true, accessibilityNeeds: true,
           accessibilityNeedOptionCodes: true, essentialAccessibilityResources: true, updatedAt: true
         }
@@ -90,6 +91,7 @@ export async function PUT(request: Request) {
         // Compare structured categories after reading legacy text entries the same way the API returns them.
         if (key === "education") before = toEducationList(before);
         if (key === "languages") before = toLanguageList(before);
+        if (key === "workPreferences") before = toWorkPreferences(before);
         if (key === "professionalExperience") before = toExperienceList(before);
         return canonicalJson(before) !== canonicalJson(fields[key as keyof typeof fields]);
       });

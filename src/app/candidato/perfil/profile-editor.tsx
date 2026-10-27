@@ -2,7 +2,8 @@
 
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import {
-  educationLevels, educationStatuses, languageLevels, type EducationEntry, type ExperienceEntry, type LanguageEntry
+  educationLevels, educationStatuses, languageLevels, brazilianStates, emptyWorkPreferences, transportModes, workModalities,
+  type EducationEntry, type ExperienceEntry, type LanguageEntry, type WorkPreferences
 } from "@/lib/candidate-profile/options";
 
 type Declaration = "NOT_INFORMED" | "NO_NEEDS_DECLARED" | "NEEDS_DECLARED";
@@ -11,13 +12,14 @@ type NeedOption = { code: string; name: string; description: string; group: Need
 type Profile = {
   fullName: string; email: string; education: EducationEntry[]; languages: LanguageEntry[];
   professionalExperience: ExperienceEntry[]; courses: string[]; certifications: string[]; professionalLinks: string[];
+  workPreferences: WorkPreferences;
   accessibilityDeclaration: Declaration; accessibilityNeeds: string[]; accessibilityNeedOptionCodes: string[];
   essentialAccessibilityResources: string[]; updatedAt?: string;
 };
 type ProfileDocument = { id: string; category: "COURSE" | "CERTIFICATION"; displayName: string; originalName: string; mimeType: string; sizeBytes: number; createdAt: string };
 const empty: Profile = {
   fullName: "", email: "", education: [], languages: [], professionalExperience: [],
-  courses: [], certifications: [], professionalLinks: [], accessibilityDeclaration: "NOT_INFORMED",
+  courses: [], certifications: [], professionalLinks: [], workPreferences: emptyWorkPreferences, accessibilityDeclaration: "NOT_INFORMED",
   accessibilityNeeds: [], accessibilityNeedOptionCodes: [], essentialAccessibilityResources: []
 };
 type TextKey = "accessibilityNeeds";
@@ -92,6 +94,14 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     return () => { active = false; };
   }, []);
 
+  function updateWork(change: Partial<WorkPreferences>) {
+    setProfile(current => ({ ...current, workPreferences: { ...current.workPreferences, ...change } }));
+  }
+  function toggleModality(modality: WorkPreferences["modalities"][number], checked: boolean) {
+    const selected = new Set(profile.workPreferences.modalities);
+    if (checked) selected.add(modality); else selected.delete(modality);
+    updateWork({ modalities: workModalities.filter(item => selected.has(item)) });
+  }
   function updateList(key: TextKey, value: string) {
     setProfile(current => ({ ...current, [key]: lines(value) }));
   }
@@ -197,7 +207,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   async function handleSubmit(event?: FormEvent<HTMLFormElement>) {
     event?.preventDefault(); setError(""); setNotice(""); setSaving(true);
     const keys = ["education", "languages", "professionalExperience", "courses", "certifications",
-      "professionalLinks", "accessibilityDeclaration", "accessibilityNeeds", "accessibilityNeedOptionCodes",
+      "professionalLinks", "workPreferences", "accessibilityDeclaration", "accessibilityNeeds", "accessibilityNeedOptionCodes",
       "essentialAccessibilityResources"] as const;
     const payload = Object.fromEntries(keys.map(key => [key, profile[key]]));
     try {
@@ -266,6 +276,28 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
         <button type="button" className="secondary-button" onClick={addLanguage} disabled={loading || saving}>Adicionar idioma</button>
       </div>
       <ul className="profile-chip-list">{profile.languages.map((entry, index) => <li key={`${index}-${describeLanguage(entry)}`}><span>{describeLanguage(entry)}</span><button type="button" className="secondary-button" onClick={() => removeLanguage(index)} aria-label={`Remover idioma: ${describeLanguage(entry)}`}>Remover</button></li>)}</ul>
+    </section>
+    <section className="profile-section">
+      <h2>Preferências de trabalho e deslocamento</h2>
+      <p className="muted">Opcional. Usadas para comparar com a modalidade e o local das vagas. Informe só o que se sentir confortável em compartilhar.</p>
+      <fieldset className="accessibility-option-group">
+        <legend>Modalidades que você aceita</legend>
+        {workModalities.map(modality => <label className="accessibility-option" key={modality}>
+          <input type="checkbox" checked={profile.workPreferences.modalities.includes(modality)} disabled={loading || saving}
+            onChange={event => toggleModality(modality, event.target.checked)} />
+          <span className="accessibility-option-copy"><strong>{modality}</strong></span>
+        </label>)}
+      </fieldset>
+      <div className="profile-education-controls">
+        <label>Cidade<input value={profile.workPreferences.city} onChange={event => updateWork({ city: event.target.value })} maxLength={120} autoComplete="address-level2" disabled={loading || saving} /></label>
+        <label>Estado<select value={profile.workPreferences.state} onChange={event => updateWork({ state: event.target.value as WorkPreferences["state"] })} disabled={loading || saving}>
+          <option value="">Não informado</option>{brazilianStates.map(item => <option key={item} value={item}>{item}</option>)}
+        </select></label>
+        <label>Endereço ou bairro (opcional)<input value={profile.workPreferences.address} onChange={event => updateWork({ address: event.target.value })} maxLength={200} autoComplete="street-address" disabled={loading || saving} /></label>
+        <label>Meio de transporte principal<select value={profile.workPreferences.transportMode} onChange={event => updateWork({ transportMode: event.target.value as WorkPreferences["transportMode"] })} disabled={loading || saving}>
+          <option value="">Não informado</option>{transportModes.map(item => <option key={item} value={item}>{item}</option>)}
+        </select></label>
+      </div>
     </section>
     <section className="profile-section">
       <h2>Links profissionais</h2>

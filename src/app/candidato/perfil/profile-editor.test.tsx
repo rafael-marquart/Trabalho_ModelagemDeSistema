@@ -5,7 +5,7 @@ import ProfileEditor from "./profile-editor";
 
 const emptyProfile = {
   education: [], languages: [], professionalExperience: [], courses: [], certifications: [],
-  professionalLinks: [], accessibilityDeclaration: "NOT_INFORMED", accessibilityNeeds: [],
+  professionalLinks: [], workPreferences: { modalities: [], city: "", state: "", address: "", transportMode: "" }, accessibilityDeclaration: "NOT_INFORMED", accessibilityNeeds: [],
   accessibilityNeedOptionCodes: [], essentialAccessibilityResources: []
 };
 
@@ -92,5 +92,21 @@ describe("candidate profile editor", () => {
     const body = JSON.parse(String(put[1]!.body));
     expect(body.professionalExperience).toEqual([{ role: "Auxiliar administrativo", company: "Empresa Exemplo", period: "03/2022 a 08/2024" }]);
     expect("skills" in body).toBe(false);
+  });
+
+  it("saves optional work preferences from modality, city, state and transport", async () => {
+    const fetchMock = await renderEditor();
+    expect(screen.getByRole("heading", { name: "Preferências de trabalho e deslocamento" })).toBeTruthy();
+    fireEvent.click(screen.getByLabelText("Remoto"));
+    fireEvent.click(screen.getByLabelText("Híbrido"));
+    fireEvent.change(screen.getByLabelText("Cidade"), { target: { value: "Recife" } });
+    fireEvent.change(screen.getByLabelText("Estado"), { target: { value: "PE" } });
+    fireEvent.change(screen.getByLabelText("Meio de transporte principal"), { target: { value: "Ônibus" } });
+    fireEvent.click(screen.getByRole("button", { name: "Salvar perfil" }));
+    await waitFor(() => expect(fetchMock.mock.calls.some((call) => (call as unknown as [string, RequestInit?])[1]?.method === "PUT")).toBe(true));
+    const put = fetchMock.mock.calls.map((call) => call as unknown as [string, RequestInit?]).find((call) => call[1]?.method === "PUT")!;
+    expect(JSON.parse(String(put[1]!.body)).workPreferences).toEqual({
+      modalities: ["Híbrido", "Remoto"], city: "Recife", state: "PE", address: "", transportMode: "Ônibus"
+    });
   });
 });

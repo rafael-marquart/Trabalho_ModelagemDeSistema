@@ -65,6 +65,7 @@ model CandidateProfile {
   courses                         Json                           @default("[]")
   certifications                  Json                           @default("[]")
   professionalLinks               Json                           @default("[]")
+  workPreferences                 Json                           @default("{}")
   accessibilityDeclaration        AccessibilityDeclarationStatus @default(NOT_INFORMED)
   accessibilityNeeds              Json                           @default("[]")
   accessibilityNeedOptionCodes    Json                           @default("[]")

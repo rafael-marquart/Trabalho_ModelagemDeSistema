@@ -22,3 +22,20 @@ export type ExperienceEntry = {
   company: string;
   period: string;
 };
+
+export const workModalities = ["Presencial", "Híbrido", "Remoto"] as const;
+export const transportModes = ["Caminhada", "Bicicleta", "Carro", "Ônibus", "Metrô/trem"] as const;
+export const brazilianStates = [
+  "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI",
+  "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+] as const;
+
+// Candidate preferences used later by the compatibility calculation (SPEC-007); all fields are optional.
+export type WorkPreferences = {
+  modalities: (typeof workModalities)[number][];
+  city: string;
+  state: (typeof brazilianStates)[number] | "";
+  address: string;
+  transportMode: (typeof transportModes)[number] | "";
+};
+export const emptyWorkPreferences: WorkPreferences = { modalities: [], city: "", state: "", address: "", transportMode: "" };
