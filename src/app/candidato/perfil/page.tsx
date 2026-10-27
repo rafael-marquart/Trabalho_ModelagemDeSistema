@@ -11,7 +11,7 @@ export default async function CandidateProfilePage() {
     <main className="auth-page candidate-profile-page">
       <div className="theme-control-host"><ThemeToggle /></div>
       <div className="candidate-profile-content">
-        <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.svg" alt="Acessa Vagas" /></Link>
+        <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" /></Link>
         <Link className="back-link" href="/candidato">← Voltar à área do candidato</Link>
         <header className="candidate-profile-header">
           <p className="eyebrow">Área do candidato</p><h1>Meu perfil</h1>
