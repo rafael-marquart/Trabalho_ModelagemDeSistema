@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import ThemeToggle from "@/components/theme-toggle";
+import CompanyShell from "@/components/company-shell";
 import React, { FormEvent, useCallback, useEffect, useState } from "react";
 
 type Invitation = {
@@ -165,27 +165,7 @@ export default function CompanyRecruitersPage() {
   }
 
   return (
-    <div className="company-dashboard">
-      <header className="company-topbar">
-        <Link className="company-brand" href="/empresa" aria-label="Acessa Vagas — área da empresa">
-          <img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" />
-        </Link>
-        <span className="company-topbar-label">Área da empresa</span>
-        <div className="company-topbar-actions">
-          <ThemeToggle />
-          <span className="company-avatar" aria-hidden="true">AV</span>
-        </div>
-      </header>
-
-      <div className="company-dashboard-body">
-        <aside className="company-sidebar">
-          <p className="company-sidebar-title">MENU DA EMPRESA</p>
-          <nav className="company-nav" aria-label="Menu da empresa">
-            <Link className="company-nav-item" href="/empresa/recrutadores" aria-current="page">Recrutadores</Link>
-            <Link className="company-nav-item" href="/empresa">Área da empresa</Link>
-          </nav>
-        </aside>
-
+    <CompanyShell role="COMPANY" active="recruiters" userName="Empresa">
         <main className="company-content" aria-labelledby="recruiters-title">
           <header className="company-page-heading">
             <h1 id="recruiters-title">Gestão de recrutadores</h1>
@@ -345,7 +325,6 @@ export default function CompanyRecruitersPage() {
             </div>
           </section>
         </main>
-      </div>
-    </div>
+    </CompanyShell>
   );
 }

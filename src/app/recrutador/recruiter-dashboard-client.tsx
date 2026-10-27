@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import ThemeToggle from "@/components/theme-toggle";
 import { useEffect, useState } from "react";
 
 type Overview = {
@@ -32,27 +30,7 @@ export default function RecruiterHomePage() {
   }, []);
 
   return (
-    <main className="recruiter-dashboard">
-      <header className="recruiter-topbar">
-        <Link className="recruiter-brand" href="/" aria-label="Acessa Vagas — início">
-          <img className="brand-logo recruiter-brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" />
-        </Link>
-        <span className="recruiter-topbar-label">Área do recrutador</span>
-        <div className="recruiter-topbar-actions">
-          <ThemeToggle />
-          <form action="/api/auth/logout" method="post">
-            <button className="secondary-button" type="submit">Sair da conta</button>
-          </form>
-        </div>
-      </header>
-
-      <div className="recruiter-dashboard-body">
-        <aside className="recruiter-sidebar">
-          <p className="recruiter-sidebar-title">SEU ESPAÇO</p>
-          <div className="recruiter-nav-item" aria-current="page"><span aria-hidden="true">▦</span> Visão geral</div>
-        </aside>
-
-        <section className="recruiter-content" aria-labelledby="recruiter-home-title">
+    <main className="company-content" aria-labelledby="recruiter-home-title">
           <div className="recruiter-heading">
             <div>
               <p className="eyebrow">Área do recrutador</p>
@@ -124,8 +102,6 @@ export default function RecruiterHomePage() {
               </ul>
             )}
           </section>
-        </section>
-      </div>
     </main>
   );
 }
