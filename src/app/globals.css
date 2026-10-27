@@ -540,3 +540,35 @@ button, input, select { font: inherit; }
 :root[data-theme="dark"] .catalog-admin-row input:not([type="checkbox"]),
 :root[data-theme="dark"] .catalog-admin-row select,
 :root[data-theme="dark"] .catalog-admin-row textarea { border-color: #847394; color: var(--ink); background: #2b2238; }
+
+
+/* SPEC-002 profile controls: structured languages, private documents and declaration-first flow */
+.profile-language-controls { display:grid; grid-template-columns:minmax(140px,1fr) minmax(130px,.8fr) auto; align-items:end; gap:12px; margin-top:16px; }
+.profile-language-controls label, .profile-document-form label { display:grid; gap:7px; color:var(--ink); font-size:13px; font-weight:700; }
+.profile-language-controls select, .profile-language-controls input, .profile-document-form select, .profile-document-form input:not([type="file"]) {
+  width:100%; min-height:44px; padding:10px 12px; border:1px solid #8b8499; border-radius:9px; color:var(--ink); background:var(--surface); font:inherit;
+}
+.profile-language-controls .secondary-button { padding:0 14px; }
+.profile-chip-list, .profile-document-list { display:grid; gap:10px; margin:18px 0 0; padding:0; list-style:none; }
+.profile-chip-list li, .profile-document-list li { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:12px; border:1px solid var(--line); border-radius:10px; }
+.profile-chip-list .secondary-button, .profile-document-actions .secondary-button { display:inline-flex; align-items:center; justify-content:center; padding:0 12px; min-height:36px; font-size:12px; }
+.profile-document-form { display:grid; gap:14px; margin-top:18px; padding:16px; border:1px solid var(--line); border-radius:12px; }
+.profile-document-form input[type="file"] { width:100%; padding:10px; border:1px dashed var(--line); border-radius:9px; color:var(--ink); background:var(--surface); }
+.profile-document-form .primary-button { padding:0 18px; }
+.profile-document-list li > div:first-child { display:grid; gap:5px; min-width:0; }
+.profile-document-list li strong { overflow-wrap:anywhere; font-size:14px; }
+.profile-document-list li span { color:var(--muted); font-size:12px; overflow-wrap:anywhere; }
+.profile-document-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.accessibility-declaration-choices { display:grid; gap:12px; margin:18px 0 4px; padding:16px; border:1px solid var(--line); border-radius:12px; }
+.accessibility-declaration-choices legend { padding:0 7px; color:var(--ink); font-weight:700; }
+.accessibility-declaration-choices label { display:flex; align-items:flex-start; gap:10px; color:var(--ink); line-height:1.5; cursor:pointer; }
+.accessibility-declaration-choices input { width:18px; height:18px; margin-top:2px; accent-color:var(--purple); }
+:root[data-theme="dark"] .profile-language-controls select,
+:root[data-theme="dark"] .profile-language-controls input,
+:root[data-theme="dark"] .profile-document-form select,
+:root[data-theme="dark"] .profile-document-form input:not([type="file"]) { border-color:#847394; color:var(--ink); background:#2b2238; }
+@media (max-width:650px) {
+  .profile-language-controls { grid-template-columns:1fr; }
+  .profile-document-list li { align-items:flex-start; flex-direction:column; }
+  .profile-chip-list li { align-items:flex-start; }
+}
