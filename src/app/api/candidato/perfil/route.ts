@@ -66,10 +66,10 @@ export async function PUT(request: Request) {
         essentialAccessibilityResources: true, updatedAt: true
       }
     });
-    const changedCategories = Object.keys(fields).filter((key) =>
-      JSON.stringify(previous?.[key as keyof typeof previous] ?? null) !==
-      JSON.stringify(fields[key as keyof typeof fields])
-    );
+    const changedCategories = Object.keys(fields).filter((key) => {
+      const before = previous ? (previous as Record<string, unknown>)[key] : null;
+      return JSON.stringify(before) !== JSON.stringify(fields[key as keyof typeof fields]);
+    });
     if (!previous || changedCategories.length) {
       await tx.auditEvent.create({
         data: {

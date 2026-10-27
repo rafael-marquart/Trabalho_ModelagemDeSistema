@@ -19,7 +19,7 @@ describe("candidate profile API", () => {
   beforeEach(() => {
     vi.clearAllMocks(); getCurrentUserMock.mockResolvedValue(candidate);
     prismaMock.candidateProfile.findUnique.mockResolvedValue(null);
-    prismaMock.$transaction.mockImplementation(async (callback: (tx: typeof tx) => unknown) => callback(tx));
+    prismaMock.$transaction.mockImplementation(async (callback: (transaction: typeof tx) => unknown) => callback(tx));
     tx.candidateProfile.findUnique.mockResolvedValue(null); tx.candidateProfile.upsert.mockResolvedValue(blank);
     tx.auditEvent.create.mockResolvedValue({});
   });
