@@ -1,26 +1,46 @@
 # SPEC-002 — Implementação controlada do perfil do candidato
 
-## Escopo entregue na branch
+## Escopo implementado na branch
 
 - Perfil persistido associado 1:1 à conta de usuário com papel CANDIDATE.
-- Categorias: formação/escolaridade, competências, idiomas, experiência profissional, cursos, certificações, links profissionais, declaração de acessibilidade, necessidades funcionais e recursos indispensáveis.
-- Nome e e-mail são apresentados a partir da conta, sem duplicação no perfil.
-- Salvamento progressivo: listas vazias são válidas e nenhuma categoria profissional exige preenchimento universal.
-- A declaração distingue NOT_INFORMED, NO_NEEDS_DECLARED e NEEDS_DECLARED.
+- Categorias profissionais: formação/escolaridade, competências, idiomas, experiências, cursos, certificações e links profissionais.
+- Nome e e-mail são reutilizados da conta, sem duplicação no perfil.
+- Salvamento progressivo: categorias profissionais podem permanecer vazias.
+- Declaração distingue `NOT_INFORMED`, `NO_NEEDS_DECLARED` e `NEEDS_DECLARED`.
 - Necessidades e recursos são autodeclarados; não há upload nem campo para laudo médico.
-- API restrita ao candidato autenticado e proteção contra requisições cross-origin nas alterações.
-- Auditoria registra criação/atualização e categorias afetadas, sem copiar valores profissionais ou de acessibilidade para metadados.
-- O catálogo oficial ainda não está implementado. A estrutura e a lista inicial da OPEN-008 foram aprovadas: 6 opções arquitetônicas (rampa/acesso sem escadas, elevador acessível, portas/passagens adequadas, banheiro acessível, estação adaptada, sinalização tátil), 4 de comunicação (Libras, linguagem simples, comunicação escrita, comunicação alternativa/aumentativa) e 6 tecnológicas (leitor de tela, ampliação, contraste/ajustes visuais, comandos de voz, tecnologia assistiva própria, equipamento/software assistivo). Cada opção deverá ter identificador estável e propriedade explícita de obrigatoriedade; a declaração de necessidades é opcional; se a pessoa candidata optar por declarar, deverá selecionar ao menos uma opção do catálogo ou descrever uma necessidade não contemplada, podendo fazer ambos. A descrição livre não cria opção oficial automaticamente. Critérios de obrigatoriedade, controles administrativos e eventual fluxo de incorporação de declarações livres continuam pendentes.
+- API de perfil restrita ao candidato autenticado; alterações verificam origem da requisição.
+- Auditoria de criação/atualização registra categorias alteradas sem copiar valores profissionais ou de acessibilidade para metadados.
+- Catálogo estruturado persistido no banco, com os 16 códigos aprovados na OPEN-008, separados em grupos arquitetônico, comunicação e tecnológico.
+- Cada opção possui identificador estável, nome, descrição, grupo, estado ativo/inativo e propriedade explícita de obrigatoriedade. As opções iniciais são ativas e não obrigatórias; isso não determina a classificação futura. A classificação pode ser alterada por administrador autenticado e é auditada.
+- Tela do candidato lista as opções por grupo, permite seleção múltipla e descrição livre de necessidade não contemplada. A descrição livre não cria uma opção oficial.
+- A API valida no servidor que `NEEDS_DECLARED` contenha ao menos uma opção selecionada ou descrição livre; rejeita declaração incompatível com ausência de dados e declaração de inexistência de necessidades combinada com necessidades informadas.
+- Opções desativadas não podem ser selecionadas por novos perfis, mas uma opção já registrada pode continuar associada à declaração histórica até que o candidato a remova.
+- Área administrativa em `/admin/catalogo-acessibilidade`, restrita ao papel ADMIN, permite cadastrar, editar, marcar obrigatoriedade e ativar/desativar opções. Não há exclusão física nem reutilização de identificadores.
+- Auditoria administrativa registra criação/alteração do catálogo, ator, código e metadados não sensíveis.
+- Links profissionais são validados como URLs HTTP/HTTPS.
+- Foram adicionados casos automatizados para validação da declaração condicional e rejeição de links não HTTP/HTTPS. Os testes permanecem sem execução.
 
-## Limites preservados
+## Limites e pendências preservados
 
-- Não implementa algoritmo de compatibilidade nem afirma que o perfil é suficiente para uma vaga.
-- Não disponibiliza consulta de perfis para recrutadores: a matriz de campos autorizados e o contexto de candidatura da OPEN-011 precisam de definição.
-- A estrutura e a lista inicial do catálogo da OPEN-008 foram aprovadas. A implementação continua pendente para critérios de obrigatoriedade, controles administrativos e fluxo de necessidades não contempladas.
-- Campos internos, limites por categoria, formatos e critérios de consistência da OPEN-007.2 não foram inventados.
-- O perfil é criado sob demanda no primeiro acesso à tela/API. Não há operação de exclusão.
+- Não implementa algoritmo de compatibilidade nem afirma que o perfil é suficiente para uma vaga; essa responsabilidade pertence à SPEC-007.
+- Não implementa consulta do perfil por recrutadores. A OPEN-011 define o princípio de acesso após candidatura, mas a matriz de campos, os limites por etapa e os registros de acesso continuam pendentes. Além disso, o modelo de candidatura não está presente no schema atual da branch; não foi inventado um fluxo de candidatura dentro da SPEC-002.
+- A OPEN-008 permanece parcialmente resolvida: faltam critérios de produto para atribuição/alteração da obrigatoriedade e eventual processo para incorporar declarações livres ao catálogo. Até decisão explícita, todas as opções iniciais permanecem não obrigatórias e o texto livre não é promovido automaticamente.
+- A OPEN-007.2 mantém pendentes campos internos, limites, quantidade máxima de registros e critérios detalhados de consistência. Só foi aplicada validação técnica de URL para links profissionais, sem criar limites quantitativos arbitrários.
+- O perfil continua sendo criado sob demanda; não há operação de exclusão do perfil.
 - A aprovação formal do layout permanece separada.
+
+## Arquivos principais
+
+- `prisma/schema.prisma`
+- `prisma/migrations/20261026140000_spec_002_accessibility_catalog/migration.sql`
+- `src/lib/candidate-profile/schema.ts`
+- `src/app/api/candidato/perfil/route.ts`
+- `src/app/api/candidato/catalogo-acessibilidade/route.ts`
+- `src/app/api/admin/catalogo-acessibilidade/route.ts`
+- `src/app/candidato/perfil/profile-editor.tsx`
+- `src/app/admin/catalogo-acessibilidade/page.tsx`
+- `src/app/admin/catalogo-acessibilidade/catalog-editor.tsx`
 
 ## Verificações
 
-Por solicitação explícita, nenhum teste, lint, typecheck, build, geração Prisma, migração ou validação automatizada foi executado. Os testes automatizados serão adicionados, mas permanecem sem execução.
+Por solicitação explícita, nenhum teste, lint, typecheck, build, geração Prisma, migração ou validação automatizada foi executado. O código e a migração ainda precisam passar por essas verificações quando houver autorização. Não declarar a SPEC concluída até que as pendências documentadas sejam resolvidas e os critérios de aceitação sejam verificados.
