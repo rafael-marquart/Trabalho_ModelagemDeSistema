@@ -18,12 +18,11 @@ const empty: Profile = {
   accessibilityNeeds: [], accessibilityNeedOptionCodes: [], essentialAccessibilityResources: []
 };
 const sections: { key: keyof Profile; title: string; hint: string }[] = [
-  { key: "education", title: "Formação e escolaridade", hint: "Uma formação por linha. Você pode completar esta seção depois." },
-  { key: "skills", title: "Competências", hint: "Informe suas competências, uma por linha." },
-  { key: "professionalExperience", title: "Experiência profissional", hint: "Uma experiência por linha; inclua os detalhes relevantes." },
-  { key: "professionalLinks", title: "Links profissionais", hint: "Um link por linha. Use endereços completos, como https://..." },
   { key: "essentialAccessibilityResources", title: "Recursos de acessibilidade indispensáveis", hint: "Informe recursos funcionais necessários para realizar atividades profissionais, um por linha." }
 ];
+const educationLevels = ["Ensino fundamental", "Ensino médio", "Ensino técnico", "Ensino superior — graduação", "Pós-graduação", "Mestrado", "Doutorado", "Curso livre", "Outro"];
+const educationStatuses = ["Concluído", "Em andamento", "Trancado", "Incompleto"];
+const professionalLinkTypes = ["LinkedIn", "GitHub", "Portfólio", "Site pessoal", "Behance", "Outro"];
 const groupLabels: Record<NeedGroup, string> = {
   ARCHITECTURAL: "Necessidades arquitetônicas",
   COMMUNICATION: "Necessidades de comunicação",
@@ -44,6 +43,12 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   const [language, setLanguage] = useState(languageChoices[0]);
   const [otherLanguage, setOtherLanguage] = useState("");
   const [languageLevel, setLanguageLevel] = useState(languageLevels[1]);
+  const [educationLevel, setEducationLevel] = useState(educationLevels[3]);
+  const [educationCourse, setEducationCourse] = useState("");
+  const [educationInstitution, setEducationInstitution] = useState("");
+  const [educationStatus, setEducationStatus] = useState(educationStatuses[0]);
+  const [linkType, setLinkType] = useState(professionalLinkTypes[0]);
+  const [linkUrl, setLinkUrl] = useState("");
   const [documentCategory, setDocumentCategory] = useState<"COURSE" | "CERTIFICATION">("COURSE");
   const [documentName, setDocumentName] = useState("");
   const [documentFile, setDocumentFile] = useState<File | null>(null);
@@ -112,6 +117,23 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   function removeLanguage(entry: string) {
     setProfile(current => ({ ...current, languages: current.languages.filter(item => item !== entry) }));
   }
+  function addEducation() {
+    const details = [educationLevel, educationCourse.trim(), educationInstitution.trim(), educationStatus].filter(Boolean);
+    if (details.length < 3) { setError("Informe o curso ou área e a instituição para adicionar a formação."); return; }
+    const entry = details.join(" — ");
+    if (profile.education.some(item => item.toLocaleLowerCase() === entry.toLocaleLowerCase())) { setError("Essa formação já foi adicionada."); return; }
+    setProfile(current => ({ ...current, education: [...current.education, entry] }));
+    setEducationCourse(""); setEducationInstitution(""); setError("");
+  }
+  function addProfessionalLink() {
+    const value = linkUrl.trim();
+    let parsed: URL;
+    try { parsed = new URL(value); } catch { setError("Informe um endereço completo, incluindo https://."); return; }
+    if (!["http:", "https:"].includes(parsed.protocol)) { setError("Use somente links http:// ou https://."); return; }
+    if (profile.professionalLinks.includes(value)) { setError("Esse link já foi adicionado."); return; }
+    setProfile(current => ({ ...current, professionalLinks: [...current.professionalLinks, value] }));
+    setLinkUrl(""); setError("");
+  }
   async function uploadDocument(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setError(""); setNotice("");
     if (!documentName.trim() || !documentFile) { setError("Informe o nome e selecione um arquivo."); return; }
@@ -168,6 +190,18 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
       <h2>Dados da conta</h2><p className="muted">Nome e e-mail vêm da sua conta e não precisam ser preenchidos novamente.</p>
       <div className="profile-account-grid"><div><span>Nome</span><strong>{profile.fullName || accountName}</strong></div><div><span>E-mail</span><strong>{profile.email || accountEmail}</strong></div></div>
     </section>
+    <section className="profile-section">
+      <h2>Formação e escolaridade</h2>
+      <p className="muted">Adicione cada formação separadamente. Você pode registrar formações concluídas ou em andamento.</p>
+      <div className="profile-education-controls">
+        <label>Nível de escolaridade<select value={educationLevel} onChange={event => setEducationLevel(event.target.value)} disabled={loading || saving}>{educationLevels.map(item => <option key={item} value={item}>{item}</option>)}</select></label>
+        <label>Curso ou área<input value={educationCourse} onChange={event => setEducationCourse(event.target.value)} maxLength={160} placeholder="Ex.: Análise e Desenvolvimento de Sistemas" disabled={loading || saving} /></label>
+        <label>Instituição de ensino<input value={educationInstitution} onChange={event => setEducationInstitution(event.target.value)} maxLength={160} placeholder="Ex.: Instituto Federal" disabled={loading || saving} /></label>
+        <label>Situação<select value={educationStatus} onChange={event => setEducationStatus(event.target.value)} disabled={loading || saving}>{educationStatuses.map(item => <option key={item} value={item}>{item}</option>)}</select></label>
+        <button type="button" className="secondary-button" onClick={addEducation} disabled={loading || saving}>Adicionar formação</button>
+      </div>
+      <ul className="profile-chip-list">{profile.education.map(item => <li key={item}><span>{item}</span><button type="button" className="secondary-button" onClick={() => setProfile(current => ({ ...current, education: current.education.filter(value => value !== item) }))} aria-label="Remover formação">Remover</button></li>)}</ul>
+    </section>
     {sections.map(section => <section className="profile-section" key={section.key}>
       <label className="profile-section-title" htmlFor={section.key}>{section.title}</label>
       <p className="muted">{section.hint}</p>
@@ -191,6 +225,16 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
       <ul className="profile-chip-list">{profile.languages.map(item => <li key={item}><span>{item}</span><button type="button" className="secondary-button" onClick={() => removeLanguage(item)} aria-label={`Remover ${item}`}>Remover</button></li>)}</ul>
     </section>
     <section className="profile-section">
+      <h2>Links profissionais</h2>
+      <p className="muted">Escolha o tipo de link, cole o endereço completo e adicione-o à lista. Use links públicos do seu portfólio profissional.</p>
+      <div className="profile-link-controls">
+        <label>Tipo de link<select value={linkType} onChange={event => setLinkType(event.target.value)} disabled={loading || saving}>{professionalLinkTypes.map(item => <option key={item} value={item}>{item}</option>)}</select></label>
+        <label className="profile-link-url-label">Endereço do link<input type="url" inputMode="url" autoComplete="url" value={linkUrl} onChange={event => setLinkUrl(event.target.value)} maxLength={2048} placeholder={linkType === "LinkedIn" ? "https://www.linkedin.com/in/seu-perfil" : linkType === "GitHub" ? "https://github.com/seu-usuario" : "https://..." } disabled={loading || saving} /></label>
+        <button type="button" className="secondary-button" onClick={addProfessionalLink} disabled={loading || saving}>Adicionar link</button>
+      </div>
+      <ul className="profile-document-list">{profile.professionalLinks.map((item,index) => <li key={item}><div><strong>{professionalLinkTypes.find(type => item.toLocaleLowerCase().includes(type.toLocaleLowerCase())) || "Link profissional"}</strong><a href={item} target="_blank" rel="noreferrer">{item}</a></div><button type="button" className="secondary-button" onClick={() => setProfile(current => ({ ...current, professionalLinks: current.professionalLinks.filter((_,i) => i !== index) }))}>Remover</button></li>)}</ul>
+    </section>
+    <section className="profile-section">
       <h2>Cursos e certificações</h2>
       <p className="muted">Adicione o nome e o arquivo correspondente. São aceitos PDF, DOC, DOCX, JPG e PNG, com até 10 MB por arquivo.</p>
       <form className="profile-document-form" onSubmit={uploadDocument}>
@@ -207,10 +251,6 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
         <div className="profile-document-actions"><a className="secondary-button" href={`/api/candidato/documentos/${encodeURIComponent(document.id)}`}>Baixar</a><button className="secondary-button" type="button" onClick={() => void deleteDocument(document)}>Remover</button></div>
       </li>)}</ul>
       <p className="muted">Os nomes dos cursos e certificações antigos continuam no perfil para preservar dados já registrados.</p>
-      <label className="profile-section-title" htmlFor="courses">Cursos (texto, opcional)</label>
-      <textarea id="courses" value={asText(profile.courses)} onChange={event => updateList("courses", event.target.value)} rows={2} placeholder="Um curso por linha" />
-      <label className="profile-section-title" htmlFor="certifications">Certificações (texto, opcional)</label>
-      <textarea id="certifications" value={asText(profile.certifications)} onChange={event => updateList("certifications", event.target.value)} rows={2} placeholder="Uma certificação por linha" />
     </section>
     <section className="profile-section">
       <h2>Necessidades funcionais de acessibilidade</h2>
