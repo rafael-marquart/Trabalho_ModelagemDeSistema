@@ -10,7 +10,7 @@
 - Necessidades e recursos são autodeclarados; não há upload nem campo para laudo médico.
 - API restrita ao candidato autenticado e proteção contra requisições cross-origin nas alterações.
 - Auditoria registra criação/atualização e categorias afetadas, sem copiar valores profissionais ou de acessibilidade para metadados.
-- Não há catálogo predefinido de necessidades nem marcação arbitrária de itens obrigatórios.
+- O catálogo oficial ainda não está implementado. A decisão aprovada para OPEN-008 define três grupos (arquitetônico, comunicação e tecnológico), opções com identificador estável e propriedade explícita de obrigatoriedade, controles administrativos rastreáveis e possibilidade de autodeclarar necessidades não contempladas. A lista inicial e as regras operacionais detalhadas continuam pendentes.
 
 ## Limites preservados
 
