@@ -489,8 +489,8 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | Campo | Valor |
 |---|---|
 | ID | SPEC-003 |
-| Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada em 27/10/2026, exceto a navegação por voz (em aberto para implementar depois); detalhes em `docs/Implementacao/SPEC-003.md` |
+| Estado do layout | pendente de aprovação do responsável sobre os controles implementados (botão de alto contraste, link para pular ao conteúdo e foco; sem protótipo em docs/layout/) |
 | Capacidade | Recursos funcionais de acessibilidade para interação com a plataforma |
 
 ## 2. Rastreabilidade

@@ -3,10 +3,12 @@
 import React from "react";
 
 import { useTheme } from "@/components/theme-provider";
+import ContrastToggle from "@/components/contrast-toggle";
 
 export default function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
   return (
+    <span className="appearance-controls">
     <button
       type="button"
       className="theme-toggle"
@@ -18,5 +20,7 @@ export default function ThemeToggle() {
       <span aria-hidden="true">{theme === "dark" ? "☀" : "☾"}</span>
       <span>{theme === "dark" ? "Tema claro" : "Tema escuro"}</span>
     </button>
+    <ContrastToggle />
+    </span>
   );
 }

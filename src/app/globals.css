@@ -702,3 +702,104 @@ button, input, select { font: inherit; }
 .job-field input[type="date"] { color-scheme:light; max-width:260px; }
 :root[data-theme="dark"] .job-field input[type="date"] { color-scheme:dark; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .job-field input[type="date"] { color-scheme:dark; } }
+
+/* ---- SPEC-003: alto contraste (OPEN-012). Explícito na plataforma (data-contrast="high") ou seguindo o sistema (prefers-contrast) ---- */
+:root[data-contrast="high"] {
+  --ink: #000000;
+  --muted: #2E2E2E;
+  --purple: #3B0A8F;
+  --purple-dark: #2A0066;
+  --purple-soft: #FFFFFF;
+  --line: #000000;
+  --surface: #FFFFFF;
+  --background: #FFFFFF;
+  --danger: #8A0000;
+  --focus-ring: #000000;
+  --status-success-bg: #FFFFFF;
+  --status-success-text: #004D1A;
+  --status-pending-bg: #FFFFFF;
+  --status-pending-text: #5C3B00;
+  --status-neutral-bg: #FFFFFF;
+  --status-neutral-text: #000000;
+}
+:root[data-contrast="high"][data-theme="dark"] {
+  --ink: #FFFFFF;
+  --muted: #E6E6E6;
+  --purple: #D8C2FF;
+  --purple-dark: #E9DCFF;
+  --purple-soft: #000000;
+  --line: #FFFFFF;
+  --surface: #000000;
+  --background: #000000;
+  --danger: #FF8C9C;
+  --focus-ring: #FFEE00;
+  --status-success-bg: #000000;
+  --status-success-text: #8DFFA8;
+  --status-pending-bg: #000000;
+  --status-pending-text: #FFD966;
+  --status-neutral-bg: #000000;
+  --status-neutral-text: #FFFFFF;
+}
+:root[data-contrast="high"] a { text-decoration: underline; }
+:root[data-contrast="high"] button, :root[data-contrast="high"] input, :root[data-contrast="high"] select, :root[data-contrast="high"] textarea, :root[data-contrast="high"] .secondary-button, :root[data-contrast="high"] .choice-option, :root[data-contrast="high"] .theme-toggle,
+:root[data-contrast="high"] .auth-card, :root[data-contrast="high"] .profile-section, :root[data-contrast="high"] .company-card, :root[data-contrast="high"] .table-scroll { border-color: var(--ink) !important; }
+:root[data-contrast="high"] button, :root[data-contrast="high"] input:not([type="checkbox"]), :root[data-contrast="high"] select, :root[data-contrast="high"] textarea, :root[data-contrast="high"] .theme-toggle { border-width: 2px !important; border-style: solid; }
+:root[data-contrast="high"] .status-pill { border: 2px solid currentColor; }
+:root[data-contrast="high"] .primary-button { color: #FFFFFF; }
+:root[data-contrast="high"] a:focus-visible, :root[data-contrast="high"] button:focus-visible, :root[data-contrast="high"] input:focus-visible, :root[data-contrast="high"] select:focus-visible, :root[data-contrast="high"] textarea:focus-visible, :root[data-contrast="high"] [role="radio"]:focus-visible { outline-width: 4px; }
+:root[data-contrast="high"][data-theme="dark"] .primary-button { color: #000000; }
+@media (prefers-contrast: more) {
+:root[data-contrast="auto"] {
+  --ink: #000000;
+  --muted: #2E2E2E;
+  --purple: #3B0A8F;
+  --purple-dark: #2A0066;
+  --purple-soft: #FFFFFF;
+  --line: #000000;
+  --surface: #FFFFFF;
+  --background: #FFFFFF;
+  --danger: #8A0000;
+  --focus-ring: #000000;
+  --status-success-bg: #FFFFFF;
+  --status-success-text: #004D1A;
+  --status-pending-bg: #FFFFFF;
+  --status-pending-text: #5C3B00;
+  --status-neutral-bg: #FFFFFF;
+  --status-neutral-text: #000000;
+}
+:root[data-contrast="auto"][data-theme="dark"] {
+  --ink: #FFFFFF;
+  --muted: #E6E6E6;
+  --purple: #D8C2FF;
+  --purple-dark: #E9DCFF;
+  --purple-soft: #000000;
+  --line: #FFFFFF;
+  --surface: #000000;
+  --background: #000000;
+  --danger: #FF8C9C;
+  --focus-ring: #FFEE00;
+  --status-success-bg: #000000;
+  --status-success-text: #8DFFA8;
+  --status-pending-bg: #000000;
+  --status-pending-text: #FFD966;
+  --status-neutral-bg: #000000;
+  --status-neutral-text: #FFFFFF;
+}
+:root[data-contrast="auto"] a { text-decoration: underline; }
+:root[data-contrast="auto"] button, :root[data-contrast="auto"] input, :root[data-contrast="auto"] select, :root[data-contrast="auto"] textarea, :root[data-contrast="auto"] .secondary-button, :root[data-contrast="auto"] .choice-option, :root[data-contrast="auto"] .theme-toggle,
+:root[data-contrast="auto"] .auth-card, :root[data-contrast="auto"] .profile-section, :root[data-contrast="auto"] .company-card, :root[data-contrast="auto"] .table-scroll { border-color: var(--ink) !important; }
+:root[data-contrast="auto"] button, :root[data-contrast="auto"] input:not([type="checkbox"]), :root[data-contrast="auto"] select, :root[data-contrast="auto"] textarea, :root[data-contrast="auto"] .theme-toggle { border-width: 2px !important; border-style: solid; }
+:root[data-contrast="auto"] .status-pill { border: 2px solid currentColor; }
+:root[data-contrast="auto"] .primary-button { color: #FFFFFF; }
+:root[data-contrast="auto"] a:focus-visible, :root[data-contrast="auto"] button:focus-visible, :root[data-contrast="auto"] input:focus-visible, :root[data-contrast="auto"] select:focus-visible, :root[data-contrast="auto"] textarea:focus-visible, :root[data-contrast="auto"] [role="radio"]:focus-visible { outline-width: 4px; }
+:root[data-contrast="auto"][data-theme="dark"] .primary-button { color: #000000; }
+}
+
+/* ---- SPEC-003: teclado e navegação ---- */
+.skip-link { position: absolute; top: 8px; left: 8px; z-index: 1000; padding: 12px 18px; border-radius: 10px; color: #fff; background: var(--purple-dark); font-weight: 700; transform: translateY(-200%); }
+.skip-link:focus, .skip-link:focus-visible { transform: translateY(0); text-decoration: underline; outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+:root[data-theme="dark"] .skip-link { color: #000; background: var(--purple-dark); }
+main:focus { outline: none; }
+.appearance-controls { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }

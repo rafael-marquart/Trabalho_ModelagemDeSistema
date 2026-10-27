@@ -198,6 +198,7 @@ async function cleanupTestData() {
       ...relatedInvitations.map(invitation => invitation.id)
     ];
 
+    await tx.userPreference.deleteMany({ where: { userId: { in: userIds } } });
     await tx.job.deleteMany({
       where: { OR: [{ companyId: { in: companyIds } }, { createdByUserId: { in: userIds } }] }
     });
@@ -1298,6 +1299,27 @@ async function main() {
     }
     assert.ok(!JSON.stringify(jobAudit).includes(secretTitle) && !JSON.stringify(jobAudit).includes("Recife"), "job audit events must not contain job content");
 
+    // SPEC-003: interface preferences saved in the account and the skip link.
+    const prefsUrl = `${BASE_URL}/api/conta/preferencias`;
+    const sendPrefs = (payload, cookie, extra = {}) => fetch(prefsUrl, { method: "PUT", headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie, ...extra }, body: JSON.stringify(payload), redirect: "manual" });
+    await expectStatus(await fetch(prefsUrl, { redirect: "manual" }), 401, "anonymous preferences read");
+    await expectStatus(await sendPrefs({ preferences: { HIGH_CONTRAST: "ON" } }, ""), 401, "anonymous preferences save");
+    const defaultPrefs = JSON.parse(await expectStatus(await fetch(prefsUrl, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "default preferences"));
+    assert.equal(defaultPrefs.preferences.HIGH_CONTRAST, "AUTO");
+    await expectStatus(await sendPrefs({ preferences: { HIGH_CONTRAST: "MAYBE" } }, companyCookie), 400, "invalid preference value");
+    await expectStatus(await sendPrefs({ preferences: { HIGH_CONTRAST: "ON" }, userId: "other" }, companyCookie), 400, "body cannot choose the user");
+    await expectStatus(await sendPrefs({ preferences: { HIGH_CONTRAST: "ON" } }, companyCookie, { origin: "https://evil.example" }), 403, "cross-origin preference save");
+    await expectStatus(await sendPrefs({ preferences: { HIGH_CONTRAST: "ON" } }, companyCookie), 200, "company saves high contrast");
+    const savedPrefs = JSON.parse(await expectStatus(await fetch(prefsUrl, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "saved preferences"));
+    assert.equal(savedPrefs.preferences.HIGH_CONTRAST, "ON");
+    const otherPrefs = JSON.parse(await expectStatus(await fetch(prefsUrl, { headers: { cookie: secondCompanyCookie }, redirect: "manual" }), 200, "other account preferences"));
+    assert.equal(otherPrefs.preferences.HIGH_CONTRAST, "AUTO", "preferences must not leak across accounts");
+    const prefsAudit = await prisma.auditEvent.findMany({ where: { actorUserId: companyAccount.id, eventType: "ACCESSIBILITY_PREFERENCES_UPDATED" }, select: { metadata: true } });
+    assert.equal(prefsAudit.length, 1);
+    assert.deepEqual(prefsAudit[0].metadata, { changedPreferences: ["HIGH_CONTRAST"] });
+    const loginHtml = await (await fetch(`${BASE_URL}/empresa/login`, { redirect: "manual" })).text();
+    assert.ok(loginHtml.includes("Pular para o conteúdo principal"), "pages must start with the skip link");
+
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });
     assert.equal(companySessionsBeforeLogout, 1, "company login must have one active session before logout");
@@ -1336,7 +1358,7 @@ async function main() {
     assert.ok(lockedCandidate?.lockedUntil && lockedCandidate.lockedUntil > new Date(), "ten consecutive failures must persist an active account lock");
     assert.equal(lockedCandidate.failedLoginCount, 0, "the locked account counter is reset after the threshold is reached");
 
-    process.stdout.write("Auth E2E passed: candidate email/CPF login and recovery; own jobs lifecycle and isolation; company verification and password recovery; recruiter invitation/resend/accept/refuse/cancel; multi-company isolation and concurrency; logout; account lockout.\n");
+    process.stdout.write("Auth E2E passed: candidate email/CPF login and recovery; own jobs lifecycle and isolation; account accessibility preferences; company verification and password recovery; recruiter invitation/resend/accept/refuse/cancel; multi-company isolation and concurrency; logout; account lockout.\n");
   } finally {
     try {
       await cleanupTestData();
