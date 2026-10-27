@@ -9,7 +9,7 @@ const { prismaMock, getCurrentUserMock, mkdirMock, writeFileMock, unlinkMock } =
 }));
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
 vi.mock("@/lib/auth/session", () => ({ getCurrentUser: getCurrentUserMock }));
-vi.mock("node:fs/promises", () => ({ mkdir: mkdirMock, writeFile: writeFileMock, unlink: unlinkMock }));
+vi.mock("node:fs/promises", async (importOriginal) => ({ ...(await importOriginal<typeof import("node:fs/promises")>()), mkdir: mkdirMock, writeFile: writeFileMock, unlink: unlinkMock }));
 
 import { GET, POST } from "./route";
 
