@@ -1,12 +1,15 @@
 "use client";
 
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import {
+  educationLevels, educationStatuses, languageLevels, type EducationEntry, type LanguageEntry
+} from "@/lib/candidate-profile/options";
 
 type Declaration = "NOT_INFORMED" | "NO_NEEDS_DECLARED" | "NEEDS_DECLARED";
 type NeedGroup = "ARCHITECTURAL" | "COMMUNICATION" | "TECHNOLOGICAL";
 type NeedOption = { code: string; name: string; description: string; group: NeedGroup; isMandatory: boolean; isActive: boolean };
 type Profile = {
-  fullName: string; email: string; education: string[]; skills: string[]; languages: string[];
+  fullName: string; email: string; education: EducationEntry[]; skills: string[]; languages: LanguageEntry[];
   professionalExperience: string[]; courses: string[]; certifications: string[]; professionalLinks: string[];
   accessibilityDeclaration: Declaration; accessibilityNeeds: string[]; accessibilityNeedOptionCodes: string[];
   essentialAccessibilityResources: string[]; updatedAt?: string;
@@ -21,10 +24,9 @@ const textSections: { key: "skills" | "professionalExperience"; title: string; h
   { key: "skills", title: "Competências", hint: "Informe suas competências profissionais, uma por linha." },
   { key: "professionalExperience", title: "Experiências profissionais", hint: "Informe cada experiência em uma linha, por exemplo: cargo, empresa e período." }
 ];
-// Entries are stored as "campo — campo" text, so the separator must not appear inside any field.
-const educationLevels = ["Ensino fundamental", "Ensino médio", "Ensino técnico", "Ensino superior (graduação)", "Pós-graduação", "Mestrado", "Doutorado", "Curso livre", "Outro"];
-function stripSeparator(value: string) { return value.replace(/\s*—\s*/g, " - ").trim(); }
-const educationStatuses = ["Concluído", "Em andamento", "Trancado", "Incompleto"];
+type TextKey = "skills" | "professionalExperience" | "accessibilityNeeds";
+function describeEducation(entry: EducationEntry) { return [entry.level, entry.course, entry.institution, entry.status].filter(Boolean).join(" · "); }
+function describeLanguage(entry: LanguageEntry) { return [entry.language, entry.level].filter(Boolean).join(" · "); }
 const groupLabels: Record<NeedGroup, string> = {
   ARCHITECTURAL: "Necessidades arquitetônicas",
   COMMUNICATION: "Necessidades de comunicação",
@@ -32,7 +34,6 @@ const groupLabels: Record<NeedGroup, string> = {
 };
 const groupOrder: NeedGroup[] = ["ARCHITECTURAL", "COMMUNICATION", "TECHNOLOGICAL"];
 const languageChoices = ["Inglês", "Espanhol", "Francês", "Alemão", "Italiano", "Português", "Libras", "Outro"];
-const languageLevels = ["Básico", "Intermediário", "Avançado", "Fluente", "Nativo"];
 const acceptedFiles = ".pdf,.doc,.docx,.jpg,.jpeg,.png";
 function asText(value: unknown) { return Array.isArray(value) ? value.filter((x): x is string => typeof x === "string").join("\n") : ""; }
 function lines(value: string) { return value.split("\n").map(x => x.trim()).filter(Boolean); }
@@ -44,11 +45,11 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   const [documents, setDocuments] = useState<ProfileDocument[]>([]);
   const [language, setLanguage] = useState(languageChoices[0]);
   const [otherLanguage, setOtherLanguage] = useState("");
-  const [languageLevel, setLanguageLevel] = useState(languageLevels[1]);
-  const [educationLevel, setEducationLevel] = useState(educationLevels[3]);
+  const [languageLevel, setLanguageLevel] = useState<LanguageEntry["level"]>(languageLevels[1]);
+  const [educationLevel, setEducationLevel] = useState<EducationEntry["level"]>(educationLevels[3]);
   const [educationCourse, setEducationCourse] = useState("");
   const [educationInstitution, setEducationInstitution] = useState("");
-  const [educationStatus, setEducationStatus] = useState(educationStatuses[0]);
+  const [educationStatus, setEducationStatus] = useState<EducationEntry["status"]>(educationStatuses[0]);
   const [linkUrl, setLinkUrl] = useState("");
   const [accessibilityResource, setAccessibilityResource] = useState("");
   const [courseName, setCourseName] = useState("");
@@ -91,7 +92,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     return () => { active = false; };
   }, []);
 
-  function updateList(key: keyof Profile, value: string) {
+  function updateList(key: TextKey, value: string) {
     setProfile(current => ({ ...current, [key]: lines(value) }));
   }
   function toggleOption(code: string, checked: boolean) {
@@ -102,25 +103,25 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     });
   }
   function addLanguage() {
-    const name = language === "Outro" ? stripSeparator(otherLanguage) : language;
+    const name = (language === "Outro" ? otherLanguage : language).trim();
     if (!name) { setError("Digite o nome do idioma."); return; }
-    const entry = `${name} — ${languageLevel}`;
-    if (profile.languages.some(item => item.toLocaleLowerCase() === entry.toLocaleLowerCase())) {
+    if (profile.languages.some(item => item.language.toLocaleLowerCase() === name.toLocaleLowerCase() && item.level === languageLevel)) {
       setError("Esse idioma e nível já foram adicionados."); return;
     }
-    setProfile(current => ({ ...current, languages: [...current.languages, entry] }));
+    setProfile(current => ({ ...current, languages: [...current.languages, { language: name, level: languageLevel }] }));
     setOtherLanguage(""); setError("");
   }
-  function removeLanguage(entry: string) {
-    setProfile(current => ({ ...current, languages: current.languages.filter(item => item !== entry) }));
+  function removeLanguage(index: number) {
+    setProfile(current => ({ ...current, languages: current.languages.filter((_, position) => position !== index) }));
   }
   function addEducation() {
-    const course = stripSeparator(educationCourse);
-    const institution = stripSeparator(educationInstitution);
-    const details = [educationLevel, course, institution, educationStatus].filter(Boolean);
+    const course = educationCourse.trim();
+    const institution = educationInstitution.trim();
     if (!course || !institution) { setError("Informe o curso ou área e a instituição para adicionar a formação."); return; }
-    const entry = details.join(" — ");
-    if (profile.education.some(item => item.toLocaleLowerCase() === entry.toLocaleLowerCase())) { setError("Essa formação já foi adicionada."); return; }
+    const entry: EducationEntry = { level: educationLevel, course, institution, status: educationStatus };
+    if (profile.education.some(item => describeEducation(item).toLocaleLowerCase() === describeEducation(entry).toLocaleLowerCase())) {
+      setError("Essa formação já foi adicionada."); return;
+    }
     setProfile(current => ({ ...current, education: [...current.education, entry] }));
     setEducationCourse(""); setEducationInstitution(""); setError("");
   }
@@ -223,13 +224,13 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
       <h2>Formação e escolaridade</h2>
       <p className="muted">Adicione cada formação separadamente. Você pode registrar formações concluídas ou em andamento.</p>
       <div className="profile-education-controls">
-        <label>Nível de escolaridade<select value={educationLevel} onChange={event => setEducationLevel(event.target.value)} disabled={loading || saving}>{educationLevels.map(item => <option key={item} value={item}>{item}</option>)}</select></label>
+        <label>Nível de escolaridade<select value={educationLevel} onChange={event => setEducationLevel(event.target.value as EducationEntry["level"])} disabled={loading || saving}>{educationLevels.map(item => <option key={item} value={item}>{item}</option>)}</select></label>
         <label>Curso ou área<input value={educationCourse} onChange={event => setEducationCourse(event.target.value)} maxLength={160} placeholder="Ex.: Análise e Desenvolvimento de Sistemas" disabled={loading || saving} /></label>
         <label>Instituição de ensino<input value={educationInstitution} onChange={event => setEducationInstitution(event.target.value)} maxLength={160} placeholder="Ex.: Instituto Federal" disabled={loading || saving} /></label>
-        <label>Situação<select value={educationStatus} onChange={event => setEducationStatus(event.target.value)} disabled={loading || saving}>{educationStatuses.map(item => <option key={item} value={item}>{item}</option>)}</select></label>
+        <label>Situação<select value={educationStatus} onChange={event => setEducationStatus(event.target.value as EducationEntry["status"])} disabled={loading || saving}>{educationStatuses.map(item => <option key={item} value={item}>{item}</option>)}</select></label>
         <button type="button" className="secondary-button" onClick={addEducation} disabled={loading || saving}>Adicionar formação</button>
       </div>
-      <ul className="profile-chip-list">{profile.education.map(item => <li key={item}><span>{item}</span><button type="button" className="secondary-button" onClick={() => setProfile(current => ({ ...current, education: current.education.filter(value => value !== item) }))} aria-label={`Remover formação: ${item}`}>Remover</button></li>)}</ul>
+      <ul className="profile-chip-list">{profile.education.map((entry, index) => <li key={`${index}-${describeEducation(entry)}`}><span>{describeEducation(entry)}</span><button type="button" className="secondary-button" onClick={() => setProfile(current => ({ ...current, education: current.education.filter((_, position) => position !== index) }))} aria-label={`Remover formação: ${describeEducation(entry)}`}>Remover</button></li>)}</ul>
     </section>
     {textSections.map(section => <section className="profile-section" key={section.key}>
       <label className="profile-section-title" htmlFor={section.key}>{section.title}</label>
@@ -245,12 +246,12 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
           {languageChoices.map(item => <option key={item} value={item}>{item}</option>)}
         </select></label>
         {language === "Outro" && <label>Outro idioma<input value={otherLanguage} onChange={event => setOtherLanguage(event.target.value)} maxLength={80} placeholder="Digite o idioma" /></label>}
-        <label>Nível<select value={languageLevel} onChange={event => setLanguageLevel(event.target.value)} disabled={loading || saving}>
+        <label>Nível<select value={languageLevel} onChange={event => setLanguageLevel(event.target.value as LanguageEntry["level"])} disabled={loading || saving}>
           {languageLevels.map(item => <option key={item} value={item}>{item}</option>)}
         </select></label>
         <button type="button" className="secondary-button" onClick={addLanguage} disabled={loading || saving}>Adicionar idioma</button>
       </div>
-      <ul className="profile-chip-list">{profile.languages.map(item => <li key={item}><span>{item}</span><button type="button" className="secondary-button" onClick={() => removeLanguage(item)} aria-label={`Remover ${item}`}>Remover</button></li>)}</ul>
+      <ul className="profile-chip-list">{profile.languages.map((entry, index) => <li key={`${index}-${describeLanguage(entry)}`}><span>{describeLanguage(entry)}</span><button type="button" className="secondary-button" onClick={() => removeLanguage(index)} aria-label={`Remover idioma: ${describeLanguage(entry)}`}>Remover</button></li>)}</ul>
     </section>
     <section className="profile-section">
       <h2>Links profissionais</h2>

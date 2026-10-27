@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
-import { candidateProfileInputSchema, toProfileResponse, toStringList } from "@/lib/candidate-profile/schema";
+import {
+  candidateProfileInputSchema, canonicalJson, toEducationList, toLanguageList, toProfileResponse, toStringList
+} from "@/lib/candidate-profile/schema";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 
 export async function GET() {
@@ -84,8 +86,11 @@ export async function PUT(request: Request) {
         }
       });
       const changedCategories = Object.keys(fields).filter((key) => {
-        const before = previous ? (previous as Record<string, unknown>)[key] : null;
-        return JSON.stringify(before) !== JSON.stringify(fields[key as keyof typeof fields]);
+        let before: unknown = previous ? (previous as Record<string, unknown>)[key] : null;
+        // Compare structured categories after reading legacy text entries the same way the API returns them.
+        if (key === "education") before = toEducationList(before);
+        if (key === "languages") before = toLanguageList(before);
+        return canonicalJson(before) !== canonicalJson(fields[key as keyof typeof fields]);
       });
       if (!previous || changedCategories.length) {
         await tx.auditEvent.create({

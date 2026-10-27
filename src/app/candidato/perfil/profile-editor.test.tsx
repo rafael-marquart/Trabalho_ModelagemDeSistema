@@ -61,12 +61,19 @@ describe("candidate profile editor", () => {
     expect(methods.filter((method) => method === "POST")).toHaveLength(0);
   });
 
-  it("keeps the education separator unambiguous inside stored entries", async () => {
-    await renderEditor();
+  it("sends education and languages as structured objects when saving", async () => {
+    const fetchMock = await renderEditor();
     fireEvent.change(screen.getByLabelText("Curso ou área"), { target: { value: "Sistemas — Noturno" } });
     fireEvent.change(screen.getByLabelText("Instituição de ensino"), { target: { value: "Instituto Federal" } });
     fireEvent.click(screen.getByRole("button", { name: "Adicionar formação" }));
-    const entry = screen.getByText(/Instituto Federal/).textContent ?? "";
-    expect(entry.split(" — ")).toEqual(["Ensino superior (graduação)", "Sistemas - Noturno", "Instituto Federal", "Concluído"]);
+    expect(screen.getByRole("button", { name: /Remover formação: .*Instituto Federal/ })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Salvar perfil" }));
+    await waitFor(() => expect(fetchMock.mock.calls.some((call) => (call as unknown as [string, RequestInit?])[1]?.method === "PUT")).toBe(true));
+    const put = fetchMock.mock.calls.map((call) => call as unknown as [string, RequestInit?]).find((call) => call[1]?.method === "PUT")!;
+    const body = JSON.parse(String(put[1]!.body));
+    expect(body.education).toEqual([
+      { level: "Ensino superior (graduação)", course: "Sistemas — Noturno", institution: "Instituto Federal", status: "Concluído" }
+    ]);
+    expect(body.languages).toEqual([]);
   });
 });

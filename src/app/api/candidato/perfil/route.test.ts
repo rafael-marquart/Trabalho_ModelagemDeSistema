@@ -92,4 +92,33 @@ describe("candidate profile API", () => {
     }));
     expect(JSON.stringify(tx.auditEvent.create.mock.calls)).not.toContain("sensível");
   });
+  const put = (body: Record<string, unknown>) => {
+    const { updatedAt: _ignored, ...payload } = body;
+    return PUT(new Request("https://example.test/api/candidato/perfil", {
+      method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ accessibilityNeedOptionCodes: [], ...payload })
+    }));
+  };
+  it("accepts structured education and languages and rejects unknown levels", async () => {
+    const entry = { level: "Ensino médio", course: "Geral", institution: "Escola X", status: "Concluído" };
+    expect((await put({ ...blank, education: [entry], languages: [{ language: "Inglês", level: "Avançado" }] })).status).toBe(200);
+    expect((await put({ ...blank, education: [{ ...entry, level: "Pós-doc" }] })).status).toBe(400);
+    expect((await put({ ...blank, education: ["Ensino médio — Geral"] })).status).toBe(400);
+    expect((await put({ ...blank, languages: [{ language: "", level: "Básico" }] })).status).toBe(400);
+  });
+  it("reads legacy text entries as structured objects and does not flag them as changed when resaved", async () => {
+    const stored = {
+      ...blank, education: ["Ensino superior — graduação — Sistemas — IF — Concluído"], languages: ["Inglês — Avançado"],
+      accessibilityNeedOptionCodes: []
+    };
+    prismaMock.candidateProfile.findUnique.mockResolvedValueOnce(stored);
+    const read = await (await GET()).json();
+    expect(read.profile.education).toEqual([{ level: "Ensino superior (graduação)", course: "Sistemas", institution: "IF", status: "Concluído" }]);
+    expect(read.profile.languages).toEqual([{ language: "Inglês", level: "Avançado" }]);
+    tx.candidateProfile.findUnique.mockResolvedValueOnce(stored);
+    tx.candidateProfile.upsert.mockResolvedValueOnce(stored);
+    await put({ ...blank, education: read.profile.education, languages: read.profile.languages, accessibilityNeedOptionCodes: [] });
+    const events = tx.auditEvent.create.mock.calls.map((call) => JSON.stringify(call[0]));
+    expect(events.join()).not.toContain('"education"');
+    expect(events.join()).not.toContain('"languages"');
+  });
 });
