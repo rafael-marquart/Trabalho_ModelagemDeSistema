@@ -90,6 +90,6 @@ describe("candidate profile API", () => {
     expect(tx.auditEvent.create).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({ eventType: "CANDIDATE_PROFILE_CREATED", metadata: expect.objectContaining({ changedCategories: expect.arrayContaining(["skills", "accessibilityNeeds"]) }) })
     }));
-    expect(JSON.stringify(tx.auditEvent.mock.calls)).not.toContain("sensível");
+    expect(JSON.stringify(tx.auditEvent.create.mock.calls)).not.toContain("sensível");
   });
 });
