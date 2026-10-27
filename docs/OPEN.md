@@ -227,3 +227,14 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 
 A pasta [Identidade Visual](Identidade%20Visual/) contém o README de direção visual e uma imagem de referência. O README descreve uma direção profissional, acolhedora e minimalista, com roxo/lilás, fundos claros, contraste legível e componentes simples. Essa referência orienta a futura elaboração dos layouts, mas **não substitui protótipos específicos por Spec nem representa aprovação de layout**.
 
+## Pendências operacionais da SPEC-001 antes de produção
+
+As decisões funcionais da SPEC-001 permanecem encerradas conforme registro de 26/10/2026. Os itens abaixo são pendências operacionais de lançamento, não testes considerados aprovados e não reabrem as decisões funcionais já aprovadas.
+
+### SPEC-001 — Preparação operacional para produção
+| ID | Estado | Questão em aberto | Contexto/impacto |
+|---|---|---|---|
+| OPEN-090 | aberta — antes de produção | Como será configurado e verificado o envio real de e-mails? | Configurar as credenciais e o serviço SMTP do ambiente-alvo, confirmar remetente/domínio e validar entrega real das mensagens de confirmação de e-mail, recuperação de senha e convites. A CI atual utiliza SMTP de teste e não comprova entrega real. Registrar ambiente, resultado e responsável pela verificação antes do lançamento. |
+| OPEN-091 | aberta — antes de produção | Qual será a URL canônica HTTPS e como será confiada a origem do IP do cliente? | Definir `APP_BASE_URL` com a URL pública canônica em HTTPS e verificar a topologia do proxy reverso. O proxy confiável deve sobrescrever/normalizar `X-Forwarded-For`, impedindo que clientes definam livremente o IP usado pelo controle gradual de tentativas de login. Confirmar a configuração no ambiente-alvo antes de disponibilizar o sistema publicamente. |
+| OPEN-092 | aberta — antes de produção | Como serão agendadas e monitoradas as rotinas de retenção e descarte de auditoria? | Configurar a execução recorrente de `scripts/purge-audit-events.mjs`, manter simulação/validação inicial antes de habilitar exclusão efetiva e definir monitoramento, alertas e responsável operacional. Respeitar `retentionHold` e obrigações aplicáveis de preservação. O código da rotina e os testes em CI não comprovam que o agendamento e o monitoramento existam em produção. |
+
