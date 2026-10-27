@@ -31,3 +31,5 @@
 - Vitest (regras de publicação, API com autorização, isolamento entre empresas, transições, trava e auditoria sem conteúdo; interface), ESLint e `tsc --noEmit`.
 - O E2E (CI com PostgreSQL) cobre: acesso anônimo, recrutador sem vínculo, origem cruzada, empresa não escolhida pelo corpo, rascunho incompleto, bloqueio de publicação, prazo vencido, ciclo publicar/pausar/reabrir/encerrar, isolamento entre empresas e auditoria sem conteúdo.
 - Teste manual: `docs/operacao/validacao-manual-spec-005.md`. Aprovação de layout e encerramento da Spec pendentes do responsável.
+- Teste manual executado pelo responsável em 27/10/2026; ajustes aplicados (mensagens de cidade/estado ao lado dos campos, aviso de campos pendentes com rolagem, espaçamento dos botões, item Recrutadores no menu, área do recrutador com o menu compartilhado e Vagas). Layout aprovado na mesma data.
+- SPEC-005 encerrada em 27/10/2026, exceto os quatro critérios que dependem de candidaturas e do catálogo (disponibilidade no catálogo, trava após candidatura, bloqueio de novas candidaturas ao encerrar e identificação de candidatos ativos), que permanecem abertos para as Specs correspondentes.

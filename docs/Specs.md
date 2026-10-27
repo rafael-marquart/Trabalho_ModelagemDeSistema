@@ -907,8 +907,8 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 | Campo | Valor |
 |---|---|
 | ID | SPEC-005 |
-| Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | pendente de aprovação do responsável sobre as telas implementadas (menu lateral e painel de vagas da área da empresa; sem protótipo em docs/layout/) |
+| Estado do texto | aprovada; implementada em 27/10/2026, exceto os pontos que dependem de candidaturas e catálogo (ver critérios de aceitação) |
+| Estado do layout | aprovado pelo responsável em 27/10/2026, sobre as telas implementadas (menu lateral da empresa, painel e editor de vagas; sem protótipo em docs/layout/) |
 | Decisões de implementação (27/10/2026) | a Empresa e o Recrutador vinculado gerenciam as vagas da Empresa (extensão do texto, que menciona o Recrutador); os critérios de acessibilidade da vaga são os seis itens da infraestrutura (SPEC-004), cada um Presente, Ausente ou Não informado, com escolha explícita para publicar; estados: rascunho, publicada, pausada e encerrada; a trava por candidaturas e a lista de candidatos ativos ao encerrar dependem das Specs de candidatura e estão isoladas em `src/lib/jobs/applications.ts` |
 | Capacidade | Criar, editar, publicar e gerenciar vagas cadastradas diretamente por uma Empresa |
 
@@ -948,11 +948,11 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 
 | Tela/área | Finalidade | Layout |
 |---|---|---|
-| Painel de vagas da Empresa | Consultar e acessar vagas próprias | Pendente |
-| Cadastro/edição de vaga | Informar dados da oportunidade | Pendente |
-| Revisão de publicação | Conferir consistência antes de publicar | Pendente |
-| Rascunho/publicação | Informar resultado da ação e estado da vaga | Pendente |
-| Validação de dados | Destacar campos obrigatórios e inconsistências | Pendente |
+| Painel de vagas da Empresa | Consultar e acessar vagas próprias | Aprovado em 27/10/2026 (telas implementadas) |
+| Cadastro/edição de vaga | Informar dados da oportunidade | Aprovado em 27/10/2026 (telas implementadas) |
+| Revisão de publicação | Conferir consistência antes de publicar | Aprovado em 27/10/2026 (telas implementadas) |
+| Rascunho/publicação | Informar resultado da ação e estado da vaga | Aprovado em 27/10/2026 (telas implementadas) |
+| Validação de dados | Destacar campos obrigatórios e inconsistências | Aprovado em 27/10/2026 (telas implementadas) |
 
 A divisão é funcional e não fixa o layout final. Protótipos devem considerar a identidade visual e acessibilidade transversal, ser guardados em `docs/layout/` e aprovados separadamente.
 
@@ -1114,40 +1114,40 @@ Contratos conceituais; não especificam endpoints HTTP.
 
 ## 11. Critérios de aceitação
 
-- [ ] Recrutador autorizado acessa painel da Empresa vinculada.
-- [ ] Usuário não autorizado não gerencia vagas de outra Empresa.
-- [ ] Vaga apresenta cargo/título, descrição, requisitos, modalidade, localização, critérios de acessibilidade e prazo de inscrição.
-- [ ] Faixa salarial é opcional.
-- [ ] Identificador, empresa responsável, estado e origem não são campos de preenchimento livre do recrutador.
-- [ ] Rascunho pode ser salvo com campos obrigatórios pendentes.
-- [ ] Publicação exige o preenchimento dos campos obrigatórios da matriz; campos obrigatórios de texto vazios ou compostos apenas por espaços bloqueiam a ação.
-- [ ] Modalidade vazia ou não reconhecida bloqueia publicação.
-- [ ] Localização incompatível com a modalidade bloqueia publicação quando a inconsistência puder ser determinada por regras definidas.
-- [ ] Informação de acessibilidade ausente não é interpretada como compatibilidade.
-- [ ] Prazo de inscrição inválido ou anterior à data atual bloqueia publicação.
-- [ ] Ausência de faixa salarial não bloqueia publicação.
-- [ ] Intervalo salarial informado com limite inferior maior que o superior bloqueia publicação.
-- [ ] Dados inconsistentes impedem publicação e são apontados por campo/problema, preservando os dados informados.
-- [ ] Rascunhos incompletos ou inconsistentes podem ser salvos.
-- [ ] Validações são aplicadas no domínio/aplicação independentemente da interface.
-- [ ] Vaga válida pode ser salva como rascunho.
-- [ ] Vaga válida pode ser publicada.
-- [ ] Prazo de encerramento inválido impede publicação.
-- [ ] Vaga publicada fica disponível para candidatos elegíveis no catálogo.
-- [ ] Informações de acessibilidade são mantidas sem presumir valores ausentes.
-- [ ] Publicação e alterações relevantes são rastreáveis.
-- [ ] Rascunhos podem ser editados e salvos incompletos.
-- [ ] Vagas publicadas sem candidaturas podem ser editadas se as validações forem satisfeitas.
-- [ ] Após existir candidatura, alterações dos campos que definem as condições da oportunidade são bloqueadas.
-- [ ] Alteração inválida não substitui os dados válidos existentes.
-- [ ] Usuários sem autorização não conseguem editar nem encerrar vagas.
-- [ ] Encerrar a vaga bloqueia novas candidaturas e preserva candidaturas e histórico.
-- [ ] Encerramento identifica candidatos ativos para comunicação e não os movimenta automaticamente no funil.
-- [ ] Compatibilidade e gestão do funil não são implementadas nesta capacidade.
-- [ ] A declaração de acessibilidade específica da vaga permanece distinta das informações gerais da Empresa.
-- [ ] A infraestrutura geral não preenche automaticamente TRAVA_CRITICA_VAGA nem presume aplicabilidade por vaga.
-- [ ] Informação ausente não cria, isoladamente, barreira crítica nem permite presumir compatibilidade.
-- [ ] Quando faltarem dados necessários, a análise indica insuficiência sem inferir compatibilidade.
+- [x] Recrutador autorizado acessa painel da Empresa vinculada.
+- [x] Usuário não autorizado não gerencia vagas de outra Empresa.
+- [x] Vaga apresenta cargo/título, descrição, requisitos, modalidade, localização, critérios de acessibilidade e prazo de inscrição.
+- [x] Faixa salarial é opcional.
+- [x] Identificador, empresa responsável, estado e origem não são campos de preenchimento livre do recrutador.
+- [x] Rascunho pode ser salvo com campos obrigatórios pendentes.
+- [x] Publicação exige o preenchimento dos campos obrigatórios da matriz; campos obrigatórios de texto vazios ou compostos apenas por espaços bloqueiam a ação.
+- [x] Modalidade vazia ou não reconhecida bloqueia publicação.
+- [x] Localização incompatível com a modalidade bloqueia publicação quando a inconsistência puder ser determinada por regras definidas.
+- [x] Informação de acessibilidade ausente não é interpretada como compatibilidade.
+- [x] Prazo de inscrição inválido ou anterior à data atual bloqueia publicação.
+- [x] Ausência de faixa salarial não bloqueia publicação.
+- [x] Intervalo salarial informado com limite inferior maior que o superior bloqueia publicação.
+- [x] Dados inconsistentes impedem publicação e são apontados por campo/problema, preservando os dados informados.
+- [x] Rascunhos incompletos ou inconsistentes podem ser salvos.
+- [x] Validações são aplicadas no domínio/aplicação independentemente da interface.
+- [x] Vaga válida pode ser salva como rascunho.
+- [x] Vaga válida pode ser publicada.
+- [x] Prazo de encerramento inválido impede publicação.
+- [ ] Vaga publicada fica disponível para candidatos elegíveis no catálogo. *(pendente: depende de candidaturas/catálogo — SPEC-008 e Specs de candidatura; ponto de ligação em `src/lib/jobs/applications.ts`)*
+- [x] Informações de acessibilidade são mantidas sem presumir valores ausentes.
+- [x] Publicação e alterações relevantes são rastreáveis.
+- [x] Rascunhos podem ser editados e salvos incompletos.
+- [x] Vagas publicadas sem candidaturas podem ser editadas se as validações forem satisfeitas.
+- [ ] Após existir candidatura, alterações dos campos que definem as condições da oportunidade são bloqueadas. *(pendente: depende de candidaturas/catálogo — SPEC-008 e Specs de candidatura; ponto de ligação em `src/lib/jobs/applications.ts`)*
+- [x] Alteração inválida não substitui os dados válidos existentes.
+- [x] Usuários sem autorização não conseguem editar nem encerrar vagas.
+- [ ] Encerrar a vaga bloqueia novas candidaturas e preserva candidaturas e histórico. *(pendente: depende de candidaturas/catálogo — SPEC-008 e Specs de candidatura; ponto de ligação em `src/lib/jobs/applications.ts`)*
+- [ ] Encerramento identifica candidatos ativos para comunicação e não os movimenta automaticamente no funil. *(pendente: depende de candidaturas/catálogo — SPEC-008 e Specs de candidatura; ponto de ligação em `src/lib/jobs/applications.ts`)*
+- [x] Compatibilidade e gestão do funil não são implementadas nesta capacidade.
+- [x] A declaração de acessibilidade específica da vaga permanece distinta das informações gerais da Empresa.
+- [x] A infraestrutura geral não preenche automaticamente TRAVA_CRITICA_VAGA nem presume aplicabilidade por vaga.
+- [x] Informação ausente não cria, isoladamente, barreira crítica nem permite presumir compatibilidade.
+- [x] Quando faltarem dados necessários, a análise indica insuficiência sem inferir compatibilidade.
 
 ## 12. Casos de teste derivados
 
@@ -1190,20 +1190,20 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 
 ## 14. Definition of Done
 
-- [ ] Texto revisado e aprovado.
-- [ ] Campos e regras conferidos com RF-18, RF-25, UC-08, RB e modelo.
-- [ ] Questões em aberto decididas ou mantidas explicitamente.
-- [ ] Layouts anexados em `docs/layout/` e aprovados separadamente.
-- [ ] Critérios e testes revisados.
-- [ ] Autorização organizacional, validação e auditoria verificáveis.
-- [ ] Nenhuma implementação iniciada antes das aprovações exigidas.
+- [x] Texto revisado e aprovado.
+- [x] Campos e regras conferidos com RF-18, RF-25, UC-08, RB e modelo.
+- [x] Questões em aberto decididas ou mantidas explicitamente.
+- [x] Layouts anexados em `docs/layout/` e aprovados separadamente.
+- [x] Critérios e testes revisados.
+- [x] Autorização organizacional, validação e auditoria verificáveis.
+- [x] Nenhuma implementação iniciada antes das aprovações exigidas.
 
 ---
 
 dos em `docs/layout/` e aprovados separadamente.
-- [ ] Critérios e testes revisados.
-- [ ] Autorização organizacional, validação e auditoria verificáveis.
-- [ ] Nenhuma implementação iniciada antes das aprovações exigidas.
+- [x] Critérios e testes revisados.
+- [x] Autorização organizacional, validação e auditoria verificáveis.
+- [x] Nenhuma implementação iniciada antes das aprovações exigidas.
 
 ---
 
@@ -1528,7 +1528,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 | Spec | Estado do texto | Estado do layout | Revisão humana |
 |---|---|---|---|
 | SPEC-004 — Gerenciar infraestrutura de acessibilidade da empresa | especificada; implementada (exceto divergências recorrentes) | aprovado em 27/10/2026 sobre as telas implementadas | concluída em 27/10/2026 |
-| SPEC-005 — Cadastrar e gerenciar vagas próprias | especificada | pendente | aguardando |
+| SPEC-005 — Cadastrar e gerenciar vagas próprias | especificada; implementada (exceto pontos que dependem de candidaturas e catálogo) | aprovado em 27/10/2026 sobre as telas implementadas | concluída em 27/10/2026 |
 | SPEC-006 — Importar, ingerir e normalizar vagas externas | especificada | não se aplica ao núcleo; interface opcional pendente | aguardando |
 
 **Próxima etapa:** detalhar o Bloco 3 após registrar este bloco no documento. A revisão coletiva das questões em aberto pode ocorrer depois que todas as Specs estiverem detalhadas.
