@@ -39,6 +39,8 @@ INSERT INTO "AccessibilityNeedOption" ("code", "name", "description", "group", "
 -- Preserve the meaning of legacy free-text declarations when they already exist.
 UPDATE "CandidateProfile"
 SET "accessibilityDeclaration" = 'NEEDS_DECLARED'
-WHERE jsonb_typeof("accessibilityNeeds") = 'array'
-  AND jsonb_array_length("accessibilityNeeds") > 0
+WHERE CASE
+    WHEN jsonb_typeof("accessibilityNeeds") = 'array' THEN jsonb_array_length("accessibilityNeeds") > 0
+    ELSE false
+  END
   AND "accessibilityDeclaration" = 'NOT_INFORMED';
