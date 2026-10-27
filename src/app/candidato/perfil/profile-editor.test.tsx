@@ -120,7 +120,7 @@ describe("candidate profile editor", () => {
 
   it("keeps spaces while typing the free-text need and explains what is missing when saving", async () => {
     const fetchMock = await renderEditor();
-    fireEvent.click(screen.getByLabelText("Preciso de adaptações de acessibilidade"));
+    fireEvent.click(screen.getByRole("radio", { name: "Preciso de adaptações de acessibilidade" }));
     const field = screen.getByLabelText("Necessidade não contemplada pelo catálogo") as HTMLTextAreaElement;
     fireEvent.change(field, { target: { value: "usa " } });
     expect(field.value).toBe("usa ");

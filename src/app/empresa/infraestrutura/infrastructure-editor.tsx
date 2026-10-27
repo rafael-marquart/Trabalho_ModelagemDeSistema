@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import ChoiceGroup from "@/components/choice-group";
 import { statusLabels, type InfrastructureStatus } from "@/lib/company-infrastructure/items";
 
 type Category = { code: string; label: string };
@@ -75,14 +76,12 @@ export default function InfrastructureEditor() {
         const options: InfrastructureStatus[] = item.required ? ["PRESENT", "ABSENT"] : ["PRESENT", "ABSENT", "NOT_INFORMED"];
         const errorId = `error-${item.code}`;
         return <div className="infrastructure-item" key={item.code}>
-          <fieldset className="accessibility-declaration-choices" aria-describedby={`${item.code}-hint${itemErrors[item.code] ? ` ${errorId}` : ""}`}>
-            <legend>{item.label}{item.required ? " (obrigatório)" : ""}</legend>
+          <ChoiceGroup className="accessibility-declaration-choices" legend={`${item.label}${item.required ? " (obrigatório)" : ""}`}
+            describedBy={`${item.code}-hint${itemErrors[item.code] ? ` ${errorId}` : ""}`} disabled={disabled}
+            value={answer.status} onChange={status => update(item.code, { status })}
+            choices={options.map(status => ({ value: status, label: statusLabels[status] }))}>
             <p className="muted" id={`${item.code}-hint`}>{item.description}</p>
-            {options.map(status => <label key={status}>
-              <input type="radio" name={`status-${item.code}`} checked={answer.status === status}
-                onChange={() => update(item.code, { status })} disabled={disabled} /> {statusLabels[status]}
-            </label>)}
-          </fieldset>
+          </ChoiceGroup>
           <label className="profile-section-title" htmlFor={`note-${item.code}`}>Observação sobre {item.label.toLocaleLowerCase()} (opcional)</label>
           <textarea id={`note-${item.code}`} rows={2} maxLength={300} value={answer.note}
             onChange={event => update(item.code, { note: event.target.value })} disabled={disabled}

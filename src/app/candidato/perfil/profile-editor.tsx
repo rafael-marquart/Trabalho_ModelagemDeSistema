@@ -1,5 +1,6 @@
 "use client";
 
+import ChoiceGroup from "@/components/choice-group";
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import {
   educationLevels, educationStatuses, languageLevels, brazilianStates, emptyWorkPreferences, transportModes, workModalities,
@@ -389,13 +390,14 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     <section className="profile-section">
       <h2>Necessidades funcionais de acessibilidade</h2>
       <p className="muted">Escolha uma opção antes de preencher os detalhes. A declaração é opcional.</p>
-      <p className="muted" id="declarationHint">Use as setas do teclado para alternar entre as opções. A tecla Tab passa para o próximo campo.</p>
-      <fieldset className="accessibility-declaration-choices" aria-describedby="declarationHint">
-        <legend>Você precisa de adaptações de acessibilidade?</legend>
-        <label><input type="radio" name="accessibilityDeclaration" checked={profile.accessibilityDeclaration === "NO_NEEDS_DECLARED"} onChange={() => selectedDeclaration("NO_NEEDS_DECLARED")} disabled={loading || saving} /> Não preciso de adaptações de acessibilidade</label>
-        <label><input type="radio" name="accessibilityDeclaration" checked={profile.accessibilityDeclaration === "NEEDS_DECLARED"} onChange={() => selectedDeclaration("NEEDS_DECLARED")} disabled={loading || saving} /> Preciso de adaptações de acessibilidade</label>
-        <label><input type="radio" name="accessibilityDeclaration" checked={profile.accessibilityDeclaration === "NOT_INFORMED"} onChange={() => selectedDeclaration("NOT_INFORMED")} disabled={loading || saving} /> Prefiro não informar</label>
-      </fieldset>
+      <p className="muted" id="declarationHint">Use Tab para percorrer as opções e Espaço ou Enter para escolher.</p>
+      <ChoiceGroup className="accessibility-declaration-choices" legend="Você precisa de adaptações de acessibilidade?"
+        describedBy="declarationHint" disabled={loading || saving} value={profile.accessibilityDeclaration}
+        onChange={selectedDeclaration} choices={[
+          { value: "NO_NEEDS_DECLARED", label: "Não preciso de adaptações de acessibilidade" },
+          { value: "NEEDS_DECLARED", label: "Preciso de adaptações de acessibilidade" },
+          { value: "NOT_INFORMED", label: "Prefiro não informar" }
+        ]} />
       {profile.accessibilityDeclaration === "NEEDS_DECLARED" && <>
         <p className="profile-privacy-note">Estas informações são autodeclaradas. Não informe laudos nem dados médicos desnecessários. Selecione ao menos uma opção ou descreva uma necessidade não contemplada; você pode fazer ambos.</p>
         {groupOrder.map(group => <fieldset className="accessibility-option-group" key={group}>

@@ -61,6 +61,8 @@
 
 - Primeira rodada de teste manual (27/10/2026): mensagens de erro passaram a aparecer dentro da seção do campo (com `role="alert"`); a mensagem de necessidades sem opção ficou específica; o campo de descrição livre passou a aceitar espaços; a seção de preferências de trabalho foi movida para depois de cursos e certificações; foi incluída instrução de uso das setas no grupo de declaração (o comportamento de Tab/setas dos botões de opção é o padrão do navegador e dos leitores de tela).
 
+- Grupos de escolha única (declaração de necessidades e, na SPEC-004, o questionário da empresa) usam o componente `ChoiceGroup`: cada opção é um botão com `role="radio"` dentro de um `radiogroup`, de modo que Tab passa por todas as opções, Espaço/Enter escolhem e as setas também trocam a seleção. Substitui os botões de opção nativos, em que Tab só alcançava a opção já marcada.
+
 ## Pendências de decisão
 
 - **RB-16 na análise de vaga:** critério transferido para a SPEC-007 em 27/10/2026, pois depende da vaga e do cálculo.

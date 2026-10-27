@@ -28,7 +28,7 @@ describe("company infrastructure editor", () => {
   it("shows every category and item with a labelled control", async () => {
     await renderEditor();
     for (const category of infrastructureCategories) expect(screen.getByRole("heading", { name: category.label })).toBeTruthy();
-    for (const item of infrastructureItems) expect(screen.getByRole("group", { name: new RegExp(item.label) })).toBeTruthy();
+    for (const item of infrastructureItems) expect(screen.getByRole("radiogroup", { name: new RegExp(item.label) })).toBeTruthy();
     const orphans = Array.from(document.querySelectorAll("label[for]")).filter((label) => !document.getElementById(label.getAttribute("for") ?? ""));
     expect(orphans).toHaveLength(0);
   });
@@ -45,8 +45,8 @@ describe("company infrastructure editor", () => {
   it("saves once every required item is answered", async () => {
     const fetchMock = await renderEditor();
     for (const item of infrastructureItems) {
-      const group = screen.getByRole("group", { name: new RegExp(item.label) });
-      fireEvent.click(group.querySelector("input[type=radio]") as HTMLInputElement);
+      const group = screen.getByRole("radiogroup", { name: new RegExp(item.label) });
+      fireEvent.click(group.querySelector("[role=radio]") as HTMLElement);
     }
     fireEvent.change(screen.getByLabelText(/Observação sobre rampas de acesso/), { target: { value: "só no prédio principal" } });
     fireEvent.click(screen.getByRole("button", { name: "Salvar infraestrutura" }));
@@ -55,5 +55,16 @@ describe("company infrastructure editor", () => {
     const body = JSON.parse(String(put[1]!.body));
     expect(body.answers.RAMPS).toEqual({ status: "PRESENT", note: "só no prédio principal" });
     expect(Object.keys(body.answers)).toHaveLength(infrastructureItems.length);
+  });
+
+  it("makes every option its own tab stop and selects with the keyboard", async () => {
+    await renderEditor();
+    const group = screen.getByRole("radiogroup", { name: /Rampas de acesso/ });
+    const radios = Array.from(group.querySelectorAll<HTMLElement>("[role=radio]"));
+    expect(radios.map(radio => radio.tabIndex)).toEqual([0, 0]);
+    expect(radios.map(radio => radio.getAttribute("aria-checked"))).toEqual(["false", "false"]);
+    fireEvent.keyDown(radios[0], { key: "ArrowDown" });
+    expect(radios[1].getAttribute("aria-checked")).toBe("true");
+    expect(radios[0].getAttribute("aria-checked")).toBe("false");
   });
 });

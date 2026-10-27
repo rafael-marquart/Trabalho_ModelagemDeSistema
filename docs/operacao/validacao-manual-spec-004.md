@@ -10,7 +10,7 @@ Tempo estimado: 10 a 15 minutos. Antes, rode `npm run db:generate` e `npx prisma
 | 4 | Responder todos (Presente ou Ausente), preencher uma observação e salvar | Mensagem "Infraestrutura salva"; mostra a data da última atualização |
 | 5 | Recarregar a página | Respostas e observação continuam |
 | 6 | Mudar uma resposta e salvar de novo | Salva e atualiza a data |
-| 7 | Teclado: percorrer a página só com Tab, setas e Espaço | Todos os itens são alcançáveis; as setas trocam Presente/Ausente; o foco é visível |
+| 7 | Teclado: percorrer a página só com Tab, Espaço e Enter | Tab para em cada opção (Presente e Ausente), Espaço ou Enter escolhe; as setas também trocam a opção; o foco é visível |
 | 8 | Leitor de tela (se possível) | Cada item é anunciado com o nome e a descrição; o erro de um item pendente é anunciado |
 | 9 | Sair e tentar abrir `/empresa/infraestrutura` sem login | Redireciona para o login da empresa |
 | 10 | Logado como candidato, abrir `/empresa/infraestrutura` | Redireciona para o login da empresa |

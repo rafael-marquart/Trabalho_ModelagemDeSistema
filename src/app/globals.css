@@ -661,7 +661,13 @@ button, input, select { font: inherit; }
 :root:not([data-theme="dark"]) .recruiter-table th { background: #EEE7F6; }
 
 .profile-subheading { margin: 26px 0 0; font-family: "Manrope", sans-serif; font-size: 16px; color: var(--ink); }
-.infrastructure-item { margin-top: 22px; }
-.infrastructure-item textarea { margin-top: 10px; }
 .infrastructure-item .accessibility-declaration-choices { margin-top: 0; }
 .infrastructure-item .accessibility-declaration-choices .muted { margin: 0 0 4px; }
+.choice-option { display:flex; align-items:flex-start; gap:10px; width:100%; margin:0; padding:2px 0; border:0; background:none; color:var(--ink); font:inherit; line-height:1.5; text-align:left; cursor:pointer; }
+.choice-option:disabled, fieldset:disabled .choice-option { cursor:default; opacity:.7; }
+.choice-indicator { flex:none; width:18px; height:18px; margin-top:3px; border:2px solid var(--muted); border-radius:50%; background:var(--surface); box-sizing:border-box; }
+.choice-option[aria-checked="true"] .choice-indicator { border-color:var(--purple); background:radial-gradient(circle, var(--purple) 0 38%, transparent 42%); }
+.choice-option:focus-visible { outline:3px solid var(--focus-ring); outline-offset:3px; border-radius:6px; }
+.infrastructure-item { margin-top: 34px; }
+.infrastructure-item .profile-section-title { margin-top: 22px; }
+.infrastructure-item textarea { margin-top: 12px; }
