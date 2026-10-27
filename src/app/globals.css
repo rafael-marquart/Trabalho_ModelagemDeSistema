@@ -5,10 +5,10 @@
   --muted: #6D647A;
   --purple: #6B29BF;
   --purple-dark: #4A148C;
-  --purple-soft: #EEE7F6;
-  --line: #D9D0E4;
-  --surface: #F9F7FC;
-  --background: #F1EEF6;
+  --purple-soft: #E1D5F0;
+  --line: #C9BCD9;
+  --surface: #F0EBF5;
+  --background: #E2DCE9;
   --danger: #B42318;
   --focus-ring: #6B29BF;
   --status-success-bg: #E4F6E9;
@@ -71,7 +71,7 @@ button, input, select { font: inherit; }
 .entry-divider::before, .entry-divider::after { height: 1px; flex: 1; background: var(--line); content: ""; }
 .signup-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px 22px; font-size: 13px; font-weight: 600; }
 .legal-note { margin: 38px 0 0; color: var(--muted); font-size: 11px; line-height: 1.7; text-align: center; }
-.auth-page { min-height: 100vh; padding: 30px clamp(22px, 5vw, 64px) 60px; background: radial-gradient(circle at 0% 100%, #E8DDF5 0, transparent 38%), var(--background); }
+.auth-page { min-height: 100vh; padding: 30px clamp(22px, 5vw, 64px) 60px; background: radial-gradient(circle at 0% 100%, #D4C3E7 0, transparent 42%), var(--background); }
 .auth-brand { color: var(--ink); }
 .auth-brand .brand-mark { color: white; background: var(--purple); }
 .auth-brand .brand-accent { color: var(--purple); }
@@ -606,10 +606,10 @@ button, input, select { font: inherit; }
   --muted: #6D647A;
   --purple: #6B29BF;
   --purple-dark: #4A148C;
-  --purple-soft: #EEE7F6;
-  --line: #D9D0E4;
-  --surface: #F9F7FC;
-  --background: #F1EEF6;
+  --purple-soft: #E1D5F0;
+  --line: #C9BCD9;
+  --surface: #F0EBF5;
+  --background: #E2DCE9;
   --focus-ring: #6B29BF;
 }
 :root:not([data-theme="dark"]) body { color: var(--ink); background: var(--background); }
@@ -648,14 +648,14 @@ button, input, select { font: inherit; }
 :root:not([data-theme="dark"]) .catalog-admin-row input:not([type="checkbox"]),
 :root:not([data-theme="dark"]) .catalog-admin-row select,
 :root:not([data-theme="dark"]) .catalog-admin-row textarea {
-  background: #FDFBFE;
-  border-color: #CFC3DD;
+  background: #F5F0F8;
+  border-color: #C4B5D5;
 }
 :root:not([data-theme="dark"]) .company-topbar,
 :root:not([data-theme="dark"]) .company-sidebar,
 :root:not([data-theme="dark"]) .recruiter-topbar,
-:root:not([data-theme="dark"]) .recruiter-sidebar { background: #F8F5FB; }
-:root:not([data-theme="dark"]) .recruiter-primary-card { background: linear-gradient(135deg, #F9F7FC, #EEE7F6); }
-:root:not([data-theme="dark"]) .recruiter-card-icon { background: #E8DDF5; }
+:root:not([data-theme="dark"]) .recruiter-sidebar { background: #EDE6F3; }
+:root:not([data-theme="dark"]) .recruiter-primary-card { background: linear-gradient(135deg, #F0EBF5, #E1D5F0); }
+:root:not([data-theme="dark"]) .recruiter-card-icon { background: #E1D5F0; }
 :root:not([data-theme="dark"]) .table-scroll { border-color: var(--line); }
 :root:not([data-theme="dark"]) .recruiter-table th { background: #EEE7F6; }
