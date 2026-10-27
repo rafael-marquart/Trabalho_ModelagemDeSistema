@@ -17,3 +17,8 @@ export type LanguageEntry = {
   language: string;
   level: (typeof languageLevels)[number] | "";
 };
+export type ExperienceEntry = {
+  role: string;
+  company: string;
+  period: string;
+};

@@ -9,7 +9,7 @@ vi.mock("@/lib/auth/session", () => ({ getCurrentUser: getCurrentUserMock }));
 import { GET, PUT } from "./route";
 
 const blank = {
-  education: [], skills: [], languages: [], professionalExperience: [], courses: [], certifications: [],
+  education: [], languages: [], professionalExperience: [], courses: [], certifications: [],
   professionalLinks: [], accessibilityDeclaration: "NOT_INFORMED", accessibilityNeeds: [],
   essentialAccessibilityResources: [], updatedAt: new Date("2026-10-26T00:00:00.000Z")
 };
@@ -47,7 +47,7 @@ describe("candidate profile API", () => {
     const response = await PUT(new Request("https://example.test/api/candidato/perfil", {
       method: "PUT", headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        education: [], skills: [], languages: [], professionalExperience: [], courses: [],
+        education: [], languages: [], professionalExperience: [{ role: "Analista", company: "Empresa", period: "" }], courses: [],
         certifications: [], professionalLinks: [], accessibilityDeclaration: "NEEDS_DECLARED",
         accessibilityNeeds: [], accessibilityNeedOptionCodes: [], essentialAccessibilityResources: []
       })
@@ -59,7 +59,7 @@ describe("candidate profile API", () => {
     const response = await PUT(new Request("https://example.test/api/candidato/perfil", {
       method: "PUT", headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        education: [], skills: [], languages: [], professionalExperience: [], courses: [],
+        education: [], languages: [], professionalExperience: [], courses: [],
         certifications: [], professionalLinks: ["javascript:alert(1)"],
         accessibilityDeclaration: "NOT_INFORMED", accessibilityNeeds: [],
         accessibilityNeedOptionCodes: [], essentialAccessibilityResources: []
@@ -77,18 +77,18 @@ describe("candidate profile API", () => {
     expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
   it("supports progressive saves and audits category names without sensitive values", async () => {
-    tx.candidateProfile.upsert.mockResolvedValueOnce({ ...blank, skills: ["Comunicação"], accessibilityNeeds: ["sensível"] });
+    tx.candidateProfile.upsert.mockResolvedValueOnce({ ...blank, professionalExperience: [{ role: "Analista", company: "Empresa", period: "" }], accessibilityNeeds: ["sensível"] });
     const response = await PUT(new Request("https://example.test/api/candidato/perfil", {
       method: "PUT", headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        education: [], skills: ["Comunicação"], languages: [], professionalExperience: [], courses: [],
+        education: [], languages: [], professionalExperience: [{ role: "Analista", company: "Empresa", period: "" }], courses: [],
         certifications: [], professionalLinks: [], accessibilityDeclaration: "NEEDS_DECLARED",
         accessibilityNeeds: ["sensível"], essentialAccessibilityResources: []
       })
     }));
     expect(response.status).toBe(200);
     expect(tx.auditEvent.create).toHaveBeenCalledWith(expect.objectContaining({
-      data: expect.objectContaining({ eventType: "CANDIDATE_PROFILE_CREATED", metadata: expect.objectContaining({ changedCategories: expect.arrayContaining(["skills", "accessibilityNeeds"]) }) })
+      data: expect.objectContaining({ eventType: "CANDIDATE_PROFILE_CREATED", metadata: expect.objectContaining({ changedCategories: expect.arrayContaining(["professionalExperience", "accessibilityNeeds"]) }) })
     }));
     expect(JSON.stringify(tx.auditEvent.create.mock.calls)).not.toContain("sensível");
   });
@@ -120,5 +120,16 @@ describe("candidate profile API", () => {
     const events = tx.auditEvent.create.mock.calls.map((call) => JSON.stringify(call[0]));
     expect(events.join()).not.toContain('"education"');
     expect(events.join()).not.toContain('"languages"');
+  });
+  it("validates structured experiences, reads legacy text and rejects the removed skills field", async () => {
+    const experience = { role: "Analista", company: "Empresa", period: "2022" };
+    expect((await put({ ...blank, professionalExperience: [experience] })).status).toBe(200);
+    expect((await put({ ...blank, professionalExperience: [{ ...experience, company: "" }] })).status).toBe(400);
+    expect((await put({ ...blank, professionalExperience: ["Analista na Empresa"] })).status).toBe(400);
+    expect((await put({ ...blank, skills: ["Comunicação"] })).status).toBe(400);
+    prismaMock.candidateProfile.findUnique.mockResolvedValueOnce({ ...blank, professionalExperience: ["Analista na Empresa"], accessibilityNeedOptionCodes: [] });
+    const read = await (await GET()).json();
+    expect(read.profile.professionalExperience).toEqual([{ role: "Analista na Empresa", company: "", period: "" }]);
+    expect("skills" in read.profile).toBe(false);
   });
 });

@@ -429,8 +429,8 @@ async function main() {
 
     const profilePayload = {
       education: [{ level: "Ensino superior (graduação)", course: "Sistemas — Noturno", institution: "Instituto Federal", status: "Concluído" }],
-      skills: ["Comunicação"], languages: [{ language: "Inglês", level: "Avançado" }],
-      professionalExperience: ["Atendimento"], courses: ["Excel avançado"], certifications: [],
+      languages: [{ language: "Inglês", level: "Avançado" }],
+      professionalExperience: [{ role: "Atendente", company: "Loja Exemplo", period: "2022 a 2024" }], courses: ["Excel avançado"], certifications: [],
       professionalLinks: ["https://example.test/perfil"], accessibilityDeclaration: "NEEDS_DECLARED",
       accessibilityNeeds: [], accessibilityNeedOptionCodes: [catalogCode], essentialAccessibilityResources: ["Leitor de tela"]
     };
@@ -455,6 +455,7 @@ async function main() {
       200, "candidate reads saved profile"
     ));
     assert.deepEqual(savedProfile.profile.education, profilePayload.education, "education must round-trip as structured objects");
+    assert.deepEqual(savedProfile.profile.professionalExperience, profilePayload.professionalExperience, "experiences must round-trip as structured objects");
     assert.deepEqual(savedProfile.profile.languages, profilePayload.languages, "languages must round-trip as structured objects");
     assert.deepEqual(savedProfile.profile.accessibilityNeedOptionCodes, [catalogCode]);
 

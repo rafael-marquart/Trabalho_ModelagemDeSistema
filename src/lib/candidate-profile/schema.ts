@@ -1,14 +1,19 @@
 import { z } from "zod";
 
-import { educationLevels, educationStatuses, languageLevels, type EducationEntry, type LanguageEntry } from "@/lib/candidate-profile/options";
+import { educationLevels, educationStatuses, languageLevels, type EducationEntry, type ExperienceEntry, type LanguageEntry } from "@/lib/candidate-profile/options";
 
-export type { EducationEntry, LanguageEntry };
+export type { EducationEntry, ExperienceEntry, LanguageEntry };
 
 const educationEntrySchema = z.object({
   level: z.enum(educationLevels),
   course: z.string().trim().min(1, "Informe o curso ou a área.").max(160),
   institution: z.string().trim().max(160).default(""),
   status: z.enum([...educationStatuses, ""] as const).default("")
+}).strict();
+const experienceEntrySchema = z.object({
+  role: z.string().trim().min(1, "Informe o cargo.").max(120),
+  company: z.string().trim().min(1, "Informe a empresa.").max(120),
+  period: z.string().trim().max(80).default("")
 }).strict();
 const languageEntrySchema = z.object({
   language: z.string().trim().min(1, "Informe o idioma.").max(80),
@@ -30,9 +35,8 @@ const professionalLinksSchema = z.array(z.string().trim().url("Informe um endere
 
 export const candidateProfileInputSchema = z.object({
   education: z.array(educationEntrySchema).default([]),
-  skills: profileListSchema,
   languages: z.array(languageEntrySchema).default([]),
-  professionalExperience: profileListSchema,
+  professionalExperience: z.array(experienceEntrySchema).default([]),
   courses: profileListSchema,
   certifications: profileListSchema,
   professionalLinks: professionalLinksSchema,
@@ -93,6 +97,20 @@ function legacyLanguage(text: string): LanguageEntry {
   return { language: text.trim().slice(0, 80), level: "" };
 }
 
+// Experiences saved as free text before this structure keep their text as the role.
+export function toExperienceList(value: unknown): ExperienceEntry[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item): ExperienceEntry[] => {
+    if (typeof item === "string") return item.trim() ? [{ role: item.trim().slice(0, 120), company: "", period: "" }] : [];
+    const parsed = experienceEntrySchema.safeParse(item);
+    if (parsed.success) return [parsed.data];
+    const loose = item as { role?: unknown; company?: unknown; period?: unknown } | null;
+    return typeof loose?.role === "string" && loose.role.trim()
+      ? [{ role: loose.role.trim().slice(0, 120), company: typeof loose.company === "string" ? loose.company.trim().slice(0, 120) : "", period: typeof loose.period === "string" ? loose.period.trim().slice(0, 80) : "" }]
+      : [];
+  });
+}
+
 export function toEducationList(value: unknown): EducationEntry[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap((item): EducationEntry[] => {
@@ -119,15 +137,14 @@ export function canonicalJson(value: unknown): string {
 }
 
 export function toProfileResponse(profile: {
-  education: unknown; skills: unknown; languages: unknown; professionalExperience: unknown;
+  education: unknown; languages: unknown; professionalExperience: unknown;
   courses: unknown; certifications: unknown; professionalLinks: unknown;
   accessibilityDeclaration: "NOT_INFORMED" | "NO_NEEDS_DECLARED" | "NEEDS_DECLARED";
   accessibilityNeeds: unknown; accessibilityNeedOptionCodes: unknown;
   essentialAccessibilityResources: unknown; updatedAt: Date;
 }) {
   return {
-    education: toEducationList(profile.education), skills: toStringList(profile.skills),
-    languages: toLanguageList(profile.languages), professionalExperience: toStringList(profile.professionalExperience),
+    education: toEducationList(profile.education), languages: toLanguageList(profile.languages), professionalExperience: toExperienceList(profile.professionalExperience),
     courses: toStringList(profile.courses), certifications: toStringList(profile.certifications),
     professionalLinks: toStringList(profile.professionalLinks),
     accessibilityDeclaration: profile.accessibilityDeclaration,

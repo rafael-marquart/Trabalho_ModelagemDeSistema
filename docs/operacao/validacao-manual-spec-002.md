@@ -16,7 +16,7 @@ Veja os comandos de subida do ambiente no README (seção de execução local). 
 | 1.4 | Adicionar a mesma formação de novo | Mensagem de erro de duplicidade |
 | 1.5 | Adicionar formação sem instituição | Mensagem pedindo curso e instituição |
 | 1.6 | Idiomas: adicionar Inglês/Avançado; depois "Outro" com idioma digitado | Itens listados; duplicado é recusado |
-| 1.7 | Competências e experiências: digitar uma por linha e salvar | Persistem ao recarregar |
+| 1.7 | Experiências: preencher cargo, empresa e período e "Adicionar experiência"; tentar sem empresa | Item aparece como "cargo · empresa · período"; sem cargo ou empresa mostra erro; não existe campo Competências |
 | 1.8 | Cursos e certificações: adicionar só pelo nome | Adiciona sem exigir arquivo |
 | 1.9 | Link profissional inválido (`abc`) e válido (`https://exemplo.com`) | Inválido recusado com mensagem; válido aceito |
 | 1.10 | Recarregar a página | Tudo o que foi salvo volta, com formação e idiomas legíveis |

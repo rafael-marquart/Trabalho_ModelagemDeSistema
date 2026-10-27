@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
 import {
-  candidateProfileInputSchema, canonicalJson, toEducationList, toLanguageList, toProfileResponse, toStringList
+  candidateProfileInputSchema, canonicalJson, toEducationList, toExperienceList, toLanguageList, toProfileResponse, toStringList
 } from "@/lib/candidate-profile/schema";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 
@@ -13,14 +13,14 @@ export async function GET() {
   const profile = await prisma.candidateProfile.findUnique({
     where: { userId: user.id },
     select: {
-      education: true, skills: true, languages: true, professionalExperience: true,
+      education: true, languages: true, professionalExperience: true,
       courses: true, certifications: true, professionalLinks: true,
       accessibilityDeclaration: true, accessibilityNeeds: true, accessibilityNeedOptionCodes: true,
       essentialAccessibilityResources: true, updatedAt: true
     }
   });
   const emptyProfile = {
-    education: [], skills: [], languages: [], professionalExperience: [], courses: [],
+    education: [], languages: [], professionalExperience: [], courses: [],
     certifications: [], professionalLinks: [], accessibilityDeclaration: "NOT_INFORMED" as const,
     accessibilityNeeds: [], accessibilityNeedOptionCodes: [], essentialAccessibilityResources: [], updatedAt: new Date(0)
   };
@@ -42,7 +42,7 @@ export async function PUT(request: Request) {
 
   const input = parsed.data;
   const fields = {
-    education: input.education, skills: input.skills, languages: input.languages,
+    education: input.education, languages: input.languages,
     professionalExperience: input.professionalExperience, courses: input.courses,
     certifications: input.certifications, professionalLinks: input.professionalLinks,
     accessibilityDeclaration: input.accessibilityDeclaration,
@@ -56,7 +56,7 @@ export async function PUT(request: Request) {
       const previous = await tx.candidateProfile.findUnique({
         where: { userId: user.id },
         select: {
-          education: true, skills: true, languages: true, professionalExperience: true,
+          education: true, languages: true, professionalExperience: true,
           courses: true, certifications: true, professionalLinks: true,
           accessibilityDeclaration: true, accessibilityNeeds: true,
           accessibilityNeedOptionCodes: true, essentialAccessibilityResources: true
@@ -79,7 +79,7 @@ export async function PUT(request: Request) {
       const profile = await tx.candidateProfile.upsert({
         where: { userId: user.id }, create: { userId: user.id, ...fields }, update: fields,
         select: {
-          education: true, skills: true, languages: true, professionalExperience: true,
+          education: true, languages: true, professionalExperience: true,
           courses: true, certifications: true, professionalLinks: true,
           accessibilityDeclaration: true, accessibilityNeeds: true,
           accessibilityNeedOptionCodes: true, essentialAccessibilityResources: true, updatedAt: true
@@ -90,6 +90,7 @@ export async function PUT(request: Request) {
         // Compare structured categories after reading legacy text entries the same way the API returns them.
         if (key === "education") before = toEducationList(before);
         if (key === "languages") before = toLanguageList(before);
+        if (key === "professionalExperience") before = toExperienceList(before);
         return canonicalJson(before) !== canonicalJson(fields[key as keyof typeof fields]);
       });
       if (!previous || changedCategories.length) {

@@ -3,7 +3,7 @@
 ## Escopo implementado na branch
 
 - Perfil persistido associado 1:1 à conta de usuário com papel CANDIDATE.
-- Categorias profissionais: formação/escolaridade, competências, idiomas, experiências, cursos, certificações e links profissionais.
+- Categorias profissionais: formação/escolaridade, idiomas, experiências (cargo, empresa, período), cursos, certificações e links profissionais. Competências foram retiradas por decisão de 27/10/2026.
 - Nome e e-mail são reutilizados da conta, sem duplicação no perfil.
 - Salvamento progressivo: categorias profissionais podem permanecer vazias.
 - Declaração distingue `NOT_INFORMED`, `NO_NEEDS_DECLARED` e `NEEDS_DECLARED`.
@@ -50,7 +50,7 @@
 
 ## Revisão de 27/10/2026
 
-- Competências e experiências profissionais voltaram à tela (haviam sido removidas por engano); cursos e certificações podem ser registrados só com o nome, e o anexo é opcional.
+- Experiências profissionais voltaram à tela como entradas estruturadas (`role`, `company`, `period`); registros antigos em texto são lidos com o texto no cargo. O campo Competências foi retirado da tela, do contrato da API e da validação (a coluna `skills` permanece no banco, sem uso, para evitar migração). Impacto: a SPEC-007 usa competências no perfil técnico e precisará definir a fonte desses dados. Cursos e certificações podem ser registrados só com o nome, e o anexo é opcional.
 - Formação e idiomas passaram a ser objetos estruturados (formação: `level`, `course`, `institution`, `status`; idioma: `language`, `level`), validados no servidor com listas fechadas de nível e situação. Registros antigos em texto "campo — campo" são lidos de forma compatível e convertidos no próximo salvamento; a detecção de mudança para auditoria compara JSON canônico (chaves ordenadas).
 - Rótulos sem controle associado foram corrigidos; botões de remover e baixar identificam o item; a troca da declaração de necessidades pede confirmação quando há seleções.
 - Envio e remoção de anexos geram auditoria (`CANDIDATE_PROFILE_DOCUMENT_ADDED` / `_REMOVED`), registrando só a categoria.

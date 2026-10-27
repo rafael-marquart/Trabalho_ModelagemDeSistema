@@ -2,29 +2,26 @@
 
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import {
-  educationLevels, educationStatuses, languageLevels, type EducationEntry, type LanguageEntry
+  educationLevels, educationStatuses, languageLevels, type EducationEntry, type ExperienceEntry, type LanguageEntry
 } from "@/lib/candidate-profile/options";
 
 type Declaration = "NOT_INFORMED" | "NO_NEEDS_DECLARED" | "NEEDS_DECLARED";
 type NeedGroup = "ARCHITECTURAL" | "COMMUNICATION" | "TECHNOLOGICAL";
 type NeedOption = { code: string; name: string; description: string; group: NeedGroup; isMandatory: boolean; isActive: boolean };
 type Profile = {
-  fullName: string; email: string; education: EducationEntry[]; skills: string[]; languages: LanguageEntry[];
-  professionalExperience: string[]; courses: string[]; certifications: string[]; professionalLinks: string[];
+  fullName: string; email: string; education: EducationEntry[]; languages: LanguageEntry[];
+  professionalExperience: ExperienceEntry[]; courses: string[]; certifications: string[]; professionalLinks: string[];
   accessibilityDeclaration: Declaration; accessibilityNeeds: string[]; accessibilityNeedOptionCodes: string[];
   essentialAccessibilityResources: string[]; updatedAt?: string;
 };
 type ProfileDocument = { id: string; category: "COURSE" | "CERTIFICATION"; displayName: string; originalName: string; mimeType: string; sizeBytes: number; createdAt: string };
 const empty: Profile = {
-  fullName: "", email: "", education: [], skills: [], languages: [], professionalExperience: [],
+  fullName: "", email: "", education: [], languages: [], professionalExperience: [],
   courses: [], certifications: [], professionalLinks: [], accessibilityDeclaration: "NOT_INFORMED",
   accessibilityNeeds: [], accessibilityNeedOptionCodes: [], essentialAccessibilityResources: []
 };
-const textSections: { key: "skills" | "professionalExperience"; title: string; hint: string }[] = [
-  { key: "skills", title: "Competências", hint: "Informe suas competências profissionais, uma por linha." },
-  { key: "professionalExperience", title: "Experiências profissionais", hint: "Informe cada experiência em uma linha, por exemplo: cargo, empresa e período." }
-];
-type TextKey = "skills" | "professionalExperience" | "accessibilityNeeds";
+type TextKey = "accessibilityNeeds";
+function describeExperience(entry: ExperienceEntry) { return [entry.role, entry.company, entry.period].filter(Boolean).join(" · "); }
 function describeEducation(entry: EducationEntry) { return [entry.level, entry.course, entry.institution, entry.status].filter(Boolean).join(" · "); }
 function describeLanguage(entry: LanguageEntry) { return [entry.language, entry.level].filter(Boolean).join(" · "); }
 const groupLabels: Record<NeedGroup, string> = {
@@ -47,6 +44,9 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   const [otherLanguage, setOtherLanguage] = useState("");
   const [languageLevel, setLanguageLevel] = useState<LanguageEntry["level"]>(languageLevels[1]);
   const [educationLevel, setEducationLevel] = useState<EducationEntry["level"]>(educationLevels[3]);
+  const [experienceRole, setExperienceRole] = useState("");
+  const [experienceCompany, setExperienceCompany] = useState("");
+  const [experiencePeriod, setExperiencePeriod] = useState("");
   const [educationCourse, setEducationCourse] = useState("");
   const [educationInstitution, setEducationInstitution] = useState("");
   const [educationStatus, setEducationStatus] = useState<EducationEntry["status"]>(educationStatuses[0]);
@@ -113,6 +113,15 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   }
   function removeLanguage(index: number) {
     setProfile(current => ({ ...current, languages: current.languages.filter((_, position) => position !== index) }));
+  }
+  function addExperience() {
+    const entry: ExperienceEntry = { role: experienceRole.trim(), company: experienceCompany.trim(), period: experiencePeriod.trim() };
+    if (!entry.role || !entry.company) { setError("Informe o cargo e a empresa para adicionar a experiência."); return; }
+    if (profile.professionalExperience.some(item => describeExperience(item).toLocaleLowerCase() === describeExperience(entry).toLocaleLowerCase())) {
+      setError("Essa experiência já foi adicionada."); return;
+    }
+    setProfile(current => ({ ...current, professionalExperience: [...current.professionalExperience, entry] }));
+    setExperienceRole(""); setExperienceCompany(""); setExperiencePeriod(""); setError("");
   }
   function addEducation() {
     const course = educationCourse.trim();
@@ -187,7 +196,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   }
   async function handleSubmit(event?: FormEvent<HTMLFormElement>) {
     event?.preventDefault(); setError(""); setNotice(""); setSaving(true);
-    const keys = ["education", "skills", "languages", "professionalExperience", "courses", "certifications",
+    const keys = ["education", "languages", "professionalExperience", "courses", "certifications",
       "professionalLinks", "accessibilityDeclaration", "accessibilityNeeds", "accessibilityNeedOptionCodes",
       "essentialAccessibilityResources"] as const;
     const payload = Object.fromEntries(keys.map(key => [key, profile[key]]));
@@ -232,12 +241,17 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
       </div>
       <ul className="profile-chip-list">{profile.education.map((entry, index) => <li key={`${index}-${describeEducation(entry)}`}><span>{describeEducation(entry)}</span><button type="button" className="secondary-button" onClick={() => setProfile(current => ({ ...current, education: current.education.filter((_, position) => position !== index) }))} aria-label={`Remover formação: ${describeEducation(entry)}`}>Remover</button></li>)}</ul>
     </section>
-    {textSections.map(section => <section className="profile-section" key={section.key}>
-      <label className="profile-section-title" htmlFor={section.key}>{section.title}</label>
-      <p className="muted">{section.hint}</p>
-      <textarea id={section.key} value={asText(profile[section.key])} onChange={event => updateList(section.key, event.target.value)}
-        rows={4} placeholder="Digite uma informação por linha" disabled={loading || saving} />
-    </section>)}
+    <section className="profile-section">
+      <h2>Experiências profissionais</h2>
+      <p className="muted">Adicione cada experiência separadamente: cargo, empresa e período.</p>
+      <div className="profile-education-controls">
+        <label>Cargo<input value={experienceRole} onChange={event => setExperienceRole(event.target.value)} maxLength={120} placeholder="Ex.: Auxiliar administrativo" disabled={loading || saving} /></label>
+        <label>Empresa<input value={experienceCompany} onChange={event => setExperienceCompany(event.target.value)} maxLength={120} placeholder="Ex.: Empresa Exemplo" disabled={loading || saving} /></label>
+        <label>Período (opcional)<input value={experiencePeriod} onChange={event => setExperiencePeriod(event.target.value)} maxLength={80} placeholder="Ex.: 03/2022 a 08/2024" disabled={loading || saving} /></label>
+        <button type="button" className="secondary-button" onClick={addExperience} disabled={loading || saving}>Adicionar experiência</button>
+      </div>
+      <ul className="profile-chip-list">{profile.professionalExperience.map((entry, index) => <li key={`${index}-${describeExperience(entry)}`}><span>{describeExperience(entry)}</span><button type="button" className="secondary-button" onClick={() => setProfile(current => ({ ...current, professionalExperience: current.professionalExperience.filter((_, position) => position !== index) }))} aria-label={`Remover experiência: ${describeExperience(entry)}`}>Remover</button></li>)}</ul>
+    </section>
     <section className="profile-section">
       <h2>Idiomas</h2>
       <p className="muted">Selecione um idioma, informe seu nível e adicione quantos idiomas precisar.</p>

@@ -299,11 +299,12 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 ### Incluído
 - Permitir que candidato autenticado consulte seu perfil.
-- Cadastrar e atualizar as categorias aprovadas na OPEN-007: dados pessoais básicos (nome/e-mail reutilizados da conta), formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais.
+- Cadastrar e atualizar as categorias aprovadas na OPEN-007: dados pessoais básicos (nome/e-mail reutilizados da conta), formação/escolaridade, idiomas, experiências profissionais, cursos, certificações e links profissionais.
 - Permitir autodeclaração e atualização de necessidades funcionais de acessibilidade e recursos indispensáveis para acessibilidade.
 - Organizar o catálogo oficial em grupos arquitetônicos, de comunicação e tecnológicos, com códigos estáveis, descrição, estado ativo/inativo e propriedade explícita de obrigatoriedade.
 - Permitir, opcionalmente, anexar comprovantes de cursos e certificações (PDF, DOC, DOCX, JPG ou PNG, até 10 MB), em armazenamento privado, visíveis apenas ao candidato proprietário. O anexo nunca é exigido para registrar o curso ou a certificação e não se aplica a laudos médicos.
-- Registrar formação/escolaridade e idiomas como entradas estruturadas (formação: nível, curso/área, instituição e situação; idioma: idioma e nível).
+- Registrar formação/escolaridade, idiomas e experiências profissionais como entradas estruturadas (formação: nível, curso/área, instituição e situação; idioma: idioma e nível; experiência: cargo, empresa e período opcional).
+- Decisão de 27/10/2026: a categoria "competências" da OPEN-007 foi retirada do perfil nesta Spec. A SPEC-007, que hoje usa competências e conhecimentos no perfil técnico (T), deve definir de onde virão esses dados (por exemplo, derivados de cursos, certificações e experiências) ou reintroduzir a categoria.
 - Permitir seleção de opções oficiais e descrição livre para necessidades não contempladas; a descrição livre não cria uma opção oficial automaticamente.
 - Validar no backend que, quando a pessoa candidata declara necessidades, haja ao menos uma opção selecionada ou uma descrição livre. A declaração continua opcional.
 - Disponibilizar administração do catálogo apenas a ADMIN, com auditoria e desativação sem exclusão física.
@@ -346,7 +347,7 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 1. Candidato abre a edição.
 2. Informa ou atualiza os dados previstos em RF-04/RF-19.
 3. O formulário reutiliza nome e e-mail mantidos na conta, sem exigir preenchimento duplicado; o cadastro da conta segue as regras próprias da SPEC-001. CPF não é obrigatório para salvar o perfil, pois a baseline não apresenta justificativa funcional aprovada para exigi-lo.
-4. Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais fazem parte do escopo aprovado na OPEN-007, podem ser preenchidos progressivamente e não bloqueiam o salvamento por categoria.
+4. Formação/escolaridade, idiomas, experiências profissionais, cursos, certificações e links profissionais fazem parte do escopo aprovado na OPEN-007, podem ser preenchidos progressivamente e não bloqueiam o salvamento por categoria.
 5. Necessidades funcionais de acessibilidade e recursos indispensáveis não exigem declaração universal. Quando declarados, podem ser informados por autodeclaração, sem exigir ou armazenar laudo; a interface distingue “não informado” de “declarado que não possui necessidade”.
 6. Dados válidos são persistidos, permitindo o preenchimento progressivo das categorias.
 7. Erros de validação definidos são indicados para correção, sem descarte silencioso das informações preenchidas.
@@ -373,7 +374,7 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 3. Dados profissionais e vetor devem permanecer associados ao candidato correto (RNF-09).
 4. O candidato só pode consultar/alterar o próprio perfil, salvo permissões explicitamente previstas pela baseline.
 5. O salvamento respeita RB-29 e o cadastro progressivo aprovado na OPEN-007.1. Nome e e-mail são reutilizados da conta, sem preenchimento duplicado no perfil; o cadastro da conta segue a SPEC-001. CPF não é obrigatório para salvar o perfil, pois não há justificativa funcional aprovada na baseline para exigi-lo.
-6. As categorias aprovadas na OPEN-007 — formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais — não bloqueiam o salvamento por categoria.
+6. As categorias aprovadas na OPEN-007 — formação/escolaridade, idiomas, experiências profissionais, cursos, certificações e links profissionais — não bloqueiam o salvamento por categoria.
 7. Necessidades funcionais e recursos indispensáveis não exigem declaração universal. A interface deve distinguir ausência de informação (“não informado”) de declaração de inexistência de necessidade; necessidades declaradas podem ser autodeclaradas sem exigir ou armazenar laudo.
 8. A ausência de dados necessários à análise de uma vaga deve ser indicada sem presumir compatibilidade, conforme RB-16, e não torna automaticamente esses dados obrigatórios para salvar o perfil.
 9. A distinção de necessidades obrigatórias deve ser preservada quando suportada pela baseline, pois RB-06 determina que sejam consideradas na compatibilidade.
@@ -420,14 +421,14 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 ## 11. Critérios de aceitação
 
 - [ ] Candidato autenticado consulta seu perfil.
-- [ ] Candidato cadastra e atualiza todas as categorias aprovadas na OPEN-007: dados pessoais básicos da conta, formação/escolaridade, competências, idiomas, necessidades funcionais, recursos indispensáveis, experiências profissionais, cursos, certificações e links profissionais.
+- [ ] Candidato cadastra e atualiza todas as categorias aprovadas na OPEN-007: dados pessoais básicos da conta, formação/escolaridade, idiomas, necessidades funcionais, recursos indispensáveis, experiências profissionais, cursos, certificações e links profissionais.
 - [ ] Candidato declara necessidades por autodeclaração.
 - [ ] Necessidades são organizadas nas categorias conceituais do vetor e catálogo oficial inicial contém os 16 códigos aprovados na OPEN-008.
 - [ ] Candidato pode selecionar opções oficiais e/ou descrever necessidade não contemplada; o texto livre não cria opção oficial.
 - [ ] Backend recusa declaração NEEDS_DECLARED sem opção selecionada nem descrição livre e recusa NO_NEEDS_DECLARED quando há necessidades informadas.
 - [ ] Somente ADMIN pode cadastrar/editar/desativar opções; alterações do catálogo são auditadas e opções desativadas preservam referências históricas.
 - [ ] Nome e e-mail da conta são reutilizados sem exigir preenchimento duplicado no perfil; CPF não bloqueia o salvamento.
-- [ ] Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria.
+- [ ] Formação/escolaridade, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria.
 - [ ] Necessidades funcionais e recursos indispensáveis não exigem declaração universal; “não informado” é distinguido de “declarado que não possui necessidade”, e a autodeclaração não exige nem armazena laudo.
 - [ ] A ausência de dados necessários à análise de uma vaga é indicada sem presumir compatibilidade, conforme RB-16, sem tornar automaticamente esses dados obrigatórios para salvar o perfil.
 - [ ] Um candidato não consulta nem altera perfil privado de outro.
