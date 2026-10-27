@@ -119,7 +119,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   }
   function addEducation() {
     const details = [educationLevel, educationCourse.trim(), educationInstitution.trim(), educationStatus].filter(Boolean);
-    if (details.length < 3) { setError("Informe o curso ou área e a instituição para adicionar a formação."); return; }
+    if (!educationCourse.trim() || !educationInstitution.trim()) { setError("Informe o curso ou área e a instituição para adicionar a formação."); return; }
     const entry = details.join(" — ");
     if (profile.education.some(item => item.toLocaleLowerCase() === entry.toLocaleLowerCase())) { setError("Essa formação já foi adicionada."); return; }
     setProfile(current => ({ ...current, education: [...current.education, entry] }));
@@ -232,7 +232,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
         <label className="profile-link-url-label">Endereço do link<input type="url" inputMode="url" autoComplete="url" value={linkUrl} onChange={event => setLinkUrl(event.target.value)} maxLength={2048} placeholder={linkType === "LinkedIn" ? "https://www.linkedin.com/in/seu-perfil" : linkType === "GitHub" ? "https://github.com/seu-usuario" : "https://..." } disabled={loading || saving} /></label>
         <button type="button" className="secondary-button" onClick={addProfessionalLink} disabled={loading || saving}>Adicionar link</button>
       </div>
-      <ul className="profile-document-list">{profile.professionalLinks.map((item,index) => <li key={item}><div><strong>{professionalLinkTypes.find(type => item.toLocaleLowerCase().includes(type.toLocaleLowerCase())) || "Link profissional"}</strong><a href={item} target="_blank" rel="noreferrer">{item}</a></div><button type="button" className="secondary-button" onClick={() => setProfile(current => ({ ...current, professionalLinks: current.professionalLinks.filter((_,i) => i !== index) }))}>Remover</button></li>)}</ul>
+      <ul className="profile-document-list">{profile.professionalLinks.map(item => <li key={item}><div><strong>{professionalLinkTypes.find(type => item.toLocaleLowerCase().includes(type.toLocaleLowerCase())) || "Link profissional"}</strong><a href={item} target="_blank" rel="noreferrer">{item}</a></div><button type="button" className="secondary-button" onClick={() => setProfile(current => ({ ...current, professionalLinks: current.professionalLinks.filter((_,i) => i !== index) }))}>Remover</button></li>)}</ul>
     </section>
     <section className="profile-section">
       <h2>Cursos e certificações</h2>
