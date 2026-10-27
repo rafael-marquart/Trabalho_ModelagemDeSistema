@@ -300,6 +300,8 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 - Cadastrar e atualizar as categorias aprovadas na OPEN-007: dados pessoais básicos (nome/e-mail reutilizados da conta), formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais.
 - Permitir autodeclaração e atualização de necessidades funcionais de acessibilidade e recursos indispensáveis para acessibilidade.
 - Organizar o catálogo oficial em grupos arquitetônicos, de comunicação e tecnológicos, com códigos estáveis, descrição, estado ativo/inativo e propriedade explícita de obrigatoriedade.
+- Permitir, opcionalmente, anexar comprovantes de cursos e certificações (PDF, DOC, DOCX, JPG ou PNG, até 10 MB), em armazenamento privado, visíveis apenas ao candidato proprietário. O anexo nunca é exigido para registrar o curso ou a certificação e não se aplica a laudos médicos.
+- Registrar formação/escolaridade e idiomas como entradas estruturadas (formação: nível, curso/área, instituição e situação; idioma: idioma e nível).
 - Permitir seleção de opções oficiais e descrição livre para necessidades não contempladas; a descrição livre não cria uma opção oficial automaticamente.
 - Validar no backend que, quando a pessoa candidata declara necessidades, haja ao menos uma opção selecionada ou uma descrição livre. A declaração continua opcional.
 - Disponibilizar administração do catálogo apenas a ADMIN, com auditoria e desativação sem exclusão física.
@@ -309,6 +311,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 ### Fora do escopo
 - Cálculo de compatibilidade, pertencente à SPEC-007.
+- Classificação, pelo candidato, de quais necessidades são obrigatórias para uma vaga (RB-06): nesta Spec apenas o ADMIN marca a obrigatoriedade no catálogo; o uso na compatibilidade e a eventual indicação pelo candidato ficam para a SPEC-007.
 - Busca e filtros de vagas.
 - Armazenamento de laudos médicos: o sistema não armazena laudos; necessidades podem ser autodeclaradas.
 - Definição de campos internos, formatos, limites, cardinalidades e validações específicas ainda não aprovados; essas lacunas permanecem nas OPEN-007.1/007.2.

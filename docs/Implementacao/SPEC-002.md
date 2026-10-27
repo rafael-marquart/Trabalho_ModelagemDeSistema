@@ -51,7 +51,7 @@
 ## Revisão de 27/10/2026
 
 - Competências e experiências profissionais voltaram à tela (haviam sido removidas por engano); cursos e certificações podem ser registrados só com o nome, e o anexo é opcional.
-- Entradas de formação e idiomas não aceitam o separador " — " dentro dos campos, para que o texto armazenado possa ser separado sem ambiguidade (o nível "Ensino superior (graduação)" deixou de conter o separador).
+- Formação e idiomas passaram a ser objetos estruturados (formação: `level`, `course`, `institution`, `status`; idioma: `language`, `level`), validados no servidor com listas fechadas de nível e situação. Registros antigos em texto "campo — campo" são lidos de forma compatível e convertidos no próximo salvamento; a detecção de mudança para auditoria compara JSON canônico (chaves ordenadas).
 - Rótulos sem controle associado foram corrigidos; botões de remover e baixar identificam o item; a troca da declaração de necessidades pede confirmação quando há seleções.
 - Envio e remoção de anexos geram auditoria (`CANDIDATE_PROFILE_DOCUMENT_ADDED` / `_REMOVED`), registrando só a categoria.
 - Testes de anexos executam em ambiente `node` (o `jsdom` travava o envio de formulário).
@@ -59,10 +59,12 @@
 
 ## Pendências de decisão
 
-- **RB-06 (necessidades obrigatórias):** hoje só o administrador marca uma opção do catálogo como obrigatória, e todas começaram não obrigatórias; o candidato não indica quais necessidades são indispensáveis, a não ser pelo campo de recursos indispensáveis (texto). Definir antes da SPEC-007 quem classifica a obrigatoriedade.
-- **Formação estruturada:** formação e idiomas continuam armazenados como texto "campo — campo". Se a SPEC-007 precisar comparar escolaridade, migrar para objetos estruturados.
-- **Anexos:** a SPEC-002 não prevê anexos de cursos/certificações; a funcionalidade foi mantida como opcional. Confirmar ou remover do escopo, lembrando que o sistema não armazena laudos.
+- **RB-06 (necessidades obrigatórias):** adiada para a SPEC-007. Nesta Spec só o administrador marca uma opção do catálogo como obrigatória (todas começaram não obrigatórias); o candidato indica recursos indispensáveis apenas em texto. A SPEC-007 deve definir quem classifica a obrigatoriedade e como ela entra na compatibilidade.
+- **Anexos:** decidido manter como opcionais e incluídos no escopo da SPEC-002 (Specs.md atualizado); o sistema continua sem armazenar laudos.
+- **Formação e idiomas:** decidido estruturar agora; ver Revisão acima.
 
 ## Verificações
 
-Testes unitários, lint e os testes de componente executados em 27/10/2026 (ver commit). Typecheck, build, migrações e E2E dependem do Prisma Client e do PostgreSQL e devem ser conferidos na CI ou localmente. Teste manual das telas ainda pendente.
+- Vitest, ESLint e `tsc --noEmit` executados localmente em 27/10/2026 (testes de rota, de componente e de esquema).
+- O E2E (`scripts/auth-e2e.mjs`) cobre perfil, catálogo e anexos: acesso anônimo recusado, validação da declaração, rejeição de texto antigo e de código inexistente, origem cruzada, persistência estruturada de formação/idiomas, auditoria sem valores, envio/lista/download/remoção de anexo com conteúdo validado. Depende de PostgreSQL e roda na CI.
+- Teste manual das telas, leitor de tela e aprovação formal do layout continuam pendentes e não foram marcados nos critérios de aceitação.
