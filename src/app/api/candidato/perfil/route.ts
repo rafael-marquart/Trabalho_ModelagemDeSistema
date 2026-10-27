@@ -8,8 +8,8 @@ export async function GET() {
   const user = await getCurrentUser();
   if (!user || user.role !== "CANDIDATE") return NextResponse.json({ message: "Acesso não autorizado." }, { status: 401 });
 
-  const profile = await prisma.candidateProfile.upsert({
-    where: { userId: user.id }, create: { userId: user.id }, update: {},
+  const profile = await prisma.candidateProfile.findUnique({
+    where: { userId: user.id },
     select: {
       education: true, skills: true, languages: true, professionalExperience: true,
       courses: true, certifications: true, professionalLinks: true,
@@ -17,7 +17,14 @@ export async function GET() {
       essentialAccessibilityResources: true, updatedAt: true
     }
   });
-  return NextResponse.json({ profile: { fullName: user.fullName, email: user.email, ...toProfileResponse(profile) } });
+  const emptyProfile = {
+    education: [], skills: [], languages: [], professionalExperience: [], courses: [],
+    certifications: [], professionalLinks: [], accessibilityDeclaration: "NOT_INFORMED" as const,
+    accessibilityNeeds: [], essentialAccessibilityResources: [], updatedAt: new Date(0)
+  };
+  return NextResponse.json({
+    profile: { fullName: user.fullName, email: user.email, ...toProfileResponse(profile ?? emptyProfile) }
+  });
 }
 
 export async function PUT(request: Request) {
