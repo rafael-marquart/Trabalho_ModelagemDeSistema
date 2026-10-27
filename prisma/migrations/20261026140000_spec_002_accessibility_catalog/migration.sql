@@ -35,3 +35,10 @@ INSERT INTO "AccessibilityNeedOption" ("code", "name", "description", "group", "
 ('T04', 'Compatibilidade com comandos de voz', 'Operação de ferramentas digitais por comandos de voz quando necessário.', 'TECHNOLOGICAL', false, true, CURRENT_TIMESTAMP),
 ('T05', 'Compatibilidade com tecnologia assistiva própria', 'Compatibilidade com tecnologias assistivas utilizadas pela pessoa candidata.', 'TECHNOLOGICAL', false, true, CURRENT_TIMESTAMP),
 ('T06', 'Disponibilização de equipamento ou software assistivo', 'Disponibilização de recurso necessário para realizar as atividades previstas.', 'TECHNOLOGICAL', false, true, CURRENT_TIMESTAMP);
+
+-- Preserve the meaning of legacy free-text declarations when they already exist.
+UPDATE "CandidateProfile"
+SET "accessibilityDeclaration" = 'NEEDS_DECLARED'
+WHERE jsonb_typeof("accessibilityNeeds") = 'array'
+  AND jsonb_array_length("accessibilityNeeds") > 0
+  AND "accessibilityDeclaration" = 'NOT_INFORMED';
