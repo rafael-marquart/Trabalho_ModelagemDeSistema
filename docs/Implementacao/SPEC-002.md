@@ -16,7 +16,7 @@
 
 - Não implementa algoritmo de compatibilidade nem afirma que o perfil é suficiente para uma vaga.
 - Não disponibiliza consulta de perfis para recrutadores: a matriz de campos autorizados e o contexto de candidatura da OPEN-011 precisam de definição.
-- Catálogo, semântica das opções, evolução e flags de obrigatoriedade da OPEN-008 permanecem pendentes.
+- A estrutura do catálogo da OPEN-008 foi aprovada, mas sua implementação continua pendente até a definição da lista inicial de opções, critérios de obrigatoriedade, controles administrativos e fluxo para necessidades não contempladas.
 - Campos internos, limites por categoria, formatos e critérios de consistência da OPEN-007.2 não foram inventados.
 - O perfil é criado sob demanda no primeiro acesso à tela/API. Não há operação de exclusão.
 - A aprovação formal do layout permanece separada.
