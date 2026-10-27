@@ -130,8 +130,18 @@ model Company {
   recruiterLinks   RecruiterLink[]
   invitations      RecruiterInvitation[]
   emailVerificationTokens CompanyEmailVerificationToken[]
+  infrastructure   CompanyInfrastructure?
   createdAt        DateTime              @default(now())
   updatedAt        DateTime              @updatedAt
+}
+
+model CompanyInfrastructure {
+  id        String   @id @default(cuid())
+  companyId String   @unique
+  answers   Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Restrict)
 }
 
 model RecruiterLink {
