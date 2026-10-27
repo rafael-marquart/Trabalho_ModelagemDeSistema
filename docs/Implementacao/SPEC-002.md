@@ -61,6 +61,7 @@
 
 ## Pendências de decisão
 
+- **RB-16 na análise de vaga:** critério transferido para a SPEC-007 em 27/10/2026, pois depende da vaga e do cálculo.
 - **RB-06 (necessidades obrigatórias):** adiada para a SPEC-007. Nesta Spec só o administrador marca uma opção do catálogo como obrigatória (todas começaram não obrigatórias); o candidato indica recursos indispensáveis apenas em texto. A SPEC-007 deve definir quem classifica a obrigatoriedade e como ela entra na compatibilidade.
 - **Anexos:** decidido manter como opcionais e incluídos no escopo da SPEC-002 (Specs.md atualizado); o sistema continua sem armazenar laudos.
 - **Formação e idiomas:** decidido estruturar agora; ver Revisão acima.

@@ -430,7 +430,7 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 - [x] Preferências de trabalho e deslocamento (modalidades, cidade, estado, endereço e transporte) são opcionais, validadas no servidor e persistidas.
 - [x] Formação/escolaridade, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria.
 - [x] Necessidades funcionais e recursos indispensáveis não exigem declaração universal; “não informado” é distinguido de “declarado que não possui necessidade”, e a autodeclaração não exige nem armazena laudo.
-- [ ] A ausência de dados necessários à análise de uma vaga é indicada sem presumir compatibilidade, conforme RB-16, sem tornar automaticamente esses dados obrigatórios para salvar o perfil.
+- Transferido para a SPEC-007 (decisão de 27/10/2026): a indicação de dados ausentes na análise de uma vaga (RB-16) depende da vaga e do cálculo de compatibilidade. Esta Spec garante apenas que esses dados não são obrigatórios para salvar o perfil.
 - [x] Um candidato não consulta nem altera perfil privado de outro.
 - [x] Dados de acessibilidade não são expostos sem autorização.
 - [x] Atualizações preservam integridade da associação entre candidato e necessidades.
@@ -438,7 +438,7 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 - [x] O sistema não exige nem armazena laudo médico como condição para declarar necessidades.
 - [ ] Mensagens de validação são perceptíveis por tecnologias assistivas.
 
-> Evidência: testes Vitest e E2E (`scripts/auth-e2e.mjs`) verdes na CI. Permanecem abertos: indicação de insuficiência de dados (RB-16), que depende da SPEC-007, e validação com tecnologias assistivas, que exige teste manual.
+> Evidência: testes Vitest e E2E (`scripts/auth-e2e.mjs`) verdes na CI. Permanece aberta apenas a validação com tecnologias assistivas, que exige teste manual. A indicação de dados insuficientes (RB-16) foi transferida para a SPEC-007.
 
 ## 12. Casos de teste derivados
 
@@ -456,7 +456,7 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 | T-002-10 | Usar formulário com leitor de tela/teclado | Campos e erros identificáveis e operáveis |
 | T-002-11 | Consultar perfil com as categorias aprovadas | Categorias do perfil e dados de acessibilidade apresentados ao próprio candidato conforme autorização |
 | T-002-12 | Salvar perfil sem experiências, cursos, certificações ou links profissionais | Salvamento permitido, desde que as demais validações aplicáveis sejam satisfeitas |
-| T-002-13 | Categoria profissional ainda não preenchida é relevante para uma vaga | Insuficiência indicada sem presumir compatibilidade conforme RB-16 |
+| T-002-13 | Categoria profissional ainda não preenchida é relevante para uma vaga | Insuficiência indicada sem presumir compatibilidade conforme RB-16 (verificado na SPEC-007; nesta Spec, o perfil continua salvável sem a categoria) |
 
 ## 13. Questões em aberto
 
@@ -1677,6 +1677,7 @@ Contratos conceituais, sem endpoints HTTP.
 - [ ] Barreira incompatível com necessidade obrigatória elimina a vaga independentemente do score.
 - [ ] Score usa pesos 50%/30%/20%.
 - [ ] Dados insuficientes não são convertidos em compatibilidade presumida.
+- [ ] A ausência de dados do perfil (incluindo categorias profissionais e preferências de trabalho e deslocamento) necessários à análise de uma vaga é indicada como insuficiência, sem presumir compatibilidade (RB-16) e sem exigir esses dados para salvar o perfil (transferido da SPEC-002).
 - [ ] Perfil incompleto gera indicação de complementação, conforme UC-13.
 - [ ] Resultado expõe fatores considerados.
 - [ ] Mesmas entradas e regras produzem resultado consistente.
