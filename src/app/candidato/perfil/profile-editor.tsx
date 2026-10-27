@@ -22,7 +22,6 @@ const sections: { key: keyof Profile; title: string; hint: string }[] = [
 ];
 const educationLevels = ["Ensino fundamental", "Ensino médio", "Ensino técnico", "Ensino superior — graduação", "Pós-graduação", "Mestrado", "Doutorado", "Curso livre", "Outro"];
 const educationStatuses = ["Concluído", "Em andamento", "Trancado", "Incompleto"];
-const professionalLinkTypes = ["LinkedIn", "GitHub", "Portfólio", "Site pessoal", "Behance", "Outro"];
 const groupLabels: Record<NeedGroup, string> = {
   ARCHITECTURAL: "Necessidades arquitetônicas",
   COMMUNICATION: "Necessidades de comunicação",
@@ -47,7 +46,6 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   const [educationCourse, setEducationCourse] = useState("");
   const [educationInstitution, setEducationInstitution] = useState("");
   const [educationStatus, setEducationStatus] = useState(educationStatuses[0]);
-  const [linkType, setLinkType] = useState(professionalLinkTypes[0]);
   const [linkUrl, setLinkUrl] = useState("");
   const [documentCategory, setDocumentCategory] = useState<"COURSE" | "CERTIFICATION">("COURSE");
   const [documentName, setDocumentName] = useState("");
@@ -221,10 +219,10 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
       <h2>Links profissionais</h2>
       <p className="muted">Escolha o tipo de link, cole o endereço completo e adicione-o à lista. Use links públicos do seu portfólio profissional.</p>
       <div className="profile-link-controls">
-        <label>Tipo de link<select value={linkType} onChange={event => setLinkType(event.target.value)} disabled={loading || saving}>{professionalLinkTypes.map(item => <option key={item} value={item}>{item}</option>)}</select></label>
-        <label className="profile-link-url-label">Endereço do link<input type="url" inputMode="url" autoComplete="url" value={linkUrl} onChange={event => setLinkUrl(event.target.value)} maxLength={2048} placeholder={linkType === "LinkedIn" ? "https://www.linkedin.com/in/seu-perfil" : linkType === "GitHub" ? "https://github.com/seu-usuario" : "https://..." } disabled={loading || saving} /></label>
+        <label className="profile-link-url-label">Endereço do perfil profissional<input type="url" inputMode="url" autoComplete="url" value={linkUrl} onChange={event => setLinkUrl(event.target.value)} maxLength={2048} placeholder="https://www.linkedin.com/in/seu-perfil" disabled={loading || saving} /></label>
         <button type="button" className="secondary-button" onClick={addProfessionalLink} disabled={loading || saving}>Adicionar link</button>
       </div>
+      <p className="muted">Exemplos: LinkedIn, GitHub, portfólio ou site pessoal. Cada endereço será validado e poderá ser removido individualmente.</p>
       <ul className="profile-document-list">{profile.professionalLinks.map((item, index) => <li key={item}><div><strong>Link profissional {index + 1}</strong><a href={item} target="_blank" rel="noreferrer">{item}</a></div><button type="button" className="secondary-button" onClick={() => setProfile(current => ({ ...current, professionalLinks: current.professionalLinks.filter((_,i) => i !== index) }))}>Remover</button></li>)}</ul>
     </section>
     <section className="profile-section">
