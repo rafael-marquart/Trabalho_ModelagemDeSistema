@@ -155,11 +155,15 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   }
   async function deleteDocument(document: ProfileDocument) {
     setError(""); setNotice("");
-    const response = await fetch(`/api/candidato/documentos/${encodeURIComponent(document.id)}`, { method: "DELETE" });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok) { setError(result.message || "Não foi possível remover o arquivo."); return; }
-    setDocuments(current => current.filter(item => item.id !== document.id));
-    setNotice("Arquivo removido.");
+    try {
+      const response = await fetch(`/api/candidato/documentos/${encodeURIComponent(document.id)}`, { method: "DELETE" });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) { setError(result.message || "Não foi possível remover o arquivo."); return; }
+      setDocuments(current => current.filter(item => item.id !== document.id));
+      setNotice("Arquivo removido.");
+    } catch {
+      setError("Não foi possível conectar ao serviço para remover o arquivo. Tente novamente.");
+    }
   }
   async function handleSubmit(event?: FormEvent<HTMLFormElement>) {
     event?.preventDefault(); setError(""); setNotice(""); setSaving(true);
