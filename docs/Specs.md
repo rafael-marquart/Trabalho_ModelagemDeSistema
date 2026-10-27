@@ -299,7 +299,10 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 - Permitir que candidato autenticado consulte seu perfil.
 - Cadastrar e atualizar as categorias aprovadas na OPEN-007: dados pessoais básicos (nome/e-mail reutilizados da conta), formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais.
 - Permitir autodeclaração e atualização de necessidades funcionais de acessibilidade e recursos indispensáveis para acessibilidade.
-- Organizar necessidades nas categorias do vetor conceitual.
+- Organizar o catálogo oficial em grupos arquitetônicos, de comunicação e tecnológicos, com códigos estáveis, descrição, estado ativo/inativo e propriedade explícita de obrigatoriedade.
+- Permitir seleção de opções oficiais e descrição livre para necessidades não contempladas; a descrição livre não cria uma opção oficial automaticamente.
+- Validar no backend que, quando a pessoa candidata declara necessidades, haja ao menos uma opção selecionada ou uma descrição livre. A declaração continua opcional.
+- Disponibilizar administração do catálogo apenas a ADMIN, com auditoria e desativação sem exclusão física.
 - Validar campos obrigatórios e informações mínimas definidas na baseline.
 - Proteger as informações de acessibilidade e registrar alterações relevantes.
 - Disponibilizar os dados para capacidades posteriores somente conforme autorização e finalidade.
@@ -346,10 +349,11 @@ A divisão é funcional e provisória; não fixa a lista final de campos ou a di
 
 ### 5.3 Declarar necessidades de acessibilidade
 1. Candidato acessa a área de necessidades.
-2. Declara necessidades funcionais por autodeclaração.
-3. Sistema organiza os dados nas categorias do vetor: necessidades arquitetônicas, de comunicação e tecnológicas.
-4. Sistema valida o preenchimento conforme os requisitos de dados mínimos.
-5. Após confirmação e validação, persiste os dados com controles de acesso compatíveis com sua confidencialidade.
+2. Pode manter a declaração como não informada, declarar que não possui necessidades ou declarar necessidades funcionais por autodeclaração.
+3. Ao declarar necessidades, seleciona pelo menos uma opção do catálogo oficial ou descreve uma necessidade não contemplada; pode fazer ambos.
+4. O catálogo apresenta opções nos grupos arquitetônico, de comunicação e tecnológico. Opções desativadas não podem ser escolhidas por novos perfis; referências já existentes são preservadas até alteração da declaração.
+5. O backend valida a consistência entre o estado da declaração, as opções selecionadas e a descrição livre.
+6. Após confirmação e validação, persiste os dados com controles de acesso compatíveis com sua confidencialidade.
 
 ### 5.4 Atualizar necessidades
 1. Candidato consulta suas necessidades atuais e altera o que deseja.
@@ -413,7 +417,10 @@ São responsabilidades conceituais, não endpoints ou métodos definitivos.
 - [ ] Candidato autenticado consulta seu perfil.
 - [ ] Candidato cadastra e atualiza todas as categorias aprovadas na OPEN-007: dados pessoais básicos da conta, formação/escolaridade, competências, idiomas, necessidades funcionais, recursos indispensáveis, experiências profissionais, cursos, certificações e links profissionais.
 - [ ] Candidato declara necessidades por autodeclaração.
-- [ ] Necessidades são organizadas nas categorias conceituais do vetor.
+- [ ] Necessidades são organizadas nas categorias conceituais do vetor e catálogo oficial inicial contém os 16 códigos aprovados na OPEN-008.
+- [ ] Candidato pode selecionar opções oficiais e/ou descrever necessidade não contemplada; o texto livre não cria opção oficial.
+- [ ] Backend recusa declaração NEEDS_DECLARED sem opção selecionada nem descrição livre e recusa NO_NEEDS_DECLARED quando há necessidades informadas.
+- [ ] Somente ADMIN pode cadastrar/editar/desativar opções; alterações do catálogo são auditadas e opções desativadas preservam referências históricas.
 - [ ] Nome e e-mail da conta são reutilizados sem exigir preenchimento duplicado no perfil; CPF não bloqueia o salvamento.
 - [ ] Formação/escolaridade, competências, idiomas, experiências profissionais, cursos, certificações e links profissionais não bloqueiam o salvamento por categoria.
 - [ ] Necessidades funcionais e recursos indispensáveis não exigem declaração universal; “não informado” é distinguido de “declarado que não possui necessidade”, e a autodeclaração não exige nem armazena laudo.
