@@ -7,7 +7,7 @@
 - Nome e e-mail são reutilizados da conta, sem duplicação no perfil.
 - Salvamento progressivo: categorias profissionais podem permanecer vazias.
 - Declaração distingue `NOT_INFORMED`, `NO_NEEDS_DECLARED` e `NEEDS_DECLARED`.
-- Necessidades e recursos são autodeclarados; não há upload nem campo para laudo médico.
+- Necessidades e recursos são autodeclarados; não há upload de laudos médicos nem campo para dados clínicos. Os anexos são restritos a cursos e certificações.
 - Idiomas possuem opções de idioma e nível, incluindo opção de texto livre para idioma não listado.
 - Cursos e certificações aceitam metadados e anexos PDF, DOC, DOCX, JPG ou PNG de até 10 MB, armazenados em diretório privado local fora da pasta pública; os arquivos podem ser listados, baixados e removidos apenas pela conta candidata proprietária.
 - A declaração de acessibilidade é apresentada antes dos campos detalhados; as opções do catálogo e a descrição livre só aparecem quando a pessoa declara que precisa de adaptações.
