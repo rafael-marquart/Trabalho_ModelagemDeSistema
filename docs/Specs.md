@@ -1547,7 +1547,7 @@ Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN
 |---|---|
 | ID | SPEC-007 |
 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-007.md` |
 | Estado do layout | não se aplica ao cálculo; apresentação do resultado pertence à SPEC-010 |
 | Capacidade | Aplicar trava crítica e calcular score determinístico de compatibilidade |
 
@@ -3214,3 +3214,10 @@ O objetivo final é disponibilizar um link público funcional da aplicação no 
 
 A integração com Adzuna permanece limitada a **até 25 chamadas de teste**. Essa autorização não permite coleta contínua, rotina diária, operação de produção nem ampliação do limite.
 
+## SPEC-007 — Decisões de implementação (28/10/2026)
+
+- Mapa fixo entre necessidades do catálogo e os seis itens da vaga (A01, A02, A04, A06, T01); demais necessidades ficam "não avaliáveis".
+- Critérios técnicos estruturados definidos pelo recrutador no editor da vaga; a integração com LLM não é usada nesta etapa.
+- Dimensão sem critério aplicável é excluída e os pesos restantes são normalizados (a confirmar, OPEN-090).
+- A validação de localização de vaga externa (item 6 do comportamento) e a SPEC-006 permanecem pendentes; os critérios que dependem de vagas externas continuam abertos.
+- Encerramento da SPEC-007 depende do teste manual e da aprovação do responsável.

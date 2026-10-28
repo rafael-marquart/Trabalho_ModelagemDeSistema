@@ -15,6 +15,7 @@
     "db:studio": "prisma studio",
     "audit:retention": "node scripts/purge-audit-events.mjs",
     "login-security:retention": "node scripts/purge-login-security-records.mjs",
+    "compatibility:retention": "node scripts/purge-compatibility-results.mjs",
     "admin:create": "node scripts/create-admin.mjs"
   },
   "dependencies": {

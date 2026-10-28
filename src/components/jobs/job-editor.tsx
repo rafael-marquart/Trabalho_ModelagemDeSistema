@@ -4,15 +4,21 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ChoiceGroup from "@/components/choice-group";
 import { brazilianStates, jobModalities, jobModalityLabels, jobStatusLabels, TEXT_LIMITS, type JobAction, type JobModalityValue, type JobStatusValue } from "@/lib/jobs/constants";
+import { languageLevels } from "@/lib/candidate-profile/options";
+import { rankedEducationLevels, type TechnicalCriteria } from "@/lib/jobs/criteria";
 import { infrastructureItems, infrastructureStatuses, statusLabels, type InfrastructureStatus } from "@/lib/company-infrastructure/items";
 
 type Form = {
   title: string; description: string; requirements: string; modality: JobModalityValue | "";
   locationCity: string; locationState: string; locationAddress: string; deadline: string;
   salaryMin: string; salaryMax: string; accessibility: Record<string, InfrastructureStatus>;
+  skillsText: string; experienceText: string; educationMinLevel: TechnicalCriteria["educationMinLevel"];
+  languages: TechnicalCriteria["languages"];
 };
 const MISSING_FIELDS = "Falta preencher ou corrigir algum campo. Os campos com problema estão indicados em vermelho, acima nesta página.";
-const empty: Form = { title: "", description: "", requirements: "", modality: "", locationCity: "", locationState: "", locationAddress: "", deadline: "", salaryMin: "", salaryMax: "", accessibility: {} };
+const empty: Form = { title: "", description: "", requirements: "", modality: "", locationCity: "", locationState: "", locationAddress: "", deadline: "", salaryMin: "", salaryMax: "", accessibility: {},
+  skillsText: "", experienceText: "", educationMinLevel: "", languages: [] };
+const toLines = (text: string) => text.split(/\r?\n|;/).map(line => line.trim()).filter(Boolean);
 
 function parseMoney(text: string): number | null | "invalid" {
   const trimmed = text.trim().replace(/\./g, "").replace(",", ".");
@@ -43,7 +49,9 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
       setStatus(job.status);
       setForm({ ...empty, title: job.title, description: job.description, requirements: job.requirements, modality: job.modality,
         locationCity: job.locationCity, locationState: job.locationState, locationAddress: job.locationAddress, deadline: job.deadline,
-        salaryMin: moneyText(job.salaryMin), salaryMax: moneyText(job.salaryMax), accessibility: job.accessibility ?? {} });
+        salaryMin: moneyText(job.salaryMin), salaryMax: moneyText(job.salaryMax), accessibility: job.accessibility ?? {},
+        skillsText: (job.technicalCriteria?.skills ?? []).join("\n"), experienceText: (job.technicalCriteria?.experience ?? []).join("\n"),
+        educationMinLevel: job.technicalCriteria?.educationMinLevel ?? "", languages: job.technicalCriteria?.languages ?? [] });
     }).catch(err => { if (active) setError(err.message || "Não foi possível carregar a vaga."); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
@@ -75,7 +83,9 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
     }
     return { title: form.title, description: form.description, requirements: form.requirements, modality: form.modality,
       locationCity: form.locationCity, locationState: form.locationState, locationAddress: form.locationAddress, deadline: form.deadline,
-      salaryMin: min, salaryMax: max, accessibility: form.accessibility };
+      salaryMin: min, salaryMax: max, accessibility: form.accessibility,
+      technicalCriteria: { skills: toLines(form.skillsText), experience: toLines(form.experienceText), educationMinLevel: form.educationMinLevel,
+        languages: form.languages.filter(entry => entry.language.trim()).map(entry => ({ language: entry.language.trim(), level: entry.level })) } };
   }
 
   async function request(url: string, method: string, body: unknown) {
@@ -185,6 +195,40 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
             <input type="text" inputMode="decimal" value={form.salaryMax} onChange={e => set("salaryMax", e.target.value)} aria-describedby={issues.salary ? "err-salary" : undefined} /></label>
         </div>
         {fieldError("salary")}
+      </fieldset>
+
+      <fieldset className="profile-section job-fieldset" disabled={readOnly}>
+        <legend className="sr-only">Critérios técnicos</legend>
+        <h2>Critérios técnicos (opcional)</h2>
+        <p className="muted">Usados no cálculo de compatibilidade. Só entram os critérios que você preencher.</p>
+        <label className="job-field"><span className="profile-section-title">Competências e conhecimentos (um por linha)</span>
+          <textarea rows={4} value={form.skillsText} onChange={e => set("skillsText", e.target.value)} aria-invalid={Boolean(issues["technicalCriteria.skills"])} aria-describedby={issues["technicalCriteria.skills"] ? "err-technicalCriteria.skills" : undefined} />
+        </label>{fieldError("technicalCriteria.skills")}
+        <label className="job-field"><span className="profile-section-title">Experiência profissional exigida (um cargo ou área por linha)</span>
+          <textarea rows={3} value={form.experienceText} onChange={e => set("experienceText", e.target.value)} aria-invalid={Boolean(issues["technicalCriteria.experience"])} aria-describedby={issues["technicalCriteria.experience"] ? "err-technicalCriteria.experience" : undefined} />
+        </label>{fieldError("technicalCriteria.experience")}
+        <label className="job-field"><span className="profile-section-title">Escolaridade mínima</span>
+          <select value={form.educationMinLevel} onChange={e => set("educationMinLevel", e.target.value as Form["educationMinLevel"])}>
+            <option value="">Não exigida</option>
+            {rankedEducationLevels.map(level => <option key={level} value={level}>{level}</option>)}
+          </select>
+        </label>
+        <div className="job-field">
+          <span className="profile-section-title">Idiomas exigidos</span>
+          {form.languages.map((entry, index) => <div key={index} className="job-row job-language-row">
+            <label className="job-field"><span className="sr-only">Idioma {index + 1}</span>
+              <input type="text" placeholder="Idioma" value={entry.language} maxLength={80} onChange={e => set("languages", form.languages.map((item, i) => i === index ? { ...item, language: e.target.value } : item))} />
+            </label>
+            <label className="job-field"><span className="sr-only">Nível mínimo do idioma {index + 1}</span>
+              <select value={entry.level} onChange={e => set("languages", form.languages.map((item, i) => i === index ? { ...item, level: e.target.value as (typeof languageLevels)[number] } : item))}>
+                {languageLevels.map(level => <option key={level} value={level}>{level}</option>)}
+              </select>
+            </label>
+            <button type="button" className="secondary-button" onClick={() => set("languages", form.languages.filter((_, i) => i !== index))}>Remover idioma {index + 1}</button>
+          </div>)}
+          <button type="button" className="secondary-button job-add-language" onClick={() => set("languages", [...form.languages, { language: "", level: languageLevels[1] }])}>Adicionar idioma</button>
+          {fieldError("technicalCriteria.languages")}
+        </div>
       </fieldset>
 
       <fieldset className="profile-section job-fieldset" disabled={readOnly}>
