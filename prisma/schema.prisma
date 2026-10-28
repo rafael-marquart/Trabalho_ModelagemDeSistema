@@ -54,6 +54,7 @@ model User {
 
   @@index([role, isActive])
   jobsCreated       Job[]    @relation("JobCreator")
+  preference        UserPreference?
 }
 
 model CandidateProfile {
@@ -322,4 +323,12 @@ model Job {
   createdBy       User         @relation("JobCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
 
   @@index([companyId, status])
+}
+
+// Interface preferences saved per account (SPEC-003, OPEN-013). Values are stored by stable code.
+model UserPreference {
+  userId      String   @id
+  user        User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  preferences Json     @default("{}")
+  updatedAt   DateTime @updatedAt
 }

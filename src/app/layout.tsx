@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ThemeProvider from "@/components/theme-provider";
+import ContrastProvider from "@/components/contrast-provider";
+import SkipLink from "@/components/skip-link";
 
 export const metadata: Metadata = {
   title: "Acessa Vagas",
@@ -11,7 +13,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <SkipLink />
+        <ThemeProvider><ContrastProvider>{children}</ContrastProvider></ThemeProvider>
       </body>
     </html>
   );

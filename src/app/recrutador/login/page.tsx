@@ -1,4 +1,6 @@
 "use client";
+
+import React from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
 import { FormEvent, useState } from "react";
