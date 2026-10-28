@@ -28,3 +28,5 @@
 - O E2E (CI com PostgreSQL) cobre: preferências negadas a anônimos, padrão `AUTO`, valores inválidos, usuário não escolhido pelo corpo, origem cruzada, persistência, isolamento entre contas, auditoria e presença do link para pular ao conteúdo.
 - O axe-core em jsdom não mede contraste de cores (sem layout); isso é coberto pelos testes de tokens e pela avaliação manual.
 - Teste manual e aprovação de layout: `docs/operacao/validacao-manual-spec-003.md` (pendentes do responsável).
+- Teste manual executado pelo responsável em 28/10/2026; ajuste aplicado no passo 6 (a preferência da conta passou a ser reaplicada logo após o login, sem precisar recarregar). Layout aprovado na mesma data.
+- SPEC-003 encerrada em 28/10/2026, exceto: navegação por voz (em aberto para implementar depois), matriz de ambientes e plano formal de avaliação WCAG (OPEN-015/OPEN-016, pendentes de decisão) e a evidência de conformidade integral, que os testes realizados não comprovam.

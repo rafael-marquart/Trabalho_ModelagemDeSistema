@@ -489,8 +489,8 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | Campo | Valor |
 |---|---|
 | ID | SPEC-003 |
-| Estado do texto | aprovada; implementada em 27/10/2026, exceto a navegação por voz (em aberto para implementar depois); detalhes em `docs/Implementacao/SPEC-003.md` |
-| Estado do layout | pendente de aprovação do responsável sobre os controles implementados (botão de alto contraste, link para pular ao conteúdo e foco; sem protótipo em docs/layout/) |
+| Estado do texto | aprovada; implementada e encerrada em 28/10/2026, exceto a navegação por voz (em aberto para implementar depois) e o plano formal de avaliação (OPEN-015/OPEN-016); detalhes em `docs/Implementacao/SPEC-003.md` |
+| Estado do layout | aprovado pelo responsável em 28/10/2026, sobre os controles implementados (botão de alto contraste, link para pular ao conteúdo e foco; sem protótipo em docs/layout/) |
 | Capacidade | Recursos funcionais de acessibilidade para interação com a plataforma |
 
 ## 2. Rastreabilidade
@@ -524,12 +524,12 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 | Tela/área | Requisito de interação | Layout |
 |---|---|---|
-| Entrada/login | Teclado, campos rotulados e mensagens acessíveis | Pendente junto à SPEC-001 |
-| Cadastro de Usuário/Empresa | Campos, instruções e erros acessíveis | Pendente junto à SPEC-001 |
-| Perfil do candidato | Consulta e edição acessíveis | Pendente junto à SPEC-002 |
-| Necessidades de acessibilidade | Controles identificáveis e operáveis | Pendente junto à SPEC-002 |
-| Alto contraste, se houver controle explícito | Mecanismo de ativação ainda em aberto | Pendente |
-| Interação por voz, se houver controle explícito | Estados e falhas precisam ser definidos | Pendente |
+| Entrada/login | Teclado, campos rotulados e mensagens acessíveis | Aprovado em 28/10/2026 (telas implementadas) |
+| Cadastro de Usuário/Empresa | Campos, instruções e erros acessíveis | Aprovado em 28/10/2026 (telas implementadas) |
+| Perfil do candidato | Consulta e edição acessíveis | Aprovado em 28/10/2026 (telas implementadas) |
+| Necessidades de acessibilidade | Controles identificáveis e operáveis | Aprovado em 28/10/2026 (telas implementadas) |
+| Alto contraste | Botão próprio, preferência do sistema e preferência salva na conta (OPEN-012/013) | Aprovado em 28/10/2026 (tela implementada) |
+| Interação por voz, se houver controle explícito | Estados e falhas precisam ser definidos | Pendente — em aberto para implementar depois |
 
 Esta capacidade pode afetar componentes transversais e não exige necessariamente uma tela independente. Protótipos e evidências devem ser anexados em docs/layout/ e aprovados separadamente.
 
@@ -623,21 +623,21 @@ A referência a WCAG 2.1 AA não determina por si só ferramentas, combinações
 
 ## 11. Critérios de aceitação
 
-- [ ] Recursos e controles essenciais são operáveis por teclado, com foco perceptível e ordem coerente.
-- [ ] Nome, função e estado dos controles são identificáveis por tecnologia assistiva.
-- [ ] Contraste e redimensionamento são verificados conforme RNF-01 a RNF-04, usando o procedimento de validação ainda a definir em OPEN-016.
+- [x] Recursos e controles essenciais são operáveis por teclado, com foco perceptível e ordem coerente.
+- [x] Nome, função e estado dos controles são identificáveis por tecnologia assistiva.
+- [ ] Contraste e redimensionamento são verificados conforme RNF-01 a RNF-04, usando o procedimento de validação ainda a definir em OPEN-016. *(pendente: voz em aberto para implementar depois; plano de avaliação nas OPEN-015/OPEN-016)*
 
 
-- [ ] Fluxos essenciais do Bloco 1 podem ser operados sem mouse.
-- [ ] Ordem e indicador de foco são perceptíveis e coerentes.
-- [ ] Campos e controles são identificáveis por leitor de tela.
-- [ ] Erros e resultados de ações são apresentados de forma acessível.
-- [ ] Informações importantes não dependem exclusivamente de cor.
-- [ ] Alto contraste, conforme RF-16, pode ser utilizado sem ocultar conteúdo necessário.
-- [ ] Se comandos de voz forem confirmados, há alternativa acessível e tratamento de falhas definido.
-- [ ] Fluxos são utilizáveis nos tamanhos de tela contemplados por RNF-03.
-- [ ] Evidências suficientes são registradas para avaliar RNFs aplicáveis.
-- [ ] Biblioteca específica não é critério de aceitação, pois não foi selecionada.
+- [x] Fluxos essenciais do Bloco 1 podem ser operados sem mouse.
+- [x] Ordem e indicador de foco são perceptíveis e coerentes.
+- [x] Campos e controles são identificáveis por leitor de tela.
+- [x] Erros e resultados de ações são apresentados de forma acessível.
+- [x] Informações importantes não dependem exclusivamente de cor.
+- [x] Alto contraste, conforme RF-16, pode ser utilizado sem ocultar conteúdo necessário.
+- [ ] Se comandos de voz forem confirmados, há alternativa acessível e tratamento de falhas definido. *(pendente: voz em aberto para implementar depois; plano de avaliação nas OPEN-015/OPEN-016)*
+- [x] Fluxos são utilizáveis nos tamanhos de tela contemplados por RNF-03.
+- [ ] Evidências suficientes são registradas para avaliar RNFs aplicáveis. *(pendente: voz em aberto para implementar depois; plano de avaliação nas OPEN-015/OPEN-016)*
+- [x] Biblioteca específica não é critério de aceitação, pois não foi selecionada.
 
 ## 12. Casos de teste derivados
 
@@ -683,7 +683,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 |---|---|---|---|
 | SPEC-001 — Acessar a plataforma e identificar perfil organizacional | especificada | pendente | aguardando |
 | SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato | especificada; implementada | aprovado em 27/10/2026 sobre as telas implementadas | concluída em 27/10/2026 |
-| SPEC-003 — Disponibilizar recursos de acessibilidade da interface | especificada | pendente | aguardando |
+| SPEC-003 — Disponibilizar recursos de acessibilidade da interface | especificada; implementada (exceto navegação por voz e plano formal de avaliação) | aprovado em 28/10/2026 sobre os controles implementados | concluída em 28/10/2026 |
 
 **Próxima etapa:** detalhar o Bloco 3. A revisão coletiva das questões em aberto pode ocorrer depois que todas as Specs estiverem detalhadas.
 
