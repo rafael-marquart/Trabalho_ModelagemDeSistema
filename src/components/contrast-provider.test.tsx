@@ -5,6 +5,8 @@ import ContrastProvider from "./contrast-provider";
 import ThemeProvider from "./theme-provider";
 import ThemeToggle from "./theme-toggle";
 
+const { pathnameRef } = vi.hoisted(() => ({ pathnameRef: { current: "/candidato/login" } }));
+vi.mock("next/navigation", () => ({ usePathname: () => pathnameRef.current }));
 const fetchMock = vi.fn();
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
 const setup = () => render(<ThemeProvider><ContrastProvider><ThemeToggle /></ContrastProvider></ThemeProvider>);
@@ -46,9 +48,31 @@ describe("high contrast control", () => {
 
   it("sends a choice made before login to an account that never set one", async () => {
     window.localStorage.setItem("acessa-vagas-contrast", "ON");
-    fetchMock.mockResolvedValue(json({ preferences: { HIGH_CONTRAST: "AUTO" } }));
+    window.localStorage.setItem("acessa-vagas-contrast-source", "local");
+    fetchMock.mockImplementation(async (_url: string, init?: RequestInit) => init?.method === "PUT" ? json({ ok: true }) : json({ preferences: { HIGH_CONTRAST: "AUTO" } }));
     setup(); await act(async () => {});
     expect(document.documentElement.dataset.contrast).toBe("high");
     expect(fetchMock.mock.calls.some(([, init]) => init?.method === "PUT")).toBe(true);
+  });
+
+  it("does not hand a value that came from another account to a new account", async () => {
+    window.localStorage.setItem("acessa-vagas-contrast", "ON");
+    window.localStorage.setItem("acessa-vagas-contrast-source", "account");
+    fetchMock.mockResolvedValue(json({ preferences: { HIGH_CONTRAST: "AUTO" } }));
+    setup(); await act(async () => {});
+    expect(fetchMock.mock.calls.some(([, init]) => init?.method === "PUT")).toBe(false);
+    expect(document.documentElement.dataset.contrast).toBe("auto");
+  });
+
+  it("re-reads the account after client-side navigation, as happens right after signing in", async () => {
+    pathnameRef.current = "/candidato/login";
+    fetchMock.mockResolvedValue(json({ message: "x" }, 401));
+    const view = setup(); await act(async () => {});
+    expect(document.documentElement.dataset.contrast).toBe("auto");
+    fetchMock.mockResolvedValue(json({ preferences: { HIGH_CONTRAST: "ON" } }));
+    pathnameRef.current = "/candidato";
+    view.rerender(<ThemeProvider><ContrastProvider><ThemeToggle /></ContrastProvider></ThemeProvider>);
+    await act(async () => {});
+    expect(document.documentElement.dataset.contrast).toBe("high");
   });
 });

@@ -12,7 +12,7 @@ import SkipLink from "@/components/skip-link";
 import ThemeProvider from "@/components/theme-provider";
 import ContrastProvider from "@/components/contrast-provider";
 
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }), usePathname: () => "/" }));
 vi.mock("next/link", () => ({ default: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => <a href={href} {...rest}>{children}</a> }));
 
 // jsdom has no layout engine, so colour contrast is covered by the token tests instead.
