@@ -37,3 +37,5 @@
 - Vitest: motor (trava, insuficiência, pesos, arredondamento, bandas), adaptador HERE (falhas, chave oculta), serviço, API, critérios, retenção. ESLint e `tsc --noEmit` limpos.
 - E2E (`scripts/auth-e2e.mjs`) usa um HERE simulado local: score completo, sobrescrita de transporte, imutabilidade, falha do provedor, trava crítica sem chamada de rota.
 - Teste manual: `docs/operacao/validacao-manual-spec-007.md`.
+- Teste manual executado pelo responsável em 29/10/2026 com a HERE real; ajustes aplicados durante o teste. Layout da tela provisória e da opção "Indispensável para mim" aprovado na mesma data.
+- SPEC-007 encerrada em 29/10/2026, exceto os critérios de vaga externa (SPEC-006 e validação de localização), que permanecem abertos.
