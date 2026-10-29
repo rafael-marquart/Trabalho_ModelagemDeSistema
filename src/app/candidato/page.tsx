@@ -37,7 +37,7 @@ export default async function CandidateHomePage() {
           <Link href="/candidato/vagas">Ver todas as vagas</Link>
         </div>
         {failed ? <p className="form-error" role="alert">Não foi possível carregar as vagas agora. Tente novamente em instantes.</p>
-          : featured.length ? <div className="job-card-grid">{featured.map(job => <JobCard key={job.id} job={job} />)}</div>
+          : featured.length ? <div className="job-card-list">{featured.map(job => <JobCard key={job.id} job={job} />)}</div>
             : <p className="muted">Ainda não há vagas elegíveis para o seu perfil. <Link href="/candidato/vagas">Buscar vagas</Link> ou <Link href="/candidato/perfil">completar o perfil</Link>.</p>}
       </section>
     </main>

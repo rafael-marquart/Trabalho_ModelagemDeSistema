@@ -917,9 +917,6 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 @media (max-width: 520px) {
   .job-search-bar { flex-direction: column; }
 }
-/* Featured cards are narrow: the score leads, the details follow. */
-.job-card-grid .job-card { grid-template-columns: minmax(0, 1fr); }
-.job-card-grid .job-card .score-ring { grid-row: 1; }
 
 /* Refino visual, etapa 2 (entrada, login e cadastro) */
 /* Logo: monochrome light version on dark themes (option D, 29/10/2026); the purple welcome panel always uses it. */
@@ -954,3 +951,4 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .catalog-admin-flags { margin-top: 12px; }
 .catalog-admin-flags label { display: flex; align-items: center; gap: 8px; font-weight: 600; }
 .company-page-heading + .candidate-profile-form { margin-top: 24px; }
+.score-ring-value-long { font-size: 15px; letter-spacing: -0.3px; }
