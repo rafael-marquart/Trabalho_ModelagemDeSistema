@@ -490,8 +490,8 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | Campo | Valor |
 |---|---|
 | ID | SPEC-003 |
-| Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada em 28/10/2026, exceto a navegação por voz (em aberto para implementar depois) e o plano formal de avaliação (OPEN-015/OPEN-016); detalhes em `docs/Implementacao/SPEC-003.md` |
+| Estado do layout | aprovado pelo responsável em 28/10/2026, sobre os controles implementados (botão de alto contraste, link para pular ao conteúdo e foco; sem protótipo em docs/layout/) |
 | Pendência registrada (27/10/2026) | **Navegação por voz (seção 5.4, OPEN-014): em aberto para implementar depois.** Vocabulário de comandos, tratamento de falhas e tecnologia de voz ainda dependem de decisão do responsável; teclado, leitor de tela, alto contraste e demais recursos da Spec seguem sem depender dela, e a voz nunca será a única forma de executar uma ação |
 | Capacidade | Recursos funcionais de acessibilidade para interação com a plataforma |
 
@@ -526,12 +526,12 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 | Tela/área | Requisito de interação | Layout |
 |---|---|---|
-| Entrada/login | Teclado, campos rotulados e mensagens acessíveis | Pendente junto à SPEC-001 |
-| Cadastro de Usuário/Empresa | Campos, instruções e erros acessíveis | Pendente junto à SPEC-001 |
-| Perfil do candidato | Consulta e edição acessíveis | Pendente junto à SPEC-002 |
-| Necessidades de acessibilidade | Controles identificáveis e operáveis | Pendente junto à SPEC-002 |
-| Alto contraste, se houver controle explícito | Mecanismo de ativação ainda em aberto | Pendente |
-| Interação por voz, se houver controle explícito | Estados e falhas precisam ser definidos | Pendente |
+| Entrada/login | Teclado, campos rotulados e mensagens acessíveis | Aprovado em 28/10/2026 (telas implementadas) |
+| Cadastro de Usuário/Empresa | Campos, instruções e erros acessíveis | Aprovado em 28/10/2026 (telas implementadas) |
+| Perfil do candidato | Consulta e edição acessíveis | Aprovado em 28/10/2026 (telas implementadas) |
+| Necessidades de acessibilidade | Controles identificáveis e operáveis | Aprovado em 28/10/2026 (telas implementadas) |
+| Alto contraste | Botão próprio, preferência do sistema e preferência salva na conta (OPEN-012/013) | Aprovado em 28/10/2026 (tela implementada) |
+| Interação por voz, se houver controle explícito | Estados e falhas precisam ser definidos | Pendente — em aberto para implementar depois |
 
 Esta capacidade pode afetar componentes transversais e não exige necessariamente uma tela independente. Protótipos e evidências devem ser anexados em docs/layout/ e aprovados separadamente.
 
@@ -625,21 +625,21 @@ A referência a WCAG 2.1 AA não determina por si só ferramentas, combinações
 
 ## 11. Critérios de aceitação
 
-- [ ] Recursos e controles essenciais são operáveis por teclado, com foco perceptível e ordem coerente.
-- [ ] Nome, função e estado dos controles são identificáveis por tecnologia assistiva.
-- [ ] Contraste e redimensionamento são verificados conforme RNF-01 a RNF-04, usando o procedimento de validação ainda a definir em OPEN-016.
+- [x] Recursos e controles essenciais são operáveis por teclado, com foco perceptível e ordem coerente.
+- [x] Nome, função e estado dos controles são identificáveis por tecnologia assistiva.
+- [ ] Contraste e redimensionamento são verificados conforme RNF-01 a RNF-04, usando o procedimento de validação ainda a definir em OPEN-016. *(pendente: voz em aberto para implementar depois; plano de avaliação nas OPEN-015/OPEN-016)*
 
 
-- [ ] Fluxos essenciais do Bloco 1 podem ser operados sem mouse.
-- [ ] Ordem e indicador de foco são perceptíveis e coerentes.
-- [ ] Campos e controles são identificáveis por leitor de tela.
-- [ ] Erros e resultados de ações são apresentados de forma acessível.
-- [ ] Informações importantes não dependem exclusivamente de cor.
-- [ ] Alto contraste, conforme RF-16, pode ser utilizado sem ocultar conteúdo necessário.
-- [ ] Se comandos de voz forem confirmados, há alternativa acessível e tratamento de falhas definido.
-- [ ] Fluxos são utilizáveis nos tamanhos de tela contemplados por RNF-03.
-- [ ] Evidências suficientes são registradas para avaliar RNFs aplicáveis.
-- [ ] Biblioteca específica não é critério de aceitação, pois não foi selecionada.
+- [x] Fluxos essenciais do Bloco 1 podem ser operados sem mouse.
+- [x] Ordem e indicador de foco são perceptíveis e coerentes.
+- [x] Campos e controles são identificáveis por leitor de tela.
+- [x] Erros e resultados de ações são apresentados de forma acessível.
+- [x] Informações importantes não dependem exclusivamente de cor.
+- [x] Alto contraste, conforme RF-16, pode ser utilizado sem ocultar conteúdo necessário.
+- [ ] Se comandos de voz forem confirmados, há alternativa acessível e tratamento de falhas definido. *(pendente: voz em aberto para implementar depois; plano de avaliação nas OPEN-015/OPEN-016)*
+- [x] Fluxos são utilizáveis nos tamanhos de tela contemplados por RNF-03.
+- [ ] Evidências suficientes são registradas para avaliar RNFs aplicáveis. *(pendente: voz em aberto para implementar depois; plano de avaliação nas OPEN-015/OPEN-016)*
+- [x] Biblioteca específica não é critério de aceitação, pois não foi selecionada.
 
 ## 12. Casos de teste derivados
 
@@ -685,7 +685,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 |---|---|---|---|
 | SPEC-001 — Acessar a plataforma e identificar perfil organizacional | especificada | pendente | aguardando |
 | SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato | especificada; implementada | aprovado em 27/10/2026 sobre as telas implementadas | concluída em 27/10/2026 |
-| SPEC-003 — Disponibilizar recursos de acessibilidade da interface | especificada | pendente | aguardando |
+| SPEC-003 — Disponibilizar recursos de acessibilidade da interface | especificada; implementada (exceto navegação por voz e plano formal de avaliação) | aprovado em 28/10/2026 sobre os controles implementados | concluída em 28/10/2026 |
 
 **Pendências em aberto para implementar depois (registradas em 27/10/2026):**
 
@@ -1556,8 +1556,8 @@ Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN
 |---|---|
 | ID | SPEC-007 |
 |
-| Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | não se aplica ao cálculo; apresentação do resultado pertence à SPEC-010 |
+| Estado do texto | aprovada; implementada e encerrada em 29/10/2026, exceto os critérios que dependem de vagas externas (SPEC-006); ver `docs/Implementacao/SPEC-007.md` |
+| Estado do layout | não se aplica ao cálculo; tela provisória de validação (`/candidato/compatibilidade`) e a opção "Indispensável para mim" no perfil aprovadas pelo responsável em 29/10/2026 nas telas implementadas (sem protótipo em docs/layout/); a apresentação definitiva pertence à SPEC-010 |
 | Capacidade | Aplicar trava crítica e calcular score determinístico de compatibilidade |
 
 ## 2. Rastreabilidade
@@ -1691,20 +1691,22 @@ Contratos conceituais, sem endpoints HTTP.
 - **RNF-09/RNF-14:** aplicáveis quando resultado e parâmetros forem registrados conforme regras de rastreabilidade.
 
 ## 11. Critérios de aceitação
-- [ ] Barreira incompatível com necessidade obrigatória elimina a vaga independentemente do score.
-- [ ] Score usa pesos 50%/30%/20%.
-- [ ] Dados insuficientes não são convertidos em compatibilidade presumida.
-- [ ] A ausência de dados do perfil (incluindo categorias profissionais e preferências de trabalho e deslocamento) necessários à análise de uma vaga é indicada como insuficiência, sem presumir compatibilidade (RB-16) e sem exigir esses dados para salvar o perfil (transferido da SPEC-002).
-- [ ] Perfil incompleto gera indicação de complementação, conforme UC-13.
-- [ ] Resultado expõe fatores considerados.
-- [ ] Mesmas entradas e regras produzem resultado consistente.
+- [x] Barreira incompatível com necessidade obrigatória elimina a vaga independentemente do score.
+- [x] Score usa pesos 50%/30%/20%.
+- [x] Dados insuficientes não são convertidos em compatibilidade presumida.
+- [x] A ausência de dados do perfil (incluindo categorias profissionais e preferências de trabalho e deslocamento) necessários à análise de uma vaga é indicada como insuficiência, sem presumir compatibilidade (RB-16) e sem exigir esses dados para salvar o perfil (transferido da SPEC-002).
+- [x] Perfil incompleto gera indicação de complementação, conforme UC-13.
+- [x] Resultado expõe fatores considerados.
+- [x] Mesmas entradas e regras produzem resultado consistente.
 - [ ] Vaga externa só é analisada depois de validada e normalizada.
-- [ ] Cálculo pode ser testado isoladamente.
-- [ ] Subpontuações e score final seguem a fórmula aprovada na OPEN-031, com arredondamento apenas no resultado final.
-- [ ] Quando faltar informação necessária em qualquer dimensão, análise sinaliza “dados insuficientes”, sem score final completo; informa dimensões avaliadas e dados faltantes, sem converter ausência em zero ou compatibilidade presumida.
+- [x] Cálculo pode ser testado isoladamente.
+- [x] Subpontuações e score final seguem a fórmula aprovada na OPEN-031, com arredondamento apenas no resultado final.
+- [x] Quando faltar informação necessária em qualquer dimensão, análise sinaliza “dados insuficientes”, sem score final completo; informa dimensões avaliadas e dados faltantes, sem converter ausência em zero ou compatibilidade presumida.
 - [ ] Endereço de trabalho de vaga externa tem fonte e estado de validação registrados antes de estimar deslocamento.
 - [ ] Endereço da sede não é tratado automaticamente como destino da vaga.
 - [ ] Localização divergente ou não confirmada não gera tempo de deslocamento inventado nem score final completo quando a localização for necessária.
+
+> Evidência: testes Vitest (motor, adaptador HERE, limite de uso, serviço, API, critérios) e E2E (`scripts/auth-e2e.mjs`, com HERE simulado) verdes na CI. Teste manual executado pelo responsável em 29/10/2026 com a HERE real (plano gratuito, dados fictícios em São Paulo); ajustes aplicados durante o teste (idiomas por lista no editor da vaga, correspondência de competências, endereço só com cidade recusado, necessidade indispensável marcada pelo candidato, limite de 60% da cota). Permanecem abertos os critérios de vaga externa (análise só após validação e os três de localização), que dependem da SPEC-006 e da validação de localização da seção 6.3; hoje apenas vagas próprias são analisadas.
 
 ## 12. Casos de teste derivados
 | ID | Cenário | Resultado esperado |
@@ -1739,12 +1741,12 @@ Contratos conceituais, sem endpoints HTTP.
 - **OPEN-089:** resolvida sob o fluxo atualizado da seção 6.3: analisar primeiro o anúncio do Adzuna; sem endereço concreto, buscar evidências na internet com LLM usando empresa e cidade da vaga. Só usar endereço confirmado para vagas presenciais/híbridas. Vagas remotas não exigem busca de endereço nem cálculo de deslocamento. Divergência ou falta de evidência segue OPEN-033; não presumir destino.
 
 ## 14. Definition of Done
-- [ ] Texto aprovado.
-- [ ] Fórmula e dados mínimos confirmados na baseline ou por decisão registrada.
-- [ ] Trava crítica e pesos cobertos por testes.
-- [ ] Apresentação do resultado aprovada na SPEC-010.
-- [ ] Critérios e testes revisados.
-- [ ] Sem implementação antes das aprovações necessárias.
+- [x] Texto aprovado.
+- [x] Fórmula e dados mínimos confirmados na baseline ou por decisão registrada.
+- [x] Trava crítica e pesos cobertos por testes.
+- [ ] Apresentação do resultado aprovada na SPEC-010. (pendente: pertence à SPEC-010)
+- [x] Critérios e testes revisados.
+- [x] Sem implementação antes das aprovações necessárias.
 
 ---
 
@@ -3223,3 +3225,12 @@ O objetivo final é disponibilizar um link público funcional da aplicação no 
 
 A integração com Adzuna permanece limitada a **até 25 chamadas de teste**. Essa autorização não permite coleta contínua, rotina diária, operação de produção nem ampliação do limite.
 
+## SPEC-007 — Decisões de implementação (28/10/2026)
+
+- Mapa fixo entre necessidades do catálogo e os seis itens da vaga (A01, A02, A04, A06, T01); demais necessidades ficam "não avaliáveis".
+- Critérios técnicos estruturados definidos pelo recrutador no editor da vaga; a integração com LLM não é usada nesta etapa.
+- Dimensão sem critério aplicável é excluída e os pesos restantes são normalizados (OPEN-090, aprovada em 29/10/2026).
+- O candidato marca no perfil quais necessidades são indispensáveis (RB-06); a marcação obrigatória do catálogo pelo ADMIN continua válida.
+- Limite de segurança: uso da HERE bloqueado ao atingir 60% da cota gratuita do mês, liberado no mês seguinte.
+- A validação de localização de vaga externa (item 6 do comportamento) e a SPEC-006 permanecem pendentes; os critérios que dependem de vagas externas continuam abertos.
+- Encerramento da SPEC-007 depende do teste manual e da aprovação do responsável.

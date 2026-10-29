@@ -55,3 +55,34 @@ describe("approved visual tokens and focus contrast", () => {
     expect(contrast(token(darkBlock, "focus-ring"), token(darkBlock, "surface"))).toBeGreaterThanOrEqual(3);
   });
 });
+
+describe("high contrast tokens (SPEC-003, OPEN-012)", () => {
+  const block = (selector: string) => {
+    const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const match = css.match(new RegExp(escaped + "\\s*\\{([\\s\\S]*?)\\}"))?.[1];
+    if (!match) throw new Error("Missing block " + selector);
+    return match;
+  };
+  const light = block(':root[data-contrast="high"]');
+  const dark = block(':root[data-contrast="high"][data-theme="dark"]');
+
+  it.each([["light", light], ["dark", dark]])("keeps text, links, errors and states at 7:1 or better (%s)", (_name, tokens) => {
+    const background = token(tokens, "background");
+    const surface = token(tokens, "surface");
+    for (const name of ["ink", "muted", "purple", "purple-dark", "danger", "status-success-text", "status-pending-text", "status-neutral-text"]) {
+      expect(contrast(token(tokens, name), background), name + " on background").toBeGreaterThanOrEqual(7);
+      expect(contrast(token(tokens, name), surface), name + " on surface").toBeGreaterThanOrEqual(7);
+    }
+    expect(contrast(token(tokens, "focus-ring"), background)).toBeGreaterThanOrEqual(3);
+    expect(contrast(token(tokens, "line"), background)).toBeGreaterThanOrEqual(3);
+  });
+
+  it("keeps primary button text readable in both themes", () => {
+    expect(contrast("#FFFFFF", token(light, "purple"))).toBeGreaterThanOrEqual(7);
+    expect(contrast("#000000", token(dark, "purple"))).toBeGreaterThanOrEqual(7);
+  });
+
+  it("offers the same palette when the system asks for more contrast", () => {
+    expect(css).toMatch(/@media \(prefers-contrast: more\) \{\s*:root\[data-contrast="auto"\]/);
+  });
+});

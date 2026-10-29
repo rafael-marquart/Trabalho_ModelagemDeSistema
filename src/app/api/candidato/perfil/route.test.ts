@@ -150,4 +150,10 @@ describe("candidate profile API", () => {
     const read = await (await GET()).json();
     expect(read.profile.workPreferences).toEqual({ modalities: [], city: "", state: "", address: "", transportMode: "" });
   });
+  it("accepts indispensable needs only among the selected catalog needs", async () => {
+    expect((await put({ ...blank, accessibilityDeclaration: "NO_NEEDS_DECLARED", mandatoryNeedOptionCodes: ["A01"] })).status).toBe(400);
+    const read = prismaMock.candidateProfile.findUnique.mockResolvedValueOnce({ ...blank, accessibilityNeedOptionCodes: ["A01"] });
+    expect(read).toBeTruthy();
+    expect((await (await GET()).json()).profile.mandatoryNeedOptionCodes).toEqual([]);
+  });
 });

@@ -59,8 +59,17 @@ export const candidateProfileInputSchema = z.object({
   accessibilityDeclaration: z.enum(["NOT_INFORMED", "NO_NEEDS_DECLARED", "NEEDS_DECLARED"]),
   accessibilityNeeds: profileListSchema,
   accessibilityNeedOptionCodes: optionCodeListSchema,
+  // Subset of the selected catalog needs that the candidate marks as indispensable (critical lock, SPEC-007).
+  mandatoryNeedOptionCodes: optionCodeListSchema,
   essentialAccessibilityResources: profileListSchema
 }).strict().superRefine((profile, context) => {
+  if (profile.mandatoryNeedOptionCodes.some((code) => !profile.accessibilityNeedOptionCodes.includes(code))) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["mandatoryNeedOptionCodes"],
+      message: "Só é possível marcar como indispensável uma necessidade selecionada."
+    });
+  }
   const hasAccessibilityNeed = profile.accessibilityNeedOptionCodes.length > 0 || profile.accessibilityNeeds.length > 0;
   if (profile.accessibilityDeclaration === "NEEDS_DECLARED" && !hasAccessibilityNeed) {
     context.addIssue({
@@ -161,7 +170,7 @@ export function toProfileResponse(profile: {
   education: unknown; languages: unknown; professionalExperience: unknown;
   courses: unknown; certifications: unknown; professionalLinks: unknown; workPreferences: unknown;
   accessibilityDeclaration: "NOT_INFORMED" | "NO_NEEDS_DECLARED" | "NEEDS_DECLARED";
-  accessibilityNeeds: unknown; accessibilityNeedOptionCodes: unknown;
+  accessibilityNeeds: unknown; accessibilityNeedOptionCodes: unknown; mandatoryNeedOptionCodes?: unknown;
   essentialAccessibilityResources: unknown; updatedAt: Date;
 }) {
   return {
@@ -172,6 +181,7 @@ export function toProfileResponse(profile: {
     accessibilityDeclaration: profile.accessibilityDeclaration,
     accessibilityNeeds: toStringList(profile.accessibilityNeeds),
     accessibilityNeedOptionCodes: toStringList(profile.accessibilityNeedOptionCodes),
+    mandatoryNeedOptionCodes: toStringList(profile.mandatoryNeedOptionCodes),
     essentialAccessibilityResources: toStringList(profile.essentialAccessibilityResources),
     updatedAt: profile.updatedAt.toISOString()
   };

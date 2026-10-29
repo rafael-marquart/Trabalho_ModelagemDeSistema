@@ -54,6 +54,8 @@ model User {
 
   @@index([role, isActive])
   jobsCreated       Job[]    @relation("JobCreator")
+  preference        UserPreference?
+  compatibilityResults CompatibilityResult[]
 }
 
 model CandidateProfile {
@@ -70,6 +72,7 @@ model CandidateProfile {
   accessibilityDeclaration        AccessibilityDeclarationStatus @default(NOT_INFORMED)
   accessibilityNeeds              Json                           @default("[]")
   accessibilityNeedOptionCodes    Json                           @default("[]")
+  mandatoryNeedOptionCodes        Json                           @default("[]")
   essentialAccessibilityResources Json                           @default("[]")
   createdAt                       DateTime                       @default(now())
   updatedAt                       DateTime                       @updatedAt
@@ -313,6 +316,7 @@ model Job {
   deadline        DateTime?    @db.Date
   salaryMin       Decimal?     @db.Decimal(12, 2)
   salaryMax       Decimal?     @db.Decimal(12, 2)
+  technicalCriteria Json       @default("{}")
   accessibility   Json         @default("{}")
   publishedAt     DateTime?
   closedAt        DateTime?
@@ -322,4 +326,42 @@ model Job {
   createdBy       User         @relation("JobCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
 
   @@index([companyId, status])
+  compatibilityResults CompatibilityResult[]
+}
+
+// Interface preferences saved per account (SPEC-003, OPEN-013). Values are stored by stable code.
+model UserPreference {
+  userId      String   @id
+  user        User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  preferences Json     @default("{}")
+  updatedAt   DateTime @updatedAt
+}
+
+// Immutable history of each compatibility calculation (SPEC-007 section 6.2). Rows are never updated; a recalculation adds a row.
+model CompatibilityResult {
+  id            String   @id @default(cuid())
+  candidateUserId String
+  candidate     User     @relation(fields: [candidateUserId], references: [id], onDelete: Restrict)
+  jobId         String
+  job           Job      @relation(fields: [jobId], references: [id], onDelete: Restrict)
+  executedAt    DateTime @default(now())
+  rulesVersion  String
+  status        String
+  score         Int?
+  // Minimized snapshot of what was used, the sub-results and the factors; no address or full profile is copied.
+  snapshot      Json
+  outcome       Json
+
+  @@index([candidateUserId, jobId, executedAt])
+  @@index([executedAt])
+}
+
+/// Monthly count of HERE requests sent by this installation (SPEC-007 / OPEN-088 safety cap).
+model HereUsage {
+  month     String
+  service   String
+  count     Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@id([month, service])
 }

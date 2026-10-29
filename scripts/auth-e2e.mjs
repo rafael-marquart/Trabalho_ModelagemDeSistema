@@ -2,12 +2,16 @@ import assert from "node:assert/strict";
 import { createHash, randomUUID } from "node:crypto";
 import { spawn } from "node:child_process";
 import { createServer as createSmtpServer } from "node:net";
+import { createServer as createHttpServer } from "node:http";
 import { setTimeout as delay } from "node:timers/promises";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 const PORT = Number(process.env.AUTH_E2E_PORT || "3187");
 const SMTP_PORT = Number(process.env.AUTH_E2E_SMTP_PORT || "2527");
+const HERE_PORT = Number(process.env.AUTH_E2E_HERE_PORT || "2529");
+const HERE_KEY = "e2e-here-key";
+const HERE_REQUESTS = [];
 const BASE_URL = `http://127.0.0.1:${PORT}`;
 const PUBLIC_URL = `https://127.0.0.1:${PORT}`;
 const TEST_IP = "192.0.2.77";
@@ -116,6 +120,24 @@ function startTestSmtp() {
   });
 }
 
+// Local stand-in for the HERE APIs: the E2E never reaches the real provider or spends the free-plan quota.
+function startFakeHere() {
+  const server = createHttpServer((request, response) => {
+    const url = new URL(request.url, `http://127.0.0.1:${HERE_PORT}`);
+    HERE_REQUESTS.push({ path: url.pathname, params: Object.fromEntries(url.searchParams), key: url.searchParams.get("apiKey") });
+    const send = (status, body) => { response.writeHead(status, { "content-type": "application/json" }); response.end(JSON.stringify(body)); };
+    if (url.searchParams.get("apiKey") !== HERE_KEY) return send(401, { error: "bad key" });
+    if (url.pathname === "/geocode") {
+      if ((url.searchParams.get("q") || "").includes("QUOTA")) return send(429, { error: "quota" });
+      return send(200, { items: [{ position: { lat: -23.56, lng: -46.65 } }] });
+    }
+    if (url.pathname === "/router") return send(200, { routes: [{ sections: [{ summary: { duration: 1200 } }] }] });
+    if (url.pathname === "/transit") return send(200, { routes: [{ sections: [{ travelSummary: { duration: 900 } }, { travelSummary: { duration: 900 } }] }] });
+    return send(404, {});
+  });
+  return new Promise((resolve, reject) => { server.once("error", reject); server.listen(HERE_PORT, "127.0.0.1", () => resolve(server)); });
+}
+
 async function waitForApp(child) {
   const deadline = Date.now() + 90_000;
   while (Date.now() < deadline) {
@@ -198,6 +220,8 @@ async function cleanupTestData() {
       ...relatedInvitations.map(invitation => invitation.id)
     ];
 
+    await tx.compatibilityResult.deleteMany({ where: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } });
+    await tx.userPreference.deleteMany({ where: { userId: { in: userIds } } });
     await tx.job.deleteMany({
       where: { OR: [{ companyId: { in: companyIds } }, { createdByUserId: { in: userIds } }] }
     });
@@ -261,10 +285,12 @@ async function cleanupTestData() {
 
 async function main() {
   let smtpServer;
+  let hereServer;
   let appExit;
   try {
     await prisma.$connect();
     smtpServer = await startTestSmtp();
+    hereServer = await startFakeHere();
 
     const runtimeEnv = {
       ...process.env,
@@ -277,6 +303,10 @@ async function main() {
       SMTP_USER: "",
       SMTP_PASSWORD: "",
       SMTP_FROM: "Acessa Vagas E2E <noreply@example.test>",
+      HERE_API_KEY: HERE_KEY,
+      HERE_GEOCODE_URL: `http://127.0.0.1:${HERE_PORT}/geocode`,
+      HERE_ROUTER_URL: `http://127.0.0.1:${HERE_PORT}/router`,
+      HERE_TRANSIT_URL: `http://127.0.0.1:${HERE_PORT}/transit`,
       NEXT_TELEMETRY_DISABLED: "1"
     };
 
@@ -1298,6 +1328,145 @@ async function main() {
     }
     assert.ok(!JSON.stringify(jobAudit).includes(secretTitle) && !JSON.stringify(jobAudit).includes("Recife"), "job audit events must not contain job content");
 
+    // SPEC-003: interface preferences saved in the account and the skip link.
+    const prefsUrl = `${BASE_URL}/api/conta/preferencias`;
+    const sendPrefs = (payload, cookie, extra = {}) => fetch(prefsUrl, { method: "PUT", headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie, ...extra }, body: JSON.stringify(payload), redirect: "manual" });
+    await expectStatus(await fetch(prefsUrl, { redirect: "manual" }), 401, "anonymous preferences read");
+    await expectStatus(await sendPrefs({ preferences: { HIGH_CONTRAST: "ON" } }, ""), 401, "anonymous preferences save");
+    const defaultPrefs = JSON.parse(await expectStatus(await fetch(prefsUrl, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "default preferences"));
+    assert.equal(defaultPrefs.preferences.HIGH_CONTRAST, "AUTO");
+    await expectStatus(await sendPrefs({ preferences: { HIGH_CONTRAST: "MAYBE" } }, companyCookie), 400, "invalid preference value");
+    await expectStatus(await sendPrefs({ preferences: { HIGH_CONTRAST: "ON" }, userId: "other" }, companyCookie), 400, "body cannot choose the user");
+    await expectStatus(await sendPrefs({ preferences: { HIGH_CONTRAST: "ON" } }, companyCookie, { origin: "https://evil.example" }), 403, "cross-origin preference save");
+    await expectStatus(await sendPrefs({ preferences: { HIGH_CONTRAST: "ON" } }, companyCookie), 200, "company saves high contrast");
+    const savedPrefs = JSON.parse(await expectStatus(await fetch(prefsUrl, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "saved preferences"));
+    assert.equal(savedPrefs.preferences.HIGH_CONTRAST, "ON");
+    const otherPrefs = JSON.parse(await expectStatus(await fetch(prefsUrl, { headers: { cookie: secondCompanyCookie }, redirect: "manual" }), 200, "other account preferences"));
+    assert.equal(otherPrefs.preferences.HIGH_CONTRAST, "AUTO", "preferences must not leak across accounts");
+    const prefsAudit = await prisma.auditEvent.findMany({ where: { actorUserId: companyAccount.id, eventType: "ACCESSIBILITY_PREFERENCES_UPDATED" }, select: { metadata: true } });
+    assert.equal(prefsAudit.length, 1);
+    assert.deepEqual(prefsAudit[0].metadata, { changedPreferences: ["HIGH_CONTRAST"] });
+    const loginHtml = await (await fetch(`${BASE_URL}/empresa/login`, { redirect: "manual" })).text();
+    assert.ok(loginHtml.includes("Pular para o conteúdo principal"), "pages must start with the skip link");
+
+    // SPEC-007: compatibility calculation (critical lock, A/T/D, HERE through a local stand-in, immutable history).
+    const compatUrl = `${BASE_URL}/api/candidato/compatibilidade`;
+    const candidateLogin = await postJson("/api/auth/login", { profile: "candidate", identifier: EMAIL, password: NEW_PASSWORD, rememberMe: false });
+    await expectStatus(candidateLogin, 200, "candidate login for compatibility");
+    const compatCookie = `acessa_session=${(candidateLogin.headers.get("set-cookie") || "").match(/(?:^|,\s*)acessa_session=([^;]+)/)[1]}`;
+    const sendCompat = (payload, cookie, extra = {}) => fetch(compatUrl, { method: "POST", headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie, ...extra }, body: JSON.stringify(payload), redirect: "manual" });
+    const sendJobApi = (url, method, payload, cookie) => fetch(url, { method, headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie }, body: JSON.stringify(payload), redirect: "manual" });
+
+    const compatJobBody = {
+      title: "Analista de dados E2E", description: "Descricao", requirements: "Requisitos", modality: "PRESENCIAL", locationCity: "São Paulo", locationState: "SP",
+      locationAddress: "Avenida Paulista, 1000", deadline: `${new Date().getUTCFullYear() + 1}-12-31`,
+      accessibility: Object.fromEntries(infraCodes.map(code => [code, "PRESENT"])),
+      technicalCriteria: { skills: ["sql"], experience: [], educationMinLevel: "", languages: [] }
+    };
+    const compatJob = JSON.parse(await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas`, "POST", compatJobBody, companyCookie), 201, "company creates a job with technical criteria")).job;
+    assert.deepEqual(compatJob.technicalCriteria.skills, ["sql"], "technical criteria must round-trip");
+    await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}/acao`, "POST", { action: "publish" }, companyCookie), 200, "company publishes the job to be analyzed");
+
+    await expectStatus(await sendCompat({ jobId: compatJob.id }, ""), 401, "anonymous compatibility");
+    await expectStatus(await sendCompat({ jobId: compatJob.id }, companyCookie), 401, "company cannot request a candidate analysis");
+    await expectStatus(await fetch(`${BASE_URL}/api/candidato/vagas`, { headers: { cookie: companyCookie }, redirect: "manual" }), 401, "company cannot list candidate jobs");
+    await expectStatus(await sendCompat({ jobId: compatJob.id, candidateUserId: "other" }, compatCookie), 400, "body cannot choose the candidate");
+    await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie, { origin: "https://evil.example" }), 403, "cross-origin compatibility request");
+    await expectStatus(await sendCompat({ jobId: "does-not-exist" }, compatCookie), 404, "unknown job");
+    const openJobs = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/candidato/vagas`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate lists published jobs"));
+    assert.ok(openJobs.jobs.some(job => job.id === compatJob.id), "published job must be listed");
+    await expectStatus(await fetch(`${BASE_URL}/candidato/compatibilidade`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate compatibility page");
+
+    const compatProfile = {
+      education: [], languages: [], professionalExperience: [], courses: ["Curso de SQL"], certifications: [], professionalLinks: [],
+      workPreferences: { modalities: ["Presencial"], city: "São Paulo", state: "SP", address: "Rua Reservada, 55", transportMode: "Ônibus" },
+      accessibilityDeclaration: "NO_NEEDS_DECLARED", accessibilityNeeds: [], accessibilityNeedOptionCodes: [], essentialAccessibilityResources: []
+    };
+    const saveCompatProfile = payload => fetch(`${BASE_URL}/api/candidato/perfil`, { method: "PUT", headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie: compatCookie }, body: JSON.stringify(payload), redirect: "manual" });
+    await expectStatus(await saveCompatProfile(compatProfile), 200, "candidate prepares the profile for analysis");
+
+    const complete = JSON.parse(await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 201, "candidate analyzes a job")).result;
+    assert.equal(complete.status, "COMPLETE");
+    assert.equal(complete.score, 100, "full match with a 30-minute trip must score 100");
+    assert.equal(complete.dimensions.A.status, "NOT_APPLICABLE");
+    assert.equal(complete.dimensions.D.components.find(c => c.label === "Deslocamento").score, 100);
+    const transitCall = HERE_REQUESTS.find(request => request.path === "/transit");
+    assert.ok(transitCall && transitCall.key === HERE_KEY && transitCall.params.modes.includes("bus"), "bus trips must use the transit service with bus modes");
+    const walking = JSON.parse(await expectStatus(await sendCompat({ jobId: compatJob.id, transportMode: "Caminhada" }, compatCookie), 201, "candidate overrides the transport mode for one job")).result;
+    assert.notEqual(walking.id, complete.id, "a recalculation must create a new record");
+    assert.ok(HERE_REQUESTS.some(request => request.path === "/router" && request.params.transportMode === "pedestrian"), "walking must use the routing service");
+    const profileAfterOverride = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/candidato/perfil`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "profile after override"));
+    assert.equal(profileAfterOverride.profile.workPreferences.transportMode, "Ônibus", "the override must not change the profile");
+    await expectStatus(await sendCompat({ jobId: compatJob.id, transportMode: "Foguete" }, compatCookie), 400, "invalid transport mode");
+    const stored = await prisma.compatibilityResult.findMany({ where: { jobId: compatJob.id }, orderBy: { executedAt: "asc" } });
+    assert.equal(stored.length, 2, "every calculation must be stored as its own record");
+    assert.ok(!JSON.stringify(stored).includes("Reservada") && !JSON.stringify(stored).includes("Avenida Paulista"), "stored history must not copy addresses");
+    await assert.rejects(prisma.$executeRaw`UPDATE "CompatibilityResult" SET "score" = 1 WHERE "id" = ${stored[0].id}`, "stored results must be immutable");
+    const latest = JSON.parse(await expectStatus(await fetch(`${compatUrl}?jobId=${compatJob.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate reads the latest result"));
+    assert.equal(latest.result.id, walking.id);
+    await expectStatus(await fetch(`${compatUrl}?jobId=${compatJob.id}`, { headers: { cookie: companyCookie }, redirect: "manual" }), 401, "company cannot read candidate results");
+
+    // A provider failure never becomes a zero or an invented travel time.
+    await expectStatus(await saveCompatProfile({ ...compatProfile, workPreferences: { ...compatProfile.workPreferences, address: "Rua QUOTA, 1" } }), 200, "candidate address that makes the stand-in fail");
+    const failed = JSON.parse(await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 201, "analysis with provider failure")).result;
+    assert.equal(failed.status, "INSUFFICIENT_DATA");
+    assert.equal(failed.score, null);
+    await expectStatus(await saveCompatProfile(compatProfile), 200, "restore profile address");
+
+    // Safety cap: once this month's geocoding count reaches 60% of the free allowance, no request reaches HERE.
+    const usageMonth = new Date().toISOString().slice(0, 7);
+    const geocodeUsage = await prisma.hereUsage.findUnique({ where: { month_service: { month: usageMonth, service: "geocode" } } });
+    assert.ok(geocodeUsage && geocodeUsage.count > 0, "requests sent to HERE must be counted per month and service");
+    try {
+      await prisma.hereUsage.update({ where: { month_service: { month: usageMonth, service: "geocode" } }, data: { count: 18000 } });
+      const requestsBeforeCap = HERE_REQUESTS.length;
+      const capped = JSON.parse(await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 201, "analysis after the safety cap")).result;
+      assert.equal(capped.status, "INSUFFICIENT_DATA", "a reached cap must not invent a travel time");
+      assert.ok(JSON.stringify(capped).includes("limite de segurança"), "the reason must explain the safety cap");
+      assert.equal(HERE_REQUESTS.length, requestsBeforeCap, "a reached cap must not send requests to HERE");
+    } finally {
+      await prisma.hereUsage.update({ where: { month_service: { month: usageMonth, service: "geocode" } }, data: { count: geocodeUsage.count } });
+    }
+
+    // The candidate marks a declared need as indispensable: a job declaring that resource absent is incompatible.
+    await expectStatus(await saveCompatProfile({ ...compatProfile, mandatoryNeedOptionCodes: ["A01"] }), 400, "indispensable need must be among the selected needs");
+    const rampBefore = await prisma.accessibilityNeedOption.findUnique({ where: { code: "A01" } });
+    await prisma.accessibilityNeedOption.update({ where: { code: "A01" }, data: { isMandatory: false } });
+    try {
+    await expectStatus(await saveCompatProfile({ ...compatProfile, accessibilityDeclaration: "NEEDS_DECLARED", accessibilityNeedOptionCodes: ["A01"], mandatoryNeedOptionCodes: ["A01"] }), 200, "candidate marks the ramp as indispensable");
+    await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}`, "PUT", { ...compatJobBody, accessibility: { ...compatJobBody.accessibility, RAMPS: "ABSENT" } }, companyCookie), 200, "company declares no ramps (candidate-marked lock)");
+    const candidateLocked = JSON.parse(await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 201, "analysis with a candidate-marked barrier")).result;
+    assert.equal(candidateLocked.status, "INCOMPATIBLE", "a need marked indispensable by the candidate must lock the job");
+    await expectStatus(await saveCompatProfile({ ...compatProfile, accessibilityDeclaration: "NEEDS_DECLARED", accessibilityNeedOptionCodes: ["A01"] }), 200, "candidate unmarks the ramp");
+    const softened = JSON.parse(await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 201, "analysis without the indispensable mark")).result;
+    assert.notEqual(softened.status, "INCOMPATIBLE", "without the mark an absent ramp only lowers the accessibility score");
+    await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}`, "PUT", compatJobBody, companyCookie), 200, "restore job accessibility");
+    } finally {
+      await prisma.accessibilityNeedOption.update({ where: { code: "A01" }, data: { isMandatory: rampBefore.isMandatory } });
+    }
+    await expectStatus(await saveCompatProfile(compatProfile), 200, "restore profile after candidate-marked lock");
+
+    // Critical lock: a mandatory need meeting a declared barrier makes the job incompatible and spends no provider call.
+    const rampOption = await prisma.accessibilityNeedOption.findUnique({ where: { code: "A01" } });
+    assert.ok(rampOption, "catalog must contain A01");
+    try {
+      await prisma.accessibilityNeedOption.update({ where: { code: "A01" }, data: { isMandatory: true } });
+      await expectStatus(await saveCompatProfile({ ...compatProfile, accessibilityDeclaration: "NEEDS_DECLARED", accessibilityNeedOptionCodes: ["A01"] }), 200, "candidate declares the ramp need");
+      await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}`, "PUT", { ...compatJobBody, accessibility: { ...compatJobBody.accessibility, RAMPS: "ABSENT" } }, companyCookie), 200, "company declares no ramps");
+      const callsBefore = HERE_REQUESTS.length;
+      const locked = JSON.parse(await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 201, "analysis with a critical barrier")).result;
+      assert.equal(locked.status, "INCOMPATIBLE");
+      assert.equal(locked.score, null);
+      assert.equal(HERE_REQUESTS.length, callsBefore, "a critical barrier must not spend a route request");
+      await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}`, "PUT", { ...compatJobBody, accessibility: { ...compatJobBody.accessibility, RAMPS: "NOT_INFORMED" } }, companyCookie), 200, "company leaves the ramp item uninformed");
+      const unknown = JSON.parse(await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 201, "analysis with an uninformed item")).result;
+      assert.equal(unknown.status, "INSUFFICIENT_DATA", "an uninformed item must not create a barrier nor presume compatibility");
+    } finally {
+      await prisma.accessibilityNeedOption.update({ where: { code: "A01" }, data: { isMandatory: rampOption.isMandatory } });
+    }
+    await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}/acao`, "POST", { action: "close" }, companyCookie), 200, "company closes the analyzed job");
+    await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 404, "closed jobs are not analyzed");
+
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });
     assert.equal(companySessionsBeforeLogout, 1, "company login must have one active session before logout");
@@ -1336,7 +1505,7 @@ async function main() {
     assert.ok(lockedCandidate?.lockedUntil && lockedCandidate.lockedUntil > new Date(), "ten consecutive failures must persist an active account lock");
     assert.equal(lockedCandidate.failedLoginCount, 0, "the locked account counter is reset after the threshold is reached");
 
-    process.stdout.write("Auth E2E passed: candidate email/CPF login and recovery; own jobs lifecycle and isolation; company verification and password recovery; recruiter invitation/resend/accept/refuse/cancel; multi-company isolation and concurrency; logout; account lockout.\n");
+    process.stdout.write("Auth E2E passed: candidate email/CPF login and recovery; own jobs lifecycle and isolation; account accessibility preferences; compatibility calculation; company verification and password recovery; recruiter invitation/resend/accept/refuse/cancel; multi-company isolation and concurrency; logout; account lockout.\n");
   } finally {
     try {
       await cleanupTestData();
@@ -1354,6 +1523,7 @@ async function main() {
     }
     for (const socket of SMTP_SOCKETS) socket.destroy();
     if (smtpServer) await new Promise(resolve => smtpServer.close(() => resolve()));
+    if (hereServer) await new Promise(resolve => hereServer.close(() => resolve()));
     await prisma.$disconnect();
     if (appSpawnError) throw appSpawnError;
     if (appExit && appExit.code !== 0 && appExit.signal !== "SIGTERM") {

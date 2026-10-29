@@ -15,14 +15,14 @@ export async function GET() {
     select: {
       education: true, languages: true, professionalExperience: true,
       courses: true, certifications: true, professionalLinks: true, workPreferences: true,
-      accessibilityDeclaration: true, accessibilityNeeds: true, accessibilityNeedOptionCodes: true,
+      accessibilityDeclaration: true, accessibilityNeeds: true, accessibilityNeedOptionCodes: true, mandatoryNeedOptionCodes: true,
       essentialAccessibilityResources: true, updatedAt: true
     }
   });
   const emptyProfile = {
     education: [], languages: [], professionalExperience: [], courses: [],
     certifications: [], professionalLinks: [], workPreferences: {}, accessibilityDeclaration: "NOT_INFORMED" as const,
-    accessibilityNeeds: [], accessibilityNeedOptionCodes: [], essentialAccessibilityResources: [], updatedAt: new Date(0)
+    accessibilityNeeds: [], accessibilityNeedOptionCodes: [], mandatoryNeedOptionCodes: [], essentialAccessibilityResources: [], updatedAt: new Date(0)
   };
   return NextResponse.json({
     profile: { fullName: user.fullName, email: user.email, ...toProfileResponse(profile ?? emptyProfile) }
@@ -49,6 +49,7 @@ export async function PUT(request: Request) {
     accessibilityDeclaration: input.accessibilityDeclaration,
     accessibilityNeeds: input.accessibilityNeeds,
     accessibilityNeedOptionCodes: input.accessibilityNeedOptionCodes,
+    mandatoryNeedOptionCodes: input.mandatoryNeedOptionCodes,
     essentialAccessibilityResources: input.essentialAccessibilityResources
   };
 
@@ -60,7 +61,7 @@ export async function PUT(request: Request) {
           education: true, languages: true, professionalExperience: true,
           courses: true, certifications: true, professionalLinks: true, workPreferences: true,
           accessibilityDeclaration: true, accessibilityNeeds: true,
-          accessibilityNeedOptionCodes: true, essentialAccessibilityResources: true
+          accessibilityNeedOptionCodes: true, mandatoryNeedOptionCodes: true, essentialAccessibilityResources: true
         }
       });
       if (input.accessibilityNeedOptionCodes.length) {
@@ -83,7 +84,7 @@ export async function PUT(request: Request) {
           education: true, languages: true, professionalExperience: true,
           courses: true, certifications: true, professionalLinks: true, workPreferences: true,
           accessibilityDeclaration: true, accessibilityNeeds: true,
-          accessibilityNeedOptionCodes: true, essentialAccessibilityResources: true, updatedAt: true
+          accessibilityNeedOptionCodes: true, mandatoryNeedOptionCodes: true, essentialAccessibilityResources: true, updatedAt: true
         }
       });
       const changedCategories = Object.keys(fields).filter((key) => {
