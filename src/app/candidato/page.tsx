@@ -16,6 +16,7 @@ export default async function CandidateHomePage() {
           <p className="muted">Mantenha seu perfil atualizado para registrar sua formação, competências, experiências e necessidades de acessibilidade.</p>
           <div className="candidate-home-actions">
             <Link className="primary-button candidate-profile-link" href="/candidato/perfil">Gerenciar meu perfil <span aria-hidden="true">→</span></Link>
+            <Link className="secondary-button candidate-profile-link" href="/candidato/compatibilidade">Compatibilidade com vagas <span aria-hidden="true">→</span></Link>
             <form action="/api/auth/logout" method="post"><button className="secondary-button" type="submit">Sair da conta</button></form>
           </div>
         </section>

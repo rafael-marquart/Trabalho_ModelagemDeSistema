@@ -19,7 +19,7 @@ export const TEXT_LIMITS = { title: 160, description: 5000, requirements: 5000, 
 // Fields that define the conditions of the opportunity; locked once applications exist (OPEN-022).
 export const conditionFields = [
   "title", "description", "requirements", "modality", "locationCity", "locationState", "locationAddress",
-  "accessibility", "deadline", "salaryMin", "salaryMax"
+  "accessibility", "technicalCriteria", "deadline", "salaryMin", "salaryMax"
 ] as const;
 
 export type JobAction = "publish" | "pause" | "reopen" | "close";

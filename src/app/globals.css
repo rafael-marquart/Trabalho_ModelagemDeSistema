@@ -803,3 +803,27 @@ main:focus { outline: none; }
 .appearance-controls { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+.job-language-row { align-items:end; margin-top:12px; }
+.job-add-language { margin-top:14px; }
+.compat-list { display:grid; gap:20px; }
+.compat-card h2 { margin:0; }
+.compat-actions { display:flex; flex-wrap:wrap; align-items:end; gap:16px; margin-top:16px; }
+.compat-mode { min-width:240px; }
+.compat-mode select { margin-top:8px; }
+.compat-actions .primary-button { padding:0 22px; }
+.compat-result { margin-top:20px; padding-top:16px; border-top:1px solid var(--line); }
+.compat-result h3 { margin:18px 0 6px; font-size:15px; }
+.compat-result ul { margin:6px 0 0; padding-left:20px; line-height:1.6; }
+.compat-score { font-size:28px; }
+.candidate-home-actions .secondary-button { display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
+
+/* SPEC-007: candidate marks a declared need as indispensable */
+.accessibility-option-wrapper { display: grid; min-width: 0; }
+/* A selected need and its "indispensável" choice share one card. */
+.accessibility-option-wrapper.is-selected { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.accessibility-option-wrapper.is-selected > .accessibility-option { border: 0; background: transparent; }
+.accessibility-option-mandatory {
+  display: flex; align-items: flex-start; gap: 10px; margin: 0 13px 13px 43px; padding-top: 10px;
+  border-top: 1px solid var(--line); color: var(--ink); font-size: 13px; cursor: pointer;
+}
+.accessibility-option-mandatory input { flex: 0 0 auto; width: 16px; height: 16px; margin-top: 1px; accent-color: var(--purple); }

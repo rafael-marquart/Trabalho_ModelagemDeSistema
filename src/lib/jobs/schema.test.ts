@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { infrastructureItems } from "@/lib/company-infrastructure/items";
+import { normalizeCriteria } from "./criteria";
 import { changedFieldNames, fieldsToData, jobInputSchema, rowToFields, validateForPublication, type JobFields } from "./schema";
 
 const accessibility = Object.fromEntries(infrastructureItems.map((item) => [item.code, "NOT_INFORMED"]));
 const complete = (): JobFields => ({
   title: "Analista", description: "Descrição", requirements: "Requisitos", modality: "REMOTO", locationCity: "", locationState: "",
-  locationAddress: "", deadline: "2026-12-31", salaryMin: null, salaryMax: null, accessibility
+  locationAddress: "", deadline: "2026-12-31", salaryMin: null, salaryMax: null, accessibility,
+  technicalCriteria: { skills: [], experience: [], educationMinLevel: "", languages: [] }
 });
 
 describe("job schema", () => {
@@ -47,5 +49,18 @@ describe("job schema", () => {
     expect(rowToFields(row as never)).toEqual(fields);
     expect(changedFieldNames(fields, { ...fields, title: "Outro", accessibility: { ...accessibility, RAMPS: "PRESENT" } })).toEqual(["title", "accessibility"]);
     expect(changedFieldNames(fields, { ...fields, accessibility: Object.fromEntries(Object.entries(accessibility).reverse()) })).toEqual([]);
+  });
+
+  it("accepts technical criteria, rejects repeats and unknown levels, and tolerates old rows", () => {
+    expect(jobInputSchema.safeParse({ technicalCriteria: { skills: ["SQL", "Java"], experience: ["Analista"], educationMinLevel: "Ensino médio", languages: [{ language: "Inglês", level: "Fluente" }] } }).success).toBe(true);
+    expect(jobInputSchema.safeParse({ technicalCriteria: { skills: ["SQL", "sql"] } }).success).toBe(false);
+    expect(jobInputSchema.safeParse({ technicalCriteria: { educationMinLevel: "Curso livre" } }).success).toBe(false);
+    expect(jobInputSchema.safeParse({ technicalCriteria: { languages: [{ language: "Inglês", level: "Mestre" }] } }).success).toBe(false);
+    expect(jobInputSchema.safeParse({ technicalCriteria: { unknown: [] } }).success).toBe(false);
+    expect(normalizeCriteria({ skills: "not a list" })).toEqual({ skills: [], experience: [], educationMinLevel: "", languages: [] });
+    expect(normalizeCriteria(undefined).skills).toEqual([]);
+  });
+  it("does not require technical criteria to publish", () => {
+    expect(validateForPublication(complete(), "2026-10-27")).toEqual({});
   });
 });

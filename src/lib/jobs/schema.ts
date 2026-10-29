@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { infrastructureItems, infrastructureStatuses, statusLabels } from "@/lib/company-infrastructure/items";
+import { emptyCriteria, normalizeCriteria, technicalCriteriaSchema, type TechnicalCriteria } from "./criteria";
 import { brazilianStates, jobModalities, TEXT_LIMITS, type JobModalityValue } from "./constants";
 
 const knownAccessibilityCodes = new Set(infrastructureItems.map((item) => item.code));
@@ -31,7 +32,8 @@ export const jobInputSchema = z.object({
   deadline: dateText.default(""),
   salaryMin: salary,
   salaryMax: salary,
-  accessibility: z.record(z.string(), z.enum(infrastructureStatuses)).default({})
+  accessibility: z.record(z.string(), z.enum(infrastructureStatuses)).default({}),
+  technicalCriteria: technicalCriteriaSchema.default({ ...emptyCriteria })
 }).strict().superRefine((input, context) => {
   for (const code of Object.keys(input.accessibility)) {
     if (!knownAccessibilityCodes.has(code)) {
@@ -46,6 +48,7 @@ export type JobFields = {
   title: string; description: string; requirements: string; modality: JobModalityValue | "";
   locationCity: string; locationState: string; locationAddress: string; deadline: string;
   salaryMin: number | null; salaryMax: number | null; accessibility: Record<string, string>;
+  technicalCriteria: TechnicalCriteria;
 };
 
 const effective = (value: string) => value.trim().length > 0;
@@ -80,7 +83,7 @@ export function validateForPublication(job: JobFields, today = todayInBrazil()):
 type JobRow = {
   id: string; companyId: string; status: string; origin: string; title: string; description: string; requirements: string;
   modality: string | null; locationCity: string; locationState: string; locationAddress: string; deadline: Date | null;
-  salaryMin: unknown; salaryMax: unknown; accessibility: unknown; publishedAt: Date | null; closedAt: Date | null;
+  salaryMin: unknown; salaryMax: unknown; accessibility: unknown; technicalCriteria?: unknown; publishedAt: Date | null; closedAt: Date | null;
   createdAt: Date; updatedAt: Date;
 };
 
@@ -98,7 +101,8 @@ export function rowToFields(row: JobRow): JobFields {
     title: row.title, description: row.description, requirements: row.requirements,
     modality: (row.modality ?? "") as JobFields["modality"], locationCity: row.locationCity, locationState: row.locationState,
     locationAddress: row.locationAddress, deadline: row.deadline ? row.deadline.toISOString().slice(0, 10) : "",
-    salaryMin: toNumber(row.salaryMin), salaryMax: toNumber(row.salaryMax), accessibility
+    salaryMin: toNumber(row.salaryMin), salaryMax: toNumber(row.salaryMax), accessibility,
+    technicalCriteria: normalizeCriteria(row.technicalCriteria)
   };
 }
 
@@ -117,7 +121,8 @@ export function fieldsToData(fields: JobFields) {
     modality: fields.modality === "" ? null : fields.modality,
     locationCity: fields.locationCity, locationState: fields.locationState, locationAddress: fields.locationAddress,
     deadline: fields.deadline ? new Date(`${fields.deadline}T00:00:00.000Z`) : null,
-    salaryMin: fields.salaryMin, salaryMax: fields.salaryMax, accessibility: fields.accessibility
+    salaryMin: fields.salaryMin, salaryMax: fields.salaryMax, accessibility: fields.accessibility,
+    technicalCriteria: fields.technicalCriteria
   };
 }
 
