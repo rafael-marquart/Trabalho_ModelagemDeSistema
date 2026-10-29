@@ -410,7 +410,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
           <legend>{groupLabels[group]}</legend>
           {options.filter(option => option.group === group).map(option => {
             const checked = selectedCodes.has(option.code);
-            return <div className="accessibility-option-wrapper" key={option.code}><label className={`accessibility-option${!option.isActive ? " accessibility-option-inactive" : ""}`}>
+            return <div className={`accessibility-option-wrapper${checked ? " is-selected" : ""}`} key={option.code}><label className={`accessibility-option${!option.isActive ? " accessibility-option-inactive" : ""}`}>
               <input type="checkbox" checked={checked} disabled={loading || saving || (!option.isActive && !checked)}
                 onChange={event => toggleOption(option.code, event.target.checked)} />
               <span className="accessibility-option-copy">

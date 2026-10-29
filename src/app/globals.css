@@ -818,6 +818,12 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .candidate-home-actions .secondary-button { display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
 
 /* SPEC-007: candidate marks a declared need as indispensable */
-.accessibility-option-wrapper { display: grid; gap: 0.35rem; }
-.accessibility-option-mandatory { display: flex; align-items: flex-start; gap: 0.5rem; margin-left: 2rem; font-size: 0.92rem; }
-.accessibility-option-mandatory input { margin-top: 0.2rem; }
+.accessibility-option-wrapper { display: grid; min-width: 0; }
+/* A selected need and its "indispensável" choice share one card. */
+.accessibility-option-wrapper.is-selected { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.accessibility-option-wrapper.is-selected > .accessibility-option { border: 0; background: transparent; }
+.accessibility-option-mandatory {
+  display: flex; align-items: flex-start; gap: 10px; margin: 0 13px 13px 43px; padding-top: 10px;
+  border-top: 1px solid var(--line); color: var(--ink); font-size: 13px; cursor: pointer;
+}
+.accessibility-option-mandatory input { flex: 0 0 auto; width: 16px; height: 16px; margin-top: 1px; accent-color: var(--purple); }
