@@ -25,6 +25,7 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 |
 | Estado do texto | implementada; encerramento baseado em CI e testes automatizados aprovados, com dispensa explícita de novos testes manuais pelo responsável em 26/10/2026; limitações operacionais registradas no relatório de validação |
 | Estado do layout | protótipos de entrada/login, login de Candidato, login de Empresa, cadastro de Candidato, cadastro de Empresa, recuperação de senha, gestão de recrutadores e mensagens de autenticação aprovados visualmente em 25/10/2026; SVGs estáticos de referência |
+| Pendência registrada (27/10/2026) | **SMTP real: em aberto para implementar depois.** O envio de e-mails (verificação, recuperação, convites) funciona com o servidor de captura local; falta configurar um provedor SMTP real (`SMTP_HOST`, `SMTP_FROM`, credenciais) e verificar entrega e falhas, conforme `docs/operacao/implantacao-spec-001.md`. Não bloqueia o encerramento da implementação nem as Specs seguintes |
 | Capacidade | Cadastro de usuário/empresa, autenticação, recuperação de senha, autorização por perfil e vínculo organizacional de recrutador |
 
 ## 2. Rastreabilidade
@@ -491,6 +492,7 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | ID | SPEC-003 |
 | Estado do texto | aprovada; implementada e encerrada em 28/10/2026, exceto a navegação por voz (em aberto para implementar depois) e o plano formal de avaliação (OPEN-015/OPEN-016); detalhes em `docs/Implementacao/SPEC-003.md` |
 | Estado do layout | aprovado pelo responsável em 28/10/2026, sobre os controles implementados (botão de alto contraste, link para pular ao conteúdo e foco; sem protótipo em docs/layout/) |
+| Pendência registrada (27/10/2026) | **Navegação por voz (seção 5.4, OPEN-014): em aberto para implementar depois.** Vocabulário de comandos, tratamento de falhas e tecnologia de voz ainda dependem de decisão do responsável; teclado, leitor de tela, alto contraste e demais recursos da Spec seguem sem depender dela, e a voz nunca será a única forma de executar uma ação |
 | Capacidade | Recursos funcionais de acessibilidade para interação com a plataforma |
 
 ## 2. Rastreabilidade
@@ -684,6 +686,13 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 | SPEC-001 — Acessar a plataforma e identificar perfil organizacional | especificada | pendente | aguardando |
 | SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato | especificada; implementada | aprovado em 27/10/2026 sobre as telas implementadas | concluída em 27/10/2026 |
 | SPEC-003 — Disponibilizar recursos de acessibilidade da interface | especificada; implementada (exceto navegação por voz e plano formal de avaliação) | aprovado em 28/10/2026 sobre os controles implementados | concluída em 28/10/2026 |
+
+**Pendências em aberto para implementar depois (registradas em 27/10/2026):**
+
+| Spec | Item | Situação |
+|---|---|---|
+| SPEC-001 | SMTP real (provedor, credenciais, verificação de entrega e falhas) | em aberto para implementar depois; ver `docs/operacao/implantacao-spec-001.md` |
+| SPEC-003 | Navegação por voz em pt-BR (seção 5.4, OPEN-014) | em aberto para implementar depois; depende de decisões sobre vocabulário, falhas e tecnologia de voz |
 
 **Próxima etapa:** detalhar o Bloco 3. A revisão coletiva das questões em aberto pode ocorrer depois que todas as Specs estiverem detalhadas.
 
