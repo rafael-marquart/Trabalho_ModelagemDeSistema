@@ -81,7 +81,7 @@ export default function CatalogEditor() {
       <p className="muted">A nova opção começa ativa e não obrigatória. Alterar a obrigatoriedade exige decisão de produto registrada.</p>
       <form className="catalog-admin-form" onSubmit={createOption}>
         <div className="catalog-admin-grid">
-          <label>Identificador estável<input required pattern="[A-Z][A-Z0-9_-]{1,31}" value={draft.code} onChange={event => setDraft(current => ({ ...current, code: event.target.value.toUpperCase() }))} placeholder="Ex.: A07" /></label>
+          <label>Código<input required pattern="[A-Z][A-Z0-9_-]{1,31}" value={draft.code} onChange={event => setDraft(current => ({ ...current, code: event.target.value.toUpperCase() }))} placeholder="Ex.: A07" /></label>
           <label>Nome<input required value={draft.name} onChange={event => setDraft(current => ({ ...current, name: event.target.value }))} /></label>
           <label>Descrição<textarea required value={draft.description} onChange={event => setDraft(current => ({ ...current, description: event.target.value }))} /></label>
           <label>Grupo<select value={draft.group} onChange={event => setDraft(current => ({ ...current, group: event.target.value as Group }))}>

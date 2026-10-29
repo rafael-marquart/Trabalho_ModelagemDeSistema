@@ -3,8 +3,8 @@ import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
 import BrandLogo from "@/components/brand-logo";
 
-export type ShellRole = "COMPANY" | "RECRUITER" | "CANDIDATE";
-export type ShellSection = "home" | "jobs" | "recruiters" | "settings" | "profile";
+export type ShellRole = "COMPANY" | "RECRUITER" | "CANDIDATE" | "ADMIN";
+export type ShellSection = "home" | "jobs" | "recruiters" | "settings" | "profile" | "catalog";
 
 const menus: Record<ShellRole, { key: ShellSection; label: string; href: string }[]> = {
   COMPANY: [
@@ -22,12 +22,16 @@ const menus: Record<ShellRole, { key: ShellSection; label: string; href: string 
     { key: "home", label: "Início", href: "/candidato" },
     { key: "jobs", label: "Vagas", href: "/candidato/vagas" },
     { key: "profile", label: "Meu perfil", href: "/candidato/perfil" }
+  ],
+  ADMIN: [
+    { key: "catalog", label: "Catálogo de acessibilidade", href: "/admin/catalogo-acessibilidade" }
   ]
 };
 const areaText: Record<ShellRole, { home: string; label: string; menu: string; nav: string }> = {
   COMPANY: { home: "/empresa", label: "Área da empresa", menu: "Menu da empresa", nav: "Menu da empresa" },
   RECRUITER: { home: "/recrutador", label: "Área do recrutador", menu: "Menu do recrutador", nav: "Menu do recrutador" },
-  CANDIDATE: { home: "/candidato", label: "Área do candidato", menu: "Menu do candidato", nav: "Menu do candidato" }
+  CANDIDATE: { home: "/candidato", label: "Área do candidato", menu: "Menu do candidato", nav: "Menu do candidato" },
+  ADMIN: { home: "/admin/catalogo-acessibilidade", label: "Administração da plataforma", menu: "Menu da administração", nav: "Menu da administração" }
 };
 
 function initials(name: string) {
