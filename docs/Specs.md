@@ -3218,6 +3218,8 @@ A integração com Adzuna permanece limitada a **até 25 chamadas de teste**. Es
 
 - Mapa fixo entre necessidades do catálogo e os seis itens da vaga (A01, A02, A04, A06, T01); demais necessidades ficam "não avaliáveis".
 - Critérios técnicos estruturados definidos pelo recrutador no editor da vaga; a integração com LLM não é usada nesta etapa.
-- Dimensão sem critério aplicável é excluída e os pesos restantes são normalizados (a confirmar, OPEN-090).
+- Dimensão sem critério aplicável é excluída e os pesos restantes são normalizados (OPEN-090, aprovada em 29/10/2026).
+- O candidato marca no perfil quais necessidades são indispensáveis (RB-06); a marcação obrigatória do catálogo pelo ADMIN continua válida.
+- Limite de segurança: uso da HERE bloqueado ao atingir 60% da cota gratuita do mês, liberado no mês seguinte.
 - A validação de localização de vaga externa (item 6 do comportamento) e a SPEC-006 permanecem pendentes; os critérios que dependem de vagas externas continuam abertos.
 - Encerramento da SPEC-007 depende do teste manual e da aprovação do responsável.

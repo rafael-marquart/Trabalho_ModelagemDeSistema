@@ -17,7 +17,7 @@
 - API: `GET/POST /api/candidato/compatibilidade` (somente candidato, origem verificada, corpo estrito); `GET /api/candidato/vagas` provisório (a SPEC-008 substitui). Apenas vagas publicadas e dentro do prazo.
 - Tela provisória de validação: `/candidato/compatibilidade`. A apresentação definitiva é da SPEC-010.
 
-## Decisões desta implementação (a confirmar — ver OPEN-090)
+## Decisões desta implementação (aprovadas em 29/10/2026 — OPEN-090)
 
 1. Dimensão sem nenhum critério aplicável (candidato declarou "sem necessidades" para A; vaga sem critérios técnicos para T) é excluída e os pesos restantes são normalizados proporcionalmente; isso aparece nos fatores.
 2. Candidato com declaração "não informada" torna A insuficiente.
