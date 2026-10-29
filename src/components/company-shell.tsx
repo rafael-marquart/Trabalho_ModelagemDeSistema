@@ -24,9 +24,9 @@ const menus: Record<ShellRole, { key: ShellSection; label: string; href: string 
   ]
 };
 const areaText: Record<ShellRole, { home: string; label: string; menu: string; nav: string }> = {
-  COMPANY: { home: "/empresa", label: "Área da empresa", menu: "MENU DA EMPRESA", nav: "Menu da empresa" },
-  RECRUITER: { home: "/recrutador", label: "Área do recrutador", menu: "MENU DO RECRUTADOR", nav: "Menu do recrutador" },
-  CANDIDATE: { home: "/candidato", label: "Área do candidato", menu: "MENU DO CANDIDATO", nav: "Menu do candidato" }
+  COMPANY: { home: "/empresa", label: "Área da empresa", menu: "Menu da empresa", nav: "Menu da empresa" },
+  RECRUITER: { home: "/recrutador", label: "Área do recrutador", menu: "Menu do recrutador", nav: "Menu do recrutador" },
+  CANDIDATE: { home: "/candidato", label: "Área do candidato", menu: "Menu do candidato", nav: "Menu do candidato" }
 };
 
 function initials(name: string) {

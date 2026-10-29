@@ -63,7 +63,7 @@ export default function CandidateLoginPage() {
         </div>
         {notice && <p className="form-success" role="status" aria-live="polite">{notice}</p>}
         {error && <p className="form-error" role="alert">{error}</p>}
-        <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar na plataforma  →"}</button>
+        <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar na plataforma"}</button>
       </form>
     </AuthSplitLayout>
   );

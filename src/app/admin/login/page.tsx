@@ -53,7 +53,7 @@ export default function AdminLoginPage() {
             <label htmlFor="password">Senha</label>
             <input id="password" type="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required />
             {error && <p className="form-error" role="alert">{error}</p>}
-            <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar  →"}</button>
+            <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar"}</button>
           </form>
         </section>
       </div>

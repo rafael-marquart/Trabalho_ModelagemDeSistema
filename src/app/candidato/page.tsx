@@ -27,12 +27,12 @@ export default async function CandidateHomePage() {
           <h1 id="candidate-home-title">Olá, {firstName}!</h1>
           <p className="muted">Aqui você encontra vagas que combinam com o seu perfil.</p>
         </div>
-        <Link className="secondary-button" href="/candidato/perfil">Ver meu perfil <span aria-hidden="true">→</span></Link>
+        <Link className="secondary-button" href="/candidato/perfil">Ver meu perfil</Link>
       </header>
       <section className="candidate-featured" aria-labelledby="featured-title">
         <div className="section-heading-row">
           <h2 id="featured-title">Vagas em destaque</h2>
-          <Link href="/candidato/vagas">Ver todas <span aria-hidden="true">→</span></Link>
+          <Link href="/candidato/vagas">Ver todas as vagas</Link>
         </div>
         {failed ? <p className="form-error" role="alert">Não foi possível carregar as vagas agora. Tente novamente em instantes.</p>
           : featured.length ? <div className="job-card-grid">{featured.map(job => <JobCard key={job.id} job={job} />)}</div>
