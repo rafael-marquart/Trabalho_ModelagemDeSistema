@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
+import BrandLogo from "@/components/brand-logo";
 
 export type ShellRole = "COMPANY" | "RECRUITER" | "CANDIDATE";
 export type ShellSection = "home" | "jobs" | "recruiters" | "settings" | "profile";
@@ -43,7 +44,7 @@ export default function CompanyShell({ role, active, userName, children }: {
   return <div className="company-dashboard">
     <header className="company-topbar">
       <Link className="company-brand" href={home} aria-label="Acessa Vagas — página inicial da área">
-        <img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" />
+        <BrandLogo />
       </Link>
       <span className="company-topbar-label">{text.label}</span>
       <div className="company-topbar-actions">

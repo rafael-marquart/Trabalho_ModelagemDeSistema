@@ -4,6 +4,7 @@ import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import BrandLogo from "@/components/brand-logo";
 
 export default function RecruiterInvitationPage() {
   const router = useRouter();
@@ -51,7 +52,7 @@ export default function RecruiterInvitationPage() {
     <main className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div>
       <Link className="brand auth-brand" href="/">
-        <img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" />
+        <BrandLogo />
       </Link>
       <section className="auth-card" aria-labelledby="invitation-title">
         <p className="eyebrow">Vínculo organizacional</p>

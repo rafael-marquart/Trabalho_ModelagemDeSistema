@@ -1,12 +1,13 @@
 import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
+import BrandLogo from "@/components/brand-logo";
 
 export default function HomePage() {
   return (
     <main className="page-shell">
       <section className="welcome-panel" aria-labelledby="welcome-title">
         <Link className="brand" href="/" aria-label="Acessa Vagas — início">
-          <img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" />
+          <BrandLogo onDark />
         </Link>
         <div className="welcome-copy">
           <p className="eyebrow">Oportunidades para todos</p>

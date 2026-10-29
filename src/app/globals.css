@@ -922,10 +922,14 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .job-card-grid .job-card .score-ring { grid-row: 1; }
 
 /* Refino visual, etapa 2 (entrada, login e cadastro) */
-/* The logo's deep purples disappear on dark or purple grounds: there it sits on a light lilac plate, keeping the brand colors intact. */
-:root[data-theme="dark"] .brand-logo,
-.welcome-panel .brand-logo { padding: 6px 10px; border-radius: 14px; background: #F0EBF5; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .brand-logo { padding: 6px 10px; border-radius: 14px; background: #F0EBF5; } }
+/* Logo: monochrome light version on dark themes (option D, 29/10/2026); the purple welcome panel always uses it. */
+.brand-logo-light { display: none; }
+:root[data-theme="dark"] .brand-logo-default { display: none; }
+:root[data-theme="dark"] .brand-logo-light { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .brand-logo-default { display: none; }
+  :root:not([data-theme="light"]) .brand-logo-light { display: block; }
+}
 /* Theme controls share the first row with the logo instead of pushing it down. */
 .auth-page { position: relative; }
 .auth-page > .theme-control-host { position: absolute; top: 30px; right: clamp(22px, 5vw, 64px); width: auto; margin: 0; }
