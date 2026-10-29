@@ -50,7 +50,7 @@ export default function ConfirmCompanyEmailPage() {
       </Link>
       <section className="auth-card" aria-labelledby="confirm-title">
         <p className="eyebrow">Verificação da empresa</p>
-        <h1 id="confirm-title">Confirmação de e-mail corporativo</h1>
+        <h1 id="confirm-title">Confirmação de e&#8209;mail corporativo</h1>
         <p className={status === "error" ? "form-error" : status === "success" ? "form-success" : "muted"} role={status === "error" ? "alert" : "status"} aria-live="polite">
           {message}
         </p>

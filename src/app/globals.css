@@ -214,7 +214,7 @@ button, input, select { font: inherit; }
 }
 @media (max-width: 760px) {
   .company-topbar { gap: 16px; padding: 12px 20px; }
-  .company-topbar .brand-logo { width: 145px; }
+  .company-topbar .brand-logo { width: auto; height: 40px; }
   .company-topbar-label { display: none; }
   .company-dashboard-body { grid-template-columns: 1fr; }
   .company-sidebar { padding: 12px 16px; border-right: 0; border-bottom: 1px solid var(--line); }
@@ -226,7 +226,7 @@ button, input, select { font: inherit; }
 }
 @media (max-width: 520px) {
   .company-topbar { padding: 12px 16px; }
-  .company-topbar .brand-logo { width: 128px; }
+  .company-topbar .brand-logo { width: auto; height: 36px; }
   .company-topbar-actions { gap: 10px; }
   .company-avatar { width: 36px; height: 36px; flex-basis: 36px; }
   .invite-form { grid-template-columns: 1fr; }
@@ -920,3 +920,21 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 /* Featured cards are narrow: the score leads, the details follow. */
 .job-card-grid .job-card { grid-template-columns: minmax(0, 1fr); }
 .job-card-grid .job-card .score-ring { grid-row: 1; }
+
+/* Refino visual, etapa 2 (entrada, login e cadastro) */
+/* The logo's deep purples disappear on dark or purple grounds: there it sits on a light lilac plate, keeping the brand colors intact. */
+:root[data-theme="dark"] .brand-logo,
+.welcome-panel .brand-logo { padding: 6px 10px; border-radius: 14px; background: #F0EBF5; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .brand-logo { padding: 6px 10px; border-radius: 14px; background: #F0EBF5; } }
+/* Theme controls share the first row with the logo instead of pushing it down. */
+.auth-page { position: relative; }
+.auth-page > .theme-control-host { position: absolute; top: 30px; right: clamp(22px, 5vw, 64px); width: auto; margin: 0; }
+.auth-page .auth-brand .brand-logo { width: auto; height: 64px; }
+.auth-card { margin-top: clamp(28px, 6vh, 64px); }
+.auth-card h1 { text-wrap: balance; }
+/* Entry decoration stays clear of the headline. */
+.welcome-decoration { bottom: -14%; right: -230px; }
+.welcome-copy h1 { text-wrap: balance; }
+@media (max-width: 760px) {
+  .auth-page > .theme-control-host { position: static; justify-content: flex-end; margin: 0 0 16px; }
+}
