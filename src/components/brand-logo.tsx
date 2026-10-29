@@ -1,7 +1,7 @@
 import React from "react";
 
 /**
- * Acessa Vagas logo. On dark themes and on the purple welcome panel the monochrome light version (same drawing as the color PNG) is shown
+ * Acessa Vagas logo. On dark themes and on the purple welcome panel the light two-tone version (same drawing as the color PNG) is shown
  * (decision of 29/10/2026); CSS picks the visible image, so the choice follows the theme toggle without a reload.
  */
 export default function BrandLogo({ onDark = false }: { onDark?: boolean }) {
