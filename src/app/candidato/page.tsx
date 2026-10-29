@@ -16,7 +16,9 @@ export default async function CandidateHomePage() {
   let failed = false;
   try {
     featured = (await searchJobsForCandidate(user.id, searchQuerySchema.parse({}))).jobs.slice(0, 3) as SearchJob[];
-  } catch {
+  } catch (error) {
+    // Logged on the server so a missing migration or database outage is visible in the terminal running the app.
+    console.error("Falha ao carregar as vagas em destaque:", error instanceof Error ? error.message : error);
     failed = true;
   }
   return <CompanyShell role="CANDIDATE" active="home" userName={user.fullName}>
