@@ -6,6 +6,8 @@ export const educationLevels = [
 ] as const;
 export const educationStatuses = ["Concluído", "Em andamento", "Trancado", "Incompleto"] as const;
 export const languageLevels = ["Básico", "Intermediário", "Avançado", "Fluente", "Nativo"] as const;
+// Languages offered in the profile and in the job editor; "Outro" opens a free-text field.
+export const languageChoices = ["Inglês", "Espanhol", "Francês", "Alemão", "Italiano", "Português", "Libras", "Outro"] as const;
 
 export type EducationEntry = {
   level: (typeof educationLevels)[number];

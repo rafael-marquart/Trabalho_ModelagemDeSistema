@@ -3,7 +3,7 @@ import { hasCriteria } from "@/lib/jobs/criteria";
 import {
   DISPLACEMENT_WEIGHTS, NEED_TO_JOB_ITEM, TECHNICAL_WEIGHTS, WEIGHTS, dimensionLabels, educationRank, languageRank, travelBandScore
 } from "./constants";
-import { containsTerm, normalizeText } from "./text";
+import { matchesCriterion, normalizeText } from "./text";
 import type { AnalysisInput, AnalysisOutcome, Barrier, CandidateInput, Component, Dimension, DimensionCode, JobInput, MissingItem } from "./types";
 
 const itemLabel = (code: string) => infrastructureItems.find((item) => item.code === code)?.label ?? code;
@@ -82,7 +82,7 @@ function dimensionTechnical(candidate: CandidateInput, job: JobInput, missing: M
     if (!corpus.length) {
       lack("Competências e conhecimentos (cursos, certificações, formação ou experiências)", "Informe formação, cursos, certificações ou experiências no seu perfil.");
     } else {
-      const matched = criteria.skills.filter((skill) => corpus.some((entry) => containsTerm(entry, skill)));
+      const matched = criteria.skills.filter((skill) => corpus.some((entry) => matchesCriterion(entry, skill)));
       parts.push({ weight: TECHNICAL_WEIGHTS.skills, component: {
         label: "Competências e conhecimentos", score: (matched.length / criteria.skills.length) * 100,
         detail: `${matched.length} de ${criteria.skills.length} exigidas encontradas no perfil${matched.length ? `: ${matched.join(", ")}` : ""}.`
@@ -93,7 +93,7 @@ function dimensionTechnical(candidate: CandidateInput, job: JobInput, missing: M
     if (!candidate.experience.length) lack("Experiência profissional", "Informe suas experiências profissionais no perfil.");
     else {
       const text = candidate.experience.map((entry) => `${entry.role} ${entry.company}`);
-      const matched = criteria.experience.filter((term) => text.some((entry) => containsTerm(entry, term)));
+      const matched = criteria.experience.filter((term) => text.some((entry) => matchesCriterion(entry, term)));
       parts.push({ weight: TECHNICAL_WEIGHTS.experience, component: {
         label: "Experiência profissional", score: (matched.length / criteria.experience.length) * 100,
         detail: `${matched.length} de ${criteria.experience.length} experiências exigidas encontradas${matched.length ? `: ${matched.join(", ")}` : ""}.`
@@ -126,7 +126,8 @@ function dimensionTechnical(candidate: CandidateInput, job: JobInput, missing: M
         if (!found.level) { unknownLevel = true; lack(`Nível de ${required.language}`, `Informe o nível de ${required.language} no perfil.`); continue; }
         const have = languageRank[found.level], need = languageRank[required.level];
         scores.push(have >= need ? 100 : have === need - 1 ? 50 : 0);
-        details.push(`${required.language}: ${found.level} (exigido ${required.level})`);
+        details.push(have >= need ? `${required.language}: atende (${found.level}; mínimo exigido ${required.level})`
+          : `${required.language}: ${found.level}, abaixo do mínimo exigido (${required.level})`);
       }
       if (!unknownLevel) parts.push({ weight: TECHNICAL_WEIGHTS.languages, component: {
         label: "Idiomas", score: scores.reduce((a, b) => a + b, 0) / scores.length, detail: details.join("; ") + "."

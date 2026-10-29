@@ -4,8 +4,7 @@ import ChoiceGroup from "@/components/choice-group";
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import {
   educationLevels, educationStatuses, languageLevels, brazilianStates, emptyWorkPreferences, transportModes, workModalities,
-  type EducationEntry, type ExperienceEntry, type LanguageEntry, type WorkPreferences
-} from "@/lib/candidate-profile/options";
+  type EducationEntry, type ExperienceEntry, type LanguageEntry, type WorkPreferences, languageChoices } from "@/lib/candidate-profile/options";
 
 type Declaration = "NOT_INFORMED" | "NO_NEEDS_DECLARED" | "NEEDS_DECLARED";
 type NeedGroup = "ARCHITECTURAL" | "COMMUNICATION" | "TECHNOLOGICAL";
@@ -32,7 +31,6 @@ const groupLabels: Record<NeedGroup, string> = {
   TECHNOLOGICAL: "Necessidades tecnológicas"
 };
 const groupOrder: NeedGroup[] = ["ARCHITECTURAL", "COMMUNICATION", "TECHNOLOGICAL"];
-const languageChoices = ["Inglês", "Espanhol", "Francês", "Alemão", "Italiano", "Português", "Libras", "Outro"];
 const acceptedFiles = ".pdf,.doc,.docx,.jpg,.jpeg,.png";
 function asText(value: unknown) { return Array.isArray(value) ? value.filter((x): x is string => typeof x === "string").join("\n") : ""; }
 function lines(value: string) { return value.split("\n").map(x => x.trim()).filter(Boolean); }
@@ -42,7 +40,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   const [profile, setProfile] = useState<Profile>({ ...empty, fullName: accountName, email: accountEmail });
   const [options, setOptions] = useState<NeedOption[]>([]);
   const [documents, setDocuments] = useState<ProfileDocument[]>([]);
-  const [language, setLanguage] = useState(languageChoices[0]);
+  const [language, setLanguage] = useState<string>(languageChoices[0]);
   const [otherLanguage, setOtherLanguage] = useState("");
   const [languageLevel, setLanguageLevel] = useState<LanguageEntry["level"]>(languageLevels[1]);
   const [educationLevel, setEducationLevel] = useState<EducationEntry["level"]>(educationLevels[3]);

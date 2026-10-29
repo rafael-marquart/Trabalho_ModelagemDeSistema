@@ -67,7 +67,7 @@ export default function CompatibilityPanel() {
           <p><span className={`status-pill ${statusClass[result.status]}`}>{statusText[result.status]}</span>{result.score !== null ? <strong className="compat-score"> {result.score}%</strong> : null}</p>
           <h3>Principais fatores</h3>
           <ul>{result.factors.map((factor, index) => <li key={index}>{factor}</li>)}</ul>
-          {result.missing.length ? <><h3>O que falta</h3><ul>{result.missing.map((item, index) => <li key={index}><strong>{item.item}.</strong> {item.action}</li>)}</ul></> : null}
+          {result.missing.length ? <><h3>O que falta</h3><ul>{result.missing.map((item, index) => <li key={index}><strong>{item.item.replace(/\.+$/, "")}.</strong> {item.action}</li>)}</ul></> : null}
           <h3>Por dimensão</h3>
           <ul>{(["A", "T", "D"] as const).map(code => <li key={code}><strong>{dimensionNames[code]}:</strong> {result.dimensions[code].status === "EVALUATED" ? `${Math.round(result.dimensions[code].score ?? 0)}/100` : result.dimensions[code].status === "NOT_APPLICABLE" ? "não se aplica" : "dados insuficientes"}
             {result.dimensions[code].components.length ? <ul>{result.dimensions[code].components.map((component, index) => <li key={index}>{component.label}: {component.detail}</li>)}</ul> : null}</li>)}</ul>

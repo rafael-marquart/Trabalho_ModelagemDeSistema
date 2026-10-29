@@ -21,7 +21,8 @@ type Fetcher = typeof fetch;
 type HereConfig = { apiKey?: string; geocodeUrl?: string; routerUrl?: string; transitUrl?: string; fetcher?: Fetcher; timeoutMs?: number };
 
 export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
-  const apiKey = config.apiKey ?? process.env.HERE_API_KEY;
+  // Read on every call so a key added to .env is picked up without depending on module caching.
+  const readKey = () => (config.apiKey ?? process.env.HERE_API_KEY ?? "").trim();
   const geocodeUrl = config.geocodeUrl ?? process.env.HERE_GEOCODE_URL ?? "https://geocode.search.hereapi.com/v1/geocode";
   const routerUrl = config.routerUrl ?? process.env.HERE_ROUTER_URL ?? "https://router.hereapi.com/v8/routes";
   const transitUrl = config.transitUrl ?? process.env.HERE_TRANSIT_URL ?? "https://transit.router.hereapi.com/v8/routes";
@@ -45,7 +46,7 @@ export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
     url.searchParams.set("q", text);
     url.searchParams.set("in", "countryCode:BRA");
     url.searchParams.set("limit", "1");
-    url.searchParams.set("apiKey", apiKey!);
+    url.searchParams.set("apiKey", readKey());
     const result = await getJson(url);
     if (!result.ok) return { reason: result.reason };
     const position = (result.body as { items?: { position?: { lat?: number; lng?: number } }[] })?.items?.[0]?.position;
@@ -55,7 +56,7 @@ export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
 
   return {
     async estimate({ origin, destination, mode }) {
-      if (!apiKey) return unavailable("O serviço de rotas não está configurado.");
+      if (!readKey()) return unavailable("O serviço de rotas não está configurado: a chave HERE_API_KEY não foi encontrada no arquivo .env do servidor.");
       const routerMode = ROUTER_MODES[mode];
       const transitModes = TRANSIT_MODES[mode];
       if (!routerMode && !transitModes) return unavailable("Meio de transporte não suportado.");
@@ -70,7 +71,7 @@ export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
       url.searchParams.set("destination", `${to.lat},${to.lng}`);
       if (routerMode) { url.searchParams.set("transportMode", routerMode); url.searchParams.set("return", "summary"); }
       else { url.searchParams.set("modes", transitModes); url.searchParams.set("return", "travelSummary"); }
-      url.searchParams.set("apiKey", apiKey);
+      url.searchParams.set("apiKey", readKey());
       const result = await getJson(url);
       if (!result.ok) return unavailable(result.reason);
 

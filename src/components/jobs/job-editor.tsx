@@ -4,7 +4,9 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ChoiceGroup from "@/components/choice-group";
 import { brazilianStates, jobModalities, jobModalityLabels, jobStatusLabels, TEXT_LIMITS, type JobAction, type JobModalityValue, type JobStatusValue } from "@/lib/jobs/constants";
-import { languageLevels } from "@/lib/candidate-profile/options";
+import { languageChoices, languageLevels } from "@/lib/candidate-profile/options";
+
+const isListedLanguage = (value: string) => value !== "Outro" && (languageChoices as readonly string[]).includes(value);
 import { rankedEducationLevels, type TechnicalCriteria } from "@/lib/jobs/criteria";
 import { infrastructureItems, infrastructureStatuses, statusLabels, type InfrastructureStatus } from "@/lib/company-infrastructure/items";
 
@@ -202,10 +204,10 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
         <h2>Critérios técnicos (opcional)</h2>
         <p className="muted">Usados no cálculo de compatibilidade. Só entram os critérios que você preencher.</p>
         <label className="job-field"><span className="profile-section-title">Competências e conhecimentos (um por linha)</span>
-          <textarea rows={4} value={form.skillsText} onChange={e => set("skillsText", e.target.value)} aria-invalid={Boolean(issues["technicalCriteria.skills"])} aria-describedby={issues["technicalCriteria.skills"] ? "err-technicalCriteria.skills" : undefined} />
+          <textarea rows={4} placeholder={"Ex.: Engenharia de software\nSQL\nExcel"} value={form.skillsText} onChange={e => set("skillsText", e.target.value)} aria-invalid={Boolean(issues["technicalCriteria.skills"])} aria-describedby={issues["technicalCriteria.skills"] ? "err-technicalCriteria.skills" : undefined} />
         </label>{fieldError("technicalCriteria.skills")}
         <label className="job-field"><span className="profile-section-title">Experiência profissional exigida (um cargo ou área por linha)</span>
-          <textarea rows={3} value={form.experienceText} onChange={e => set("experienceText", e.target.value)} aria-invalid={Boolean(issues["technicalCriteria.experience"])} aria-describedby={issues["technicalCriteria.experience"] ? "err-technicalCriteria.experience" : undefined} />
+          <textarea rows={3} placeholder={"Ex.: Desenvolvedor\nAtendimento ao cliente"} value={form.experienceText} onChange={e => set("experienceText", e.target.value)} aria-invalid={Boolean(issues["technicalCriteria.experience"])} aria-describedby={issues["technicalCriteria.experience"] ? "err-technicalCriteria.experience" : undefined} />
         </label>{fieldError("technicalCriteria.experience")}
         <label className="job-field"><span className="profile-section-title">Escolaridade mínima</span>
           <select value={form.educationMinLevel} onChange={e => set("educationMinLevel", e.target.value as Form["educationMinLevel"])}>
@@ -217,8 +219,13 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
           <span className="profile-section-title">Idiomas exigidos</span>
           {form.languages.map((entry, index) => <div key={index} className="job-row job-language-row">
             <label className="job-field"><span className="sr-only">Idioma {index + 1}</span>
-              <input type="text" placeholder="Idioma" value={entry.language} maxLength={80} onChange={e => set("languages", form.languages.map((item, i) => i === index ? { ...item, language: e.target.value } : item))} />
+              <select value={isListedLanguage(entry.language) ? entry.language : "Outro"} onChange={e => set("languages", form.languages.map((item, i) => i === index ? { ...item, language: e.target.value === "Outro" ? "" : e.target.value } : item))}>
+                {languageChoices.map(choice => <option key={choice} value={choice}>{choice}</option>)}
+              </select>
             </label>
+            {!isListedLanguage(entry.language) && <label className="job-field"><span className="sr-only">Outro idioma {index + 1}</span>
+              <input type="text" placeholder="Digite o idioma" value={entry.language} maxLength={80} onChange={e => set("languages", form.languages.map((item, i) => i === index ? { ...item, language: e.target.value } : item))} />
+            </label>}
             <label className="job-field"><span className="sr-only">Nível mínimo do idioma {index + 1}</span>
               <select value={entry.level} onChange={e => set("languages", form.languages.map((item, i) => i === index ? { ...item, level: e.target.value as (typeof languageLevels)[number] } : item))}>
                 {languageLevels.map(level => <option key={level} value={level}>{level}</option>)}
@@ -226,7 +233,7 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
             </label>
             <button type="button" className="secondary-button" onClick={() => set("languages", form.languages.filter((_, i) => i !== index))}>Remover idioma {index + 1}</button>
           </div>)}
-          <button type="button" className="secondary-button job-add-language" onClick={() => set("languages", [...form.languages, { language: "", level: languageLevels[1] }])}>Adicionar idioma</button>
+          <button type="button" className="secondary-button job-add-language" onClick={() => set("languages", [...form.languages, { language: languageChoices[0], level: languageLevels[1] }])}>Adicionar idioma</button>
           {fieldError("technicalCriteria.languages")}
         </div>
       </fieldset>
