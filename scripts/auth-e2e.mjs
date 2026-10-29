@@ -1413,6 +1413,39 @@ async function main() {
     assert.equal(failed.score, null);
     await expectStatus(await saveCompatProfile(compatProfile), 200, "restore profile address");
 
+    // Safety cap: once this month's geocoding count reaches 60% of the free allowance, no request reaches HERE.
+    const usageMonth = new Date().toISOString().slice(0, 7);
+    const geocodeUsage = await prisma.hereUsage.findUnique({ where: { month_service: { month: usageMonth, service: "geocode" } } });
+    assert.ok(geocodeUsage && geocodeUsage.count > 0, "requests sent to HERE must be counted per month and service");
+    try {
+      await prisma.hereUsage.update({ where: { month_service: { month: usageMonth, service: "geocode" } }, data: { count: 18000 } });
+      const requestsBeforeCap = HERE_REQUESTS.length;
+      const capped = JSON.parse(await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 201, "analysis after the safety cap")).result;
+      assert.equal(capped.status, "INSUFFICIENT_DATA", "a reached cap must not invent a travel time");
+      assert.ok(JSON.stringify(capped).includes("limite de segurança"), "the reason must explain the safety cap");
+      assert.equal(HERE_REQUESTS.length, requestsBeforeCap, "a reached cap must not send requests to HERE");
+    } finally {
+      await prisma.hereUsage.update({ where: { month_service: { month: usageMonth, service: "geocode" } }, data: { count: geocodeUsage.count } });
+    }
+
+    // The candidate marks a declared need as indispensable: a job declaring that resource absent is incompatible.
+    await expectStatus(await saveCompatProfile({ ...compatProfile, mandatoryNeedOptionCodes: ["A01"] }), 400, "indispensable need must be among the selected needs");
+    const rampBefore = await prisma.accessibilityNeedOption.findUnique({ where: { code: "A01" } });
+    await prisma.accessibilityNeedOption.update({ where: { code: "A01" }, data: { isMandatory: false } });
+    try {
+    await expectStatus(await saveCompatProfile({ ...compatProfile, accessibilityDeclaration: "NEEDS_DECLARED", accessibilityNeedOptionCodes: ["A01"], mandatoryNeedOptionCodes: ["A01"] }), 200, "candidate marks the ramp as indispensable");
+    await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}`, "PUT", { ...compatJobBody, accessibility: { ...compatJobBody.accessibility, RAMPS: "ABSENT" } }, companyCookie), 200, "company declares no ramps (candidate-marked lock)");
+    const candidateLocked = JSON.parse(await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 201, "analysis with a candidate-marked barrier")).result;
+    assert.equal(candidateLocked.status, "INCOMPATIBLE", "a need marked indispensable by the candidate must lock the job");
+    await expectStatus(await saveCompatProfile({ ...compatProfile, accessibilityDeclaration: "NEEDS_DECLARED", accessibilityNeedOptionCodes: ["A01"] }), 200, "candidate unmarks the ramp");
+    const softened = JSON.parse(await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 201, "analysis without the indispensable mark")).result;
+    assert.notEqual(softened.status, "INCOMPATIBLE", "without the mark an absent ramp only lowers the accessibility score");
+    await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}`, "PUT", compatJobBody, companyCookie), 200, "restore job accessibility");
+    } finally {
+      await prisma.accessibilityNeedOption.update({ where: { code: "A01" }, data: { isMandatory: rampBefore.isMandatory } });
+    }
+    await expectStatus(await saveCompatProfile(compatProfile), 200, "restore profile after candidate-marked lock");
+
     // Critical lock: a mandatory need meeting a declared barrier makes the job incompatible and spends no provider call.
     const rampOption = await prisma.accessibilityNeedOption.findUnique({ where: { code: "A01" } });
     assert.ok(rampOption, "catalog must contain A01");

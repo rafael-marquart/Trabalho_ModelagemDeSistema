@@ -1,3 +1,4 @@
+import { DEFAULT_QUOTA_PERCENT, type HereService, type QuotaGuard } from "./quota";
 // Travel-time estimation behind a port, so the calculation never depends on a provider (SPEC-007, OPEN-088).
 export type TravelEstimate =
   | { status: "OK"; minutes: number; mode: string; method: string }
@@ -18,7 +19,7 @@ const TRANSIT_MODES: Record<string, string> = {
 };
 
 type Fetcher = typeof fetch;
-type HereConfig = { apiKey?: string; geocodeUrl?: string; routerUrl?: string; transitUrl?: string; fetcher?: Fetcher; timeoutMs?: number };
+type HereConfig = { quota?: QuotaGuard; apiKey?: string; geocodeUrl?: string; routerUrl?: string; transitUrl?: string; fetcher?: Fetcher; timeoutMs?: number };
 
 export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
   // Read on every call so a key added to .env is picked up without depending on module caching.
@@ -29,8 +30,11 @@ export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
   const fetcher = config.fetcher ?? fetch;
   const timeoutMs = config.timeoutMs ?? 8000;
 
-  async function getJson(url: URL): Promise<{ ok: true; body: unknown } | { ok: false; reason: string }> {
+  async function getJson(url: URL, service: HereService): Promise<{ ok: true; body: unknown } | { ok: false; reason: string }> {
     try {
+      if (config.quota && !(await config.quota.tryConsume(service))) {
+        return { ok: false, reason: `O limite de segurança do serviço de rotas (${process.env.HERE_QUOTA_PERCENT || DEFAULT_QUOTA_PERCENT}% da cota gratuita do mês) foi atingido; o tempo de deslocamento volta a ser calculado no próximo mês.` };
+      }
       const response = await fetcher(url, { signal: AbortSignal.timeout(timeoutMs), cache: "no-store" });
       if (response.status === 401 || response.status === 403) return { ok: false, reason: "A chave da API de rotas é inválida ou não tem permissão." };
       if (response.status === 429) return { ok: false, reason: "O limite de uso do serviço de rotas foi atingido." };
@@ -50,7 +54,7 @@ export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
     url.searchParams.set("in", "countryCode:BRA");
     url.searchParams.set("limit", "1");
     url.searchParams.set("apiKey", readKey());
-    const result = await getJson(url);
+    const result = await getJson(url, "geocode");
     if (!result.ok) return { reason: result.reason };
     const item = (result.body as { items?: { resultType?: string; position?: { lat?: number; lng?: number } }[] })?.items?.[0];
     const position = item?.position;
@@ -77,7 +81,7 @@ export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
       if (routerMode) { url.searchParams.set("transportMode", routerMode); url.searchParams.set("return", "summary"); }
       else { url.searchParams.set("modes", transitModes); url.searchParams.set("return", "travelSummary"); }
       url.searchParams.set("apiKey", readKey());
-      const result = await getJson(url);
+      const result = await getJson(url, routerMode ? "routing" : "transit");
       if (!result.ok) return unavailable(result.reason);
 
       const sections = (result.body as { routes?: { sections?: { summary?: { duration?: number }; travelSummary?: { duration?: number } }[] }[] })?.routes?.[0]?.sections;

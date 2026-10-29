@@ -72,6 +72,7 @@ model CandidateProfile {
   accessibilityDeclaration        AccessibilityDeclarationStatus @default(NOT_INFORMED)
   accessibilityNeeds              Json                           @default("[]")
   accessibilityNeedOptionCodes    Json                           @default("[]")
+  mandatoryNeedOptionCodes        Json                           @default("[]")
   essentialAccessibilityResources Json                           @default("[]")
   createdAt                       DateTime                       @default(now())
   updatedAt                       DateTime                       @updatedAt
@@ -353,4 +354,14 @@ model CompatibilityResult {
 
   @@index([candidateUserId, jobId, executedAt])
   @@index([executedAt])
+}
+
+/// Monthly count of HERE requests sent by this installation (SPEC-007 / OPEN-088 safety cap).
+model HereUsage {
+  month     String
+  service   String
+  count     Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@id([month, service])
 }

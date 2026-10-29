@@ -816,3 +816,8 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .compat-result ul { margin:6px 0 0; padding-left:20px; line-height:1.6; }
 .compat-score { font-size:28px; }
 .candidate-home-actions .secondary-button { display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
+
+/* SPEC-007: candidate marks a declared need as indispensable */
+.accessibility-option-wrapper { display: grid; gap: 0.35rem; }
+.accessibility-option-mandatory { display: flex; align-items: flex-start; gap: 0.5rem; margin-left: 2rem; font-size: 0.92rem; }
+.accessibility-option-mandatory input { margin-top: 0.2rem; }

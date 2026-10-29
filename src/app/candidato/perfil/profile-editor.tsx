@@ -13,14 +13,14 @@ type Profile = {
   fullName: string; email: string; education: EducationEntry[]; languages: LanguageEntry[];
   professionalExperience: ExperienceEntry[]; courses: string[]; certifications: string[]; professionalLinks: string[];
   workPreferences: WorkPreferences;
-  accessibilityDeclaration: Declaration; accessibilityNeeds: string[]; accessibilityNeedOptionCodes: string[];
+  accessibilityDeclaration: Declaration; accessibilityNeeds: string[]; accessibilityNeedOptionCodes: string[]; mandatoryNeedOptionCodes: string[];
   essentialAccessibilityResources: string[]; updatedAt?: string;
 };
 type ProfileDocument = { id: string; category: "COURSE" | "CERTIFICATION"; displayName: string; originalName: string; mimeType: string; sizeBytes: number; createdAt: string };
 const empty: Profile = {
   fullName: "", email: "", education: [], languages: [], professionalExperience: [],
   courses: [], certifications: [], professionalLinks: [], workPreferences: emptyWorkPreferences, accessibilityDeclaration: "NOT_INFORMED",
-  accessibilityNeeds: [], accessibilityNeedOptionCodes: [], essentialAccessibilityResources: []
+  accessibilityNeeds: [], accessibilityNeedOptionCodes: [], mandatoryNeedOptionCodes: [], essentialAccessibilityResources: []
 };
 function describeExperience(entry: ExperienceEntry) { return [entry.role, entry.company, entry.period].filter(Boolean).join(" · "); }
 function describeEducation(entry: EducationEntry) { return [entry.level, entry.course, entry.institution, entry.status].filter(Boolean).join(" · "); }
@@ -120,7 +120,15 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     setProfile(current => {
       const selected = new Set(current.accessibilityNeedOptionCodes);
       if (checked) selected.add(code); else selected.delete(code);
-      return { ...current, accessibilityNeedOptionCodes: Array.from(selected) };
+      return { ...current, accessibilityNeedOptionCodes: Array.from(selected),
+        mandatoryNeedOptionCodes: current.mandatoryNeedOptionCodes.filter(item => selected.has(item)) };
+    });
+  }
+  function toggleMandatory(code: string, checked: boolean) {
+    setProfile(current => {
+      const mandatory = new Set(current.mandatoryNeedOptionCodes);
+      if (checked) mandatory.add(code); else mandatory.delete(code);
+      return { ...current, mandatoryNeedOptionCodes: Array.from(mandatory) };
     });
   }
   function addLanguage() {
@@ -218,7 +226,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   const issueSections: Record<string, string> = {
     education: "education", languages: "languages", professionalExperience: "experience", courses: "courses",
     certifications: "certifications", professionalLinks: "links", workPreferences: "work", accessibilityNeeds: "needs",
-    accessibilityNeedOptionCodes: "needs", accessibilityDeclaration: "needs", essentialAccessibilityResources: "resource"
+    accessibilityNeedOptionCodes: "needs", mandatoryNeedOptionCodes: "needs", accessibilityDeclaration: "needs", essentialAccessibilityResources: "resource"
   };
   async function handleSubmit(event?: FormEvent<HTMLFormElement>) {
     event?.preventDefault(); setError(""); setNotice(""); setErrors({});
@@ -236,7 +244,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     setSaving(true);
     const keys = ["education", "languages", "professionalExperience", "courses", "certifications",
       "professionalLinks", "workPreferences", "accessibilityDeclaration", "accessibilityNeeds", "accessibilityNeedOptionCodes",
-      "essentialAccessibilityResources"] as const;
+      "mandatoryNeedOptionCodes", "essentialAccessibilityResources"] as const;
     const payload = Object.fromEntries(keys.map(key => [key, profile[key]]));
     try {
       const response = await fetch("/api/candidato/perfil", {
@@ -268,7 +276,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     }
     setProfile(current => ({
       ...current, accessibilityDeclaration: value,
-      ...(value !== "NEEDS_DECLARED" ? { accessibilityNeeds: [], accessibilityNeedOptionCodes: [] } : {})
+      ...(value !== "NEEDS_DECLARED" ? { accessibilityNeeds: [], accessibilityNeedOptionCodes: [], mandatoryNeedOptionCodes: [] } : {})
     }));
     if (value !== "NEEDS_DECLARED") setNeedsText("");
     clearFail("needs");
@@ -402,7 +410,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
           <legend>{groupLabels[group]}</legend>
           {options.filter(option => option.group === group).map(option => {
             const checked = selectedCodes.has(option.code);
-            return <label className={`accessibility-option${!option.isActive ? " accessibility-option-inactive" : ""}`} key={option.code}>
+            return <div className="accessibility-option-wrapper" key={option.code}><label className={`accessibility-option${!option.isActive ? " accessibility-option-inactive" : ""}`}>
               <input type="checkbox" checked={checked} disabled={loading || saving || (!option.isActive && !checked)}
                 onChange={event => toggleOption(option.code, event.target.checked)} />
               <span className="accessibility-option-copy">
@@ -411,7 +419,13 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
                 {!option.isActive && <span className="accessibility-option-status">Opção desativada; mantida apenas para preservar sua declaração anterior.</span>}
                 {option.isMandatory && <span className="accessibility-option-status">Marcada como obrigatória pelo administrador.</span>}
               </span>
-            </label>;
+            </label>
+            {checked && <label className="accessibility-option-mandatory">
+              <input type="checkbox" checked={option.isMandatory || profile.mandatoryNeedOptionCodes.includes(option.code)} disabled={loading || saving || option.isMandatory}
+                onChange={event => toggleMandatory(option.code, event.target.checked)} />
+              <span>Indispensável para mim: vagas que declaram não ter este recurso ficam incompatíveis</span>
+            </label>}
+            </div>;
           })}
         </fieldset>)}
         <label className="profile-section-title" htmlFor="accessibilityNeedsOther">Necessidade não contemplada pelo catálogo</label>

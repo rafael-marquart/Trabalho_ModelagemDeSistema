@@ -26,11 +26,12 @@ Antes: `git pull`, `npm install`, `npm run db:generate`, `npx prisma migrate dep
 | 4 | Trocar o meio de transporte na análise | Tempo e D mudam; o perfil não muda |
 | 5 | Calcular de novo | Novo registro; o anterior permanece (histórico) |
 | 6 | Vaga com item "Não informado" para uma necessidade do candidato | "Dados insuficientes" com o que falta; sem score |
-| 7 | Como ADMIN, em `/admin/catalogo-acessibilidade`, marcar A01 (rampa) como "Obrigatória" e salvar; o candidato tem A01 no perfil; calcular uma vaga com rampas "Ausente" | "Incompatível" sem score e sem consulta de rota. Sem a marcação, rampa ausente só reduz a acessibilidade (não é trava) |
+| 7 | No perfil, marcar A01 (rampa) e, logo abaixo dela, "Indispensável para mim"; salvar; calcular uma vaga com rampas "Ausente" | "Incompatível" sem score e sem consulta de rota. Desmarcando "Indispensável", rampa ausente só reduz a acessibilidade |
 | 8 | Vaga remota | D ignora deslocamento |
 | 9 | Remover `HERE_API_KEY`, reiniciar, calcular vaga presencial | Dados insuficientes no deslocamento; nenhuma chave exibida |
 | 10 | Vaga pausada/encerrada | Não encontrada |
 | 11 | Teclado e leitor de tela na tela de compatibilidade | Foco visível; resultado anunciado |
-| 12 | `npm run compatibility:retention` | Simulação, nada apagado |
+| 12 | `npm.cmd run compatibility:retention` | Simulação, nada apagado |
+| 13 | `npm.cmd run here:usage` | Uso do mês por serviço (geocode, routing, transit) e o limite de 60% |
 
 Registre abaixo os números com problema antes de encerrar a SPEC-007.

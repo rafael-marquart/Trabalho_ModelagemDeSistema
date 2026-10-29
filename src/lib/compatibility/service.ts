@@ -4,6 +4,7 @@ import { toEducationList, toExperienceList, toLanguageList, toStringList, toWork
 import { rowToFields, todayInBrazil } from "@/lib/jobs/schema";
 import { RULES_VERSION } from "./constants";
 import { analyze, evaluateCriticalLock, travelRequired } from "./engine";
+import { createDbQuotaGuard } from "./quota";
 import { createHereEstimator, type TravelEstimator } from "./travel";
 import type { AnalysisInput, AnalysisOutcome, CandidateInput, JobInput, TravelInput } from "./types";
 
@@ -11,7 +12,7 @@ export type CompatibilityView = AnalysisOutcome & { id: string; executedAt: stri
 export type ServiceResult = { error: { status: number; message: string } } | { view: CompatibilityView };
 
 let estimator: TravelEstimator | null = null;
-const defaultEstimator = () => (estimator ??= createHereEstimator());
+const defaultEstimator = () => (estimator ??= createHereEstimator({ quota: createDbQuotaGuard(prisma) }));
 
 /** Keeps only what the calculation used: no residential address or location data is copied into the history (OPEN-035). */
 function minimizedSnapshot(input: AnalysisInput): AnalysisInput {
@@ -59,10 +60,12 @@ export async function analyzeCandidateForJob(
   const codes = toStringList(profile?.accessibilityNeedOptionCodes);
   const options = codes.length ? await prisma.accessibilityNeedOption.findMany({ where: { code: { in: codes } }, select: { code: true, name: true, isMandatory: true } }) : [];
   const preferences = toWorkPreferences(profile?.workPreferences);
+  const candidateMandatory = toStringList(profile?.mandatoryNeedOptionCodes);
 
   const candidate: CandidateInput = {
     accessibilityDeclaration: profile?.accessibilityDeclaration ?? "NOT_INFORMED",
-    needs: options.map((option) => ({ code: option.code, name: option.name, mandatory: option.isMandatory })),
+    // Eliminatory when the candidate marks it as indispensable, or when the catalog marks the option as mandatory for everyone.
+    needs: options.map((option) => ({ code: option.code, name: option.name, mandatory: option.isMandatory || candidateMandatory.includes(option.code) })),
     hasFreeTextNeeds: toStringList(profile?.accessibilityNeeds).length > 0,
     education: toEducationList(profile?.education), languages: toLanguageList(profile?.languages),
     experience: toExperienceList(profile?.professionalExperience),
