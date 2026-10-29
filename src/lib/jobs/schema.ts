@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { infrastructureItems, infrastructureStatuses, statusLabels } from "@/lib/company-infrastructure/items";
 import { emptyCriteria, normalizeCriteria, technicalCriteriaSchema, type TechnicalCriteria } from "./criteria";
-import { brazilianStates, jobModalities, TEXT_LIMITS, type JobModalityValue } from "./constants";
+import { brazilianStates, jobModalities, professionalAreas, TEXT_LIMITS, type JobModalityValue, type ProfessionalArea } from "./constants";
 
 const knownAccessibilityCodes = new Set(infrastructureItems.map((item) => item.code));
 const dateText = z.string().trim().refine((value) => value === "" || isValidDate(value), "Informe uma data válida.");
@@ -26,6 +26,7 @@ export const jobInputSchema = z.object({
   description: z.string().trim().max(TEXT_LIMITS.description, `Use até ${TEXT_LIMITS.description} caracteres.`).default(""),
   requirements: z.string().trim().max(TEXT_LIMITS.requirements, `Use até ${TEXT_LIMITS.requirements} caracteres.`).default(""),
   modality: z.enum([...jobModalities, ""] as const).default(""),
+  professionalArea: z.enum([...professionalAreas, ""] as const).default(""),
   locationCity: z.string().trim().max(TEXT_LIMITS.city).default(""),
   locationState: z.enum([...brazilianStates, ""] as const).default(""),
   locationAddress: z.string().trim().max(TEXT_LIMITS.address).default(""),
@@ -45,7 +46,7 @@ export const jobInputSchema = z.object({
 export type JobInput = z.infer<typeof jobInputSchema>;
 
 export type JobFields = {
-  title: string; description: string; requirements: string; modality: JobModalityValue | "";
+  title: string; description: string; requirements: string; modality: JobModalityValue | ""; professionalArea: ProfessionalArea | "";
   locationCity: string; locationState: string; locationAddress: string; deadline: string;
   salaryMin: number | null; salaryMax: number | null; accessibility: Record<string, string>;
   technicalCriteria: TechnicalCriteria;
@@ -82,7 +83,7 @@ export function validateForPublication(job: JobFields, today = todayInBrazil()):
 
 type JobRow = {
   id: string; companyId: string; status: string; origin: string; title: string; description: string; requirements: string;
-  modality: string | null; locationCity: string; locationState: string; locationAddress: string; deadline: Date | null;
+  modality: string | null; professionalArea?: string; locationCity: string; locationState: string; locationAddress: string; deadline: Date | null;
   salaryMin: unknown; salaryMax: unknown; accessibility: unknown; technicalCriteria?: unknown; publishedAt: Date | null; closedAt: Date | null;
   createdAt: Date; updatedAt: Date;
 };
@@ -99,7 +100,9 @@ export function rowToFields(row: JobRow): JobFields {
   }
   return {
     title: row.title, description: row.description, requirements: row.requirements,
-    modality: (row.modality ?? "") as JobFields["modality"], locationCity: row.locationCity, locationState: row.locationState,
+    modality: (row.modality ?? "") as JobFields["modality"],
+    professionalArea: ((professionalAreas as readonly string[]).includes(row.professionalArea ?? "") ? row.professionalArea : "") as JobFields["professionalArea"],
+    locationCity: row.locationCity, locationState: row.locationState,
     locationAddress: row.locationAddress, deadline: row.deadline ? row.deadline.toISOString().slice(0, 10) : "",
     salaryMin: toNumber(row.salaryMin), salaryMax: toNumber(row.salaryMax), accessibility,
     technicalCriteria: normalizeCriteria(row.technicalCriteria)
@@ -118,7 +121,7 @@ export function toJobResponse(row: JobRow) {
 export function fieldsToData(fields: JobFields) {
   return {
     title: fields.title, description: fields.description, requirements: fields.requirements,
-    modality: fields.modality === "" ? null : fields.modality,
+    modality: fields.modality === "" ? null : fields.modality, professionalArea: fields.professionalArea,
     locationCity: fields.locationCity, locationState: fields.locationState, locationAddress: fields.locationAddress,
     deadline: fields.deadline ? new Date(`${fields.deadline}T00:00:00.000Z`) : null,
     salaryMin: fields.salaryMin, salaryMax: fields.salaryMax, accessibility: fields.accessibility,

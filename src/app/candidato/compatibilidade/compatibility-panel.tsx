@@ -23,7 +23,7 @@ export default function CompatibilityPanel() {
 
   useEffect(() => {
     let active = true;
-    fetch("/api/candidato/vagas").then(async response => {
+    fetch("/api/candidato/compatibilidade/vagas").then(async response => {
       const data = await response.json();
       if (!response.ok) throw new Error();
       if (active) setJobs(data.jobs);

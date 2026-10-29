@@ -14,11 +14,18 @@ export const jobModalityLabels: Record<JobModalityValue, string> = {
 
 export { brazilianStates };
 
+// Professional areas offered in the job editor and as a search filter (SPEC-008, OPEN-036; list pending confirmation, OPEN-091).
+export const professionalAreas = [
+  "Administração", "Atendimento ao cliente", "Comercial e vendas", "Comunicação e marketing", "Educação", "Engenharia",
+  "Finanças e contabilidade", "Jurídico", "Logística e operações", "Recursos humanos", "Saúde", "Tecnologia da informação", "Outra"
+] as const;
+export type ProfessionalArea = (typeof professionalAreas)[number];
+
 export const TEXT_LIMITS = { title: 160, description: 5000, requirements: 5000, city: 120, address: 200 } as const;
 
 // Fields that define the conditions of the opportunity; locked once applications exist (OPEN-022).
 export const conditionFields = [
-  "title", "description", "requirements", "modality", "locationCity", "locationState", "locationAddress",
+  "title", "description", "requirements", "modality", "professionalArea", "locationCity", "locationState", "locationAddress",
   "accessibility", "technicalCriteria", "deadline", "salaryMin", "salaryMax"
 ] as const;
 

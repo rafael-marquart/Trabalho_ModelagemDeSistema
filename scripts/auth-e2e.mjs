@@ -1358,7 +1358,7 @@ async function main() {
     const sendJobApi = (url, method, payload, cookie) => fetch(url, { method, headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie }, body: JSON.stringify(payload), redirect: "manual" });
 
     const compatJobBody = {
-      title: "Analista de dados E2E", description: "Descricao", requirements: "Requisitos", modality: "PRESENCIAL", locationCity: "São Paulo", locationState: "SP",
+      title: "Analista de dados E2E", description: "Descricao", requirements: "Requisitos", modality: "PRESENCIAL", professionalArea: "Tecnologia da informação", locationCity: "São Paulo", locationState: "SP",
       locationAddress: "Avenida Paulista, 1000", deadline: `${new Date().getUTCFullYear() + 1}-12-31`,
       accessibility: Object.fromEntries(infraCodes.map(code => [code, "PRESENT"])),
       technicalCriteria: { skills: ["sql"], experience: [], educationMinLevel: "", languages: [] }
@@ -1369,11 +1369,11 @@ async function main() {
 
     await expectStatus(await sendCompat({ jobId: compatJob.id }, ""), 401, "anonymous compatibility");
     await expectStatus(await sendCompat({ jobId: compatJob.id }, companyCookie), 401, "company cannot request a candidate analysis");
-    await expectStatus(await fetch(`${BASE_URL}/api/candidato/vagas`, { headers: { cookie: companyCookie }, redirect: "manual" }), 401, "company cannot list candidate jobs");
+    await expectStatus(await fetch(`${BASE_URL}/api/candidato/compatibilidade/vagas`, { headers: { cookie: companyCookie }, redirect: "manual" }), 401, "company cannot list candidate jobs");
     await expectStatus(await sendCompat({ jobId: compatJob.id, candidateUserId: "other" }, compatCookie), 400, "body cannot choose the candidate");
     await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie, { origin: "https://evil.example" }), 403, "cross-origin compatibility request");
     await expectStatus(await sendCompat({ jobId: "does-not-exist" }, compatCookie), 404, "unknown job");
-    const openJobs = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/candidato/vagas`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate lists published jobs"));
+    const openJobs = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/candidato/compatibilidade/vagas`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate lists published jobs"));
     assert.ok(openJobs.jobs.some(job => job.id === compatJob.id), "published job must be listed");
     await expectStatus(await fetch(`${BASE_URL}/candidato/compatibilidade`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate compatibility page");
 
@@ -1417,15 +1417,21 @@ async function main() {
     const usageMonth = new Date().toISOString().slice(0, 7);
     const geocodeUsage = await prisma.hereUsage.findUnique({ where: { month_service: { month: usageMonth, service: "geocode" } } });
     assert.ok(geocodeUsage && geocodeUsage.count > 0, "requests sent to HERE must be counted per month and service");
+    const usageBefore = await prisma.hereUsage.findMany({ where: { month: usageMonth } });
+    const caps = { geocode: 18000, routing: 3000, transit: 3000 };
     try {
-      await prisma.hereUsage.update({ where: { month_service: { month: usageMonth, service: "geocode" } }, data: { count: 18000 } });
+      // Geocodes are cached in memory, so every service is capped to prove that nothing reaches HERE.
+      for (const [service, count] of Object.entries(caps)) {
+        await prisma.hereUsage.upsert({ where: { month_service: { month: usageMonth, service } }, create: { month: usageMonth, service, count }, update: { count } });
+      }
       const requestsBeforeCap = HERE_REQUESTS.length;
       const capped = JSON.parse(await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 201, "analysis after the safety cap")).result;
       assert.equal(capped.status, "INSUFFICIENT_DATA", "a reached cap must not invent a travel time");
       assert.ok(JSON.stringify(capped).includes("limite de segurança"), "the reason must explain the safety cap");
       assert.equal(HERE_REQUESTS.length, requestsBeforeCap, "a reached cap must not send requests to HERE");
     } finally {
-      await prisma.hereUsage.update({ where: { month_service: { month: usageMonth, service: "geocode" } }, data: { count: geocodeUsage.count } });
+      await prisma.hereUsage.deleteMany({ where: { month: usageMonth } });
+      for (const row of usageBefore) await prisma.hereUsage.create({ data: { month: row.month, service: row.service, count: row.count } });
     }
 
     // The candidate marks a declared need as indispensable: a job declaring that resource absent is incompatible.
@@ -1464,8 +1470,55 @@ async function main() {
     } finally {
       await prisma.accessibilityNeedOption.update({ where: { code: "A01" }, data: { isMandatory: rampOption.isMandatory } });
     }
+
+    // SPEC-008: search for the candidate, filters, critical-barrier exclusion and reuse of unchanged results (D-01).
+    const searchUrl = query => `${BASE_URL}/api/candidato/vagas${query ? `?${query}` : ""}`;
+    const search = async (query, cookie = compatCookie) => fetch(searchUrl(query), { headers: { cookie }, redirect: "manual" });
+    await expectStatus(await search(""), 200, "candidate searches jobs");
+    await expectStatus(await search("", ""), 401, "anonymous search");
+    await expectStatus(await search("", companyCookie), 401, "company cannot use the candidate search");
+    await expectStatus(await search("modalidade=TELETRABALHO"), 400, "unknown filter value");
+    await expectStatus(await search("candidateUserId=other"), 400, "the query cannot choose the candidate");
+    const found = JSON.parse(await expectStatus(await search("q=analista%20E2E"), 200, "text search"));
+    const foundJob = found.jobs.find(job => job.id === compatJob.id);
+    assert.ok(foundJob, "text search must find the job by title fragments, ignoring case");
+    assert.ok(foundJob.compatibility && ["COMPLETE", "INSUFFICIENT_DATA"].includes(foundJob.compatibility.status), "each result carries the SPEC-007 result");
+    assert.equal(foundJob.accessibility.length, infraCodes.length, "declared accessibility is shown before applying (RB-13)");
+    assert.ok(found.facets.area.includes("Tecnologia da informação") && found.facets.modalidade.includes("PRESENCIAL"), "filter options come from open jobs");
+    assert.ok(!JSON.stringify(found).includes("Avenida Paulista") && !JSON.stringify(found).includes("Reservada"), "results do not expose addresses");
+    const remoteOnly = JSON.parse(await expectStatus(await search("q=analista%20E2E&modalidade=REMOTO"), 200, "modality filter"));
+    assert.ok(!remoteOnly.jobs.some(job => job.id === compatJob.id), "a modality filter must exclude other modalities");
+    const orFilter = JSON.parse(await expectStatus(await search("q=analista%20E2E&modalidade=REMOTO&modalidade=PRESENCIAL&area=Tecnologia%20da%20informa%C3%A7%C3%A3o"), 200, "OR inside a category, AND across"));
+    assert.ok(orFilter.jobs.some(job => job.id === compatJob.id), "values inside one category combine with OR");
+    const noMatch = JSON.parse(await expectStatus(await search("q=analista%20E2E%20inexistentexyz"), 200, "every term must match"));
+    assert.equal(noMatch.total, 0, "a term that matches nothing returns an empty result");
+    const recordsBefore = await prisma.compatibilityResult.count({ where: { jobId: compatJob.id } });
+    const hereBefore = HERE_REQUESTS.length;
+    await expectStatus(await search("q=analista%20E2E"), 200, "repeated search");
+    assert.equal(await prisma.compatibilityResult.count({ where: { jobId: compatJob.id } }), recordsBefore, "unchanged inputs must not add history rows (D-01)");
+    assert.equal(HERE_REQUESTS.length, hereBefore, "unchanged inputs must not call HERE again");
+    const rampSearch = await prisma.accessibilityNeedOption.findUnique({ where: { code: "A01" } });
+    await prisma.accessibilityNeedOption.update({ where: { code: "A01" }, data: { isMandatory: false } });
+    try {
+      await expectStatus(await saveCompatProfile({ ...compatProfile, accessibilityDeclaration: "NEEDS_DECLARED", accessibilityNeedOptionCodes: ["A01"], mandatoryNeedOptionCodes: ["A01"] }), 200, "candidate marks the ramp as indispensable for the search");
+      await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}`, "PUT", { ...compatJobBody, accessibility: { ...compatJobBody.accessibility, RAMPS: "ABSENT" } }, companyCookie), 200, "company declares no ramps for the search");
+      const hidden = JSON.parse(await expectStatus(await search("q=analista%20E2E"), 200, "search with a critical barrier"));
+      assert.ok(!hidden.jobs.some(job => job.id === compatJob.id), "a job with a critical barrier is not listed as eligible");
+      assert.ok(hidden.hiddenIncompatible >= 1, "the number of hidden jobs is reported");
+    } finally {
+      await prisma.accessibilityNeedOption.update({ where: { code: "A01" }, data: { isMandatory: rampSearch.isMandatory } });
+      await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}`, "PUT", compatJobBody, companyCookie);
+      await saveCompatProfile(compatProfile);
+    }
+    await expectStatus(await fetch(`${BASE_URL}/candidato/vagas`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate jobs page");
+    const anonymousJobsPage = await fetch(`${BASE_URL}/candidato/vagas`, { redirect: "manual" });
+    assert.notEqual(anonymousJobsPage.status, 200, "anonymous visitors are redirected away from the candidate jobs page");
+    await expectStatus(await fetch(`${BASE_URL}/candidato`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate home with featured jobs");
+
     await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}/acao`, "POST", { action: "close" }, companyCookie), 200, "company closes the analyzed job");
     await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 404, "closed jobs are not analyzed");
+    const afterClose = JSON.parse(await expectStatus(await search("q=analista%20E2E"), 200, "search after closing"));
+    assert.ok(!afterClose.jobs.some(job => job.id === compatJob.id), "closed jobs leave the search (current status respected)");
 
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });

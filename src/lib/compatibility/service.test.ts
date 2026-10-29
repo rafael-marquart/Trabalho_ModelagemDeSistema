@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const { prismaMock } = vi.hoisted(() => ({
   prismaMock: {
     job: { findFirst: vi.fn() }, candidateProfile: { findUnique: vi.fn() },
-    accessibilityNeedOption: { findMany: vi.fn() }, compatibilityResult: { create: vi.fn() }
+    accessibilityNeedOption: { findMany: vi.fn() }, compatibilityResult: { create: vi.fn(), findFirst: vi.fn() }
   }
 }));
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
@@ -30,6 +30,7 @@ describe("compatibility service", () => {
     prismaMock.candidateProfile.findUnique.mockResolvedValue(profile());
     prismaMock.accessibilityNeedOption.findMany.mockResolvedValue([{ code: "A01", name: "Rampa", isMandatory: false }]);
     prismaMock.compatibilityResult.create.mockImplementation(async ({ data }: { data: Record<string, unknown> }) => ({ id: "r1", executedAt: new Date("2026-10-28T00:00:00Z"), jobId: "job-1", ...data }));
+    prismaMock.compatibilityResult.findFirst.mockResolvedValue(null);
     estimator.estimate.mockResolvedValue({ status: "OK", minutes: 25, mode: "Ônibus", method: "HERE" });
   });
   const run = (extra: Record<string, unknown> = {}) => analyzeCandidateForJob({ userId: "cand-1", jobId: "job-1", ...extra }, { estimator, now: new Date("2026-10-28T12:00:00Z") });
@@ -97,8 +98,55 @@ describe("compatibility service", () => {
     expect(analyze(data.snapshot)).toEqual(data.outcome);
   });
 
-  it("creates a new record on every run instead of overwriting", async () => {
-    await run(); await run();
-    expect(prismaMock.compatibilityResult.create).toHaveBeenCalledTimes(2);
+  // D-01: keep the history meaningful when results are computed automatically by the search.
+  const stored = () => prismaMock.compatibilityResult.create.mock.calls.at(-1)![0].data;
+  const asRow = (data: Record<string, unknown>) => ({ id: "r-prev", executedAt: new Date("2026-10-28T00:00:00Z"), jobId: "job-1", ...data });
+
+  it("reuses the latest result without calling HERE or writing when the inputs are unchanged", async () => {
+    await run();
+    prismaMock.compatibilityResult.findFirst.mockResolvedValue(asRow(stored()));
+    estimator.estimate.mockClear(); prismaMock.compatibilityResult.create.mockClear();
+    const again = await run();
+    expect("view" in again && again.view.id).toBe("r-prev");
+    expect(estimator.estimate).not.toHaveBeenCalled();
+    expect(prismaMock.compatibilityResult.create).not.toHaveBeenCalled();
+  });
+
+  it("writes a new record when the profile, the job or the transport mode changes", async () => {
+    await run();
+    prismaMock.compatibilityResult.findFirst.mockResolvedValue(asRow(stored()));
+    prismaMock.candidateProfile.findUnique.mockResolvedValue(profile({ courses: ["Curso de Excel"] }));
+    await run();
+    prismaMock.candidateProfile.findUnique.mockResolvedValue(profile({ workPreferences: { ...profile().workPreferences, address: "Rua Nova, 1" } }));
+    await run();
+    await run({ transportMode: "Carro" });
+    prismaMock.job.findFirst.mockResolvedValue(jobRow({ accessibility: { RAMPS: "ABSENT" } }));
+    await run();
+    expect(prismaMock.compatibilityResult.create).toHaveBeenCalledTimes(5);
+    expect(new Set(prismaMock.compatibilityResult.create.mock.calls.map(call => call[0].data.inputHash)).size).toBe(5);
+  });
+
+  it("retries after a transient provider failure but does not duplicate an identical outcome", async () => {
+    estimator.estimate.mockResolvedValue({ status: "UNAVAILABLE", reason: "O limite de uso do serviço de rotas foi atingido." });
+    await run();
+    expect(stored().snapshot.travel.transient).toBe(true);
+    prismaMock.compatibilityResult.findFirst.mockResolvedValue(asRow(stored()));
+    estimator.estimate.mockClear(); prismaMock.compatibilityResult.create.mockClear();
+    await run();
+    expect(estimator.estimate).toHaveBeenCalledTimes(1);
+    expect(prismaMock.compatibilityResult.create).not.toHaveBeenCalled();
+    estimator.estimate.mockResolvedValue({ status: "OK", minutes: 25, mode: "Ônibus", method: "HERE" });
+    await run();
+    expect(prismaMock.compatibilityResult.create).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not retry a permanent travel problem such as an address that cannot be located", async () => {
+    estimator.estimate.mockResolvedValue({ status: "UNAVAILABLE", reason: "Não foi possível localizar o endereço da vaga.", permanent: true });
+    await run();
+    expect(stored().snapshot.travel.transient).toBeUndefined();
+    prismaMock.compatibilityResult.findFirst.mockResolvedValue(asRow(stored()));
+    estimator.estimate.mockClear();
+    await run();
+    expect(estimator.estimate).not.toHaveBeenCalled();
   });
 });

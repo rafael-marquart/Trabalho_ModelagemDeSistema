@@ -1,24 +1,21 @@
+import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import ThemeToggle from "@/components/theme-toggle";
+import CompanyShell from "@/components/company-shell";
 import { getCurrentUser } from "@/lib/auth/session";
 import CompatibilityPanel from "./compatibility-panel";
 
 export default async function CandidateCompatibilityPage() {
   const user = await getCurrentUser();
   if (!user || user.role !== "CANDIDATE") redirect("/candidato/login");
-  return (
-    <main className="auth-page candidate-profile-page">
-      <div className="theme-control-host"><ThemeToggle /></div>
-      <div className="candidate-profile-content">
-        <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" /></Link>
-        <Link className="back-link" href="/candidato">← Voltar à área do candidato</Link>
-        <header className="candidate-profile-header">
-          <p className="eyebrow">Área do candidato</p><h1>Compatibilidade com vagas</h1>
-          <p className="muted">Tela provisória para conferir o cálculo. A busca e a página da vaga com o resultado completo virão nas próximas etapas.</p>
-        </header>
-        <CompatibilityPanel />
-      </div>
+  return <CompanyShell role="CANDIDATE" active="jobs" userName={user.fullName}>
+    <main className="company-content candidate-profile-content" aria-labelledby="compat-title">
+      <Link className="back-link" href="/candidato/vagas">← Voltar às vagas</Link>
+      <header className="company-page-heading candidate-profile-header">
+        <p className="eyebrow">Área do candidato</p><h1 id="compat-title">Simular compatibilidade</h1>
+        <p className="muted">Tela de validação da SPEC-007: permite testar outro meio de transporte em uma vaga sem mudar o seu perfil. A página completa da vaga virá na SPEC-010.</p>
+      </header>
+      <CompatibilityPanel />
     </main>
-  );
+  </CompanyShell>;
 }

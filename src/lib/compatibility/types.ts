@@ -23,7 +23,8 @@ export type JobInput = {
 export type TravelInput =
   | { status: "NOT_REQUESTED" }
   | { status: "OK"; minutes: number; mode: string; method: string }
-  | { status: "UNAVAILABLE"; reason: string };
+  // transient: the provider failed (quota, outage); the same inputs may succeed later, so the result is not reused.
+  | { status: "UNAVAILABLE"; reason: string; transient?: boolean };
 
 export type AnalysisInput = { candidate: CandidateInput; job: JobInput; travel: TravelInput };
 

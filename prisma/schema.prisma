@@ -310,6 +310,7 @@ model Job {
   description     String       @default("")
   requirements    String       @default("")
   modality        JobModality?
+  professionalArea String      @default("")
   locationCity    String       @default("")
   locationState   String       @default("")
   locationAddress String       @default("")
@@ -326,6 +327,7 @@ model Job {
   createdBy       User         @relation("JobCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
 
   @@index([companyId, status])
+  @@index([status, origin])
   compatibilityResults CompatibilityResult[]
 }
 
@@ -351,6 +353,8 @@ model CompatibilityResult {
   // Minimized snapshot of what was used, the sub-results and the factors; no address or full profile is copied.
   snapshot      Json
   outcome       Json
+  // Fingerprint of the inputs (including addresses, never stored here); a new row is written only when it or the outcome changes (D-01).
+  inputHash     String?
 
   @@index([candidateUserId, jobId, executedAt])
   @@index([executedAt])

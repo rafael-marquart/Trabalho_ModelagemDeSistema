@@ -1,22 +1,13 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
-import { prisma } from "@/lib/prisma";
-import { todayInBrazil } from "@/lib/jobs/schema";
+import { parseSearchParams } from "@/lib/jobs/search";
+import { searchJobsForCandidate } from "@/lib/jobs/search-service";
 
-/** Provisional list of published jobs so a candidate can request an analysis; search and catalog belong to SPEC-008. */
-export async function GET() {
+/** SPEC-008: job search for the signed-in candidate, ordered by the compatibility computed for that candidate. */
+export async function GET(request: Request) {
   const user = await getCurrentUser();
   if (!user || user.role !== "CANDIDATE" || !user.isActive) return NextResponse.json({ message: "Acesso não autorizado." }, { status: 401 });
-  const today = new Date(`${todayInBrazil()}T00:00:00.000Z`);
-  const jobs = await prisma.job.findMany({
-    where: { status: "OPEN", origin: "OWN", OR: [{ deadline: null }, { deadline: { gte: today } }] },
-    orderBy: { publishedAt: "desc" }, take: 50,
-    select: { id: true, title: true, modality: true, locationCity: true, locationState: true, deadline: true, company: { select: { tradeName: true, legalName: true } } }
-  });
-  return NextResponse.json({
-    jobs: jobs.map((job) => ({
-      id: job.id, title: job.title, modality: job.modality, city: job.locationCity, state: job.locationState,
-      deadline: job.deadline ? job.deadline.toISOString().slice(0, 10) : "", company: job.company.tradeName || job.company.legalName
-    }))
-  });
+  const parsed = parseSearchParams(new URL(request.url).searchParams);
+  if (!parsed.success) return NextResponse.json({ message: "Revise a busca e os filtros informados." }, { status: 400 });
+  return NextResponse.json(await searchJobsForCandidate(user.id, parsed.data));
 }
