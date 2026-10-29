@@ -41,7 +41,10 @@ export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
     }
   }
 
-  async function geocode(text: string): Promise<{ lat: number; lng: number } | { reason: string }> {
+  // HERE result types too coarse to estimate a trip (only the city/state/country was recognized).
+  const COARSE_RESULTS = new Set(["locality", "administrativeArea", "country"]);
+
+  async function geocode(text: string, whose: string): Promise<{ lat: number; lng: number } | { reason: string }> {
     const url = new URL(geocodeUrl);
     url.searchParams.set("q", text);
     url.searchParams.set("in", "countryCode:BRA");
@@ -49,8 +52,10 @@ export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
     url.searchParams.set("apiKey", readKey());
     const result = await getJson(url);
     if (!result.ok) return { reason: result.reason };
-    const position = (result.body as { items?: { position?: { lat?: number; lng?: number } }[] })?.items?.[0]?.position;
-    if (typeof position?.lat !== "number" || typeof position?.lng !== "number") return { reason: "Não foi possível localizar um dos endereços." };
+    const item = (result.body as { items?: { resultType?: string; position?: { lat?: number; lng?: number } }[] })?.items?.[0];
+    const position = item?.position;
+    if (typeof position?.lat !== "number" || typeof position?.lng !== "number") return { reason: `Não foi possível localizar o endereço ${whose}.` };
+    if (item?.resultType && COARSE_RESULTS.has(item.resultType)) return { reason: `O endereço ${whose} foi localizado só pela cidade; informe rua ou bairro para estimar o tempo.` };
     return { lat: position.lat, lng: position.lng };
   }
 
@@ -61,9 +66,9 @@ export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
       const transitModes = TRANSIT_MODES[mode];
       if (!routerMode && !transitModes) return unavailable("Meio de transporte não suportado.");
 
-      const from = await geocode(origin);
+      const from = await geocode(origin, "do candidato");
       if ("reason" in from) return unavailable(from.reason);
-      const to = await geocode(destination);
+      const to = await geocode(destination, "da vaga");
       if ("reason" in to) return unavailable(to.reason);
 
       const url = new URL(routerMode ? routerUrl : transitUrl);

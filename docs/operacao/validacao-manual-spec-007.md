@@ -26,7 +26,7 @@ Antes: `git pull`, `npm install`, `npm run db:generate`, `npx prisma migrate dep
 | 4 | Trocar o meio de transporte na análise | Tempo e D mudam; o perfil não muda |
 | 5 | Calcular de novo | Novo registro; o anterior permanece (histórico) |
 | 6 | Vaga com item "Não informado" para uma necessidade do candidato | "Dados insuficientes" com o que falta; sem score |
-| 7 | Necessidade obrigatória A01 e vaga com rampas "Ausente" | "Incompatível" sem score e sem consulta de rota |
+| 7 | Como ADMIN, em `/admin/catalogo-acessibilidade`, marcar A01 (rampa) como "Obrigatória" e salvar; o candidato tem A01 no perfil; calcular uma vaga com rampas "Ausente" | "Incompatível" sem score e sem consulta de rota. Sem a marcação, rampa ausente só reduz a acessibilidade (não é trava) |
 | 8 | Vaga remota | D ignora deslocamento |
 | 9 | Remover `HERE_API_KEY`, reiniciar, calcular vaga presencial | Dados insuficientes no deslocamento; nenhuma chave exibida |
 | 10 | Vaga pausada/encerrada | Não encontrada |

@@ -56,6 +56,14 @@ describe("HERE travel estimator", () => {
     expect((await createHereEstimator({ apiKey: "k", fetcher: vi.fn() as never }).estimate({ ...request, mode: "Teletransporte" })).status).toBe("UNAVAILABLE");
   });
 
+  it("refuses a city-only geocoding match and says whose address it was", async () => {
+    const coarse = vi.fn().mockResolvedValueOnce(geocodeOk()).mockResolvedValueOnce(json({ items: [{ resultType: "locality", position: { lat: -23.5, lng: -46.6 } }] }));
+    const result = await createHereEstimator({ apiKey: "k", fetcher: coarse as never }).estimate(request);
+    expect(result).toMatchObject({ status: "UNAVAILABLE" });
+    expect(JSON.stringify(result)).toContain("da vaga");
+    expect(coarse).toHaveBeenCalledTimes(2);
+  });
+
   it("never puts the key in a returned reason", async () => {
     const result = await createHereEstimator({ apiKey: "SEGREDO123", fetcher: vi.fn().mockResolvedValue(json({}, 403)) as never }).estimate(request);
     expect(JSON.stringify(result)).not.toContain("SEGREDO123");
