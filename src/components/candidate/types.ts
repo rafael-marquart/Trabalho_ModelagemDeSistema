@@ -4,6 +4,7 @@ export type Compatibility = {
   id: string; status: "COMPLETE" | "INCOMPATIBLE" | "INSUFFICIENT_DATA"; score: number | null; executedAt: string;
   factors: string[]; missing: { dimension: string; item: string; action: string }[];
   dimensions: Record<"A" | "T" | "D", CompatDimension>; appliedWeights: Partial<Record<"A" | "T" | "D", number>> | null;
+  critical?: { applied: boolean; barriers: { needCode: string; needName: string; jobItem: string }[]; pending?: { needCode: string; needName: string; jobItem: string }[] };
 };
 export type SearchJob = {
   id: string; title: string; companyName: string; modality: string; professionalArea: string; location: string; publishedAt: string | null;

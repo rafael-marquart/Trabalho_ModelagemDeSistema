@@ -42,7 +42,8 @@ export type Barrier = { needCode: string; needName: string; jobItem: string };
 export type AnalysisOutcome = {
   status: "INCOMPATIBLE" | "INSUFFICIENT_DATA" | "COMPLETE";
   score: number | null;
-  critical: { applied: boolean; barriers: Barrier[] };
+  // pending: indispensable needs whose resource the job did not inform; eligibility is not concluded (OPEN-046). Absent in older results.
+  critical: { applied: boolean; barriers: Barrier[]; pending?: Barrier[] };
   dimensions: Record<DimensionCode, Dimension>;
   appliedWeights: Partial<Record<DimensionCode, number>> | null;
   missing: MissingItem[];

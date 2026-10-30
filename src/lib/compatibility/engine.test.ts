@@ -26,6 +26,8 @@ describe("compatibility engine", () => {
   });
   it("does not lock on a missing declaration or on a non-mandatory need (T-007-04)", () => {
     expect(run(candidate({ needs: [{ code: "A01", name: "Rampa", mandatory: true }] }), job({ accessibility: { RAMPS: "NOT_INFORMED" } })).status).toBe("INSUFFICIENT_DATA");
+    const pending = run(candidate({ needs: [{ code: "A01", name: "Rampa", mandatory: true }, { code: "A02", name: "Elevador", mandatory: false }] }), job({ accessibility: { RAMPS: "NOT_INFORMED" } }));
+    expect(pending.critical.pending).toEqual([{ needCode: "A01", needName: "Rampa", jobItem: "RAMPS" }]);
     const nonMandatory = run(candidate(), job({ accessibility: { RAMPS: "ABSENT" } }));
     expect(nonMandatory.critical.applied).toBe(false);
     expect(nonMandatory.dimensions.A.score).toBe(0);
