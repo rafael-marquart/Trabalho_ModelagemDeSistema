@@ -18,6 +18,14 @@ describe("job search text (OPEN-037)", () => {
     expect(matchesText(job(), "dados inova sql")).toBe(true);
     expect(matchesText(job(), "dados marketing")).toBe(false);
   });
+  it("finds words with the same root (engenharia → engenheiro)", () => {
+    const engineer = job({ title: "Engenheiro de Software", description: "Atuação com sistemas", companyName: "X" });
+    expect(matchesText(engineer, "engenharia")).toBe(true);
+    expect(matchesText(job({ title: "Enfermeira", description: "", companyName: "" }), "enfermagem")).toBe(true);
+    expect(matchesText(job({ title: "Vendedor", description: "", companyName: "" }), "vendas")).toBe(true);
+    expect(matchesText(engineer, "engenharia civil")).toBe(false);
+    expect(matchesText(job({ title: "Contador", description: "", companyName: "" }), "contato")).toBe(false);
+  });
   it("does not restrict when empty", () => {
     expect(matchesText(job(), "   ")).toBe(true);
   });
