@@ -5,7 +5,7 @@ export type TravelEstimate =
   // permanent: the inputs themselves prevent an estimate (address not found, unsupported mode); retrying the same inputs is useless.
   | { status: "UNAVAILABLE"; reason: string; permanent?: boolean };
 
-export type TravelRequest = { origin: string; destination: string; mode: string };
+export type TravelRequest = { origin: string; destination: string; mode: string; departureTime?: string };
 export interface TravelEstimator {
   estimate(request: TravelRequest): Promise<TravelEstimate>;
 }
@@ -81,7 +81,7 @@ export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
   }
 
   return {
-    async estimate({ origin, destination, mode }) {
+    async estimate({ origin, destination, mode, departureTime }) {
       if (!readKey()) return unavailable("O serviço de rotas não está configurado: a chave HERE_API_KEY não foi encontrada no arquivo .env do servidor.");
       const routerMode = ROUTER_MODES[mode];
       const transitModes = TRANSIT_MODES[mode];
@@ -97,6 +97,8 @@ export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
       url.searchParams.set("destination", `${to.lat},${to.lng}`);
       if (routerMode) { url.searchParams.set("transportMode", routerMode); url.searchParams.set("return", "summary"); }
       else { url.searchParams.set("modes", transitModes); url.searchParams.set("return", "travelSummary"); }
+      // Reference departure (peak hour) so the estimate does not depend on when the candidate looks (car traffic and transit timetables).
+      if (departureTime) url.searchParams.set("departureTime", departureTime);
       url.searchParams.set("apiKey", readKey());
       const result = await getJson(url, routerMode ? "routing" : "transit");
       if (!result.ok) return unavailable(result.reason);

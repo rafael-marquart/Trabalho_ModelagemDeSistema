@@ -3,7 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const { prismaMock } = vi.hoisted(() => ({
   prismaMock: {
     job: { findFirst: vi.fn() }, candidateProfile: { findUnique: vi.fn() },
-    accessibilityNeedOption: { findMany: vi.fn() }, compatibilityResult: { create: vi.fn(), findFirst: vi.fn() }
+    accessibilityNeedOption: { findMany: vi.fn() }, compatibilityResult: { create: vi.fn(), findFirst: vi.fn() },
+    travelTimeCache: { findUnique: vi.fn(), upsert: vi.fn() }
   }
 }));
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
@@ -31,6 +32,7 @@ describe("compatibility service", () => {
     prismaMock.accessibilityNeedOption.findMany.mockResolvedValue([{ code: "A01", name: "Rampa", isMandatory: false }]);
     prismaMock.compatibilityResult.create.mockImplementation(async ({ data }: { data: Record<string, unknown> }) => ({ id: "r1", executedAt: new Date("2026-10-28T00:00:00Z"), jobId: "job-1", ...data }));
     prismaMock.compatibilityResult.findFirst.mockResolvedValue(null);
+    prismaMock.travelTimeCache.findUnique.mockResolvedValue(null);
     estimator.estimate.mockResolvedValue({ status: "OK", minutes: 25, mode: "Ônibus", method: "HERE" });
   });
   const run = (extra: Record<string, unknown> = {}) => analyzeCandidateForJob({ userId: "cand-1", jobId: "job-1", ...extra }, { estimator, now: new Date("2026-10-28T12:00:00Z") });
@@ -51,7 +53,7 @@ describe("compatibility service", () => {
   it("estimates travel with the profile transport mode and stores the result without addresses", async () => {
     const result = await run();
     expect("view" in result && result.view.status).toBe("COMPLETE");
-    expect(estimator.estimate).toHaveBeenCalledWith({ origin: "Rua Secreta, 55, São Paulo, SP, Brasil", destination: "Av. Paulista, 1000, São Paulo, SP, Brasil", mode: "Ônibus" });
+    expect(estimator.estimate).toHaveBeenCalledWith(expect.objectContaining({ origin: "Rua Secreta, 55, São Paulo, SP, Brasil", destination: "Av. Paulista, 1000, São Paulo, SP, Brasil", mode: "Ônibus", departureTime: expect.stringMatching(/T07:00:00-03:00$/) }));
     const data = prismaMock.compatibilityResult.create.mock.calls[0][0].data;
     expect(data.rulesVersion).toBe("SPEC-007/1");
     expect(JSON.stringify(data.snapshot)).not.toContain("Rua Secreta");
@@ -148,5 +150,24 @@ describe("compatibility service", () => {
     estimator.estimate.mockClear();
     await run();
     expect(estimator.estimate).not.toHaveBeenCalled();
+  });
+
+  it("estimates a trip once and reuses the saved time, without storing addresses in the saved entry", async () => {
+    await run();
+    const saved = prismaMock.travelTimeCache.upsert.mock.calls[0][0];
+    expect(saved.create).toMatchObject({ minutes: 25, method: "HERE" });
+    expect(JSON.stringify(saved)).not.toContain("Secreta");
+    prismaMock.travelTimeCache.findUnique.mockResolvedValue({ key: saved.where.key, minutes: 25, method: "HERE" });
+    prismaMock.candidateProfile.findUnique.mockResolvedValue(profile({ courses: ["Curso de SQL", "Curso de Excel"] }));
+    estimator.estimate.mockClear();
+    const again = await run();
+    expect(estimator.estimate).not.toHaveBeenCalled();
+    expect("view" in again && again.view.dimensions.D.components.find(c => c.label === "Deslocamento")?.detail).toContain("7h em dia útil");
+  });
+
+  it("does not save a failed estimate", async () => {
+    estimator.estimate.mockResolvedValue({ status: "UNAVAILABLE", reason: "Indisponível." });
+    await run();
+    expect(prismaMock.travelTimeCache.upsert).not.toHaveBeenCalled();
   });
 });

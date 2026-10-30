@@ -4,6 +4,8 @@ import { toEducationList, toExperienceList, toLanguageList, toStringList, toWork
 import { rowToFields, todayInBrazil } from "@/lib/jobs/schema";
 import { RULES_VERSION } from "./constants";
 import { fingerprint } from "./fingerprint";
+import { nextPeakDeparture, PEAK_LABEL, PEAK_POLICY } from "./peak";
+import { normalizeText } from "./text";
 import { analyze, evaluateCriticalLock, travelRequired } from "./engine";
 import { createDbQuotaGuard } from "./quota";
 import { createHereEstimator, type TravelEstimator } from "./travel";
@@ -37,12 +39,18 @@ async function resolveTravel(
   const home = addresses.candidate;
   if (!home.address || !home.city || !home.state) return { status: "UNAVAILABLE", reason: "Endereço do candidato incompleto (rua, cidade e estado)." };
   if (!job.locationAddress || !job.locationCity || !job.locationState) return { status: "UNAVAILABLE", reason: "Endereço do local de trabalho da vaga não informado." };
-  const estimate = await estimatorToUse.estimate({
-    origin: `${home.address}, ${home.city}, ${home.state}, Brasil`,
-    destination: `${job.locationAddress}, ${job.locationCity}, ${job.locationState}, Brasil`,
-    mode
-  });
-  if (estimate.status !== "UNAVAILABLE") return estimate;
+  const origin = `${home.address}, ${home.city}, ${home.state}, Brasil`;
+  const destination = `${job.locationAddress}, ${job.locationCity}, ${job.locationState}, Brasil`;
+  // A trip is estimated once and saved; it is reused until an address or the means of transport changes (29/10/2026).
+  // Only a hash of the addresses is stored, never the addresses themselves.
+  const key = fingerprint({ policy: PEAK_POLICY, origin: normalizeText(origin), destination: normalizeText(destination), mode });
+  const saved = await prisma.travelTimeCache.findUnique({ where: { key } });
+  if (saved) return { status: "OK", minutes: saved.minutes, mode, method: saved.method, departure: PEAK_LABEL };
+  const estimate = await estimatorToUse.estimate({ origin, destination, mode, departureTime: nextPeakDeparture() });
+  if (estimate.status === "OK") {
+    await prisma.travelTimeCache.upsert({ where: { key }, create: { key, minutes: estimate.minutes, method: estimate.method }, update: {} });
+    return { ...estimate, departure: PEAK_LABEL };
+  }
   return estimate.permanent ? { status: "UNAVAILABLE", reason: estimate.reason } : { status: "UNAVAILABLE", reason: estimate.reason, transient: true };
 }
 
