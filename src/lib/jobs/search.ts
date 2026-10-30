@@ -53,12 +53,37 @@ export type SearchableJob = {
 export const locationLabel = (job: Pick<SearchableJob, "locationCity" | "locationState">) =>
   job.locationCity.trim() ? `${job.locationCity.trim()}/${job.locationState}` : "";
 
-/** Every term must appear (as a word or fragment) in the title, description or company name, ignoring case and accents. */
+// Word endings removed before comparing (decision of 29/10/2026, complementing OPEN-037): "engenharia" finds "engenheiro",
+// "enfermagem" finds "enfermeira", "vendas" finds "vendedor". Deterministic; no synonyms, typo correction or AI.
+const SUFFIXES = [
+  "amentos", "imentos", "amento", "imento", "idades", "idade", "acoes", "icoes", "arias", "aria", "eiros", "eiras", "eiro", "eira",
+  "istas", "ista", "ismos", "ismo", "agens", "agem", "acao", "icao", "dores", "doras", "dor", "dora", "ivos", "ivas", "ivo", "iva",
+  "icos", "icas", "ico", "ica", "ias", "ia", "os", "as", "es", "o", "a", "e", "s"
+];
+const MIN_STEM = 4;
+
+/** Root of a normalized word: the longest listed ending is removed when at least four letters remain. */
+export function stem(word: string): string {
+  for (const suffix of SUFFIXES) {
+    if (word.endsWith(suffix) && word.length - suffix.length >= MIN_STEM) return word.slice(0, -suffix.length);
+  }
+  return word;
+}
+
+/**
+ * Every term must be found in the title, description or company name, ignoring case and accents: as a fragment of the text
+ * or as a word with the same root (a word of the job starting with the term's root).
+ */
 export function matchesText(job: SearchableJob, q: string): boolean {
   const terms = normalizeText(q).split(" ").filter(Boolean);
   if (!terms.length) return true;
   const haystack = normalizeText(`${job.title} ${job.description} ${job.companyName}`);
-  return terms.every((term) => haystack.includes(term));
+  const roots = haystack.split(" ").filter(Boolean).map(stem);
+  return terms.every((term) => {
+    if (haystack.includes(term)) return true;
+    const root = stem(term);
+    return root.length >= MIN_STEM && roots.some((word) => word.startsWith(root));
+  });
 }
 
 /** Different categories combine with AND; values inside one category combine with OR; empty categories do not restrict. */
