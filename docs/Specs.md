@@ -1756,8 +1756,8 @@ Contratos conceituais, sem endpoints HTTP.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-008 |
-| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-008.md` |
-| Estado do layout | referência visual em `docs/layout/SPEC-008-010-referencia-area-candidato.png` (D-03, 29/10/2026); aprovação pendente sobre as telas implementadas |
+| Estado do texto | aprovada; implementada e encerrada em 29/10/2026, exceto os itens que dependem da SPEC-006 e da SPEC-009; ver `docs/Implementacao/SPEC-008.md` |
+| Estado do layout | aprovado pelo responsável em 29/10/2026 sobre as telas implementadas (Início, Vagas com busca, filtros e paginação, diálogo do score e perfil na área do candidato); referência visual em `docs/layout/SPEC-008-010-referencia-area-candidato.png` |
 | Capacidade | Buscar e filtrar vagas elegíveis e ordená-las por compatibilidade |
 
 ## 2. Rastreabilidade
@@ -1845,19 +1845,21 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 
 ## 11. Critérios de aceitação
 
-- [ ] A consulta respeita autorização e não expõe dados pessoais ou necessidades de acessibilidade fora da finalidade autorizada (RNF-07/RNF-08).
-- [ ] Filtros combinados e resultados mantêm comportamento consistente após erro ou ausência de dados (RNF-09); limites de paginação permanecem conforme OPEN-038.
+- [x] A consulta respeita autorização e não expõe dados pessoais ou necessidades de acessibilidade fora da finalidade autorizada (RNF-07/RNF-08).
+- [x] Filtros combinados e resultados mantêm comportamento consistente após erro ou ausência de dados (RNF-09); limites de paginação permanecem conforme OPEN-038.
 
-- [ ] Candidato busca vagas com critérios suportados.
-- [ ] Filtros restringem resultados conforme solicitado.
-- [ ] Vagas com barreira crítica não aparecem como elegíveis.
-- [ ] Resultados seguem o score da SPEC-007.
-- [ ] A consulta apresenta até 100 vagas elegíveis, em páginas de 20; paginação numerada anterior/próxima preserva busca, filtros e ordenação, e alterações em busca/filtros reiniciam na primeira página.
-- [ ] Ordenações alternativas são maior compatibilidade (padrão), mais recentes e mais antigas; empates mantêm ordem estável por identificador interno não exposto.
+- [x] Candidato busca vagas com critérios suportados.
+- [x] Filtros restringem resultados conforme solicitado.
+- [x] Vagas com barreira crítica não aparecem como elegíveis.
+- [x] Resultados seguem o score da SPEC-007.
+- [x] A consulta apresenta até 100 vagas elegíveis, em páginas de 20; paginação numerada anterior/próxima preserva busca, filtros e ordenação, e alterações em busca/filtros reiniciam na primeira página.
+- [x] Ordenações alternativas são maior compatibilidade (padrão), mais recentes e mais antigas; empates mantêm ordem estável por identificador interno não exposto.
 - [ ] Vagas externas não validadas são excluídas.
-- [ ] Status atual da vaga é respeitado.
-- [ ] Informações de acessibilidade aparecem antes da candidatura.
-- [ ] Estado sem resultados é comunicado de forma acessível.
+- [x] Status atual da vaga é respeitado.
+- [x] Informações de acessibilidade aparecem antes da candidatura.
+- [x] Estado sem resultados é comunicado de forma acessível.
+
+> Evidência: testes Vitest (busca, filtros, ordenação, paginação, serviço, API, interface com axe-core) e E2E verdes na CI; teste manual executado pelo responsável em 29/10/2026 (ajuste aplicado: busca por palavras com a mesma raiz, complemento da OPEN-037). "Status atual respeitado": apenas vagas publicadas e dentro do prazo entram na busca e uma vaga encerrada sai dela (E2E); a apresentação do status pertence à SPEC-009. Permanece aberto o critério de vagas externas, que depende da SPEC-006 (hoje só vagas próprias participam).
 
 ## 12. Casos de teste derivados
 | ID | Cenário | Resultado esperado |
@@ -1878,20 +1880,21 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 - **OPEN-039:** se alertas/salvamento de busca fazem parte do escopo ou são apenas sugestão.
 
 ## 14. Definition of Done
-- [ ] Texto aprovado.
-- [ ] Filtros conferidos na baseline.
-- [ ] Integração com SPEC-007/SPEC-009 testável.
-- [ ] Layouts e estados vazios anexados e aprovados.
-- [ ] Acessibilidade e desempenho verificáveis.
-- [ ] Sem implementação antes das aprovações necessárias.
+- [x] Texto aprovado.
+- [x] Filtros conferidos na baseline.
+- [ ] Integração com SPEC-007/SPEC-009 testável. (SPEC-007 integrada e testada; SPEC-009 pendente)
+- [x] Layouts e estados vazios anexados e aprovados.
+- [ ] Acessibilidade e desempenho verificáveis. (acessibilidade verificada por axe-core e teste manual; desempenho sem medição formal)
+- [x] Sem implementação antes das aprovações necessárias.
 
 ## SPEC-008 — Decisões de implementação (29/10/2026)
 
 - D-01: o histórico de compatibilidade só ganha registro novo quando as entradas (perfil, vaga, meio de transporte) ou o resultado mudam.
 - D-02: a área do candidato não mostra Candidaturas, Notificações, banner nem "% do perfil" até as Specs correspondentes.
 - D-03: imagem enviada pelo responsável guardada como referência de layout.
-- Área profissional criada como campo opcional da vaga, com lista fixa (a confirmar, OPEN-091).
-- Vagas com dados insuficientes aparecem depois das que têm score, sem número (a confirmar, OPEN-091).
+- Área profissional criada como campo opcional da vaga, com lista fixa (OPEN-091, confirmada em 29/10/2026).
+- Vagas com dados insuficientes aparecem depois das que têm score, sem número (OPEN-091, confirmada em 29/10/2026).
+- Tempo de deslocamento calculado uma vez por trajeto e salvo; estimativa com saída às 7h de dia útil.
 - Vagas externas continuam fora até a SPEC-006.
 
 ---

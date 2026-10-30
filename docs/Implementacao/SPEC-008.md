@@ -19,7 +19,7 @@
 - **Área profissional da vaga:** campo opcional com lista fixa no editor da vaga (necessário para o filtro).
 - A tela de simulação da SPEC-007 (`/candidato/compatibilidade`) continua disponível dentro da área do candidato para testar outro meio de transporte.
 
-## Decisões a confirmar (OPEN-091)
+## Decisões confirmadas em 29/10/2026 (OPEN-091)
 
 1. Lista de áreas profissionais: Administração, Atendimento ao cliente, Comercial e vendas, Comunicação e marketing, Educação, Engenharia, Finanças e contabilidade, Jurídico, Logística e operações, Recursos humanos, Saúde, Tecnologia da informação, Outra.
 2. Vagas com dados insuficientes aparecem na lista, depois das que têm score, sem número no círculo.
@@ -38,3 +38,4 @@
 - Vitest: busca textual, filtros AND/OR, opções, ordenações, paginação, parâmetros; serviço (elegibilidade, ocultação, ordem); API (autorização, filtros inválidos); reutilização do histórico (D-01); interface (filtros, endereço, paginação, estado vazio, diálogo, axe-core).
 - E2E: busca autenticada, filtros, OR/AND, termo inexistente, reutilização sem chamar a HERE, ocultação por trava crítica, página da área do candidato, vaga encerrada sai da busca.
 - Teste manual: `docs/operacao/validacao-manual-spec-008.md`.
+- Teste manual executado pelo responsável em 29/10/2026; layout aprovado na mesma data. SPEC-008 encerrada, exceto vagas externas (SPEC-006) e integração com a SPEC-009.
