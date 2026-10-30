@@ -1528,10 +1528,24 @@ async function main() {
     assert.notEqual(anonymousJobsPage.status, 200, "anonymous visitors are redirected away from the candidate jobs page");
     await expectStatus(await fetch(`${BASE_URL}/candidato`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate home with featured jobs");
 
+    // SPEC-010: job detail for the candidate (published jobs only; status shown; no internal identifiers).
+    const detailUrl = jobId => `${BASE_URL}/candidato/vagas/${jobId}`;
+    const detailPage = await expectStatus(await fetch(detailUrl(compatJob.id), { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate opens the job detail");
+    assert.ok(detailPage.includes("Analista de dados E2E") && detailPage.includes("Vaga aberta"), "the detail shows the job and its current status");
+    assert.ok(detailPage.includes("Declarado para esta vaga") && detailPage.includes("Informações gerais da empresa"), "job and company accessibility are shown separately");
+    assert.ok(detailPage.includes("Compatibilidade com você"), "the detail shows the SPEC-007 result");
+    const companyRecord = await prisma.job.findUnique({ where: { id: compatJob.id }, select: { companyId: true, createdByUserId: true } });
+    assert.ok(!detailPage.includes(companyRecord.companyId) && !detailPage.includes(companyRecord.createdByUserId), "the detail does not expose internal identifiers");
+    assert.notEqual((await fetch(detailUrl(compatJob.id), { redirect: "manual" })).status, 200, "anonymous visitors cannot open the candidate job detail");
+    const detailDraft = JSON.parse(await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas`, "POST", { title: "Rascunho E2E" }, companyCookie), 201, "company keeps a draft")).job;
+    assert.equal((await fetch(detailUrl(detailDraft.id), { headers: { cookie: compatCookie }, redirect: "manual" })).status, 404, "drafts are not visible to candidates");
+
     await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}/acao`, "POST", { action: "close" }, companyCookie), 200, "company closes the analyzed job");
     await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 404, "closed jobs are not analyzed");
     const afterClose = JSON.parse(await expectStatus(await search("q=analista%20E2E"), 200, "search after closing"));
     assert.ok(!afterClose.jobs.some(job => job.id === compatJob.id), "closed jobs leave the search (current status respected)");
+    const closedDetail = await expectStatus(await fetch(`${BASE_URL}/candidato/vagas/${compatJob.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate opens a closed job");
+    assert.ok(closedDetail.includes("Vaga encerrada") && closedDetail.includes("Candidatura não disponível"), "a closed job shows its status and blocks the next step");
 
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });

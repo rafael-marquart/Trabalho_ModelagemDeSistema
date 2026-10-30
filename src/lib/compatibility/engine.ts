@@ -23,6 +23,13 @@ export function evaluateCriticalLock(candidate: CandidateInput, job: JobInput): 
   return barriers;
 }
 
+/** Indispensable needs that cannot be checked because the job left the matching resource "not informed". */
+export function pendingCriticalChecks(candidate: CandidateInput, job: JobInput): Barrier[] {
+  return candidate.needs
+    .filter((need) => need.mandatory && NEED_TO_JOB_ITEM[need.code] && (job.accessibility[NEED_TO_JOB_ITEM[need.code]] ?? "NOT_INFORMED") === "NOT_INFORMED")
+    .map((need) => ({ needCode: need.code, needName: need.name, jobItem: NEED_TO_JOB_ITEM[need.code] }));
+}
+
 function dimensionAccessibility(candidate: CandidateInput, job: JobInput, missing: MissingItem[], factors: string[]): Dimension {
   if (candidate.accessibilityDeclaration === "NOT_INFORMED") {
     missing.push({ dimension: "A", item: "Declaração de necessidades de acessibilidade", action: "Complete a seção de acessibilidade do seu perfil (inclusive se não tiver necessidades)." });
@@ -190,6 +197,7 @@ export function analyze(input: AnalysisInput): AnalysisOutcome {
   const missing: MissingItem[] = [];
   const factors: string[] = [];
   const barriers = evaluateCriticalLock(candidate, job);
+  const pending = pendingCriticalChecks(candidate, job);
 
   const A = dimensionAccessibility(candidate, job, missing, factors);
   const T = dimensionTechnical(candidate, job, missing, factors);
@@ -200,14 +208,14 @@ export function analyze(input: AnalysisInput): AnalysisOutcome {
     for (const barrier of barriers) {
       factors.unshift(`Barreira incompatível: a necessidade obrigatória "${barrier.needName}" encontra "${itemLabel(barrier.jobItem).toLocaleLowerCase("pt-BR")}" declarado como ausente na vaga.`);
     }
-    return { status: "INCOMPATIBLE", score: null, critical: { applied: true, barriers }, dimensions, appliedWeights: null, missing, factors };
+    return { status: "INCOMPATIBLE", score: null, critical: { applied: true, barriers, pending }, dimensions, appliedWeights: null, missing, factors };
   }
 
   const codes: DimensionCode[] = ["A", "T", "D"];
   if (codes.some((code) => dimensions[code].status === "INSUFFICIENT")) {
     const insufficient = codes.filter((code) => dimensions[code].status === "INSUFFICIENT").map((code) => dimensionLabels[code]);
     factors.unshift(`Dados insuficientes em: ${insufficient.join(", ")}. O score final não é apresentado como completo.`);
-    return { status: "INSUFFICIENT_DATA", score: null, critical: { applied: false, barriers: [] }, dimensions, appliedWeights: null, missing, factors };
+    return { status: "INSUFFICIENT_DATA", score: null, critical: { applied: false, barriers: [], pending }, dimensions, appliedWeights: null, missing, factors };
   }
 
   // Dimensions with no applicable criterion are left out and the remaining weights are normalized (same rule used inside T and D).

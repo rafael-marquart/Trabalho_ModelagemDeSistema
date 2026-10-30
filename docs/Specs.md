@@ -2032,8 +2032,8 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 | Campo | Valor |
 |---|---|
 | ID | SPEC-010 |
-| Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-010.md` |
+| Estado do layout | pendente de aprovação sobre a tela implementada; referência visual em `docs/layout/SPEC-008-010-referencia-area-candidato.png` |
 | Capacidade | Apresentar detalhes da vaga, acessibilidade, status e explicação de compatibilidade |
 
 ## 2. Rastreabilidade
