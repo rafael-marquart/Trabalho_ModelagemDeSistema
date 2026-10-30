@@ -1,4 +1,10 @@
 import type { Metadata } from "next";
+// Fonts are bundled with the app (no request to a third-party font service).
+import "@fontsource/atkinson-hyperlegible-next/400.css";
+import "@fontsource/atkinson-hyperlegible-next/600.css";
+import "@fontsource/atkinson-hyperlegible-next/700.css";
+import "@fontsource/manrope/700.css";
+import "@fontsource/manrope/800.css";
 import "./globals.css";
 import ThemeProvider from "@/components/theme-provider";
 import ContrastProvider from "@/components/contrast-provider";

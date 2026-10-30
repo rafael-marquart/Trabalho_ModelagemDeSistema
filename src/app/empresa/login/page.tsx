@@ -55,7 +55,7 @@ export default function CompanyLoginPage() {
           <Link href="/recuperar-senha">Esqueci minha senha</Link>
         </div>
         {error && <p className="form-error" role="alert">{error}</p>}
-        <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar na plataforma  →"}</button>
+        <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar na plataforma"}</button>
       </form>
     </AuthSplitLayout>
   );

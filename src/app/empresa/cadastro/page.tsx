@@ -3,6 +3,7 @@
 import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
 import { FormEvent, useState } from "react";
+import BrandLogo from "@/components/brand-logo";
 
 export default function CompanySignupPage() {
   const [form,setForm]=useState({legalName:"",tradeName:"",officialId:"",contactEmail:"",password:"",confirmPassword:""});
@@ -20,7 +21,7 @@ export default function CompanySignupPage() {
     finally{setLoading(false);}
   }
   return <main className="auth-page">
-      <div className="theme-control-host"><ThemeToggle /></div><Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" /></Link><section className="auth-card"><Link className="back-link" href="/">← Voltar ao início</Link><p className="eyebrow">Cadastro de empresa</p><h1>Traga sua empresa para a plataforma.</h1><p className="muted">Preencha os dados organizacionais para iniciar o cadastro.</p><form className="auth-form" onSubmit={submit}>
+      <div className="theme-control-host"><ThemeToggle /></div><Link className="brand auth-brand" href="/"><BrandLogo /></Link><section className="auth-card"><Link className="back-link" href="/">← Voltar ao início</Link><p className="eyebrow">Cadastro de empresa</p><h1>Traga sua empresa para a plataforma.</h1><p className="muted">Preencha os dados organizacionais para iniciar o cadastro.</p><form className="auth-form" onSubmit={submit}>
     <label htmlFor="legalName">Razão social</label><input id="legalName" value={form.legalName} onChange={e=>setForm({...form,legalName:e.target.value})} required maxLength={200}/>
     <label htmlFor="tradeName">Nome fantasia (opcional)</label><input id="tradeName" value={form.tradeName} onChange={e=>setForm({...form,tradeName:e.target.value})} maxLength={200}/>
     <label htmlFor="officialId">CNPJ (opcional)</label><input id="officialId" inputMode="numeric" autoComplete="off" value={form.officialId} onChange={e=>setForm({...form,officialId:e.target.value})} maxLength={18}/>

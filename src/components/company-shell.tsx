@@ -1,9 +1,10 @@
 import React, { ReactNode } from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
+import BrandLogo from "@/components/brand-logo";
 
-export type ShellRole = "COMPANY" | "RECRUITER" | "CANDIDATE";
-export type ShellSection = "home" | "jobs" | "recruiters" | "settings" | "profile";
+export type ShellRole = "COMPANY" | "RECRUITER" | "CANDIDATE" | "ADMIN";
+export type ShellSection = "home" | "jobs" | "recruiters" | "settings" | "profile" | "catalog";
 
 const menus: Record<ShellRole, { key: ShellSection; label: string; href: string }[]> = {
   COMPANY: [
@@ -21,12 +22,16 @@ const menus: Record<ShellRole, { key: ShellSection; label: string; href: string 
     { key: "home", label: "Início", href: "/candidato" },
     { key: "jobs", label: "Vagas", href: "/candidato/vagas" },
     { key: "profile", label: "Meu perfil", href: "/candidato/perfil" }
+  ],
+  ADMIN: [
+    { key: "catalog", label: "Catálogo de acessibilidade", href: "/admin/catalogo-acessibilidade" }
   ]
 };
 const areaText: Record<ShellRole, { home: string; label: string; menu: string; nav: string }> = {
-  COMPANY: { home: "/empresa", label: "Área da empresa", menu: "MENU DA EMPRESA", nav: "Menu da empresa" },
-  RECRUITER: { home: "/recrutador", label: "Área do recrutador", menu: "MENU DO RECRUTADOR", nav: "Menu do recrutador" },
-  CANDIDATE: { home: "/candidato", label: "Área do candidato", menu: "MENU DO CANDIDATO", nav: "Menu do candidato" }
+  COMPANY: { home: "/empresa", label: "Área da empresa", menu: "Menu da empresa", nav: "Menu da empresa" },
+  RECRUITER: { home: "/recrutador", label: "Área do recrutador", menu: "Menu do recrutador", nav: "Menu do recrutador" },
+  CANDIDATE: { home: "/candidato", label: "Área do candidato", menu: "Menu do candidato", nav: "Menu do candidato" },
+  ADMIN: { home: "/admin/catalogo-acessibilidade", label: "Administração da plataforma", menu: "Menu da administração", nav: "Menu da administração" }
 };
 
 function initials(name: string) {
@@ -43,7 +48,7 @@ export default function CompanyShell({ role, active, userName, children }: {
   return <div className="company-dashboard">
     <header className="company-topbar">
       <Link className="company-brand" href={home} aria-label="Acessa Vagas — página inicial da área">
-        <img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" />
+        <BrandLogo />
       </Link>
       <span className="company-topbar-label">{text.label}</span>
       <div className="company-topbar-actions">

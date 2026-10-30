@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Icon from "@/components/icons";
 
 type Overview = {
   link: { id: string; createdAt: string; companyName: string } | null;
@@ -43,8 +44,8 @@ export default function RecruiterHomePage() {
 
           <div className="recruiter-overview-grid">
             <article className="recruiter-overview-card recruiter-primary-card">
-              <div className="recruiter-card-icon" aria-hidden="true">⌂</div>
-              <p className="recruiter-card-kicker">VÍNCULO ATUAL</p>
+              <div className="recruiter-card-icon"><Icon name="building" /></div>
+              <p className="recruiter-card-kicker">Vínculo atual</p>
               {overview === null && !error ? (
                 <p className="muted">Carregando suas informações…</p>
               ) : error ? (
@@ -64,8 +65,8 @@ export default function RecruiterHomePage() {
             </article>
 
             <article className="recruiter-overview-card">
-              <div className="recruiter-card-icon" aria-hidden="true">✉</div>
-              <p className="recruiter-card-kicker">CONVITES PENDENTES</p>
+              <div className="recruiter-card-icon"><Icon name="mail" /></div>
+              <p className="recruiter-card-kicker">Convites pendentes</p>
               <h2>{overview === null ? "—" : overview.invitations.length}</h2>
               <p className="muted">Convites aguardando sua resposta.</p>
             </article>

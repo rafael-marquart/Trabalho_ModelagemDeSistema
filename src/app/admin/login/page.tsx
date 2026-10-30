@@ -4,6 +4,7 @@ import React, { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import ThemeToggle from "@/components/theme-toggle";
+import BrandLogo from "@/components/brand-logo";
 
 // Intentionally not linked from the public entry screens: the approved prototypes
 // do not offer a public administrator login. Access is by direct URL only.
@@ -42,7 +43,7 @@ export default function AdminLoginPage() {
     <main className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div>
       <div className="entry-content">
-        <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" /></Link>
+        <Link className="brand auth-brand" href="/"><BrandLogo /></Link>
         <section className="auth-card">
           <p className="eyebrow">Acesso restrito</p>
           <h1>Administração</h1>
@@ -53,7 +54,7 @@ export default function AdminLoginPage() {
             <label htmlFor="password">Senha</label>
             <input id="password" type="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required />
             {error && <p className="form-error" role="alert">{error}</p>}
-            <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar  →"}</button>
+            <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar"}</button>
           </form>
         </section>
       </div>

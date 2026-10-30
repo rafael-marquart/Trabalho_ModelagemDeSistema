@@ -3,6 +3,7 @@
 import React, { type ReactNode } from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
+import BrandLogo from "@/components/brand-logo";
 
 type AuthProfile = "candidate" | "company";
 type AuthSplitLayoutProps = {
@@ -31,7 +32,7 @@ export default function AuthSplitLayout({
           <span className="auth-split-decoration-small" />
         </div>
         <Link className="auth-split-brand" href="/" aria-label="Acessa Vagas — início">
-          <img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" />
+          <BrandLogo />
         </Link>
         <p className="auth-split-slogan">Acesso que transforma.</p>
         <div className="auth-split-visual-copy">

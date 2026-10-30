@@ -38,7 +38,7 @@ export default function ScoreDialog({ jobTitle, result }: { jobTitle: string; re
   return <>
     <button ref={triggerRef} type="button" className={`score-ring ${complete ? "score-ring-complete" : "score-ring-pending"}`} style={ring}
       onClick={() => setOpen(true)} aria-haspopup="dialog" aria-label={`Compatibilidade: ${scoreText(result)}. Ver detalhes da vaga ${jobTitle}`}>
-      <span className="score-ring-value" aria-hidden="true">{complete ? `${result.score}%` : "?"}</span>
+      <span className={`score-ring-value${complete && (result.score ?? 0) >= 100 ? " score-ring-value-long" : ""}`} aria-hidden="true">{complete ? `${result.score}%` : "?"}</span>
       <span className="score-ring-caption" aria-hidden="true">{complete ? "Match" : "Faltam dados"}</span>
     </button>
     <dialog ref={dialogRef} className="score-dialog" aria-labelledby={titleId} onClose={() => setOpen(false)} onCancel={() => setOpen(false)}>

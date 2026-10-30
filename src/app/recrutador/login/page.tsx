@@ -5,6 +5,7 @@ import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import BrandLogo from "@/components/brand-logo";
 
 export default function RecruiterLoginPage() {
   const router = useRouter();
@@ -36,7 +37,7 @@ export default function RecruiterLoginPage() {
   return <main className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div>
     
-    <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" /></Link>
+    <Link className="brand auth-brand" href="/"><BrandLogo /></Link>
     <section className="auth-card" aria-labelledby="recruiter-login-title">
       <Link className="back-link" href="/">← Voltar ao início</Link>
       <p className="eyebrow">Área do recrutador</p><h1 id="recruiter-login-title">Acesse sua conta de recrutador.</h1>

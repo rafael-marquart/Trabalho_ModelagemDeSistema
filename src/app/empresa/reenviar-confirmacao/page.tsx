@@ -3,6 +3,7 @@
 import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
 import { useState, type FormEvent } from "react";
+import BrandLogo from "@/components/brand-logo";
 
 export default function ResendCompanyVerificationPage() {
   const [email, setEmail] = useState("");
@@ -38,7 +39,7 @@ export default function ResendCompanyVerificationPage() {
     <main className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div>
       <Link className="brand auth-brand" href="/" aria-label="Acessa Vagas — início">
-        <img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" />
+        <BrandLogo />
       </Link>
       <section className="auth-card" aria-labelledby="resend-title">
         <Link className="back-link" href="/empresa/login">← Voltar ao acesso da empresa</Link>
