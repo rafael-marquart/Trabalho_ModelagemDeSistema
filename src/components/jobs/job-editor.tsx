@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ChoiceGroup from "@/components/choice-group";
-import { brazilianStates, jobModalities, jobModalityLabels, jobStatusLabels, TEXT_LIMITS, type JobAction, type JobModalityValue, type JobStatusValue } from "@/lib/jobs/constants";
+import { brazilianStates, jobModalities, jobModalityLabels, professionalAreas, type ProfessionalArea, jobStatusLabels, TEXT_LIMITS, type JobAction, type JobModalityValue, type JobStatusValue } from "@/lib/jobs/constants";
 import { languageChoices, languageLevels } from "@/lib/candidate-profile/options";
 
 const isListedLanguage = (value: string) => value !== "Outro" && (languageChoices as readonly string[]).includes(value);
@@ -11,14 +11,14 @@ import { rankedEducationLevels, type TechnicalCriteria } from "@/lib/jobs/criter
 import { infrastructureItems, infrastructureStatuses, statusLabels, type InfrastructureStatus } from "@/lib/company-infrastructure/items";
 
 type Form = {
-  title: string; description: string; requirements: string; modality: JobModalityValue | "";
+  title: string; description: string; requirements: string; modality: JobModalityValue | ""; professionalArea: ProfessionalArea | "";
   locationCity: string; locationState: string; locationAddress: string; deadline: string;
   salaryMin: string; salaryMax: string; accessibility: Record<string, InfrastructureStatus>;
   skillsText: string; experienceText: string; educationMinLevel: TechnicalCriteria["educationMinLevel"];
   languages: TechnicalCriteria["languages"];
 };
 const MISSING_FIELDS = "Falta preencher ou corrigir algum campo. Os campos com problema estão indicados em vermelho, acima nesta página.";
-const empty: Form = { title: "", description: "", requirements: "", modality: "", locationCity: "", locationState: "", locationAddress: "", deadline: "", salaryMin: "", salaryMax: "", accessibility: {},
+const empty: Form = { title: "", description: "", requirements: "", modality: "", professionalArea: "", locationCity: "", locationState: "", locationAddress: "", deadline: "", salaryMin: "", salaryMax: "", accessibility: {},
   skillsText: "", experienceText: "", educationMinLevel: "", languages: [] };
 const toLines = (text: string) => text.split(/\r?\n|;/).map(line => line.trim()).filter(Boolean);
 
@@ -49,7 +49,7 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
       if (!active) return;
       const job = data.job;
       setStatus(job.status);
-      setForm({ ...empty, title: job.title, description: job.description, requirements: job.requirements, modality: job.modality,
+      setForm({ ...empty, title: job.title, description: job.description, requirements: job.requirements, modality: job.modality, professionalArea: job.professionalArea ?? "",
         locationCity: job.locationCity, locationState: job.locationState, locationAddress: job.locationAddress, deadline: job.deadline,
         salaryMin: moneyText(job.salaryMin), salaryMax: moneyText(job.salaryMax), accessibility: job.accessibility ?? {},
         skillsText: (job.technicalCriteria?.skills ?? []).join("\n"), experienceText: (job.technicalCriteria?.experience ?? []).join("\n"),
@@ -83,7 +83,7 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
       setIssues({ salary: "Informe os valores de salário apenas com números, por exemplo 3500,00." });
       return null;
     }
-    return { title: form.title, description: form.description, requirements: form.requirements, modality: form.modality,
+    return { title: form.title, description: form.description, requirements: form.requirements, modality: form.modality, professionalArea: form.professionalArea,
       locationCity: form.locationCity, locationState: form.locationState, locationAddress: form.locationAddress, deadline: form.deadline,
       salaryMin: min, salaryMax: max, accessibility: form.accessibility,
       technicalCriteria: { skills: toLines(form.skillsText), experience: toLines(form.experienceText), educationMinLevel: form.educationMinLevel,
@@ -169,6 +169,13 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
         <h2>Modalidade e local</h2>
         <ChoiceGroup legend="Modalidade" className="job-choice" choices={jobModalities.map(value => ({ value, label: jobModalityLabels[value] }))} value={form.modality} onChange={value => set("modality", value)} describedBy={issues.modality ? "err-modality" : undefined} />
         {fieldError("modality")}
+        <label className="job-field"><span className="profile-section-title">Área profissional (opcional)</span>
+          <select value={form.professionalArea} onChange={e => set("professionalArea", e.target.value as Form["professionalArea"])}>
+            <option value="">Não informada</option>
+            {professionalAreas.map(area => <option key={area} value={area}>{area}</option>)}
+          </select>
+        </label>
+        <p className="muted">Usada no filtro de área da busca de vagas.</p>
         <div className="job-row">
           <label className="job-field"><span className="profile-section-title">Cidade{needsLocation ? " (obrigatória)" : ""}</span>
             <input type="text" value={form.locationCity} maxLength={TEXT_LIMITS.city} onChange={e => set("locationCity", e.target.value)} aria-invalid={Boolean(issues.locationCity)} aria-describedby={issues.locationCity ? "err-locationCity" : undefined} />

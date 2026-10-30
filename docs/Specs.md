@@ -1756,8 +1756,8 @@ Contratos conceituais, sem endpoints HTTP.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-008 |
-| Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-008.md` |
+| Estado do layout | referência visual em `docs/layout/SPEC-008-010-referencia-area-candidato.png` (D-03, 29/10/2026); aprovação pendente sobre as telas implementadas |
 | Capacidade | Buscar e filtrar vagas elegíveis e ordená-las por compatibilidade |
 
 ## 2. Rastreabilidade
@@ -1884,6 +1884,15 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 - [ ] Layouts e estados vazios anexados e aprovados.
 - [ ] Acessibilidade e desempenho verificáveis.
 - [ ] Sem implementação antes das aprovações necessárias.
+
+## SPEC-008 — Decisões de implementação (29/10/2026)
+
+- D-01: o histórico de compatibilidade só ganha registro novo quando as entradas (perfil, vaga, meio de transporte) ou o resultado mudam.
+- D-02: a área do candidato não mostra Candidaturas, Notificações, banner nem "% do perfil" até as Specs correspondentes.
+- D-03: imagem enviada pelo responsável guardada como referência de layout.
+- Área profissional criada como campo opcional da vaga, com lista fixa (a confirmar, OPEN-091).
+- Vagas com dados insuficientes aparecem depois das que têm score, sem número (a confirmar, OPEN-091).
+- Vagas externas continuam fora até a SPEC-006.
 
 ---
 
@@ -3233,4 +3242,4 @@ A integração com Adzuna permanece limitada a **até 25 chamadas de teste**. Es
 - O candidato marca no perfil quais necessidades são indispensáveis (RB-06); a marcação obrigatória do catálogo pelo ADMIN continua válida.
 - Limite de segurança: uso da HERE bloqueado ao atingir 60% da cota gratuita do mês, liberado no mês seguinte.
 - A validação de localização de vaga externa (item 6 do comportamento) e a SPEC-006 permanecem pendentes; os critérios que dependem de vagas externas continuam abertos.
-- Encerramento da SPEC-007 depende do teste manual e da aprovação do responsável.
+- SPEC-007 encerrada em 29/10/2026 após teste manual e aprovação do layout pelo responsável.

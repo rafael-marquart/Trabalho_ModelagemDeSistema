@@ -5,7 +5,7 @@ import { changedFieldNames, fieldsToData, jobInputSchema, rowToFields, validateF
 
 const accessibility = Object.fromEntries(infrastructureItems.map((item) => [item.code, "NOT_INFORMED"]));
 const complete = (): JobFields => ({
-  title: "Analista", description: "Descrição", requirements: "Requisitos", modality: "REMOTO", locationCity: "", locationState: "",
+  title: "Analista", description: "Descrição", requirements: "Requisitos", modality: "REMOTO", professionalArea: "", locationCity: "", locationState: "",
   locationAddress: "", deadline: "2026-12-31", salaryMin: null, salaryMax: null, accessibility,
   technicalCriteria: { skills: [], experience: [], educationMinLevel: "", languages: [] }
 });

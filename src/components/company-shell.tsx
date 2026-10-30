@@ -2,8 +2,8 @@ import React, { ReactNode } from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
 
-export type ShellRole = "COMPANY" | "RECRUITER";
-export type ShellSection = "home" | "jobs" | "recruiters" | "settings";
+export type ShellRole = "COMPANY" | "RECRUITER" | "CANDIDATE";
+export type ShellSection = "home" | "jobs" | "recruiters" | "settings" | "profile";
 
 const menus: Record<ShellRole, { key: ShellSection; label: string; href: string }[]> = {
   COMPANY: [
@@ -15,7 +15,18 @@ const menus: Record<ShellRole, { key: ShellSection; label: string; href: string 
   RECRUITER: [
     { key: "home", label: "Visão geral", href: "/recrutador" },
     { key: "jobs", label: "Vagas", href: "/recrutador/vagas" }
+  ],
+  // D-02 (29/10/2026): applications and notifications join the menu only when their Specs are implemented.
+  CANDIDATE: [
+    { key: "home", label: "Início", href: "/candidato" },
+    { key: "jobs", label: "Vagas", href: "/candidato/vagas" },
+    { key: "profile", label: "Meu perfil", href: "/candidato/perfil" }
   ]
+};
+const areaText: Record<ShellRole, { home: string; label: string; menu: string; nav: string }> = {
+  COMPANY: { home: "/empresa", label: "Área da empresa", menu: "MENU DA EMPRESA", nav: "Menu da empresa" },
+  RECRUITER: { home: "/recrutador", label: "Área do recrutador", menu: "MENU DO RECRUTADOR", nav: "Menu do recrutador" },
+  CANDIDATE: { home: "/candidato", label: "Área do candidato", menu: "MENU DO CANDIDATO", nav: "Menu do candidato" }
 };
 
 function initials(name: string) {
@@ -23,17 +34,18 @@ function initials(name: string) {
   return letters.join("") || "AV";
 }
 
-/** Shared frame of the company area: top bar, side menu and content region. */
+/** Shared frame of the company, recruiter and candidate areas: top bar, side menu and content region. */
 export default function CompanyShell({ role, active, userName, children }: {
   role: ShellRole; active: ShellSection | null; userName: string; children: ReactNode;
 }) {
-  const home = role === "COMPANY" ? "/empresa" : "/recrutador";
+  const text = areaText[role];
+  const home = text.home;
   return <div className="company-dashboard">
     <header className="company-topbar">
       <Link className="company-brand" href={home} aria-label="Acessa Vagas — página inicial da área">
         <img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" />
       </Link>
-      <span className="company-topbar-label">{role === "COMPANY" ? "Área da empresa" : "Área do recrutador"}</span>
+      <span className="company-topbar-label">{text.label}</span>
       <div className="company-topbar-actions">
         <ThemeToggle />
         <span className="company-avatar" aria-hidden="true">{initials(userName)}</span>
@@ -42,8 +54,8 @@ export default function CompanyShell({ role, active, userName, children }: {
     </header>
     <div className="company-dashboard-body">
       <aside className="company-sidebar">
-        <p className="company-sidebar-title">{role === "COMPANY" ? "MENU DA EMPRESA" : "MENU DO RECRUTADOR"}</p>
-        <nav className="company-nav" aria-label={role === "COMPANY" ? "Menu da empresa" : "Menu do recrutador"}>
+        <p className="company-sidebar-title">{text.menu}</p>
+        <nav className="company-nav" aria-label={text.nav}>
           {menus[role].map((item) => <Link key={item.key} className="company-nav-item" href={item.href}
             aria-current={item.key === active ? "page" : undefined}>{item.label}</Link>)}
         </nav>

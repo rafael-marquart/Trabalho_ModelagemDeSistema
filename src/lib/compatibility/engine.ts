@@ -169,7 +169,7 @@ function dimensionDisplacement(candidate: CandidateInput, job: JobInput, travel:
   }
   if (travel.status === "OK") {
     const band = travelBandScore(travel.minutes);
-    components.push({ label: "Deslocamento", score: band, detail: `Tempo estimado de ${travel.minutes < 1 ? "menos de 1 min" : `cerca de ${Math.round(travel.minutes)} min`} (${travel.mode.toLocaleLowerCase("pt-BR")}).` });
+    components.push({ label: "Deslocamento", score: band, detail: `Tempo estimado de ${travel.minutes < 1 ? "menos de 1 min" : `cerca de ${Math.round(travel.minutes)} min`} (${travel.mode.toLocaleLowerCase("pt-BR")}${travel.departure ? `, ${travel.departure}` : ""}).` });
     if (insufficient) return { status: "INSUFFICIENT", score: null, components };
     return { status: "EVALUATED", score: DISPLACEMENT_WEIGHTS.modality * (modality ?? 0) + DISPLACEMENT_WEIGHTS.travel * band, components };
   }

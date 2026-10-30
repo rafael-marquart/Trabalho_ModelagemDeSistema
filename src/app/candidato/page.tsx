@@ -1,26 +1,43 @@
+import React from "react";
 import Link from "next/link";
-import ThemeToggle from "@/components/theme-toggle";
 import { redirect } from "next/navigation";
+import CompanyShell from "@/components/company-shell";
+import JobCard from "@/components/candidate/job-card";
+import type { SearchJob } from "@/components/candidate/types";
 import { getCurrentUser } from "@/lib/auth/session";
+import { searchQuerySchema } from "@/lib/jobs/search";
+import { searchJobsForCandidate } from "@/lib/jobs/search-service";
 
 export default async function CandidateHomePage() {
   const user = await getCurrentUser();
   if (!user || user.role !== "CANDIDATE") redirect("/candidato/login");
-  return (
-    <main className="auth-page">
-      <div className="theme-control-host"><ThemeToggle /></div>
-      <div className="entry-content candidate-home-content">
-        <Link className="brand auth-brand" href="/"><img className="brand-logo" src="/images/logo-acessa-vagas.png" alt="Acessa Vagas" /></Link>
-        <section className="auth-card candidate-home-card">
-          <p className="eyebrow">Área do candidato</p><h1>Olá, {user.fullName}.</h1>
-          <p className="muted">Mantenha seu perfil atualizado para registrar sua formação, competências, experiências e necessidades de acessibilidade.</p>
-          <div className="candidate-home-actions">
-            <Link className="primary-button candidate-profile-link" href="/candidato/perfil">Gerenciar meu perfil <span aria-hidden="true">→</span></Link>
-            <Link className="secondary-button candidate-profile-link" href="/candidato/compatibilidade">Compatibilidade com vagas <span aria-hidden="true">→</span></Link>
-            <form action="/api/auth/logout" method="post"><button className="secondary-button" type="submit">Sair da conta</button></form>
-          </div>
-        </section>
-      </div>
+  const firstName = user.fullName.split(/\s+/)[0] || user.fullName;
+  let featured: SearchJob[] = [];
+  let failed = false;
+  try {
+    featured = (await searchJobsForCandidate(user.id, searchQuerySchema.parse({}))).jobs.slice(0, 3) as SearchJob[];
+  } catch {
+    failed = true;
+  }
+  return <CompanyShell role="CANDIDATE" active="home" userName={user.fullName}>
+    <main className="company-content" aria-labelledby="candidate-home-title">
+      <header className="company-page-heading candidate-home-heading">
+        <div>
+          <p className="eyebrow">Área do candidato</p>
+          <h1 id="candidate-home-title">Olá, {firstName}!</h1>
+          <p className="muted">Aqui você encontra vagas que combinam com o seu perfil.</p>
+        </div>
+        <Link className="secondary-button" href="/candidato/perfil">Ver meu perfil <span aria-hidden="true">→</span></Link>
+      </header>
+      <section className="candidate-featured" aria-labelledby="featured-title">
+        <div className="section-heading-row">
+          <h2 id="featured-title">Vagas em destaque</h2>
+          <Link href="/candidato/vagas">Ver todas <span aria-hidden="true">→</span></Link>
+        </div>
+        {failed ? <p className="form-error" role="alert">Não foi possível carregar as vagas agora. Tente novamente em instantes.</p>
+          : featured.length ? <div className="job-card-grid">{featured.map(job => <JobCard key={job.id} job={job} />)}</div>
+            : <p className="muted">Ainda não há vagas elegíveis para o seu perfil. <Link href="/candidato/vagas">Buscar vagas</Link> ou <Link href="/candidato/perfil">completar o perfil</Link>.</p>}
+      </section>
     </main>
-  );
+  </CompanyShell>;
 }
