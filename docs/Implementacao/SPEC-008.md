@@ -14,6 +14,8 @@
 - **Acessibilidade da vaga antes da candidatura (RB-13):** cada cartão mostra os recursos declarados e, ao expandir, o estado dos seis itens.
 - **Histórico (D-01):** cada análise guarda uma impressão digital das entradas (`inputHash`, inclui endereços sem armazená-los). Se nada mudou, o último resultado é reutilizado sem chamar a HERE nem gravar linha nova; falhas transitórias da HERE (cota, indisponibilidade) são recalculadas na próxima vez, mas só geram linha nova se o resultado mudar.
 - **Economia da cota HERE:** geocodificações bem-sucedidas ficam em memória por 24 h (o endereço do candidato é consultado uma vez para várias vagas).
+- **Tempo de deslocamento salvo (decisão de 29/10/2026):** cada trajeto (endereço do candidato, endereço da vaga e meio de transporte) é enviado à HERE uma única vez; o resultado fica na tabela `TravelTimeCache`, guardado só com um código (hash) dos endereços, e é reutilizado até que um endereço ou o meio de transporte mude. Falhas não são salvas. A retenção de 1 ano também se aplica a esses registros.
+- **Horário de referência (decisão de 29/10/2026):** a estimativa usa a saída às 7h (horário de Brasília) da próxima terça-feira, horário de pico de um dia útil, e não o momento da consulta; o resultado informa "saindo às 7h em dia útil". O uso do parâmetro `departureTime` da HERE deve ser conferido na documentação vigente.
 - **Área profissional da vaga:** campo opcional com lista fixa no editor da vaga (necessário para o filtro).
 - A tela de simulação da SPEC-007 (`/candidato/compatibilidade`) continua disponível dentro da área do candidato para testar outro meio de transporte.
 

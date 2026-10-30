@@ -369,3 +369,14 @@ model HereUsage {
 
   @@id([month, service])
 }
+
+/// Saved travel estimates (SPEC-007/008): one HERE call per trip. The key is a hash of the normalized addresses, the means
+/// of transport and the reference departure policy; addresses are never stored here.
+model TravelTimeCache {
+  key        String   @id
+  minutes    Float
+  method     String
+  computedAt DateTime @default(now())
+
+  @@index([computedAt])
+}

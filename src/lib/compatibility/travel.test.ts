@@ -68,4 +68,10 @@ describe("HERE travel estimator", () => {
     const result = await createHereEstimator({ apiKey: "SEGREDO123", fetcher: vi.fn().mockResolvedValue(json({}, 403)) as never }).estimate(request);
     expect(JSON.stringify(result)).not.toContain("SEGREDO123");
   });
+
+  it("sends the reference departure time to HERE when given", async () => {
+    const fetcher = vi.fn().mockResolvedValueOnce(geocodeOk()).mockResolvedValueOnce(geocodeOk()).mockResolvedValueOnce(json({ routes: [{ sections: [{ summary: { duration: 600 } }] }] }));
+    await createHereEstimator({ apiKey: "k", fetcher: fetcher as never }).estimate({ ...request, departureTime: "2026-11-03T07:00:00-03:00" });
+    expect(new URL(String(fetcher.mock.calls[2][0])).searchParams.get("departureTime")).toBe("2026-11-03T07:00:00-03:00");
+  });
 });

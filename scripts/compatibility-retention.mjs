@@ -17,6 +17,8 @@ export async function purgeExpiredCompatibilityResults(prisma, { now = new Date(
   return prisma.$transaction(async tx => {
     const eligibleCount = await tx.compatibilityResult.count({ where });
     const deletion = await tx.compatibilityResult.deleteMany({ where });
+    // Saved travel estimates follow the same one-year retention (they are re-estimated on next use).
+    await tx.travelTimeCache?.deleteMany({ where: { computedAt: { lt: cutoff } } });
     return { cutoff, eligibleCount, deletedCount: deletion.count, executed: true };
   });
 }

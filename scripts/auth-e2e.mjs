@@ -1392,6 +1392,16 @@ async function main() {
     assert.equal(complete.dimensions.D.components.find(c => c.label === "Deslocamento").score, 100);
     const transitCall = HERE_REQUESTS.find(request => request.path === "/transit");
     assert.ok(transitCall && transitCall.key === HERE_KEY && transitCall.params.modes.includes("bus"), "bus trips must use the transit service with bus modes");
+    assert.match(transitCall.params.departureTime || "", /T07:00:00-03:00$/, "trips are estimated for the 7 a.m. peak, not for the moment of the query");
+    assert.ok(complete.dimensions.D.components.find(c => c.label === "Deslocamento").detail.includes("7h"), "the result says which reference trip was used");
+    const savedTrips = await prisma.travelTimeCache.findMany();
+    assert.ok(savedTrips.length >= 1 && !JSON.stringify(savedTrips).includes("Reservada"), "the trip is saved without its addresses");
+    const callsBeforeReuse = HERE_REQUESTS.length;
+    await expectStatus(await saveCompatProfile({ ...compatProfile, courses: ["Curso de SQL", "Curso de Excel"] }), 200, "profile change unrelated to the trip");
+    const reused = JSON.parse(await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 201, "analysis after an unrelated profile change")).result;
+    assert.equal(HERE_REQUESTS.length, callsBeforeReuse, "a saved trip must not be sent to HERE again");
+    assert.equal(reused.dimensions.D.components.find(c => c.label === "Deslocamento").detail, complete.dimensions.D.components.find(c => c.label === "Deslocamento").detail, "the saved travel time is reused unchanged");
+    await expectStatus(await saveCompatProfile(compatProfile), 200, "restore courses");
     const walking = JSON.parse(await expectStatus(await sendCompat({ jobId: compatJob.id, transportMode: "Caminhada" }, compatCookie), 201, "candidate overrides the transport mode for one job")).result;
     assert.notEqual(walking.id, complete.id, "a recalculation must create a new record");
     assert.ok(HERE_REQUESTS.some(request => request.path === "/router" && request.params.transportMode === "pedestrian"), "walking must use the routing service");
@@ -1399,7 +1409,7 @@ async function main() {
     assert.equal(profileAfterOverride.profile.workPreferences.transportMode, "Ônibus", "the override must not change the profile");
     await expectStatus(await sendCompat({ jobId: compatJob.id, transportMode: "Foguete" }, compatCookie), 400, "invalid transport mode");
     const stored = await prisma.compatibilityResult.findMany({ where: { jobId: compatJob.id }, orderBy: { executedAt: "asc" } });
-    assert.equal(stored.length, 2, "every calculation must be stored as its own record");
+    assert.equal(stored.length, 3, "every calculation with different inputs is stored as its own record");
     assert.ok(!JSON.stringify(stored).includes("Reservada") && !JSON.stringify(stored).includes("Avenida Paulista"), "stored history must not copy addresses");
     await assert.rejects(prisma.$executeRaw`UPDATE "CompatibilityResult" SET "score" = 1 WHERE "id" = ${stored[0].id}`, "stored results must be immutable");
     const latest = JSON.parse(await expectStatus(await fetch(`${compatUrl}?jobId=${compatJob.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate reads the latest result"));
@@ -1424,12 +1434,15 @@ async function main() {
       for (const [service, count] of Object.entries(caps)) {
         await prisma.hereUsage.upsert({ where: { month_service: { month: usageMonth, service } }, create: { month: usageMonth, service, count }, update: { count } });
       }
+      // A trip already estimated is saved and never re-sent to HERE, so the capped request uses an address not seen before.
+      await expectStatus(await saveCompatProfile({ ...compatProfile, workPreferences: { ...compatProfile.workPreferences, address: "Rua Ainda Sem Rota, 77" } }), 200, "candidate address not yet estimated");
       const requestsBeforeCap = HERE_REQUESTS.length;
       const capped = JSON.parse(await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 201, "analysis after the safety cap")).result;
       assert.equal(capped.status, "INSUFFICIENT_DATA", "a reached cap must not invent a travel time");
       assert.ok(JSON.stringify(capped).includes("limite de segurança"), "the reason must explain the safety cap");
       assert.equal(HERE_REQUESTS.length, requestsBeforeCap, "a reached cap must not send requests to HERE");
     } finally {
+      await saveCompatProfile(compatProfile);
       await prisma.hereUsage.deleteMany({ where: { month: usageMonth } });
       for (const row of usageBefore) await prisma.hereUsage.create({ data: { month: row.month, service: row.service, count: row.count } });
     }
