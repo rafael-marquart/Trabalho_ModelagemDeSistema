@@ -21,3 +21,4 @@
 - Vitest: catálogo e prazo, API de status (autorização, rascunho, falha de leitura), aviso de mudança na tela, recusa a candidato e administrador, mudança simultânea, auditoria do encerramento.
 - E2E: status lido pelo candidato, empresa pausa e o status lido em seguida é o atual, candidato não altera status, detalhe de vaga indisponível bloqueia a continuidade, auditoria com status anterior/resultante e ator, reabrir encerrada é recusado.
 - Teste manual: `docs/operacao/validacao-manual-spec-009.md`.
+- Teste manual executado pelo responsável em 31/10/2026, sem problemas; layout aprovado na mesma data. SPEC-009 encerrada; a comunicação aos candidatos ativos fica para a SPEC-011 e a SPEC-017.
