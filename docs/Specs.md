@@ -1905,8 +1905,8 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 | Campo | Valor |
 |---|---|
 | ID | SPEC-009 |
-| Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada em 31/10/2026, exceto a comunicação aos candidatos ativos, que depende da SPEC-011 e da SPEC-017; ver `docs/Implementacao/SPEC-009.md` |
+| Estado do layout | aprovado pelo responsável em 31/10/2026 sobre as telas implementadas (indicador de status, mensagens de indisponível/encerrada e aviso de mudança no detalhe da vaga) |
 | Capacidade | Exibir o estado atual da vaga e impedir ações incompatíveis com sua disponibilidade |
 
 ## 2. Rastreabilidade
@@ -1984,17 +1984,19 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 
 ## 11. Critérios de aceitação
 
-- [ ] Somente perfis autorizados consultam informações protegidas e a consulta não permite alteração de status (RNF-07/RNF-08).
-- [ ] Somente Recrutador autorizado da Empresa responsável consegue alterar status, respeitando transições da OPEN-041; operações não autorizadas ou inválidas são recusadas sem alteração.
-- [ ] Mudanças de status registram estado anterior/resultante, data/hora e ator responsável (RNF-14).
+- [x] Somente perfis autorizados consultam informações protegidas e a consulta não permite alteração de status (RNF-07/RNF-08).
+- [x] Somente Recrutador autorizado da Empresa responsável consegue alterar status, respeitando transições da OPEN-041; operações não autorizadas ou inválidas são recusadas sem alteração.
+- [x] Mudanças de status registram estado anterior/resultante, data/hora e ator responsável (RNF-14).
 
-- [ ] Candidato visualiza estado atual.
-- [ ] Vaga encerrada/indisponível bloqueia novas candidaturas.
-- [ ] Mudança após a busca é respeitada pela operação seguinte.
-- [ ] Encerramento identifica candidatos ativos para comunicação.
-- [ ] O sistema não inventa status.
-- [ ] Consulta e restrições são consistentes no backend.
-- [ ] Mensagens são acessíveis e compreensíveis.
+- [x] Candidato visualiza estado atual.
+- [x] Vaga encerrada/indisponível bloqueia novas candidaturas.
+- [x] Mudança após a busca é respeitada pela operação seguinte.
+- [ ] Encerramento identifica candidatos ativos para comunicação. (ponto de identificação e registro implementados; sem candidaturas até a SPEC-011, e o envio pertence à SPEC-017)
+- [x] O sistema não inventa status.
+- [x] Consulta e restrições são consistentes no backend.
+- [x] Mensagens são acessíveis e compreensíveis.
+
+> Evidência: testes Vitest e E2E verdes na CI; teste manual executado pelo responsável em 31/10/2026 sem problemas. A alteração de status também é permitida à conta da Empresa responsável, conforme decisão da SPEC-005 de 27/10/2026 (extensão da OPEN-041).
 
 ## 12. Casos de teste derivados
 | ID | Cenário | Resultado esperado |
@@ -2017,12 +2019,12 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 - **OPEN-042:** resolvida; comunicação imediata por e-mail individual aos candidatos ativos, com tentativa posterior registrada se houver falha. A mensagem informa encerramento, bloqueio de novas candidaturas e preservação da candidatura já realizada, que não é automaticamente excluída.
 
 ## 14. Definition of Done
-- [ ] Texto aprovado.
-- [ ] Estados e permissões conferidos.
-- [ ] Verificação de disponibilidade testável no backend.
-- [ ] Layouts dos estados aprovados.
-- [ ] Integração com candidatura/notificação testável.
-- [ ] Sem implementação antes das aprovações necessárias.
+- [x] Texto aprovado.
+- [x] Estados e permissões conferidos.
+- [x] Verificação de disponibilidade testável no backend.
+- [x] Layouts dos estados aprovados.
+- [ ] Integração com candidatura/notificação testável. (depende da SPEC-011 e da SPEC-017)
+- [x] Sem implementação antes das aprovações necessárias.
 
 ---
 

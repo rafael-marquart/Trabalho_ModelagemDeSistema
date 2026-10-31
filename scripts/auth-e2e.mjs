@@ -1540,12 +1540,31 @@ async function main() {
     const detailDraft = JSON.parse(await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas`, "POST", { title: "Rascunho E2E" }, companyCookie), 201, "company keeps a draft")).job;
     assert.equal((await fetch(detailUrl(detailDraft.id), { headers: { cookie: compatCookie }, redirect: "manual" })).status, 404, "drafts are not visible to candidates");
 
+    // SPEC-009: current status for candidates, read-only for them, and refreshed after the company changes it.
+    const statusUrl = `${BASE_URL}/api/candidato/vagas/${compatJob.id}/status`;
+    const readStatus = async () => JSON.parse(await expectStatus(await fetch(statusUrl, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate reads the job status")).availability;
+    assert.equal((await readStatus()).label, "Aberta");
+    await expectStatus(await fetch(statusUrl, { headers: { cookie: companyCookie }, redirect: "manual" }), 401, "the candidate status endpoint is for candidates");
+    await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}/acao`, "POST", { action: "pause" }, compatCookie), 401, "a candidate cannot change the job status");
+    await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}/acao`, "POST", { action: "pause" }, companyCookie), 200, "company makes the job unavailable");
+    assert.equal((await readStatus()).label, "Indisponível", "the status read after the change is the current one");
+    const pausedDetail = await expectStatus(await fetch(`${BASE_URL}/candidato/vagas/${compatJob.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate opens an unavailable job");
+    assert.ok(pausedDetail.includes("Vaga indisponível") && pausedDetail.includes("Candidatura não disponível"), "an unavailable job blocks the next step");
+    const pauseAudit = await prisma.auditEvent.findFirst({ where: { subjectId: compatJob.id, eventType: "JOB_PAUSED" }, orderBy: { createdAt: "desc" } });
+    assert.ok(pauseAudit && pauseAudit.actorUserId && pauseAudit.metadata.fromStatus === "OPEN" && pauseAudit.metadata.toStatus === "PAUSED", "status changes record previous and resulting status and the actor");
+    await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}/acao`, "POST", { action: "reopen" }, companyCookie), 200, "company reopens the unavailable job");
+    assert.equal((await readStatus()).label, "Aberta");
+
     await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}/acao`, "POST", { action: "close" }, companyCookie), 200, "company closes the analyzed job");
     await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 404, "closed jobs are not analyzed");
     const afterClose = JSON.parse(await expectStatus(await search("q=analista%20E2E"), 200, "search after closing"));
     assert.ok(!afterClose.jobs.some(job => job.id === compatJob.id), "closed jobs leave the search (current status respected)");
     const closedDetail = await expectStatus(await fetch(`${BASE_URL}/candidato/vagas/${compatJob.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate opens a closed job");
     assert.ok(closedDetail.includes("Vaga encerrada") && closedDetail.includes("Candidatura não disponível"), "a closed job shows its status and blocks the next step");
+    assert.equal((await readStatus()).label, "Encerrada");
+    await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}/acao`, "POST", { action: "reopen" }, companyCookie), 409, "a closed job cannot be reopened");
+    const closeAudit = await prisma.auditEvent.findFirst({ where: { subjectId: compatJob.id, eventType: "JOB_CLOSED" }, orderBy: { createdAt: "desc" } });
+    assert.equal(closeAudit.metadata.activeCandidatesToNotify, 0, "closing records how many active candidates must be notified");
 
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });

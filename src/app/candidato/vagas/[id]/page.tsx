@@ -3,11 +3,11 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import CompanyShell from "@/components/company-shell";
 import CompatibilityDetails, { scoreText } from "@/components/candidate/compatibility-details";
+import JobStatusLive from "@/components/candidate/job-status-live";
 import type { Compatibility } from "@/components/candidate/types";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getJobDetailForCandidate } from "@/lib/jobs/detail-service";
 
-const statusClass = { OPEN: "status-active", UNAVAILABLE: "status-pending", CLOSED: "status-neutral" } as const;
 const accessClass: Record<string, string> = { PRESENT: "access-present", ABSENT: "access-absent", NOT_INFORMED: "access-unknown" };
 
 /** SPEC-010: job detail with declared accessibility, current status and the SPEC-007 result for the signed-in candidate. */
@@ -29,7 +29,7 @@ export default async function CandidateJobDetailPage({ params }: { params: Promi
       <header className="job-detail-header">
         <p className="job-card-company">{job.companyName}</p>
         <h1 id="job-detail-title">{job.title}</h1>
-        <p className="job-detail-status"><span className={`status-pill ${statusClass[job.availability.code]}`}>{`Vaga ${job.availability.label.toLocaleLowerCase("pt-BR")}`}</span> <span>{job.availability.message}</span></p>
+        <JobStatusLive key={`${job.availability.code}-${job.availability.message}`} jobId={id} initial={job.availability} />
         <dl className="job-facts">
           <div><dt>Modalidade</dt><dd>{job.modality}</dd></div>
           <div><dt>Local de trabalho</dt><dd>{job.location}</dd></div>
