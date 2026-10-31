@@ -2032,8 +2032,8 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 | Campo | Valor |
 |---|---|
 | ID | SPEC-010 |
-| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-010.md` |
-| Estado do layout | pendente de aprovação sobre a tela implementada; referência visual em `docs/layout/SPEC-008-010-referencia-area-candidato.png` |
+| Estado do texto | aprovada; implementada e encerrada em 31/10/2026 (o envio da candidatura pertence à SPEC-011); ver `docs/Implementacao/SPEC-010.md` |
+| Estado do layout | aprovado pelo responsável em 31/10/2026 sobre a tela implementada (detalhe da vaga, resultado de compatibilidade, estados incompatível e não concluído, continuidade conforme status, versão para celular); referência visual em `docs/layout/SPEC-008-010-referencia-area-candidato.png` |
 | Capacidade | Apresentar detalhes da vaga, acessibilidade, status e explicação de compatibilidade |
 
 ## 2. Rastreabilidade
@@ -2126,18 +2126,20 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 
 ## 11. Critérios de aceitação
 
-- [ ] A tela não expõe dados privados de outros candidatos e apresenta apenas fatores de compatibilidade autorizados (RNF-08).
-- [ ] A informação de compatibilidade distingue incompatibilidade crítica, dados ausentes e resultado calculado, sem inferir equivalência entre eles.
+- [x] A tela não expõe dados privados de outros candidatos e apresenta apenas fatores de compatibilidade autorizados (RNF-08).
+- [x] A informação de compatibilidade distingue incompatibilidade crítica, dados ausentes e resultado calculado, sem inferir equivalência entre eles.
 
-- [ ] Detalhes disponíveis da vaga apresentados.
-- [ ] Informações de acessibilidade exibidas antes da candidatura.
-- [ ] Campos ausentes identificados como não informados.
-- [ ] Score/fatores correspondem à SPEC-007.
-- [ ] Vaga incompatível não é apresentada como elegível.
-- [ ] Status atual apresentado e ações incompatíveis bloqueadas.
-- [ ] Dados pessoais desnecessários não são expostos.
-- [ ] Conteúdo navegável por teclado e leitores de tela.
-- [ ] Interface responsiva nos dispositivos suportados.
+- [x] Detalhes disponíveis da vaga apresentados.
+- [x] Informações de acessibilidade exibidas antes da candidatura.
+- [x] Campos ausentes identificados como não informados.
+- [x] Score/fatores correspondem à SPEC-007.
+- [x] Vaga incompatível não é apresentada como elegível.
+- [x] Status atual apresentado e ações incompatíveis bloqueadas.
+- [x] Dados pessoais desnecessários não são expostos.
+- [x] Conteúdo navegável por teclado e leitores de tela.
+- [x] Interface responsiva nos dispositivos suportados.
+
+> Evidência: testes Vitest (regras de status e continuidade, serviço, página com axe-core, motor) e E2E verdes na CI; teste manual executado pelo responsável em 31/10/2026, com ajustes aplicados (o que falta separado entre perfil, empresa e serviço; tabelas da empresa legíveis no celular). O envio da candidatura e a validação final de elegibilidade pertencem à SPEC-011.
 
 ## 12. Casos de teste derivados
 | ID | Cenário | Resultado esperado |
@@ -2158,12 +2160,12 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 - **OPEN-046 (resolvida):** perfil incompleto não gera score final nem parcial. Mostrar dimensões/fatores avaliáveis e pendências; dados ausentes são “Dados insuficientes”, sem nota zero ou compatibilidade presumida. Se faltar dado para verificar trava crítica, indicar elegibilidade não concluída. Solicitar complementação pelo fluxo existente e apresentar score final somente após nova análise válida. Decisão refletida nesta Spec e na SPEC-010.
 
 ## 14. Definition of Done
-- [ ] Texto aprovado.
-- [ ] Campos e explicação confirmados com a baseline.
-- [ ] Integração com compatibilidade e status testável.
-- [ ] Protótipos anexados em docs/layout/ e aprovados separadamente.
-- [ ] Acessibilidade validável.
-- [ ] Sem implementação antes das aprovações necessárias.
+- [x] Texto aprovado.
+- [x] Campos e explicação confirmados com a baseline.
+- [ ] Integração com compatibilidade e status testável. (compatibilidade da SPEC-007 integrada e testada; o status usa o catálogo da SPEC-009 sobre o estado da vaga, e a consulta própria da SPEC-009 continua pendente)
+- [x] Protótipos anexados em docs/layout/ e aprovados separadamente.
+- [x] Acessibilidade validável.
+- [x] Sem implementação antes das aprovações necessárias.
 
 ---
 

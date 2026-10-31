@@ -27,3 +27,4 @@
 - Vitest: regras de status, continuidade, salário e local; serviço (só vagas publicadas, sem identificadores internos, sem análise para vagas fechadas); página (separação das acessibilidades, resultado completo, incompatibilidade, elegibilidade não concluída, vaga encerrada, não encontrada, axe-core); motor (pendências críticas).
 - E2E: detalhe aberto pelo candidato, status, seções de acessibilidade, ausência de identificadores internos, acesso anônimo bloqueado, rascunho não encontrado, vaga encerrada com bloqueio.
 - Teste manual: `docs/operacao/validacao-manual-spec-010.md`.
+- Teste manual executado pelo responsável em 31/10/2026; layout aprovado na mesma data. SPEC-010 encerrada; a consulta própria de status (SPEC-009) e o envio da candidatura (SPEC-011) permanecem nas suas Specs.
