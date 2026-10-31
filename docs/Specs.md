@@ -1905,7 +1905,7 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 | Campo | Valor |
 |---|---|
 | ID | SPEC-009 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-009.md` |
 | Estado do layout | pendente |
 | Capacidade | Exibir o estado atual da vaga e impedir ações incompatíveis com sua disponibilidade |
 

@@ -37,24 +37,30 @@ export async function POST(request: Request, context: Context) {
   }
   const { user } = actor;
   const now = new Date();
+  // Closing never moves candidates or removes applications; it identifies who is still active so SPEC-017 can notify them (RB-42).
+  const activeCandidates = action === "close" ? await listActiveCandidatesForJob(job.id) : [];
   const updated = await prisma.$transaction(async (tx) => {
-    const saved = await tx.job.update({
-      where: { id: job.id },
+    // SPEC-009 (RNF-09): the change only applies if the status is still the one that was checked; a concurrent change wins.
+    const changed = await tx.job.updateMany({
+      where: { id: job.id, status: job.status },
       data: {
         status: rule.to,
         ...(action === "publish" ? { publishedAt: now } : {}),
         ...(action === "close" ? { closedAt: now } : {})
       }
     });
+    if (changed.count !== 1) return null;
     await tx.auditEvent.create({
       data: {
         actorUserId: user.id, eventType: eventTypes[action], subjectType: "Job", subjectId: job.id,
-        metadata: { companyId: job.companyId, fromStatus: job.status, toStatus: rule.to }
+        metadata: {
+          companyId: job.companyId, fromStatus: job.status, toStatus: rule.to,
+          ...(action === "close" ? { activeCandidatesToNotify: activeCandidates.length } : {})
+        }
       }
     });
-    return saved;
+    return tx.job.findUnique({ where: { id: job.id } });
   });
-  // Closing never moves candidates or removes applications; it only reports who is still active so they can be notified.
-  const activeCandidates = action === "close" ? await listActiveCandidatesForJob(job.id) : [];
+  if (!updated) return NextResponse.json({ message: "O status da vaga mudou enquanto você operava. Atualize a página e tente de novo." }, { status: 409 });
   return NextResponse.json({ ok: true, job: toJobResponse(updated), activeCandidates: activeCandidates.length });
 }

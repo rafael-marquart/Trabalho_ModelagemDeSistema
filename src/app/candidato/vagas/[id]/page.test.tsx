@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 const { detailMock } = vi.hoisted(() => ({ detailMock: vi.fn() }));
 vi.mock("next/link", () => ({ default: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => <a href={href} {...rest}>{children}</a> }));
-vi.mock("next/navigation", () => ({ redirect: vi.fn(), notFound: vi.fn(() => { throw new Error("NOT_FOUND"); }), usePathname: () => "/" }));
+vi.mock("next/navigation", () => ({ redirect: vi.fn(), notFound: vi.fn(() => { throw new Error("NOT_FOUND"); }), usePathname: () => "/", useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock("@/components/theme-toggle", () => ({ default: () => <button type="button">Tema</button> }));
 vi.mock("@/lib/auth/session", () => ({ getCurrentUser: async () => ({ id: "cand", role: "CANDIDATE", fullName: "Maria Silva", email: "m@example.com", isActive: true }) }));
 vi.mock("@/lib/jobs/detail-service", () => ({ getJobDetailForCandidate: detailMock }));

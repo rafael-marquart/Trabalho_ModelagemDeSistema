@@ -1022,3 +1022,6 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
   .company-sidebar, .company-nav { min-width: 0; }
 }
 @media (max-width: 760px) { .company-nav { flex-wrap: wrap; overflow-x: visible; } }
+/* SPEC-009: status changed while the page was open */
+.job-status-changed { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; padding: 12px 14px; border-left: 4px solid var(--status-pending-text); border-radius: 8px; background: var(--status-pending-bg); color: var(--ink); }
+.job-status-changed p { margin: 0; }

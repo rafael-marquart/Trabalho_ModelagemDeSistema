@@ -29,7 +29,7 @@ const req = (method: string, body?: unknown) => new Request("https://example.tes
 const ctx = { params: Promise.resolve({ id: "job-1" }) };
 
 describe("jobs API", () => {
-  const tx = { job: { create: vi.fn(), update: vi.fn() }, auditEvent: { create: vi.fn() } };
+  const tx = { job: { create: vi.fn(), update: vi.fn(), updateMany: vi.fn(), findUnique: vi.fn() }, auditEvent: { create: vi.fn() } };
   beforeEach(() => {
     vi.clearAllMocks();
     getCurrentUserMock.mockResolvedValue({ id: "user-1", role: "COMPANY", isActive: true });
@@ -38,6 +38,9 @@ describe("jobs API", () => {
     prismaMock.$transaction.mockImplementation(async (cb: (t: typeof tx) => unknown) => cb(tx));
     tx.job.create.mockImplementation(async ({ data }: { data: Record<string, unknown> }) => row(data));
     tx.job.update.mockImplementation(async ({ data }: { data: Record<string, unknown> }) => row(data));
+    let lastData: Record<string, unknown> = {};
+    tx.job.updateMany.mockImplementation(async ({ data }: { data: Record<string, unknown> }) => { lastData = data; return { count: 1 }; });
+    tx.job.findUnique.mockImplementation(async () => row(lastData));
     hasApplicationsMock.mockResolvedValue(false);
   });
 
@@ -112,7 +115,7 @@ describe("jobs API", () => {
 
   it("publishes a complete draft and blocks an incomplete one", async () => {
     expect((await ACTION(req("POST", { action: "publish" }), ctx)).status).toBe(200);
-    expect(tx.job.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "OPEN", publishedAt: expect.any(Date) }) }));
+    expect(tx.job.updateMany).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "OPEN", publishedAt: expect.any(Date) }) }));
     expect(tx.auditEvent.create.mock.calls[0][0].data.eventType).toBe("JOB_PUBLISHED");
     prismaMock.job.findFirst.mockResolvedValue(row({ accessibility: {} }));
     const blocked = await ACTION(req("POST", { action: "publish" }), ctx);
@@ -129,8 +132,31 @@ describe("jobs API", () => {
     prismaMock.job.findFirst.mockResolvedValue(row({ status: "PAUSED" }));
     expect((await ACTION(req("POST", { action: "reopen" }), ctx)).status).toBe(200);
     expect((await ACTION(req("POST", { action: "close" }), ctx)).status).toBe(200);
-    expect(tx.job.update).toHaveBeenLastCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "CLOSED", closedAt: expect.any(Date) }) }));
+    expect(tx.job.updateMany).toHaveBeenLastCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "CLOSED", closedAt: expect.any(Date) }) }));
     prismaMock.job.findFirst.mockResolvedValue(row({ status: "CLOSED" }));
     expect((await ACTION(req("POST", { action: "reopen" }), ctx)).status).toBe(409);
+  });
+
+  // SPEC-009 (OPEN-041)
+  it("refuses status changes by candidates and platform administrators", async () => {
+    for (const role of ["CANDIDATE", "ADMIN"]) {
+      getCurrentUserMock.mockResolvedValueOnce({ id: "x", role, isActive: true });
+      expect((await ACTION(req("POST", { action: "close" }), ctx)).status).toBe(401);
+    }
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+  });
+  it("refuses a change when the status moved in the meantime, without auditing it", async () => {
+    prismaMock.job.findFirst.mockResolvedValue(row({ status: "OPEN" }));
+    tx.job.updateMany.mockResolvedValueOnce({ count: 0 });
+    const response = await ACTION(req("POST", { action: "pause" }), ctx);
+    expect(response.status).toBe(409);
+    expect(tx.job.updateMany).toHaveBeenCalledWith(expect.objectContaining({ where: { id: "job-1", status: "OPEN" } }));
+    expect(tx.auditEvent.create).not.toHaveBeenCalled();
+  });
+  it("records the previous and resulting status, the actor and the candidates to notify on closing", async () => {
+    prismaMock.job.findFirst.mockResolvedValue(row({ status: "OPEN" }));
+    const response = await ACTION(req("POST", { action: "close" }), ctx);
+    expect(response.status).toBe(200);
+    expect(tx.auditEvent.create.mock.calls[0][0].data).toMatchObject({ actorUserId: "user-1", eventType: "JOB_CLOSED", metadata: { fromStatus: "OPEN", toStatus: "CLOSED", activeCandidatesToNotify: 0 } });
   });
 });
