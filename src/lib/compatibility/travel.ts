@@ -3,7 +3,7 @@ import { DEFAULT_QUOTA_PERCENT, type HereService, type QuotaGuard } from "./quot
 export type TravelEstimate =
   | { status: "OK"; minutes: number; mode: string; method: string }
   // permanent: the inputs themselves prevent an estimate (address not found, unsupported mode); retrying the same inputs is useless.
-  | { status: "UNAVAILABLE"; reason: string; permanent?: boolean };
+  | { status: "UNAVAILABLE"; reason: string; permanent?: boolean; responsible?: "CANDIDATE" | "COMPANY" | "PLATFORM" };
 
 export type TravelRequest = { origin: string; destination: string; mode: string; departureTime?: string };
 export interface TravelEstimator {
@@ -53,7 +53,7 @@ export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
   const geocodeCache = new Map<string, { lat: number; lng: number; at: number }>();
   const CACHE_TTL_MS = 24 * 60 * 60 * 1000, CACHE_MAX = 1000;
 
-  async function geocode(text: string, whose: string): Promise<{ lat: number; lng: number } | { reason: string; permanent?: boolean }> {
+  async function geocode(text: string, whose: string): Promise<{ lat: number; lng: number } | { reason: string; permanent?: boolean; responsible?: "CANDIDATE" | "COMPANY" }> {
     const cacheKey = text.trim().toLocaleLowerCase("pt-BR");
     const cached = geocodeCache.get(cacheKey);
     if (cached && Date.now() - cached.at < CACHE_TTL_MS) return { lat: cached.lat, lng: cached.lng };
@@ -65,7 +65,7 @@ export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
     return found;
   }
 
-  async function geocodeRemote(text: string, whose: string): Promise<{ lat: number; lng: number } | { reason: string; permanent?: boolean }> {
+  async function geocodeRemote(text: string, whose: string): Promise<{ lat: number; lng: number } | { reason: string; permanent?: boolean; responsible?: "CANDIDATE" | "COMPANY" }> {
     const url = new URL(geocodeUrl);
     url.searchParams.set("q", text);
     url.searchParams.set("in", "countryCode:BRA");
@@ -75,8 +75,8 @@ export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
     if (!result.ok) return { reason: result.reason };
     const item = (result.body as { items?: { resultType?: string; position?: { lat?: number; lng?: number } }[] })?.items?.[0];
     const position = item?.position;
-    if (typeof position?.lat !== "number" || typeof position?.lng !== "number") return { reason: `Não foi possível localizar o endereço ${whose}.`, permanent: true };
-    if (item?.resultType && COARSE_RESULTS.has(item.resultType)) return { reason: `O endereço ${whose} foi localizado só pela cidade; informe rua ou bairro para estimar o tempo.`, permanent: true };
+    if (typeof position?.lat !== "number" || typeof position?.lng !== "number") return { reason: `Não foi possível localizar o endereço ${whose}.`, permanent: true, responsible: whose === "da vaga" ? "COMPANY" : "CANDIDATE" };
+    if (item?.resultType && COARSE_RESULTS.has(item.resultType)) return { reason: `O endereço ${whose} foi localizado só pela cidade; ${whose === "da vaga" ? "a empresa precisa informar rua ou bairro" : "informe rua ou bairro no seu perfil"} para estimar o tempo.`, permanent: true, responsible: whose === "da vaga" ? "COMPANY" : "CANDIDATE" };
     return { lat: position.lat, lng: position.lng };
   }
 
@@ -88,9 +88,9 @@ export function createHereEstimator(config: HereConfig = {}): TravelEstimator {
       if (!routerMode && !transitModes) return unavailable("Meio de transporte não suportado.", true);
 
       const from = await geocode(origin, "do candidato");
-      if ("reason" in from) return unavailable(from.reason, from.permanent);
+      if ("reason" in from) return { ...unavailable(from.reason, from.permanent), ...(from.responsible ? { responsible: from.responsible } : {}) } as TravelEstimate;
       const to = await geocode(destination, "da vaga");
-      if ("reason" in to) return unavailable(to.reason, to.permanent);
+      if ("reason" in to) return { ...unavailable(to.reason, to.permanent), ...(to.responsible ? { responsible: to.responsible } : {}) } as TravelEstimate;
 
       const url = new URL(routerMode ? routerUrl : transitUrl);
       url.searchParams.set("origin", `${from.lat},${from.lng}`);

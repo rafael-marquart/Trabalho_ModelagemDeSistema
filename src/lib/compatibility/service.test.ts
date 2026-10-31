@@ -55,7 +55,7 @@ describe("compatibility service", () => {
     expect("view" in result && result.view.status).toBe("COMPLETE");
     expect(estimator.estimate).toHaveBeenCalledWith(expect.objectContaining({ origin: "Rua Secreta, 55, São Paulo, SP, Brasil", destination: "Av. Paulista, 1000, São Paulo, SP, Brasil", mode: "Ônibus", departureTime: expect.stringMatching(/T07:00:00-03:00$/) }));
     const data = prismaMock.compatibilityResult.create.mock.calls[0][0].data;
-    expect(data.rulesVersion).toBe("SPEC-007/1");
+    expect(data.rulesVersion).toBe("SPEC-007/2");
     expect(JSON.stringify(data.snapshot)).not.toContain("Rua Secreta");
     expect(JSON.stringify(data.snapshot)).not.toContain("Paulista");
   });

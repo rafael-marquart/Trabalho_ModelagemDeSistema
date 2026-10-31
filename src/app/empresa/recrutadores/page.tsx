@@ -221,7 +221,7 @@ export default function CompanyRecruitersPage() {
             <h2 id="people-title" className="section-heading">Pessoas vinculadas</h2>
             <p className="muted">A lista apresenta as solicitações e os vínculos da empresa; o envio não confirma a elegibilidade do e-mail informado.</p>
             <div className="table-scroll">
-              <table className="recruiter-table">
+              <table className="recruiter-table stack-table">
                 <caption className="visually-hidden">Vínculos ativos e convites de recrutadores da empresa</caption>
                 <thead>
                   <tr>
@@ -234,7 +234,7 @@ export default function CompanyRecruitersPage() {
                 <tbody>
                   {links.map(link => (
                     <tr key={"link-" + link.id}>
-                      <td>
+                      <td data-label="Recrutador">
                         <strong>{link.recruiter.fullName}</strong>
                         <p className="muted">Vínculo desde {formatDate(link.createdAt)}</p>
                         {confirmingLinkId === link.id && (
@@ -243,13 +243,13 @@ export default function CompanyRecruitersPage() {
                           </p>
                         )}
                       </td>
-                      <td>{link.recruiter.email}</td>
-                      <td>
+                      <td data-label="E-mail">{link.recruiter.email}</td>
+                      <td data-label="Status">
                         <span className={"status-pill " + (link.recruiter.isActive ? "status-active" : "status-neutral")}>
                           {link.recruiter.isActive ? "Ativo" : "Conta desativada"}
                         </span>
                       </td>
-                      <td>
+                      <td data-label="Ações">
                         {confirmingLinkId === link.id ? (
                           <div className="table-actions">
                             <button className="secondary-button" type="button" disabled={loading} onClick={() => void endLink(link.id)}>
@@ -276,17 +276,17 @@ export default function CompanyRecruitersPage() {
 
                   {invitations.filter(invitation => invitation.status !== "ACCEPTED").map(invitation => (
                     <tr key={"invitation-" + invitation.id}>
-                      <td>
+                      <td data-label="Recrutador">
                         <strong>{invitation.recipient.fullName}</strong>
                         <p className="muted">Convite enviado em {formatDate(invitation.createdAt)} · Válido até {formatDate(invitation.expiresAt)}</p>
                       </td>
-                      <td>{invitation.recipient.email}</td>
-                      <td>
+                      <td data-label="E-mail">{invitation.recipient.email}</td>
+                      <td data-label="Status">
                         <span className={"status-pill status-" + invitation.status.toLowerCase()}>
                           {labels[invitation.status]}
                         </span>
                       </td>
-                      <td>
+                      <td data-label="Ações">
                         {invitation.status === "PENDING" ? (
                           <div className="table-actions">
                             <button

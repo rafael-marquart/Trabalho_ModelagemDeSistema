@@ -26,6 +26,8 @@ describe("compatibility engine", () => {
   });
   it("does not lock on a missing declaration or on a non-mandatory need (T-007-04)", () => {
     expect(run(candidate({ needs: [{ code: "A01", name: "Rampa", mandatory: true }] }), job({ accessibility: { RAMPS: "NOT_INFORMED" } })).status).toBe("INSUFFICIENT_DATA");
+    const pending = run(candidate({ needs: [{ code: "A01", name: "Rampa", mandatory: true }, { code: "A02", name: "Elevador", mandatory: false }] }), job({ accessibility: { RAMPS: "NOT_INFORMED" } }));
+    expect(pending.critical.pending).toEqual([{ needCode: "A01", needName: "Rampa", jobItem: "RAMPS" }]);
     const nonMandatory = run(candidate(), job({ accessibility: { RAMPS: "ABSENT" } }));
     expect(nonMandatory.critical.applied).toBe(false);
     expect(nonMandatory.dimensions.A.score).toBe(0);
@@ -146,5 +148,13 @@ describe("compatibility engine", () => {
     expect(roundHalfUp(72.5)).toBe(73);
     expect(roundHalfUp(72.49)).toBe(72);
     expect(roundHalfUp(0.5)).toBe(1);
+  });
+  it("says who must supply each missing piece", () => {
+    const companyAddress = run(candidate(), job({ modality: "PRESENCIAL" }), { status: "UNAVAILABLE", reason: "Endereço do local de trabalho da vaga não informado.", responsible: "COMPANY" });
+    expect(companyAddress.missing.find(item => item.dimension === "D")).toMatchObject({ responsible: "COMPANY", action: expect.stringContaining("empresa") });
+    const service = run(candidate(), job({ modality: "PRESENCIAL" }), { status: "UNAVAILABLE", reason: "O serviço de rotas está indisponível no momento.", transient: true });
+    expect(service.missing.find(item => item.dimension === "D")?.responsible).toBe("PLATFORM");
+    const declaration = run(candidate({ accessibilityDeclaration: "NOT_INFORMED" }), job());
+    expect(declaration.missing.find(item => item.dimension === "A")?.responsible).toBe("CANDIDATE");
   });
 });

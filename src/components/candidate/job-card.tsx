@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { jobModalityLabels, type JobModalityValue } from "@/lib/jobs/constants";
 import ScoreDialog from "./score-dialog";
 import type { SearchJob } from "./types";
@@ -11,7 +12,7 @@ export default function JobCard({ job }: { job: SearchJob }) {
     <div className="job-card-body">
       <div>
         <p className="job-card-company">{job.companyName}</p>
-        <h3 id={titleId}>{job.title || "Vaga sem título"}</h3>
+        <h3 id={titleId}><Link className="job-card-link" href={`/candidato/vagas/${job.id}`}>{job.title || "Vaga sem título"}</Link></h3>
       </div>
       <ul className="job-card-tags" aria-label="Características">
         {job.modality ? <li>{jobModalityLabels[job.modality as JobModalityValue] ?? job.modality}</li> : null}
@@ -23,6 +24,6 @@ export default function JobCard({ job }: { job: SearchJob }) {
         <ul>{job.accessibility.map(item => <li key={item.code}>{item.label}: {item.statusLabel}</li>)}</ul>
       </details>
     </div>
-    <ScoreDialog jobTitle={job.title || "Vaga sem título"} result={job.compatibility} />
+    <ScoreDialog jobTitle={job.title || "Vaga sem título"} result={job.compatibility} jobId={job.id} />
   </article>;
 }

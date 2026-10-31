@@ -70,15 +70,15 @@ export default function JobsPanel({ basePath }: { basePath: string }) {
     {notice ? <p className="form-success" role="status">{notice}</p> : null}
     {error ? <p className="form-error" role="alert">{error}</p> : null}
     {loading ? <p className="muted" role="status">Carregando vagas…</p> : jobs.length === 0 ? <p className="muted job-empty">Nenhuma vaga nesta situação.</p> :
-      <div className="table-scroll"><table className="recruiter-table">
+      <div className="table-scroll"><table className="recruiter-table stack-table">
         <caption className="sr-only">Vagas — {tabs.find(t => t.status === status)?.label}</caption>
         <thead><tr><th scope="col">Título</th><th scope="col">Modalidade</th><th scope="col">Prazo</th><th scope="col">Situação</th><th scope="col">Ações</th></tr></thead>
         <tbody>{jobs.map(job => <tr key={job.id}>
-          <td>{job.title || "Sem título"}</td>
-          <td>{job.modality ? jobModalityLabels[job.modality] : "—"}</td>
-          <td>{formatDate(job.deadline)}</td>
-          <td><span className={`status-pill ${pillClass[job.status]}`}>{jobStatusLabels[job.status]}</span></td>
-          <td className="job-actions">
+          <td data-label="Título">{job.title || "Sem título"}</td>
+          <td data-label="Modalidade">{job.modality ? jobModalityLabels[job.modality] : "—"}</td>
+          <td data-label="Prazo">{formatDate(job.deadline)}</td>
+          <td data-label="Situação"><span className={`status-pill ${pillClass[job.status]}`}>{jobStatusLabels[job.status]}</span></td>
+          <td className="job-actions" data-label="Ações">
             <Link className="secondary-button" href={`${basePath}/${job.id}`}>{job.status === "CLOSED" ? "Ver" : "Editar"}</Link>
             {job.status === "OPEN" ? <button type="button" className="secondary-button" disabled={busyId === job.id} onClick={() => act(job, "pause")}>Pausar</button> : null}
             {job.status === "PAUSED" ? <button type="button" className="secondary-button" disabled={busyId === job.id} onClick={() => act(job, "reopen")}>Reabrir</button> : null}
