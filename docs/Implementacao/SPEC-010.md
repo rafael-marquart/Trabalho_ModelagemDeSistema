@@ -11,6 +11,11 @@
 - Rascunhos e vagas de outras origens respondem "não encontrada". A tela não mostra identificadores internos, contatos ou dados de outros candidatos.
 - Resultado e diálogo usam o mesmo componente (`compatibility-details.tsx`).
 
+## Ajustes do teste manual (31/10/2026)
+
+- "O que falta" separado por responsável: **Falta no seu perfil** (com o botão "Completar meu perfil"), **A empresa não informou** (sem botão, com aviso de que não depende do candidato) e **Não foi possível calcular agora** (falha do serviço de rotas). O motor passou a marcar quem pode completar cada dado; versão de regras `SPEC-007/2` (resultados antigos são recalculados uma vez, sem nova chamada à HERE para trajetos salvos).
+- Celular: as tabelas de vagas e de recrutadores viram um cartão por linha, com Editar, Pausar, Reabrir e Encerrar sempre visíveis; o menu lateral quebra em linhas e não alarga mais a página; a barra do topo foi reorganizada.
+
 ## Arquivos principais
 
 - `src/lib/jobs/{detail,detail-service}.ts`, `src/app/candidato/vagas/[id]/page.tsx`

@@ -1,6 +1,6 @@
 import { educationLevels, languageLevels } from "@/lib/candidate-profile/options";
 
-export const RULES_VERSION = "SPEC-007/1";
+export const RULES_VERSION = "SPEC-007/2";
 
 // General weights (RB-03 to RB-05) and internal weights (SPEC-007 section 6.1).
 export const WEIGHTS = { A: 0.5, T: 0.3, D: 0.2 } as const;

@@ -25,12 +25,14 @@ export type TravelInput =
   // departure: reference trip used (peak hour); absent in results computed before that rule.
   | { status: "OK"; minutes: number; mode: string; method: string; departure?: string }
   // transient: the provider failed (quota, outage); the same inputs may succeed later, so the result is not reused.
-  | { status: "UNAVAILABLE"; reason: string; transient?: boolean };
+  | { status: "UNAVAILABLE"; reason: string; transient?: boolean; responsible?: Responsible };
 
 export type AnalysisInput = { candidate: CandidateInput; job: JobInput; travel: TravelInput };
 
 export type DimensionCode = "A" | "T" | "D";
-export type MissingItem = { dimension: DimensionCode; item: string; action: string };
+// responsible: who can supply the missing data (the candidate in the profile, the company in the job, or the platform/service).
+export type Responsible = "CANDIDATE" | "COMPANY" | "PLATFORM";
+export type MissingItem = { dimension: DimensionCode; item: string; action: string; responsible?: Responsible };
 export type Component = { label: string; score: number | null; detail: string };
 export type Dimension = {
   status: "EVALUATED" | "INSUFFICIENT" | "NOT_APPLICABLE";

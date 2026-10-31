@@ -32,7 +32,7 @@ export function pendingCriticalChecks(candidate: CandidateInput, job: JobInput):
 
 function dimensionAccessibility(candidate: CandidateInput, job: JobInput, missing: MissingItem[], factors: string[]): Dimension {
   if (candidate.accessibilityDeclaration === "NOT_INFORMED") {
-    missing.push({ dimension: "A", item: "Declaração de necessidades de acessibilidade", action: "Complete a seção de acessibilidade do seu perfil (inclusive se não tiver necessidades)." });
+    missing.push({ dimension: "A", item: "Declaração de necessidades de acessibilidade", action: "Complete a seção de acessibilidade do seu perfil (inclusive se não tiver necessidades).", responsible: "CANDIDATE" });
     return { status: "INSUFFICIENT", score: null, components: [] };
   }
   if (candidate.needs.length === 0) {
@@ -46,7 +46,7 @@ function dimensionAccessibility(candidate: CandidateInput, job: JobInput, missin
   for (const need of candidate.needs) {
     const jobItem = NEED_TO_JOB_ITEM[need.code];
     if (!jobItem) {
-      missing.push({ dimension: "A", item: `${need.name}: a vaga não tem como declarar este recurso`, action: "Sem ação do candidato; depende de a plataforma passar a declarar esse recurso nas vagas." });
+      missing.push({ dimension: "A", item: `${need.name}: a vaga não tem como declarar este recurso`, action: "Não depende de você: as vagas ainda não têm como declarar esse recurso.", responsible: "PLATFORM" });
       components.push({ label: need.name, score: null, detail: "Não avaliável: sem declaração correspondente na vaga." });
       evaluable = false;
       continue;
@@ -55,7 +55,7 @@ function dimensionAccessibility(candidate: CandidateInput, job: JobInput, missin
     if (status === "PRESENT") components.push({ label: need.name, score: 100, detail: `A vaga declara: ${itemLabel(jobItem).toLocaleLowerCase("pt-BR")} presente.` });
     else if (status === "ABSENT") components.push({ label: need.name, score: 0, detail: `A vaga declara: ${itemLabel(jobItem).toLocaleLowerCase("pt-BR")} ausente.` });
     else {
-      missing.push({ dimension: "A", item: `${need.name}: a vaga não informou ${itemLabel(jobItem).toLocaleLowerCase("pt-BR")}`, action: "A empresa precisa informar este item na vaga." });
+      missing.push({ dimension: "A", item: `${need.name}: a vaga não informou ${itemLabel(jobItem).toLocaleLowerCase("pt-BR")}`, action: "A empresa precisa informar este item na vaga.", responsible: "COMPANY" });
       components.push({ label: need.name, score: null, detail: "Não informado pela vaga." });
       evaluable = false;
     }
@@ -82,7 +82,7 @@ function dimensionTechnical(candidate: CandidateInput, job: JobInput, missing: M
   }
   const parts: { weight: number; component: Component }[] = [];
   let insufficient = false;
-  const lack = (item: string, action: string) => { missing.push({ dimension: "T", item, action }); insufficient = true; };
+  const lack = (item: string, action: string) => { missing.push({ dimension: "T", item, action, responsible: "CANDIDATE" }); insufficient = true; };
 
   if (criteria.skills.length) {
     const corpus = candidateCorpus(candidate);
@@ -161,8 +161,8 @@ function dimensionDisplacement(candidate: CandidateInput, job: JobInput, travel:
   const components: Component[] = [];
   let insufficient = false;
   const preferences = candidate.workPreferences.modalities;
-  if (!job.modality) { missing.push({ dimension: "D", item: "Modalidade da vaga", action: "A empresa precisa informar a modalidade da vaga." }); insufficient = true; }
-  else if (!preferences.length) { missing.push({ dimension: "D", item: "Preferência de modalidade de trabalho", action: "Informe suas preferências de trabalho no perfil." }); insufficient = true; }
+  if (!job.modality) { missing.push({ dimension: "D", item: "Modalidade da vaga", action: "A empresa precisa informar a modalidade da vaga.", responsible: "COMPANY" }); insufficient = true; }
+  else if (!preferences.length) { missing.push({ dimension: "D", item: "Preferência de modalidade de trabalho", action: "Informe suas preferências de trabalho no perfil.", responsible: "CANDIDATE" }); insufficient = true; }
   let modality: number | null = null;
   if (!insufficient) {
     const result = modalityScore(preferences, job.modality);
@@ -181,7 +181,13 @@ function dimensionDisplacement(candidate: CandidateInput, job: JobInput, travel:
     return { status: "EVALUATED", score: DISPLACEMENT_WEIGHTS.modality * (modality ?? 0) + DISPLACEMENT_WEIGHTS.travel * band, components };
   }
   const reason = travel.status === "UNAVAILABLE" ? travel.reason : "Deslocamento não estimado.";
-  missing.push({ dimension: "D", item: `Tempo de deslocamento: ${reason}`, action: "Confira o endereço e o meio de transporte no perfil e o endereço da vaga; tente novamente." });
+  const responsible = travel.status === "UNAVAILABLE" ? travel.responsible ?? "PLATFORM" : "PLATFORM";
+  const travelAction = {
+    CANDIDATE: "Confira o endereço e o meio de transporte no seu perfil.",
+    COMPANY: "A empresa precisa informar o endereço completo do local de trabalho na vaga.",
+    PLATFORM: "O cálculo será refeito automaticamente na próxima consulta."
+  } as const;
+  missing.push({ dimension: "D", item: `Tempo de deslocamento: ${reason}`, action: travelAction[responsible], responsible });
   components.push({ label: "Deslocamento", score: null, detail: reason });
   return { status: "INSUFFICIENT", score: null, components };
 }

@@ -97,4 +97,23 @@ describe("score dialog", () => {
     expect(screen.getByRole("link", { name: "Completar meu perfil" }).getAttribute("href")).toBe("/candidato/perfil");
     expect(screen.queryByText(/%$/, { selector: ".score-dialog-total strong" })).toBeNull();
   });
+  it("separates what the candidate must fill from what the company did not inform", () => {
+    const mixed: Compatibility = { ...insufficient, missing: [
+      { dimension: "D", item: "Tempo de deslocamento: Endereço do local de trabalho da vaga não informado", action: "A empresa precisa informar o endereço completo do local de trabalho na vaga.", responsible: "COMPANY" },
+      { dimension: "T", item: "Idiomas", action: "Informe seus idiomas e níveis no perfil.", responsible: "CANDIDATE" }
+    ] };
+    render(<ScoreDialog jobTitle="Assistente" result={mixed} />);
+    fireEvent.click(screen.getByRole("button", { name: /Dados insuficientes/ }));
+    expect(screen.getByRole("heading", { name: "A empresa não informou" })).toBeTruthy();
+    expect(screen.getByText(/Não depende de você: a empresa precisa completar a vaga/)).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Falta no seu perfil" })).toBeTruthy();
+    expect(screen.getAllByRole("link", { name: "Completar meu perfil" })).toHaveLength(1);
+  });
+  it("does not offer the profile link when only the company is missing data", () => {
+    const companyOnly: Compatibility = { ...insufficient, missing: [{ dimension: "D", item: "Tempo de deslocamento: Endereço do local de trabalho da vaga não informado", action: "A empresa precisa informar o endereço completo do local de trabalho na vaga." }] };
+    render(<ScoreDialog jobTitle="Assistente" result={companyOnly} />);
+    fireEvent.click(screen.getByRole("button", { name: /Dados insuficientes/ }));
+    expect(screen.getByRole("heading", { name: "A empresa não informou" })).toBeTruthy();
+    expect(screen.queryByRole("link", { name: "Completar meu perfil" })).toBeNull();
+  });
 });

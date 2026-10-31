@@ -35,10 +35,10 @@ async function resolveTravel(
 ): Promise<TravelInput> {
   if (!travelRequired(job)) return { status: "NOT_REQUESTED" };
   const mode = override || candidate.workPreferences.transportMode;
-  if (!mode) return { status: "UNAVAILABLE", reason: "Meio de transporte não informado." };
+  if (!mode) return { status: "UNAVAILABLE", reason: "Meio de transporte não informado.", responsible: "CANDIDATE" };
   const home = addresses.candidate;
-  if (!home.address || !home.city || !home.state) return { status: "UNAVAILABLE", reason: "Endereço do candidato incompleto (rua, cidade e estado)." };
-  if (!job.locationAddress || !job.locationCity || !job.locationState) return { status: "UNAVAILABLE", reason: "Endereço do local de trabalho da vaga não informado." };
+  if (!home.address || !home.city || !home.state) return { status: "UNAVAILABLE", reason: "Endereço do candidato incompleto (rua, cidade e estado).", responsible: "CANDIDATE" };
+  if (!job.locationAddress || !job.locationCity || !job.locationState) return { status: "UNAVAILABLE", reason: "Endereço do local de trabalho da vaga não informado.", responsible: "COMPANY" };
   const origin = `${home.address}, ${home.city}, ${home.state}, Brasil`;
   const destination = `${job.locationAddress}, ${job.locationCity}, ${job.locationState}, Brasil`;
   // A trip is estimated once and saved; it is reused until an address or the means of transport changes (29/10/2026).
@@ -51,7 +51,8 @@ async function resolveTravel(
     await prisma.travelTimeCache.upsert({ where: { key }, create: { key, minutes: estimate.minutes, method: estimate.method }, update: {} });
     return { ...estimate, departure: PEAK_LABEL };
   }
-  return estimate.permanent ? { status: "UNAVAILABLE", reason: estimate.reason } : { status: "UNAVAILABLE", reason: estimate.reason, transient: true };
+  const responsible = estimate.responsible ?? "PLATFORM";
+  return estimate.permanent ? { status: "UNAVAILABLE", reason: estimate.reason, responsible } : { status: "UNAVAILABLE", reason: estimate.reason, transient: true, responsible };
 }
 
 type CandidateContext = { candidate: CandidateInput; home: { city: string; state: string; address: string } };

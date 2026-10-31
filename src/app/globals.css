@@ -990,3 +990,35 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .job-card-link { color: inherit; }
 .job-card-link:hover { color: var(--purple-dark); }
 @media (max-width: 960px) { .job-detail-layout { grid-template-columns: 1fr; } .job-detail-aside { order: -1; } }
+.missing-group h3, .missing-group h2 { margin: 0; }
+.missing-group .muted { margin: 4px 0 0; font-size: 14px; }
+.missing-group ul { margin: 8px 0 0; padding-left: 20px; line-height: 1.6; }
+.missing-company, .missing-platform { padding: 12px 14px; border-radius: 10px; background: var(--status-neutral-bg); }
+
+/* Small screens: tables become one card per row, so every action stays visible without sideways scrolling. */
+@media (max-width: 760px) {
+  .stack-table { min-width: 0; }
+  .stack-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+  .stack-table, .stack-table tbody, .stack-table tr, .stack-table td { display: block; width: 100%; }
+  .stack-table tr { padding: 14px 16px; border-top: 1px solid var(--line); }
+  .stack-table tbody tr:first-child { border-top: 0; }
+  .stack-table td { padding: 6px 0; border-top: 0; }
+  .stack-table td[data-label]::before { content: attr(data-label); display: block; margin-bottom: 2px; color: var(--muted); font-size: 13px; font-weight: 600; }
+  .stack-table .job-actions, .stack-table .table-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .stack-table td.job-actions::before, .stack-table td.table-actions::before { flex-basis: 100%; }
+  .stack-table .empty-table-cell { text-align: left; }
+}
+/* Small screens: the top bar keeps the logo and account actions on one line and the display controls on the next. */
+@media (max-width: 600px) {
+  .company-topbar { flex-wrap: wrap; row-gap: 10px; }
+  .company-topbar-actions { width: 100%; margin-left: 0; flex-wrap: wrap; gap: 8px; }
+  .company-topbar-actions .company-avatar { display: none; }
+  .company-topbar-actions form { margin-left: auto; }
+  .company-topbar-actions .theme-toggle { min-height: 36px; padding: 6px 10px; }
+}
+/* The scrollable menu must not widen the page on small screens. */
+@media (max-width: 760px) {
+  .company-dashboard-body { grid-template-columns: minmax(0, 1fr); }
+  .company-sidebar, .company-nav { min-width: 0; }
+}
+@media (max-width: 760px) { .company-nav { flex-wrap: wrap; overflow-x: visible; } }

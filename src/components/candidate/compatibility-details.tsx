@@ -8,6 +8,23 @@ const itemNames: Record<string, string> = {
   RAMPS: "rampas de acesso", ELEVATORS: "elevadores", ADAPTED_RESTROOMS: "banheiros adaptados", SIGNAGE: "sinalização acessível", SCREEN_READERS: "leitores de tela"
 };
 
+type Missing = Compatibility["missing"][number];
+type Responsible = "CANDIDATE" | "COMPANY" | "PLATFORM";
+
+/** Who can supply a missing piece; results stored before this field existed are classified by their wording. */
+export function responsibleOf(item: Missing): Responsible {
+  if (item.responsible) return item.responsible;
+  if (/empresa precisa|da vaga não informado/i.test(`${item.item} ${item.action}`)) return "COMPANY";
+  if (/sem ação do candidato|serviço de rotas|tente novamente/i.test(`${item.item} ${item.action}`)) return "PLATFORM";
+  return "CANDIDATE";
+}
+
+const missingGroups: { key: Responsible; title: string; note: string }[] = [
+  { key: "CANDIDATE", title: "Falta no seu perfil", note: "Complete estas informações para calcular o score." },
+  { key: "COMPANY", title: "A empresa não informou", note: "Não depende de você: a empresa precisa completar a vaga." },
+  { key: "PLATFORM", title: "Não foi possível calcular agora", note: "Não depende de você nem da empresa." }
+];
+
 export function scoreText(result: Compatibility) {
   if (result.status === "COMPLETE" && result.score !== null) return `${result.score}%`;
   return result.status === "INCOMPATIBLE" ? "Incompatível" : "Dados insuficientes";
@@ -50,10 +67,15 @@ export default function CompatibilityDetails({ result, headingLevel = 3 }: { res
       <H>Tempo até o trabalho</H>
       <p>{travel ? travel.detail : result.dimensions.D.status === "INSUFFICIENT" ? "Não foi possível estimar o tempo de deslocamento." : "Vaga remota ou sem deslocamento a calcular."}</p>
     </section>
-    {result.missing.length ? <section aria-label="O que falta">
-      <H>O que falta</H>
-      <ul>{result.missing.map((item, index) => <li key={index}><strong>{item.item.replace(/\.+$/, "")}.</strong> {item.action}</li>)}</ul>
-      <Link className="secondary-button score-profile-link" href="/candidato/perfil">Completar meu perfil</Link>
-    </section> : null}
+    {missingGroups.map(group => {
+      const items = result.missing.filter(item => responsibleOf(item) === group.key);
+      if (!items.length) return null;
+      return <section key={group.key} className={`missing-group missing-${group.key.toLowerCase()}`} aria-label={group.title}>
+        <H>{group.title}</H>
+        <p className="muted">{group.note}</p>
+        <ul>{items.map((item, index) => <li key={index}><strong>{item.item.replace(/\.+$/, "")}.</strong> {item.action}</li>)}</ul>
+        {group.key === "CANDIDATE" ? <Link className="secondary-button score-profile-link" href="/candidato/perfil">Completar meu perfil</Link> : null}
+      </section>;
+    })}
   </div>;
 }
