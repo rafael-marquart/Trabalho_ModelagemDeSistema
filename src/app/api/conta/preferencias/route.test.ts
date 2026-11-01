@@ -32,9 +32,9 @@ describe("account preferences API", () => {
   });
 
   it("returns defaults when nothing was saved and the saved value afterwards", async () => {
-    expect((await (await GET()).json()).preferences).toEqual({ HIGH_CONTRAST: "AUTO" });
+    expect((await (await GET()).json()).preferences).toEqual({ HIGH_CONTRAST: "AUTO", EMAIL_NOTIFICATIONS: "ON" });
     prismaMock.userPreference.findUnique.mockResolvedValue({ preferences: { HIGH_CONTRAST: "ON" } });
-    expect((await (await GET()).json()).preferences).toEqual({ HIGH_CONTRAST: "ON" });
+    expect((await (await GET()).json()).preferences).toEqual({ HIGH_CONTRAST: "ON", EMAIL_NOTIFICATIONS: "ON" });
   });
 
   it("saves for the user of the session only and audits just the preference name", async () => {

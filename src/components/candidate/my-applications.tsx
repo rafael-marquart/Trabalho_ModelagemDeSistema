@@ -3,10 +3,12 @@
 import React, { useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { candidatePill, dateOnly, initialsOf } from "./application-format";
+import HideApplication from "./hide-application";
 
 export type MyApplication = {
   id: string; appliedAt: string; stage: string; stageLabel: string;
   job: { id: string; title: string; companyName: string; closed: boolean };
+  canHide?: boolean;
 };
 
 const normalize = (text: string) => text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLocaleLowerCase("pt-BR");
@@ -64,6 +66,7 @@ export default function MyApplications({ applications }: { applications: MyAppli
         <div className="my-application-side">
           <span className={`status-pill ${candidatePill[item.stage] ?? "status-neutral"}`}>{item.stageLabel}</span>
           <Link className="text-link" href={`/candidato/candidaturas/${item.id}`} aria-label={`Ver candidatura para ${item.job.title}, em ${item.job.companyName}`}>Ver candidatura →</Link>
+          {item.canHide ? <HideApplication applicationId={item.id} jobTitle={item.job.title} /> : null}
         </div>
       </li>)}
     </ul> : <p className="job-empty">Nenhuma candidatura corresponde aos filtros escolhidos.</p>}

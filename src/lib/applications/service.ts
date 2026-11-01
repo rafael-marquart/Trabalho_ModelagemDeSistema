@@ -4,6 +4,7 @@ import type { TravelEstimator } from "@/lib/compatibility/travel";
 import { checkJobAvailability } from "@/lib/jobs/availability";
 import { BLOCKING_STAGES } from "@/lib/jobs/applications";
 import { stageLabels } from "./stages";
+import { enqueueApplicationSubmitted, kickNotificationDelivery } from "@/lib/notifications/service";
 
 export type RefusalCode = "JOB_NOT_FOUND" | "JOB_UNAVAILABLE" | "INCOMPATIBLE" | "DUPLICATE";
 export type ApplicationView = { id: string; appliedAt: string; stage: string; stageLabel: string; score: number | null };
@@ -53,7 +54,7 @@ export async function applyToJob(userId: string, jobId: string, deps: { estimato
   const existing = await findBlockingApplication(userId, jobId);
   if (existing) return refuse("DUPLICATE", `Você já se candidatou a esta vaga (etapa ${existing.stageLabel}).`);
 
-  const job = await prisma.job.findFirst({ where: { id: jobId, status: "OPEN", origin: "OWN" } });
+  const job = await prisma.job.findFirst({ where: { id: jobId, status: "OPEN", origin: "OWN" }, include: { company: { select: { tradeName: true, legalName: true } } } });
   if (!job) return refuse("JOB_UNAVAILABLE", "Não é possível se candidatar: a vaga deixou de estar aberta.");
   const result = await analyzeWithContext(userId, await loadCandidateContext(userId), job, undefined, deps);
   if (result.status === "INCOMPATIBLE") {
@@ -76,8 +77,14 @@ export async function applyToJob(userId: string, jobId: string, deps: { estimato
       await tx.auditEvent.create({
         data: { actorUserId: userId, eventType: "APPLICATION_SUBMITTED", subjectType: "Application", subjectId: application.id, metadata: { jobId, stage: application.stage } }
       });
+      // SPEC-017: confirmation e-mail to the candidate, recorded with the application.
+      await enqueueApplicationSubmitted(tx, {
+        applicationId: application.id, jobId, candidateUserId: userId,
+        jobTitle: job.title || "Vaga sem título", companyName: job.company.tradeName || job.company.legalName
+      });
       return application;
     });
+    kickNotificationDelivery();
     return { ok: true, application: view(created) };
   } catch (error) {
     if (error instanceof Refused) return error.result;

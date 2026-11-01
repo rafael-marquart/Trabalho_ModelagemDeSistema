@@ -1106,3 +1106,26 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
   .my-application-card, .application-summary { grid-template-columns: auto minmax(0, 1fr); }
   .my-application-side { grid-column: 1 / -1; justify-items: start; grid-auto-flow: column; align-items: center; justify-content: space-between; }
 }
+
+/* SPEC-017 — Notificações no site */
+.company-nav-item .nav-badge { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin-left: 8px; padding: 0 6px; border-radius: 999px; color: var(--surface); background: var(--purple); font-size: 12px; font-weight: 700; line-height: 1; }
+.notices-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin: 16px 0 8px; }
+.notices-email { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 600; cursor: pointer; }
+.notices-email input { width: 20px; height: 20px; accent-color: var(--purple); }
+.notices-list { display: grid; gap: 12px; margin: 12px 0 0; padding: 0; list-style: none; }
+.notice { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 16px; padding: 16px 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.notice-unread { border-left: 5px solid var(--purple); }
+.notice-main { display: grid; gap: 4px; min-width: 0; }
+.notice-main p, .notice-title { margin: 0; }
+.notice-title { font-size: 17px; }
+.notice-meta { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+.notice-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--purple); }
+.notice-body { overflow-wrap: anywhere; }
+.notice-actions { display: grid; justify-items: end; gap: 10px; }
+@media (max-width: 720px) {
+  .notice { grid-template-columns: minmax(0, 1fr); }
+  .notice-actions { justify-items: start; grid-auto-flow: column; justify-content: space-between; align-items: center; }
+}
+.hide-application { display: grid; gap: 10px; justify-items: start; }
+.hide-application h2, .hide-application p { margin: 0; }
+.my-application-side .form-error { max-width: 220px; text-align: right; }

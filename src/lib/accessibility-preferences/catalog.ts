@@ -1,7 +1,9 @@
 // Catalog of interface preferences saved in the account (OPEN-013). Extending it only requires a new code here.
 export const preferenceCatalog = {
   // AUTO follows the operating system/browser (prefers-contrast); ON/OFF are explicit choices made in the platform control.
-  HIGH_CONTRAST: { values: ["AUTO", "ON", "OFF"], defaultValue: "AUTO", label: "Alto contraste" }
+  HIGH_CONTRAST: { values: ["AUTO", "ON", "OFF"], defaultValue: "AUTO", label: "Alto contraste" },
+  // SPEC-017 (decision of 01/11/2026): notices always appear in the site; the e-mail copy is optional, on by default.
+  EMAIL_NOTIFICATIONS: { values: ["ON", "OFF"], defaultValue: "ON", label: "Notificações também por e-mail" }
 } as const;
 
 export type PreferenceCode = keyof typeof preferenceCatalog;

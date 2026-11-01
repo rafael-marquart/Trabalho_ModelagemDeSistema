@@ -19,7 +19,8 @@
     "here:usage": "node scripts/here-usage.mjs",
     "admin:create": "node scripts/create-admin.mjs",
     "email:test": "node scripts/email-test.mjs",
-    "mailpit:chaos": "node scripts/mailpit-chaos.mjs"
+    "mailpit:chaos": "node scripts/mailpit-chaos.mjs",
+    "notifications:retention": "node scripts/purge-notifications.mjs"
   },
   "dependencies": {
     "@fontsource/atkinson-hyperlegible-next": "5.3.0",

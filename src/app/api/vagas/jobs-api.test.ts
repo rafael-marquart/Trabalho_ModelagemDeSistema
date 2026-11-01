@@ -10,7 +10,8 @@ const { prismaMock, getCurrentUserMock, hasApplicationsMock } = vi.hoisted(() =>
 }));
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
 vi.mock("@/lib/auth/session", () => ({ getCurrentUser: getCurrentUserMock }));
-vi.mock("@/lib/jobs/applications", () => ({ jobHasApplications: hasApplicationsMock, listActiveCandidatesForJob: vi.fn().mockResolvedValue([]) }));
+vi.mock("@/lib/jobs/applications", () => ({ jobHasApplications: hasApplicationsMock, ACTIVE_STAGES: ["INSCRITO", "TRIAGEM", "ENTREVISTA", "FINALISTA"] }));
+vi.mock("@/lib/notifications/service", () => ({ enqueueJobClosed: vi.fn(), kickNotificationDelivery: vi.fn() }));
 import { GET, POST } from "./route";
 import { GET as GET_ONE, PUT } from "./[id]/route";
 import { POST as ACTION } from "./[id]/acao/route";
@@ -29,7 +30,7 @@ const req = (method: string, body?: unknown) => new Request("https://example.tes
 const ctx = { params: Promise.resolve({ id: "job-1" }) };
 
 describe("jobs API", () => {
-  const tx = { job: { create: vi.fn(), update: vi.fn(), updateMany: vi.fn(), findUnique: vi.fn() }, auditEvent: { create: vi.fn() } };
+  const tx = { job: { create: vi.fn(), update: vi.fn(), updateMany: vi.fn(), findUnique: vi.fn() }, auditEvent: { create: vi.fn() }, application: { findMany: vi.fn().mockResolvedValue([]) }, company: { findUnique: vi.fn().mockResolvedValue({ tradeName: "Empresa", legalName: "Empresa Ltda" }) } };
   beforeEach(() => {
     vi.clearAllMocks();
     getCurrentUserMock.mockResolvedValue({ id: "user-1", role: "COMPANY", isActive: true });

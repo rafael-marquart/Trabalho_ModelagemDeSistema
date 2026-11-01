@@ -16,7 +16,7 @@ O código de `getPublicBaseUrl` exige `APP_BASE_URL` em produção e só aceita 
 - [ ] Configurar `SMTP_HOST` e `SMTP_FROM`; ambos são obrigatórios para `sendEmail`.
 - [ ] Definir `SMTP_PORT` conforme o provedor (o padrão no código é `587`) e `SMTP_SECURE` conforme o modo TLS oferecido pelo provedor.
 - [ ] Configurar `SMTP_USER` e `SMTP_PASSWORD` quando a autenticação for exigida. Guardar credenciais em mecanismo de segredos da infraestrutura, nunca no repositório ou em logs.
-- [ ] Enviar e receber mensagens reais de confirmação empresarial, recuperação de senha e convite/reenvio de recrutador em homologação.
+- [ ] Enviar e receber mensagens reais de confirmação empresarial, recuperação de senha e convite/reenvio de recrutador em homologação. *(01/11/2026: testado pelo responsável no ambiente local com provedor real (Brevo), com entrega a caixa de entrada real, e com o Mailpit, incluindo falhas simuladas; falta o ambiente de homologação/produção e um domínio próprio autenticado — SPF/DKIM/DMARC)*
 - [ ] Verificar entrega, rejeições, timeouts, remetente e comportamento de falha. Confirmar que uma falha de entrega não expõe token bruto em logs nem deixa convites em estado inconsistente.
 
 No código (01/11/2026): mensagens em texto e HTML acessível, TLS obrigatório para SMTP remoto (recusa SMTP remoto sem TLS em produção), tempos limite, classificação das falhas sem expor destinatário, link ou token, e categoria da falha gravada na auditoria. Configuração de provedores, comando de teste (`npm run email:test`) e falhas simuladas com Mailpit (`npm run mailpit:chaos`): `docs/operacao/email-smtp.md`; roteiro: `docs/operacao/validacao-manual-email.md`.

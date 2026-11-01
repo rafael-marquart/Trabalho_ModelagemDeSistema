@@ -8,6 +8,8 @@ const { prismaMock, tx } = vi.hoisted(() => {
   } };
 });
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
+const notify = vi.hoisted(() => ({ enqueueApplicationSubmitted: vi.fn(), enqueueStageChanged: vi.fn(), enqueueApplicationCancelled: vi.fn(), kickNotificationDelivery: vi.fn() }));
+vi.mock("@/lib/notifications/service", () => notify);
 import { changeApplicationStage, getApplicationForCompany, listJobApplications } from "./company-service";
 
 describe("company side of applications (SPEC-013)", () => {
@@ -49,12 +51,13 @@ describe("company side of applications (SPEC-013)", () => {
   });
 
   it("moves along RB-39, writing stage, history and audit together", async () => {
-    prismaMock.application.findFirst.mockResolvedValue({ id: "a1", stage: "INSCRITO", jobId: "job-1" });
+    prismaMock.application.findFirst.mockResolvedValue({ id: "a1", stage: "INSCRITO", jobId: "job-1", candidateUserId: "cand", job: { title: "Analista", company: { tradeName: "Loja", legalName: "Loja Ltda" } } });
     const result = await changeApplicationStage({ companyId: "company-1", actorUserId: "rec", applicationId: "a1", toStage: "TRIAGEM", note: " ok " });
     expect(result).toEqual({ ok: true, stage: "TRIAGEM" });
     expect(tx.application.updateMany).toHaveBeenCalledWith({ where: { id: "a1", stage: "INSCRITO" }, data: { stage: "TRIAGEM" } });
     expect(tx.applicationStageEvent.create).toHaveBeenCalledWith({ data: { applicationId: "a1", fromStage: "INSCRITO", toStage: "TRIAGEM", kind: "ADVANCED", actorUserId: "rec", note: "ok" } });
     expect(tx.auditEvent.create.mock.calls[0][0].data).toMatchObject({ eventType: "APPLICATION_STAGE_CHANGED", metadata: { fromStage: "INSCRITO", toStage: "TRIAGEM" } });
+    expect(notify.enqueueStageChanged).toHaveBeenCalledWith(tx, { applicationId: "a1", jobId: "job-1", candidateUserId: "cand", toStage: "TRIAGEM", jobTitle: "Analista", companyName: "Loja" });
   });
 
   it("refuses moves outside RB-39, other companies' applications and concurrent changes without writing anything", async () => {
