@@ -34,3 +34,7 @@ A avaliação depende de uma "entrevista cadastrada e concluída" (OPEN-070), qu
 - Vitest: data em horário de Brasília, validação do formulário de entrevista, agendamento só na etapa Entrevista e para a própria empresa, uma agendada por vez, alteração/cancelamento/conclusão (conclusão só após o horário) com auditoria e avisos; avaliação com as duas notas obrigatórias de 1 a 5, comentário opcional, vínculo com a própria entrevista, prazo de 60 dias, duplicata recusada, indício de abuso registrado sem bloqueio, auditoria sem conteúdo, distribuição só com contagens; anonimização; telas (formulário de entrevista com erros do servidor, conclusão desabilitada antes do horário, cancelamento confirmado, avaliação com revisão e envio único, axe-core).
 - E2E: entrevista exige etapa Entrevista, data passada e link inválido recusados, outra empresa e candidato recusados, agendar/alterar/concluir/cancelar, avaliação recusada antes da conclusão, notas inválidas recusadas, empresa não avalia, avaliação sem comentário aceita, segunda recusada, edição bloqueada no banco, empresa não vê a avaliação, avisos ao candidato, auditoria, página do candidato com a avaliação só para leitura.
 - Teste manual: `docs/operacao/validacao-manual-spec-018.md`.
+
+## Encerramento
+
+Teste manual executado pelo responsável em 01/11/2026 sem problemas; layouts aprovados na mesma data. SPEC-018 encerrada, com a OPEN-095 em aberto e a apresentação pública da distribuição a cargo da SPEC-021.
