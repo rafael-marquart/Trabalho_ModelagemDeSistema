@@ -2639,7 +2639,7 @@ OPEN-063 a OPEN-065 estão resolvidas conforme `docs/OPEN.md`. A linha do tempo 
 | Campo | Valor |
 |---|---|
 | ID | SPEC-017 |
-| Estado do texto | aprovada; implementada e encerrada em 01/11/2026, exceto o aviso de entrevista (não há operação de entrevista na plataforma) e com o "Recrutador responsável" provisório (OPEN-093); ver `docs/Implementacao/SPEC-017.md` |
+| Estado do texto | aprovada; implementada e encerrada em 01/11/2026, com o "Recrutador responsável" provisório (OPEN-093); o aviso de entrevista foi incluído com a SPEC-018; ver `docs/Implementacao/SPEC-017.md` |
 | Estado do layout | aprovado pelo responsável em 01/11/2026 sobre as telas implementadas (aba Notificações com contador no menu e opção de e-mail, e-mails de aviso, "Remover da lista" em Minhas candidaturas) |
 | Capacidade | Notificar alterações do processo seletivo |
 
@@ -2696,7 +2696,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
-- [ ] Cada um dos cinco tipos de evento aprovados em OPEN-066 gera comunicação ao destinatário definido para esse evento. *(quatro tipos implementados; o aviso de entrevista depende de uma operação de entrevista que não existe nas Specs atuais; destinatário do cancelamento provisório — OPEN-093)*
+- [x] Cada um dos cinco tipos de evento aprovados em OPEN-066 gera comunicação ao destinatário definido para esse evento. *(o aviso de entrevista passou a existir com o cadastro de entrevistas da SPEC-018, em 01/11/2026; destinatário do cancelamento provisório — OPEN-093)*
 - [x] Notificação é disparada apenas para destinatário autorizado e não expõe dados de outro candidato (RNF-07/RNF-08).
 - [x] Falhas de envio não apagam a alteração de origem nem geram falsa confirmação de entrega (RNF-09/RNF-14, quando aplicável).
 
@@ -2747,7 +2747,7 @@ OPEN-066 a OPEN-069 estão resolvidas conforme `docs/OPEN.md`. As notificações
 |---|---|
 | ID | SPEC-018 |
 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-018.md` |
 | Estado do layout | pendente |
 | Capacidade | Avaliar processo seletivo |
 
