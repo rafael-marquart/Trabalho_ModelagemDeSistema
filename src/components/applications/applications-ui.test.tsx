@@ -19,7 +19,7 @@ const detail = (stage = "INSCRITO", nextStages = [{ stage: "TRIAGEM", label: "Tr
   profile: { education: [], experience: [{ role: "Analista", company: "X", period: "2024" }], languages: [], courses: [], certifications: [], links: [] },
   accessibility: { declaration: "NEEDS_DECLARED", needs: ["Rampa"], essentialResources: [] },
   history: [{ at: "2026-10-31T15:00:00Z", from: null, to: "Inscrito", kind: "Candidatura registrada", actor: "Ana Lima (candidato)", note: null }],
-  nextStages, blockingIssues: []
+  nextStages, blockingIssues: [], interviews: [], canScheduleInterview: false
 } });
 
 describe("company funnel screens (SPEC-013)", () => {

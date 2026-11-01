@@ -58,6 +58,17 @@ export async function enqueueApplicationCancelled(tx: Tx, input: { applicationId
   } });
 }
 
+/** SPEC-017 item 3 / SPEC-018: interview scheduled, changed or cancelled, told to the candidate with the details they need. */
+export async function enqueueInterviewNotice(tx: Tx, type: "INTERVIEW_SCHEDULED" | "INTERVIEW_UPDATED" | "INTERVIEW_CANCELLED", input: {
+  applicationId: string; jobId: string; candidateUserId: string; jobTitle: string; companyName: string;
+  scheduledAt: string; modality: string; locationOrLink: string; accessibilityResources: string;
+}) {
+  await tx.notification.create({ data: {
+    type, recipientUserId: input.candidateUserId, applicationId: input.applicationId, jobId: input.jobId,
+    payload: json({ jobTitle: input.jobTitle, companyName: input.companyName, scheduledAt: input.scheduledAt, modality: input.modality, locationOrLink: input.locationOrLink, accessibilityResources: input.accessibilityResources })
+  } });
+}
+
 /** RB-42/OPEN-042: one e-mail per candidate still active when the job closes. */
 export async function enqueueJobClosed(tx: Tx, input: { jobId: string; jobTitle: string; companyName: string; applications: { id: string; candidateUserId: string }[] }) {
   if (!input.applications.length) return;

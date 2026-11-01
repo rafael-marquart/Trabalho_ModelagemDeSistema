@@ -1129,3 +1129,32 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .hide-application { display: grid; gap: 10px; justify-items: start; }
 .hide-application h2, .hide-application p { margin: 0; }
 .my-application-side .form-error { max-width: 220px; text-align: right; }
+
+/* SPEC-018 — Entrevistas no funil e avaliação do processo */
+.interview-panel { display: grid; gap: 12px; margin-top: 20px; }
+.interview-panel h2, .interview-panel h3 { margin: 0; }
+.interview-form .job-field input[type="datetime-local"], .interview-form .job-field select, .interview-form .job-field textarea { display: block; width: 100%; min-height: 46px; margin-top: 10px; padding: 12px 14px; border: 1px solid var(--field-border); border-radius: 10px; color: var(--ink); background: var(--surface); font: inherit; }
+.interview-form .job-field input[type="datetime-local"] { max-width: 320px; color-scheme: light; }
+:root[data-theme="dark"] .interview-form .job-field input[type="datetime-local"] { color-scheme: dark; }
+.field-error { display: block; margin-top: 6px; color: var(--danger); font-size: 14px; }
+.interview-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px 24px; margin: 12px 0; }
+.interview-facts dt { color: var(--muted); font-size: 13px; }
+.interview-facts dd { margin: 2px 0 0; font-weight: 600; }
+.interview-place { overflow-wrap: anywhere; }
+.interview-history { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.interview-history li { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.star-field { margin: 0; padding: 0; border: 0; }
+.star-field legend { margin-bottom: 8px; font-weight: 700; }
+.star-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.star-option { position: relative; }
+.star-option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.star-option label { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; min-width: 56px; padding: 8px 10px; border: 2px solid var(--field-border); border-radius: 10px; background: var(--surface); color: var(--ink); cursor: pointer; font-size: 13px; }
+.star-option label .star-icon { font-size: 22px; line-height: 1; color: var(--muted); }
+.star-option input:checked + label { border-color: var(--purple); background: var(--purple-soft); }
+.star-option input:checked + label .star-icon, .star-option.star-filled label .star-icon { color: #b7791f; }
+.star-option input:focus-visible + label { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+.evaluation-form { display: grid; gap: 18px; }
+.evaluation-form textarea { display: block; width: 100%; margin-top: 8px; padding: 12px 14px; border: 1px solid var(--field-border); border-radius: 10px; color: var(--ink); background: var(--surface); font: inherit; }
+.evaluation-summary { display: grid; gap: 6px; margin: 0; }
+.evaluation-summary dt { color: var(--muted); font-size: 13px; }
+.evaluation-summary dd { margin: 0 0 6px; font-weight: 600; overflow-wrap: anywhere; }

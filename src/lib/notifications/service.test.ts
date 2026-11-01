@@ -130,4 +130,13 @@ describe("notification content", () => {
     expect(email.text).toContain("https://app.example/recrutador/vagas/j1/candidaturas/a1");
     expect(email.text).toContain("Ana Lima cancelou a candidatura para Analista");
   });
+  it("tells the candidate the interview details, in Brasília time", () => {
+    const payload = { jobTitle: "Analista", companyName: "Loja", scheduledAt: "2026-11-10T17:30:00.000Z", modality: "ONLINE", locationOrLink: "https://meet.example/x", accessibilityResources: "Intérprete de Libras" };
+    const scheduled = notificationEmail("INTERVIEW_SCHEDULED", payload, link);
+    expect(scheduled.subject).toBe("Entrevista agendada: Analista — Acessa Vagas");
+    expect(scheduled.text).toContain("terça-feira, 10/11/2026, às 14:30 (horário de Brasília)");
+    expect(scheduled.text).toContain("Link: https://meet.example/x");
+    expect(scheduled.text).toContain("Recursos de acessibilidade previstos: Intérprete de Libras");
+    expect(notificationEmail("INTERVIEW_CANCELLED", payload, link).text).toContain("Sua candidatura continua no processo seletivo");
+  });
 });

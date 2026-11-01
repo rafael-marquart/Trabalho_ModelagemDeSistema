@@ -10,9 +10,27 @@ export type NotificationPayload = {
   toStage?: string;
   candidateName?: string;
   recipientArea?: "empresa" | "recrutador";
+  scheduledAt?: string;
+  modality?: string;
+  locationOrLink?: string;
+  accessibilityResources?: string;
 };
 
-export type NotificationKind = "APPLICATION_SUBMITTED" | "APPLICATION_STAGE_CHANGED" | "APPLICATION_CANCELLED" | "JOB_CLOSED";
+export type NotificationKind = "APPLICATION_SUBMITTED" | "APPLICATION_STAGE_CHANGED" | "APPLICATION_CANCELLED" | "JOB_CLOSED"
+  | "INTERVIEW_SCHEDULED" | "INTERVIEW_UPDATED" | "INTERVIEW_CANCELLED";
+
+const interviewWhen = (iso?: string) => {
+  if (!iso) return "data a confirmar";
+  const date = new Date(iso);
+  const part = (options: Intl.DateTimeFormatOptions) => date.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", ...options });
+  return `${part({ weekday: "long" })}, ${part({ day: "2-digit", month: "2-digit", year: "numeric" })}, às ${part({ hour: "2-digit", minute: "2-digit" })} (horário de Brasília)`;
+};
+const interviewLines = (payload: NotificationPayload) => [
+  `Quando: ${interviewWhen(payload.scheduledAt)}.`,
+  `Modalidade: ${payload.modality === "ONLINE" ? "on-line" : "presencial"}. ${payload.modality === "ONLINE" ? "Link" : "Local"}: ${payload.locationOrLink || "a confirmar"}.`,
+  ...(payload.accessibilityResources ? [`Recursos de acessibilidade previstos: ${payload.accessibilityResources}`] : [])
+];
+const interviewHeading = { INTERVIEW_SCHEDULED: "Entrevista agendada", INTERVIEW_UPDATED: "Entrevista alterada", INTERVIEW_CANCELLED: "Entrevista cancelada" } as const;
 
 const OFFICIAL = "O e-mail é um aviso: a situação oficial é a que aparece na plataforma.";
 const OPT_OUT = "Este aviso também fica em Notificações, na plataforma, onde você pode desligar o envio por e-mail.";
@@ -55,6 +73,18 @@ export function notificationEmail(kind: NotificationKind, payload: NotificationP
         closing: [OFFICIAL, OPT_OUT]
       });
     }
+    case "INTERVIEW_SCHEDULED":
+    case "INTERVIEW_UPDATED":
+    case "INTERVIEW_CANCELLED":
+      return buildEmail({
+        subject: `${interviewHeading[kind]}: ${job} — Acessa Vagas`,
+        heading: interviewHeading[kind],
+        intro: kind === "INTERVIEW_CANCELLED"
+          ? [`${company} cancelou a entrevista de ${job} que estava marcada para ${interviewWhen(payload.scheduledAt)}. Sua candidatura continua no processo seletivo.`]
+          : [kind === "INTERVIEW_SCHEDULED" ? `${company} agendou uma entrevista para a sua candidatura a ${job}.` : `${company} alterou a entrevista da sua candidatura a ${job}. Valem os dados abaixo.`, ...interviewLines(payload)],
+        action: { label: "Ver detalhes da candidatura", url: tracking },
+        closing: [OFFICIAL, OPT_OUT]
+      });
     case "JOB_CLOSED":
       return buildEmail({
         subject: `Vaga encerrada: ${job} — Acessa Vagas`,
@@ -89,6 +119,11 @@ export function notificationSummary(kind: NotificationKind, payload: Notificatio
       const area = payload.recipientArea === "recrutador" ? "recrutador" : "empresa";
       return { title: "Candidatura cancelada pelo candidato", body: `${payload.candidateName || "Um candidato"} cancelou a candidatura para ${job}.`, href: `/${area}/vagas/${ids.jobId ?? ""}/candidaturas/${ids.applicationId ?? ""}` };
     }
+    case "INTERVIEW_SCHEDULED":
+    case "INTERVIEW_UPDATED":
+      return { title: interviewHeading[kind], body: `${company}, ${job}: ${interviewWhen(payload.scheduledAt)}, ${payload.modality === "ONLINE" ? "on-line" : "presencial"}.`, href: tracking };
+    case "INTERVIEW_CANCELLED":
+      return { title: "Entrevista cancelada", body: `${company} cancelou a entrevista de ${job} marcada para ${interviewWhen(payload.scheduledAt)}.`, href: tracking };
     case "JOB_CLOSED":
       return { title: "Vaga encerrada", body: `${company} encerrou a vaga ${job}. Sua candidatura continua registrada e o processo seletivo pode continuar.`, href: tracking };
   }
