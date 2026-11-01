@@ -43,3 +43,7 @@
 ## Remover candidaturas encerradas da lista (decisão de 01/11/2026, OPEN-065 revisada)
 
 Feita junto com esta Spec, a pedido do responsável: em Minhas candidaturas (SPEC-012/016), as candidaturas **Recusadas** e **Canceladas** têm "Remover da lista" (no cartão e no detalhe), com confirmação. A candidatura some da lista do candidato e o endereço do detalhe passa a responder como inexistente; nada é apagado: registro, histórico, auditoria (`APPLICATION_HIDDEN_BY_CANDIDATE`) e o funil da Empresa continuam iguais. Campo `Application.hiddenByCandidateAt`; API `POST /api/candidato/candidaturas/[id]/ocultar`.
+
+## Encerramento
+
+Teste manual executado pelo responsável em 01/11/2026 sem problemas; layout aprovado na mesma data. SPEC-017 encerrada, com o aviso de entrevista não aplicável no momento e a OPEN-093 em aberto.
