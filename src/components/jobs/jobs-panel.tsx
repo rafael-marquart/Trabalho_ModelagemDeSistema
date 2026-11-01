@@ -57,7 +57,7 @@ export default function JobsPanel({ basePath }: { basePath: string }) {
     finally { setBusyId(""); }
   }
 
-  return <main className="company-content" aria-labelledby="jobs-title">
+  return <main id="conteudo" className="company-content" aria-labelledby="jobs-title">
     <header className="company-page-heading jobs-heading">
       <div><h1 id="jobs-title">Vagas da empresa</h1>
         <p className="muted">Cadastre, publique e acompanhe as oportunidades da sua organização.</p></div>

@@ -26,7 +26,7 @@ describe("accessible theme preference", () => {
 
     expect(screen.getByTestId("theme").textContent).toBe("light");
     expect(document.documentElement.dataset.theme).toBe("light");
-    expect(screen.getByRole("button", { name: "Alternar tema claro e escuro" }).getAttribute("aria-pressed")).toBe("false");
+    expect(screen.getByRole("button", { name: "Tema escuro" }).getAttribute("aria-pressed")).toBe("false");
   });
 
   it("restores a saved dark theme preference", async () => {
@@ -36,7 +36,7 @@ describe("accessible theme preference", () => {
 
     expect(screen.getByTestId("theme").textContent).toBe("dark");
     expect(document.documentElement.dataset.theme).toBe("dark");
-    expect(screen.getByRole("button", { name: "Alternar tema claro e escuro" }).getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getByRole("button", { name: "Tema escuro" }).getAttribute("aria-pressed")).toBe("true");
   });
 
   it("uses the operating system dark preference when no preference is saved", async () => {
@@ -49,7 +49,7 @@ describe("accessible theme preference", () => {
     expect(matchMediaMock).toHaveBeenCalledWith("(prefers-color-scheme: dark)");
     expect(screen.getByTestId("theme").textContent).toBe("dark");
     expect(document.documentElement.dataset.theme).toBe("dark");
-    expect(screen.getByRole("button", { name: "Alternar tema claro e escuro" }).getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getByRole("button", { name: "Tema escuro" }).getAttribute("aria-pressed")).toBe("true");
   });
 
   it("persists theme changes when the user activates the control", async () => {
@@ -57,14 +57,14 @@ describe("accessible theme preference", () => {
     await act(async () => {});
 
     await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "Alternar tema claro e escuro" }));
+      fireEvent.click(screen.getByRole("button", { name: "Tema escuro" }));
     });
     expect(screen.getByTestId("theme").textContent).toBe("dark");
     expect(document.documentElement.dataset.theme).toBe("dark");
     expect(window.localStorage.getItem("acessa-vagas-theme")).toBe("dark");
 
     await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "Alternar tema claro e escuro" }));
+      fireEvent.click(screen.getByRole("button", { name: "Tema escuro" }));
     });
     expect(screen.getByTestId("theme").textContent).toBe("light");
     expect(window.localStorage.getItem("acessa-vagas-theme")).toBe("light");

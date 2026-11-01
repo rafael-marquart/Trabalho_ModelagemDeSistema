@@ -26,7 +26,7 @@ export default async function MyApplicationDetailPage({ params, searchParams }: 
   const justCancelled = cancelada === "1" && application.stage === "CANCELADA";
 
   return <CompanyShell role="CANDIDATE" active="applications" userName={user.fullName}>
-    <main className="company-content application-detail" aria-labelledby="application-title">
+    <main id="conteudo" className="company-content application-detail" aria-labelledby="application-title">
       <Link className="back-link" href="/candidato/candidaturas">← Voltar para minhas candidaturas</Link>
       <h1 id="application-title">Detalhe da candidatura</h1>
 

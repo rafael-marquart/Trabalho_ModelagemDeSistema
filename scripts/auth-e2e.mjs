@@ -202,7 +202,14 @@ async function expectStatus(response, expected, description) {
   return body;
 }
 
+// Travel times are cached by route (not by user), so the cleanup removes only the entries created during this run;
+// without it a second run against the same database would reuse them and never call the (fake) HERE service.
+let travelCacheKeysBefore = null;
+
 async function cleanupTestData() {
+  if (travelCacheKeysBefore) {
+    await prisma.travelTimeCache.deleteMany({ where: { key: { notIn: [...travelCacheKeysBefore] } } });
+  }
   const users = await prisma.user.findMany({
     where: { email: { in: [EMAIL, COMPANY_EMAIL, RECRUITER_EMAIL, SECOND_COMPANY_EMAIL, CROSS_COMPANY_INVITATION_EMAIL, ADMIN_EMAIL] } },
     select: { id: true, company: { select: { id: true } } }
@@ -321,6 +328,7 @@ async function cleanupTestData() {
 }
 
 async function main() {
+  travelCacheKeysBefore = new Set((await prisma.travelTimeCache.findMany({ select: { key: true } })).map(row => row.key));
   let smtpServer;
   let hereServer;
   let appExit;

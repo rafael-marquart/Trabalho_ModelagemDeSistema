@@ -20,7 +20,7 @@ export default function CompanySignupPage() {
     }catch{setError("Não foi possível conectar ao serviço. Tente novamente.");}
     finally{setLoading(false);}
   }
-  return <main className="auth-page">
+  return <main id="conteudo" className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div><Link className="brand auth-brand" href="/"><BrandLogo /></Link><section className="auth-card"><Link className="back-link" href="/">← Voltar ao início</Link><p className="eyebrow">Cadastro de empresa</p><h1>Traga sua empresa para a plataforma.</h1><p className="muted">Preencha os dados organizacionais para iniciar o cadastro.</p><form className="auth-form" onSubmit={submit}>
     <label htmlFor="legalName">Razão social</label><input id="legalName" value={form.legalName} onChange={e=>setForm({...form,legalName:e.target.value})} required maxLength={200}/>
     <label htmlFor="tradeName">Nome fantasia (opcional)</label><input id="tradeName" value={form.tradeName} onChange={e=>setForm({...form,tradeName:e.target.value})} maxLength={200}/>

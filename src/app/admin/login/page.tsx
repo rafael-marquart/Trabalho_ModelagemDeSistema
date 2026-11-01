@@ -40,7 +40,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main className="auth-page">
+    <main id="conteudo" className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div>
       <div className="entry-content">
         <Link className="brand auth-brand" href="/"><BrandLogo /></Link>

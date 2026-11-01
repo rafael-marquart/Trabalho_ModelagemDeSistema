@@ -34,7 +34,7 @@ export default function RecruiterLoginPage() {
     } catch { setError("Não foi possível conectar ao serviço. Tente novamente."); }
     finally { setLoading(false); }
   }
-  return <main className="auth-page">
+  return <main id="conteudo" className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div>
     
     <Link className="brand auth-brand" href="/"><BrandLogo /></Link>

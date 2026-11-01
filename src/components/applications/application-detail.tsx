@@ -61,8 +61,9 @@ export default function ApplicationDetail({ basePath, jobId, applicationId }: { 
     finally { setBusy(false); }
   }
 
-  return <main className="company-content application-detail" aria-labelledby="application-title">
+  return <main id="conteudo" className="company-content application-detail" aria-labelledby="application-title">
     <Link className="back-link" href={`${basePath}/${jobId}/candidaturas`}>← Voltar às candidaturas</Link>
+    {!data ? <h1 id="application-title" className="visually-hidden">Candidatura</h1> : null}
     {error ? <p className="form-error" role="alert">{error}</p> : null}
     {notice ? <p ref={noticeRef} tabIndex={-1} className="form-success" role="status">{notice}</p> : null}
     {!data && !error ? <p className="muted" role="status">Carregando candidatura…</p> : null}

@@ -166,7 +166,7 @@ export default function CompanyRecruitersPage() {
 
   return (
     <CompanyShell role="COMPANY" active="recruiters" userName="Empresa">
-        <main className="company-content" aria-labelledby="recruiters-title">
+        <main id="conteudo" className="company-content" aria-labelledby="recruiters-title">
           <header className="company-page-heading">
             <h1 id="recruiters-title">Gestão de recrutadores</h1>
             <p className="muted">Gerencie quem pode atuar nos processos seletivos da sua empresa.</p>

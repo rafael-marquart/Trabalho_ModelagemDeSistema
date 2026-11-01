@@ -13,7 +13,7 @@ export default async function MyReportsPage() {
   if (!user || user.role !== "CANDIDATE") redirect("/candidato/login");
   const reports = await listOwnReports(user.id);
   return <CompanyShell role="CANDIDATE" active="reports" userName={user.fullName}>
-    <main className="company-content" aria-labelledby="reports-title">
+    <main id="conteudo" className="company-content" aria-labelledby="reports-title">
       <header className="company-page-heading"><div>
         <h1 id="reports-title">Minhas denúncias</h1>
         <p className="muted">Acompanhe o andamento e o resultado das denúncias que você registrou. Para denunciar, abra a vaga e use “Denunciar esta vaga”.</p>

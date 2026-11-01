@@ -67,7 +67,7 @@ export default function CompanyShell({ role, active, userName, children }: {
       </div>
     </header>
     <div className="company-dashboard-body">
-      <aside className="company-sidebar">
+      <aside className="company-sidebar" aria-label={text.menu}>
         <p className="company-sidebar-title">{text.menu}</p>
         <nav className="company-nav" aria-label={text.nav}>
           {menus[role].map((item) => item.key === "notifications"

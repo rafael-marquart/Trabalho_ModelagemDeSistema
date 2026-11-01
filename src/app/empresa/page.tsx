@@ -17,7 +17,7 @@ export default async function CompanyHomePage() {
 
   return (
     <CompanyShell role="COMPANY" active="home" userName={company?.tradeName || company?.legalName || user.fullName}>
-      <main className="company-content" aria-labelledby="company-home-title">
+      <main id="conteudo" className="company-content" aria-labelledby="company-home-title">
         <header className="company-page-heading">
           <p className="eyebrow">Área da empresa</p>
           <h1 id="company-home-title">Bem-vinda ao Acessa Vagas.</h1>

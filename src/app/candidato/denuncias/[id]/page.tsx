@@ -17,7 +17,7 @@ export default async function MyReportPage({ params }: { params: Promise<{ id: s
   if (!report) notFound();
   const reached = report.status === "CONCLUIDA" ? 2 : report.status === "RECEBIDA" ? 0 : 1;
   return <CompanyShell role="CANDIDATE" active="reports" userName={user.fullName}>
-    <main className="company-content application-detail" aria-labelledby="report-title">
+    <main id="conteudo" className="company-content application-detail" aria-labelledby="report-title">
       <Link className="back-link" href="/candidato/denuncias">← Voltar para minhas denúncias</Link>
       <header className="company-page-heading"><div>
         <p className="job-card-company">{report.job?.companyName ?? "Empresa"}</p>

@@ -12,7 +12,7 @@ export default async function MyApplicationsPage({ searchParams }: { searchParam
   const applications = await listCandidateApplications(user.id);
   const removed = (await searchParams)?.removida === "1";
   return <CompanyShell role="CANDIDATE" active="applications" userName={user.fullName}>
-    <main className="company-content" aria-labelledby="my-applications-title">
+    <main id="conteudo" className="company-content" aria-labelledby="my-applications-title">
       <header className="company-page-heading">
         <div>
           <h1 id="my-applications-title">Minhas candidaturas</h1>

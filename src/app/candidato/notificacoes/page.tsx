@@ -9,7 +9,7 @@ export default async function NotificationsPage() {
   const user = await getCurrentUser();
   if (!user || user.role !== "CANDIDATE") redirect("/candidato/login");
   return <CompanyShell role="CANDIDATE" active="notifications" userName={user.fullName}>
-    <main className="company-content" aria-labelledby="notices-title">
+    <main id="conteudo" className="company-content" aria-labelledby="notices-title">
       <header className="company-page-heading">
         <div>
           <h1 id="notices-title">Notificações</h1>

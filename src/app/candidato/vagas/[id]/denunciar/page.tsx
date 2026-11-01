@@ -14,7 +14,7 @@ export default async function ReportJobPage({ params }: { params: Promise<{ id: 
   const context = await reportFormContext(user.id, id);
   if (!context) notFound();
   return <CompanyShell role="CANDIDATE" active="jobs" userName={user.fullName}>
-    <main className="company-content application-detail" aria-labelledby="report-title">
+    <main id="conteudo" className="company-content application-detail" aria-labelledby="report-title">
       <Link className="back-link" href={`/candidato/vagas/${id}`}>← Voltar à vaga</Link>
       <header className="company-page-heading"><div>
         <p className="job-card-company">{context.job.companyName}</p>

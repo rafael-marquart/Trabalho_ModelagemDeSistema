@@ -28,7 +28,7 @@ export default async function CandidateJobDetailPage({ params }: { params: Promi
   const companyGroups = [...new Set(job.companyInfrastructure.items.map(item => item.category))];
 
   return <CompanyShell role="CANDIDATE" active="jobs" userName={user.fullName}>
-    <main className="company-content job-detail" aria-labelledby="job-detail-title">
+    <main id="conteudo" className="company-content job-detail" aria-labelledby="job-detail-title">
       <Link className="back-link" href="/candidato/vagas">← Voltar às vagas</Link>
       <header className="job-detail-header">
         <p className="job-card-company">{job.companyName}</p>
