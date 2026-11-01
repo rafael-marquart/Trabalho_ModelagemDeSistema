@@ -27,3 +27,5 @@
 - E2E: acessos recusados, rascunho, registro com etapa e score, vínculo com o resultado da SPEC-007, auditoria, duplicidade, detalhe "já se candidatou", trava de edição da vaga, encerramento identifica 1 candidato ativo e mantém a candidatura, vaga encerrada recusa nova candidatura.
 - Teste manual: `docs/operacao/validacao-manual-spec-011.md`.
 - Teste manual executado pelo responsável em 31/10/2026; layout aprovado na mesma data. SPEC-011 encerrada.
+
+- Correção (01/11/2026): a migração `20261101070000_application_score_nullable` torna `Application.score` opcional também nos bancos que aplicaram a primeira versão da migração da SPEC-011 (o arquivo original foi editado depois de aplicado). A API de candidatura passa a responder com mensagem clara e registrar o erro no servidor em caso de falha inesperada.

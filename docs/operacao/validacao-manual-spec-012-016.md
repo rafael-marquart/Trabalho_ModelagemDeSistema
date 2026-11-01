@@ -1,6 +1,6 @@
 # Roteiro de validação manual — SPEC-012 e SPEC-016
 
-Antes: `git pull`, `npm.cmd install`, `npm.cmd run db:generate`, `npm.cmd run dev` (não há migração nova). Tenha um candidato com pelo menos uma candidatura (SPEC-011) e, se possível, uma segunda candidatura movida pela empresa (SPEC-013).
+Antes: `git pull`, `npm.cmd install`, `npm.cmd run db:generate`, `npx.cmd prisma migrate deploy` (migração de correção do score opcional), `npm.cmd run dev`. Tenha um candidato com pelo menos uma candidatura (SPEC-011) e, se possível, uma segunda candidatura movida pela empresa (SPEC-013).
 
 | # | Passo | Resultado esperado |
 |---|---|---|

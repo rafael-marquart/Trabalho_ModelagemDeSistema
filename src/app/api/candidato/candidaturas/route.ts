@@ -15,7 +15,14 @@ export async function POST(request: Request) {
   if (!user || user.role !== "CANDIDATE" || !user.isActive) return NextResponse.json({ message: "Entre como candidato para se candidatar." }, { status: 401 });
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ message: "Dados inválidos." }, { status: 400 });
-  const result = await applyToJob(user.id, parsed.data.jobId);
+  let result;
+  try {
+    result = await applyToJob(user.id, parsed.data.jobId);
+  } catch (error) {
+    // Logged on the server; the candidate gets a clear message and nothing is registered (the write is one transaction).
+    console.error("Falha ao registrar candidatura:", error instanceof Error ? error.message : error);
+    return NextResponse.json({ message: "Não foi possível registrar a candidatura por um erro no servidor. Nada foi gravado; tente novamente mais tarde." }, { status: 500 });
+  }
   if (!result.ok) return NextResponse.json({ code: result.code, message: result.message }, { status: result.status });
   return NextResponse.json({ ok: true, application: result.application }, { status: 201 });
 }
