@@ -2816,9 +2816,9 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 - [x] O comentário pode ficar vazio; quando informado, é validado.
 - [x] Após o envio, o candidato não consegue editar nem substituir a avaliação; uma segunda avaliação do mesmo candidato para a mesma entrevista é recusada.
 - [x] Eventos relevantes são registrados e indícios pertinentes de abuso podem ser encaminhados para análise administrativa, sem bloqueio automático nem alteração automática da avaliação/distribuição pública. *(critério de indício provisório — OPEN-095)*
-- [ ] A apresentação pública mostra somente distribuição agregada por quantidade de estrelas e não expõe identidade, identificadores ou comentários individuais; avaliação inválida não alimenta a nota pública (RNF-08/RNF-09). *(depende da SPEC-021: aqui só existe a contagem por estrelas, sem tela pública; avaliação inválida nunca é gravada)*
+- [x] A apresentação pública mostra somente distribuição agregada por quantidade de estrelas e não expõe identidade, identificadores ou comentários individuais; avaliação inválida não alimenta a nota pública (RNF-08/RNF-09). *(entregue pela SPEC-021 em 01/11/2026; avaliação inválida nunca é gravada)*
 - [x] Registros individuais e comentários opcionais têm acesso restrito e são excluídos ou irreversivelmente anonimizados após 1 ano do envio, respeitando obrigações aplicáveis de preservação. *(rotina `npm run evaluations:retention`; o agendamento em produção segue o checklist operacional)*
-- [ ] A distribuição agregada só é mantida por prazo indeterminado se não permitir reconstruir avaliações individuais nem identificar candidatos. *(depende da SPEC-021, que definirá a apresentação e o mínimo de avaliações para não permitir identificação)*
+- [ ] A distribuição agregada só é mantida por prazo indeterminado se não permitir reconstruir avaliações individuais nem identificar candidatos. *(apresentação entregue pela SPEC-021; o risco com poucas avaliações está em aberto na OPEN-098)*
 
 - [x] Acesso limitado ao ator autorizado.
 - [x] Pré-condições e regras são validadas no backend.
@@ -3084,8 +3084,8 @@ OPEN-078 a OPEN-081 estão resolvidas. As decisões sobre critérios/evidências
 | Campo | Valor |
 |---|---|
 | ID | SPEC-021 |
-| Estado do texto | aprovada; implementada em 01/11/2026 (aguardando teste manual e aprovação do layout); ver `docs/Implementacao/SPEC-021.md` e `docs/operacao/validacao-manual-spec-021.md`; risco de identificação com poucas avaliações registrado em OPEN-098 |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada em 01/11/2026; ver `docs/Implementacao/SPEC-021.md`; o risco de identificação com poucas avaliações permanece em aberto na OPEN-098 |
+| Estado do layout | aprovado pelo responsável em 01/11/2026 sobre as telas implementadas (seção "Avaliações de candidatos" no detalhe da vaga e na página inicial da empresa: distribuição por estrelas de Acessibilidade e Postura inclusiva e estado sem dados suficientes) |
 | Capacidade | Gerenciar nota pública de acessibilidade |
 
 ## 2. Rastreabilidade
@@ -3144,19 +3144,21 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
-- [ ] Nota pública usa apenas dados válidos e apresenta somente distribuição agregada por quantidade de estrelas, sem revelar identidade, identificadores ou comentários individuais (RNF-08/RNF-09).
-- [ ] Registros individuais e comentários opcionais têm acesso restrito e são excluídos ou irreversivelmente anonimizados após 1 ano do envio, respeitando obrigações aplicáveis de preservação.
-- [ ] A distribuição agregada só é mantida por prazo indeterminado se não permitir reconstruir avaliações individuais nem identificar candidatos.
-- [ ] Denúncia pendente não altera automaticamente a nota; ausência de dados suficientes não é apresentada como nota calculada.
+- [x] Nota pública usa apenas dados válidos e apresenta somente distribuição agregada por quantidade de estrelas, sem revelar identidade, identificadores ou comentários individuais (RNF-08/RNF-09).
+- [x] Registros individuais e comentários opcionais têm acesso restrito e são excluídos ou irreversivelmente anonimizados após 1 ano do envio, respeitando obrigações aplicáveis de preservação. *(rotina `evaluations:retention`; a data de envio é reduzida ao ano)*
+- [ ] A distribuição agregada só é mantida por prazo indeterminado se não permitir reconstruir avaliações individuais nem identificar candidatos. *(em aberto na OPEN-098: com uma única avaliação, a distribuição revela as estrelas dadas; mitigação provisória com soma por empresa, sem datas nem comentários)*
+- [x] Denúncia pendente não altera automaticamente a nota; ausência de dados suficientes não é apresentada como nota calculada.
 
-- [ ] Acesso limitado ao ator autorizado.
-- [ ] Pré-condições e regras são validadas no backend.
-- [ ] Operações inválidas são recusadas sem alteração indevida.
-- [ ] Operação válida produz o estado esperado.
-- [ ] Dados pessoais e de acessibilidade respeitam autorização.
-- [ ] Alterações relevantes ficam rastreáveis.
-- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
-- [ ] Lacunas permanecem explicitadas em OPEN.md.
+- [x] Acesso limitado ao ator autorizado.
+- [x] Pré-condições e regras são validadas no backend.
+- [x] Operações inválidas são recusadas sem alteração indevida.
+- [x] Operação válida produz o estado esperado.
+- [x] Dados pessoais e de acessibilidade respeitam autorização.
+- [x] Alterações relevantes ficam rastreáveis.
+- [x] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [x] Lacunas permanecem explicitadas em OPEN.md.
+
+> Evidência: testes Vitest e E2E verdes na CI; teste manual executado pelo responsável em 01/11/2026 sem problemas; layout aprovado na mesma data. Pendente apenas a decisão da OPEN-098.
 
 ## 12. Casos de teste derivados
 
