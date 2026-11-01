@@ -26,3 +26,4 @@
 - Vitest: transições permitidas e recusadas, listagem restrita à empresa, dados do detalhe sem descrição livre, movimento com histórico e auditoria, recusas sem escrita, API (sessão, corpo estrito), telas (filtro, confirmação, etapa final, axe-core).
 - E2E: listagem pela empresa, recusa a outra empresa e ao candidato, CPF não exposto, pular etapa recusado, movimento para Triagem com observação, histórico com dois eventos, histórico imutável (atualizar e apagar recusados), páginas do funil; o encerramento continua identificando o candidato ativo.
 - Teste manual: `docs/operacao/validacao-manual-spec-013.md`.
+- Teste manual executado pelo responsável em 01/11/2026, sem problemas; layout aprovado na mesma data. SPEC-013 encerrada, com a OPEN-092 em aberto.

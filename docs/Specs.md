@@ -2413,8 +2413,8 @@ OPEN-050, OPEN-051 e OPEN-052 foram resolvidas e registradas em `docs/OPEN.md`.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-013 |
-| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-013.md` |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada em 01/11/2026, exceto as pendências impeditivas, ainda sem definição (OPEN-092); ver `docs/Implementacao/SPEC-013.md` |
+| Estado do layout | aprovado pelo responsável em 01/11/2026 sobre as telas implementadas (painel de candidaturas com filtro por etapa, detalhe da candidatura, alteração de etapa com confirmação e histórico) |
 | Capacidade | Gerenciar processo seletivo e funil |
 
 ## 2. Rastreabilidade
@@ -2474,19 +2474,21 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
-- [ ] Recrutador só consulta e altera candidaturas de vagas da Empresa à qual está vinculado e autorizado.
-- [ ] O backend valida autorização do Recrutador, transição prevista na RB-39 e ausência de pendências impeditivas conhecidas antes de avançar.
-- [ ] Pendência impeditiva impede a mudança de etapa e permite solicitar complementação; não são presumidos critérios específicos adicionais por etapa.
-- [ ] Transição recusada não altera etapa; transição concluída registra mudança rastreável (RNF-07/RNF-09/RNF-14).
+- [x] Recrutador só consulta e altera candidaturas de vagas da Empresa à qual está vinculado e autorizado.
+- [x] O backend valida autorização do Recrutador, transição prevista na RB-39 e ausência de pendências impeditivas conhecidas antes de avançar.
+- [ ] Pendência impeditiva impede a mudança de etapa e permite solicitar complementação; não são presumidos critérios específicos adicionais por etapa. *(ponto de verificação implementado, mas nenhum tipo de pendência está definido — OPEN-092)*
+- [x] Transição recusada não altera etapa; transição concluída registra mudança rastreável (RNF-07/RNF-09/RNF-14).
 
-- [ ] Acesso limitado ao ator autorizado.
-- [ ] Pré-condições e regras são validadas no backend.
-- [ ] Operações inválidas são recusadas sem alteração indevida.
-- [ ] Operação válida produz o estado esperado.
-- [ ] Dados pessoais e de acessibilidade respeitam autorização.
-- [ ] Alterações relevantes ficam rastreáveis.
-- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
-- [ ] Lacunas permanecem explicitadas em OPEN.md.
+- [x] Acesso limitado ao ator autorizado.
+- [x] Pré-condições e regras são validadas no backend.
+- [x] Operações inválidas são recusadas sem alteração indevida.
+- [x] Operação válida produz o estado esperado.
+- [x] Dados pessoais e de acessibilidade respeitam autorização.
+- [x] Alterações relevantes ficam rastreáveis.
+- [x] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [x] Lacunas permanecem explicitadas em OPEN.md.
+
+> Evidência: testes Vitest e E2E verdes na CI; teste manual executado pelo responsável em 01/11/2026 sem problemas. A conta da Empresa também opera o funil, conforme decisão da SPEC-005 de 27/10/2026.
 
 ## 12. Casos de teste derivados
 
@@ -2506,12 +2508,12 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 OPEN-055 e OPEN-056 foram resolvidas e estão registradas em `docs/OPEN.md`. O acesso do Recrutador é limitado pela finalidade e necessidade durante todas as etapas; o histórico de movimentações registra etapa anterior/resultante, data e hora, ator responsável e tipo de movimentação/decisão, com justificativa quando exigida, preservando eventos anteriores e proibindo reversões fora da RB-39. A OPEN-053 definiu UC-09 como referência para gestão do funil pelo Recrutador, enquanto UC-05 cobre o acompanhamento pelo candidato. A OPEN-054 definiu autorização, transição prevista na RB-39 e ausência de pendências impeditivas, sem criar critérios específicos adicionais por etapa.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
-- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
-- [ ] Questões decididas ou mantidas explicitamente em aberto.
-- [ ] Layout funcional anexado e aprovado quando aplicável.
-- [ ] Critérios de aceitação e testes revisados.
-- [ ] Nenhuma implementação antes das aprovações exigidas.
+- [x] Texto revisado e aprovado.
+- [x] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [x] Questões decididas ou mantidas explicitamente em aberto.
+- [x] Layout funcional anexado e aprovado quando aplicável.
+- [x] Critérios de aceitação e testes revisados.
+- [x] Nenhuma implementação antes das aprovações exigidas.
 
 ---
 
