@@ -4,9 +4,10 @@ import type { PublicRating as Rating, StarCounts } from "@/lib/public-rating/ser
 const stars = [5, 4, 3, 2, 1] as const;
 const count = (value: number) => `${value} ${value === 1 ? "avaliação" : "avaliações"}`;
 
-function Distribution({ title, counts, total, id }: { title: string; counts: StarCounts; total: number; id: string }) {
+function Distribution({ title, counts, total, id, level }: { title: string; counts: StarCounts; total: number; id: string; level: 3 | 4 }) {
+  const Heading = level === 3 ? "h3" : "h4";
   return <div className="rating-criterion">
-    <h4 id={id}>{title}</h4>
+    <Heading id={id}>{title}</Heading>
     <ul className="rating-bars" aria-labelledby={id}>
       {stars.map((star) => <li key={star}>
         <span className="rating-label">{`${star} ${star === 1 ? "estrela" : "estrelas"}`}</span>
@@ -27,8 +28,8 @@ export default function PublicRating({ rating, companyName, headingLevel = 3 }: 
     <Heading>Avaliações de candidatos</Heading>
     {rating.available ? <>
       <p className="muted">{`${count(rating.total)} de candidatos que fizeram entrevista com ${companyName}. Mostramos quantas avaliações deram cada número de estrelas, sem média, nomes ou comentários.`}</p>
-      <Distribution id={`rating-acc-${headingLevel}`} title="Acessibilidade" counts={rating.accessibility} total={rating.total} />
-      <Distribution id={`rating-inc-${headingLevel}`} title="Postura inclusiva" counts={rating.inclusion} total={rating.total} />
+      <Distribution id={`rating-acc-${headingLevel}`} title="Acessibilidade" counts={rating.accessibility} total={rating.total} level={headingLevel === 2 ? 3 : 4} />
+      <Distribution id={`rating-inc-${headingLevel}`} title="Postura inclusiva" counts={rating.inclusion} total={rating.total} level={headingLevel === 2 ? 3 : 4} />
     </> : <p className="muted">{`Ainda não há dados suficientes: nenhum candidato avaliou o processo seletivo de ${companyName}. Isso não indica que a acessibilidade seja boa ou ruim.`}</p>}
   </div>;
 }

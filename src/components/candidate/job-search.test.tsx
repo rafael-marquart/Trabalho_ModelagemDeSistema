@@ -35,8 +35,8 @@ describe("candidate job search", () => {
   it("lists jobs with the score circle, the hidden-job note and filters from the open jobs", async () => {
     render(<JobSearch initialQuery={searchQuerySchema.parse({})} />);
     expect(await screen.findByRole("heading", { name: "22 vagas encontradas" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /Compatibilidade: 92%/ })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /Compatibilidade: Dados insuficientes/ })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /92% Match: compatibilidade/ })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Faltam dados: compatibilidade dados insuficientes/ })).toBeTruthy();
     expect(screen.getByText(/1 vaga não aparece/)).toBeTruthy();
     expect(screen.getByRole("group", { name: "Modalidade" })).toBeTruthy();
     expect(within(screen.getByRole("group", { name: "Localização" })).getAllByRole("checkbox")).toHaveLength(2);
@@ -81,7 +81,7 @@ describe("score dialog", () => {
   afterEach(() => cleanup());
   it("opens with the dimension scores and the travel time, and closes back to the circle", () => {
     render(<ScoreDialog jobTitle="Analista" result={complete} />);
-    const trigger = screen.getByRole("button", { name: /Compatibilidade: 92%/ });
+    const trigger = screen.getByRole("button", { name: /92% Match: compatibilidade/ });
     fireEvent.click(trigger);
     expect(screen.getByText("92%", { selector: "strong" })).toBeTruthy();
     expect(screen.getByText("Acessibilidade")).toBeTruthy();
@@ -92,7 +92,7 @@ describe("score dialog", () => {
   });
   it("never shows a number when data is missing and points to the profile", () => {
     render(<ScoreDialog jobTitle="Assistente" result={insufficient} />);
-    fireEvent.click(screen.getByRole("button", { name: /Dados insuficientes/ }));
+    fireEvent.click(screen.getByRole("button", { name: /dados insuficientes/i }));
     expect(screen.getByText(/nenhum valor foi presumido/)).toBeTruthy();
     expect(screen.getByRole("link", { name: "Completar meu perfil" }).getAttribute("href")).toBe("/candidato/perfil");
     expect(screen.queryByText(/%$/, { selector: ".score-dialog-total strong" })).toBeNull();
@@ -103,7 +103,7 @@ describe("score dialog", () => {
       { dimension: "T", item: "Idiomas", action: "Informe seus idiomas e níveis no perfil.", responsible: "CANDIDATE" }
     ] };
     render(<ScoreDialog jobTitle="Assistente" result={mixed} />);
-    fireEvent.click(screen.getByRole("button", { name: /Dados insuficientes/ }));
+    fireEvent.click(screen.getByRole("button", { name: /dados insuficientes/i }));
     expect(screen.getByRole("heading", { name: "A empresa não informou" })).toBeTruthy();
     expect(screen.getByText(/Não depende de você: a empresa precisa completar a vaga/)).toBeTruthy();
     expect(screen.getByRole("heading", { name: "Falta no seu perfil" })).toBeTruthy();
@@ -112,7 +112,7 @@ describe("score dialog", () => {
   it("does not offer the profile link when only the company is missing data", () => {
     const companyOnly: Compatibility = { ...insufficient, missing: [{ dimension: "D", item: "Tempo de deslocamento: Endereço do local de trabalho da vaga não informado", action: "A empresa precisa informar o endereço completo do local de trabalho na vaga." }] };
     render(<ScoreDialog jobTitle="Assistente" result={companyOnly} />);
-    fireEvent.click(screen.getByRole("button", { name: /Dados insuficientes/ }));
+    fireEvent.click(screen.getByRole("button", { name: /dados insuficientes/i }));
     expect(screen.getByRole("heading", { name: "A empresa não informou" })).toBeTruthy();
     expect(screen.queryByRole("link", { name: "Completar meu perfil" })).toBeNull();
   });

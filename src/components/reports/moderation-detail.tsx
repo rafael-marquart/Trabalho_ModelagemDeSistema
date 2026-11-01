@@ -70,7 +70,7 @@ export default function ModerationDetail({ reportId }: { reportId: string }) {
   }
 
   const upheld = decision.decision === "PROCEDENTE" || decision.decision === "PARCIALMENTE_PROCEDENTE";
-  return <main className="company-content application-detail" aria-labelledby="moderation-title">
+  return <main id="conteudo" className="company-content application-detail" aria-labelledby="moderation-title">
     <Link className="back-link" href="/admin/denuncias">← Voltar à fila</Link>
     {error ? <p className="form-error" role="alert">{error}</p> : null}
     {notice ? <p ref={noticeRef} tabIndex={-1} className="form-success" role="status">{notice}</p> : null}

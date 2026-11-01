@@ -31,7 +31,7 @@ export default function RecruiterHomePage() {
   }, []);
 
   return (
-    <main className="company-content" aria-labelledby="recruiter-home-title">
+    <main id="conteudo" className="company-content" aria-labelledby="recruiter-home-title">
           <div className="recruiter-heading">
             <div>
               <p className="eyebrow">Área do recrutador</p>

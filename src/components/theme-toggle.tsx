@@ -13,12 +13,11 @@ export default function ThemeToggle() {
       type="button"
       className="theme-toggle"
       onClick={toggleTheme}
-      aria-label="Alternar tema claro e escuro"
       aria-pressed={theme === "dark"}
-      title={theme === "dark" ? "Usar tema claro" : "Usar tema escuro"}
+      title={theme === "dark" ? "Desativar tema escuro" : "Ativar tema escuro"}
     >
-      <span aria-hidden="true">{theme === "dark" ? "☀" : "☾"}</span>
-      <span>{theme === "dark" ? "Tema claro" : "Tema escuro"}</span>
+      <span aria-hidden="true">☾</span>
+      <span>Tema escuro</span>
     </button>
     <ContrastToggle />
     </span>

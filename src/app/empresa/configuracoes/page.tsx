@@ -8,7 +8,7 @@ export default async function CompanySettingsPage() {
   if (!user || user.role !== "COMPANY") redirect("/empresa/login");
   return (
     <CompanyShell role="COMPANY" active="settings" userName={user.fullName}>
-      <main className="company-content" aria-labelledby="settings-title">
+      <main id="conteudo" className="company-content" aria-labelledby="settings-title">
         <header className="company-page-heading">
           <h1 id="settings-title">Configurações</h1>
           <p className="muted">Informações da sua organização.</p>

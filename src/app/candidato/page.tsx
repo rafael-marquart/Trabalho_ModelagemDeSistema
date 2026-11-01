@@ -22,7 +22,7 @@ export default async function CandidateHomePage() {
     failed = true;
   }
   return <CompanyShell role="CANDIDATE" active="home" userName={user.fullName}>
-    <main className="company-content" aria-labelledby="candidate-home-title">
+    <main id="conteudo" className="company-content" aria-labelledby="candidate-home-title">
       <header className="company-page-heading candidate-home-heading">
         <div>
           <p className="eyebrow">Área do candidato</p>

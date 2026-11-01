@@ -28,9 +28,10 @@ export default function ScoreDialog({ jobTitle, result, jobId }: { jobTitle: str
   const travel = result.dimensions.D.components.find(component => component.label === "Deslocamento");
   const ring = complete ? { ["--score" as string]: `${result.score}` } as React.CSSProperties : undefined;
 
+  // The accessible name starts with the visible text ("92% Match"), so voice control users can say what they see (WCAG 2.5.3).
   return <>
     <button ref={triggerRef} type="button" className={`score-ring ${complete ? "score-ring-complete" : "score-ring-pending"}`} style={ring}
-      onClick={() => setOpen(true)} aria-haspopup="dialog" aria-label={`Compatibilidade: ${scoreText(result)}. Ver detalhes da vaga ${jobTitle}`}>
+      onClick={() => setOpen(true)} aria-haspopup="dialog" aria-label={complete ? `${result.score}% Match: compatibilidade com a vaga ${jobTitle}. Ver detalhes` : `Faltam dados: compatibilidade ${scoreText(result).toLowerCase()} com a vaga ${jobTitle}. Ver detalhes`}>
       <span className={`score-ring-value${complete && (result.score ?? 0) >= 100 ? " score-ring-value-long" : ""}`} aria-hidden="true">{complete ? `${result.score}%` : "?"}</span>
       <span className="score-ring-caption" aria-hidden="true">{complete ? "Match" : "Faltam dados"}</span>
     </button>

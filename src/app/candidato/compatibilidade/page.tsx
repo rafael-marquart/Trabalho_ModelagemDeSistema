@@ -9,7 +9,7 @@ export default async function CandidateCompatibilityPage() {
   const user = await getCurrentUser();
   if (!user || user.role !== "CANDIDATE") redirect("/candidato/login");
   return <CompanyShell role="CANDIDATE" active="jobs" userName={user.fullName}>
-    <main className="company-content candidate-profile-content" aria-labelledby="compat-title">
+    <main id="conteudo" className="company-content candidate-profile-content" aria-labelledby="compat-title">
       <Link className="back-link" href="/candidato/vagas">← Voltar às vagas</Link>
       <header className="company-page-heading candidate-profile-header">
         <p className="eyebrow">Área do candidato</p><h1 id="compat-title">Simular compatibilidade</h1>

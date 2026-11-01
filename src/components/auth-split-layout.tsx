@@ -26,7 +26,7 @@ export default function AuthSplitLayout({
   showRoleSwitch = true
 }: AuthSplitLayoutProps) {
   return (
-    <main className="auth-split-page">
+    <main id="conteudo" className="auth-split-page">
       <section className="auth-split-visual" aria-label="Identidade Acessa Vagas">
         <div className="auth-split-decoration" aria-hidden="true">
           <span className="auth-split-decoration-small" />

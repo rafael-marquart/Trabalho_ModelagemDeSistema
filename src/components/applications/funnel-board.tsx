@@ -34,7 +34,7 @@ export default function FunnelBoard({ basePath, jobId }: { basePath: string; job
   }, [jobId]);
 
   const list = data ? data.applications.filter(item => filter === "ALL" || item.stage === filter) : [];
-  return <main className="company-content" aria-labelledby="funnel-title">
+  return <main id="conteudo" className="company-content" aria-labelledby="funnel-title">
     <Link className="back-link" href={basePath}>← Voltar às vagas</Link>
     <header className="company-page-heading">
       <h1 id="funnel-title">{data ? `Candidaturas — ${data.job.title}` : "Candidaturas"}</h1>

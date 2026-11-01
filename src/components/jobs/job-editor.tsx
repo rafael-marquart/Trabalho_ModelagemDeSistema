@@ -137,11 +137,11 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
     finally { setBusy(false); }
   }
 
-  if (loading) return <main className="company-content"><p className="muted" role="status">Carregando vaga…</p></main>;
-  if (error && jobId && status === "DRAFT" && !form.title && error === "Vaga não encontrada.") return <main className="company-content"><p className="form-error" role="alert">{error}</p></main>;
+  if (loading) return <main id="conteudo" className="company-content"><p className="muted" role="status">Carregando vaga…</p></main>;
+  if (error && jobId && status === "DRAFT" && !form.title && error === "Vaga não encontrada.") return <main id="conteudo" className="company-content"><p className="form-error" role="alert">{error}</p></main>;
 
   const needsLocation = form.modality === "PRESENCIAL" || form.modality === "HIBRIDO";
-  return <main className="company-content" aria-labelledby="job-editor-title">
+  return <main id="conteudo" className="company-content" aria-labelledby="job-editor-title">
     <header className="company-page-heading">
       <h1 id="job-editor-title">{jobId ? "Vaga" : "Nova vaga"}{status !== "NEW" ? <span className={`status-pill job-status-inline ${status === "OPEN" ? "status-active" : status === "PAUSED" ? "status-pending" : "status-neutral"}`}>{jobStatusLabels[status]}</span> : null}</h1>
       <p className="muted">{readOnly ? "Esta vaga está encerrada e não pode mais ser alterada." : "Rascunhos podem ficar incompletos. Para publicar, preencha todos os campos obrigatórios e declare a acessibilidade da vaga."}</p>

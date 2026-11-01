@@ -30,7 +30,7 @@ describe("approved visual tokens and focus contrast", () => {
   it("keeps the refined light theme palette consistent with the implemented design", () => {
     const expected: Record<string, string> = {
       ink: "#261B38",
-      muted: "#6D647A",
+      muted: "#5C5369",
       purple: "#6B29BF",
       "purple-dark": "#4A148C",
       "purple-soft": "#E1D5F0",
@@ -42,6 +42,13 @@ describe("approved visual tokens and focus contrast", () => {
 
     for (const [name, value] of Object.entries(expected)) {
       expect(token(lightBlock, name)).toBe(value);
+    }
+  });
+
+  it("keeps secondary text at WCAG AA (4.5:1) on every light background", () => {
+    // #6D647A reached only 4.16:1 on the page background (axe-core in the browser, 01/11/2026).
+    for (const background of ["background", "surface", "purple-soft"]) {
+      expect(contrast(token(lightBlock, "muted"), token(lightBlock, background)), "muted on " + background).toBeGreaterThanOrEqual(4.5);
     }
   });
 

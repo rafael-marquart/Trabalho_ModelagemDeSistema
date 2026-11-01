@@ -4,7 +4,7 @@ import BrandLogo from "@/components/brand-logo";
 
 export default function HomePage() {
   return (
-    <main className="page-shell">
+    <main id="conteudo" className="page-shell">
       <section className="welcome-panel" aria-labelledby="welcome-title">
         <Link className="brand" href="/" aria-label="Acessa Vagas — início">
           <BrandLogo onDark />

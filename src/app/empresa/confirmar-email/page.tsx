@@ -44,7 +44,7 @@ export default function ConfirmCompanyEmailPage() {
   }
 
   return (
-    <main className="auth-page">
+    <main id="conteudo" className="auth-page">
       <div className="theme-control-host"><ThemeToggle /></div>
       <Link className="brand auth-brand" href="/">
         <BrandLogo />
