@@ -90,8 +90,9 @@ export default async function CandidateJobDetailPage({ params }: { params: Promi
                 <span className={`score-ring-value${complete && (result.score ?? 0) >= 100 ? " score-ring-value-long" : ""}`}>{complete ? `${result.score}%` : result.status === "INCOMPATIBLE" ? "✕" : "?"}</span>
               </div>
               <p className="visually-hidden">Compatibilidade: {scoreText(result)}</p>
+              {job.compatibilityFromApplication ? <p className="muted compat-source">{`Resultado registrado na sua candidatura, em ${new Date(job.compatibilityFromApplication).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}. Como a vaga não está aberta, ele não é recalculado.`}</p> : null}
               <CompatibilityDetails result={result} />
-            </> : <p className="muted">A compatibilidade só é mostrada para vagas abertas.</p>}
+            </> : <p className="muted">A compatibilidade é calculada para vagas abertas e fica disponível depois do encerramento para quem se candidatou.</p>}
           </section>
         </aside>
       </div>

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { analyzeWithContext, loadCandidateContext } from "@/lib/compatibility/service";
+import { analyzeWithContext, loadCandidateContext, toView } from "@/lib/compatibility/service";
 import type { TravelEstimator } from "@/lib/compatibility/travel";
 import { checkJobAvailability } from "@/lib/jobs/availability";
 import { BLOCKING_STAGES } from "@/lib/jobs/applications";
@@ -18,6 +18,18 @@ const lowerFirst = (text: string) => text.charAt(0).toLocaleLowerCase("pt-BR") +
 
 class Refused extends Error {
   constructor(readonly result: ApplyResult) { super("refused"); }
+}
+
+/**
+ * The SPEC-007 result registered with the candidate's latest application to a job, so it stays visible after the job
+ * closes (it is not recalculated: closed jobs are not analyzed). Only the candidate's own application is read.
+ */
+export async function findApplicationResult(userId: string, jobId: string) {
+  const row = await prisma.application.findFirst({
+    where: { candidateUserId: userId, jobId }, orderBy: { appliedAt: "desc" },
+    select: { appliedAt: true, compatibilityResult: { select: { id: true, executedAt: true, rulesVersion: true, jobId: true, outcome: true } } }
+  });
+  return row ? { appliedAt: row.appliedAt.toISOString(), result: toView(row.compatibilityResult) } : null;
 }
 
 /** The candidate's application to a job that still blocks a new one (in progress or hired), if any. */

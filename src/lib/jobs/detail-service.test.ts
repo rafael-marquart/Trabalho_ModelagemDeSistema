@@ -3,7 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const { prismaMock, analyzeMock, infraMock } = vi.hoisted(() => ({ prismaMock: { job: { findFirst: vi.fn() } }, analyzeMock: vi.fn(), infraMock: vi.fn() }));
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
 vi.mock("@/lib/compatibility/service", () => ({ loadCandidateContext: vi.fn().mockResolvedValue({}), analyzeWithContext: analyzeMock }));
-vi.mock("@/lib/applications/service", () => ({ findBlockingApplication: vi.fn().mockResolvedValue(null) }));
+const { appResultMock } = vi.hoisted(() => ({ appResultMock: vi.fn() }));
+vi.mock("@/lib/applications/service", () => ({ findBlockingApplication: vi.fn().mockResolvedValue(null), findApplicationResult: appResultMock }));
 vi.mock("@/lib/company-infrastructure/service", () => ({ getCompanyInfrastructure: infraMock, categoryLabel: (code: string) => code }));
 import { getJobDetailForCandidate } from "./detail-service";
 
@@ -38,5 +39,13 @@ describe("job detail for a candidate", () => {
     const detail = await getJobDetailForCandidate("cand", "job-1");
     expect(analyzeMock).not.toHaveBeenCalled();
     expect(detail).toMatchObject({ compatibility: null, availability: { label: "Encerrada" }, action: { allowed: false } });
+  });
+  it("keeps showing the result registered with the application after the job closes, without recalculating", async () => {
+    prismaMock.job.findFirst.mockResolvedValue(row({ status: "CLOSED" }));
+    appResultMock.mockResolvedValueOnce({ appliedAt: "2026-10-31T15:00:00.000Z", result: { status: "COMPLETE", score: 77 } });
+    const detail = await getJobDetailForCandidate("cand", "job-1");
+    expect(analyzeMock).not.toHaveBeenCalled();
+    expect(appResultMock).toHaveBeenCalledWith("cand", "job-1");
+    expect(detail).toMatchObject({ compatibility: { score: 77 }, compatibilityFromApplication: "2026-10-31T15:00:00.000Z" });
   });
 });

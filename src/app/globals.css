@@ -1037,3 +1037,4 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .apply-result h3:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
 .apply-result p { margin: 0; }
 .job-action-applied { border-left: 4px solid var(--purple); background: var(--purple-soft); }
+.compat-source { margin: 0 0 8px; font-size: 14px; }

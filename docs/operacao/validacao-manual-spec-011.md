@@ -14,7 +14,7 @@ Antes: `git pull`, `npm.cmd install`, `npm.cmd run db:generate`, `npx.cmd prisma
 | 8 | Vaga incompatível (recurso indispensável ausente) | Sem botão; motivo da incompatibilidade |
 | 9 | Empresa tenta editar título/descrição da vaga que já tem candidatura | Não salva; aviso de que a vaga já recebeu candidaturas |
 | 10 | Empresa pausa a vaga com o detalhe aberto no candidato (sem ter se candidatado, use outra vaga) e o candidato confirma a candidatura | Recusa: a vaga não está aberta; nada é registrado |
-| 11 | Empresa encerra a vaga com candidatura | A vaga encerra; o candidato continua vendo "Você já se candidatou" |
+| 11 | Empresa encerra a vaga com candidatura | A vaga encerra; o candidato continua vendo "Você já se candidatou" e a compatibilidade registrada na candidatura, com a data |
 | 12 | Teclado e leitor de tela | Botões alcançáveis; confirmação e resultado anunciados; foco vai para o resultado |
 | 13 | Celular | Botões e mensagens legíveis |
 

@@ -16,7 +16,7 @@ const base = {
   title: "Analista de Dados", companyName: "TechPlus", description: "Trabalhar com dados.", requirements: "Não informados",
   criteria: { skills: ["SQL"], experience: [], educationMinLevel: "", languages: [{ language: "Inglês", level: "Intermediário" }] },
   modality: "Híbrido", professionalArea: "Não informada", location: "Av. Paulista, 1000, São Paulo/SP", salary: "Não informada", deadline: "31/12/2026",
-  origin: "Publicada pela empresa no Acessa Vagas", availability: { code: "OPEN", label: "Aberta", message: "Inscrições abertas até 31/12/2026." },
+  compatibilityFromApplication: null, origin: "Publicada pela empresa no Acessa Vagas", availability: { code: "OPEN", label: "Aberta", message: "Inscrições abertas até 31/12/2026." },
   jobAccessibility: [{ label: "Rampas de acesso", status: "PRESENT", statusLabel: "Presente" }, { label: "Elevadores", status: "NOT_INFORMED", statusLabel: "Não informado" }],
   companyInfrastructure: { updatedAt: "2026-10-27T00:00:00Z", items: [{ category: "Acesso físico e circulação", label: "Rampas de acesso", status: "PRESENT", statusLabel: "Presente", note: "Só no térreo" }] },
   compatibility: { id: "r", status: "COMPLETE", score: 86, executedAt: "", factors: [], missing: [], appliedWeights: { A: 0.5, T: 0.3, D: 0.2 }, critical: { applied: false, barriers: [], pending: [] },
@@ -54,7 +54,14 @@ describe("job detail page", () => {
   it("shows a closed job without compatibility", async () => {
     await show({ ...base, availability: { code: "CLOSED", label: "Encerrada", message: "Esta vaga foi encerrada e não recebe candidaturas." }, compatibility: null, action: { allowed: false, message: "Esta vaga foi encerrada e não recebe candidaturas." } });
     expect(screen.getByText("Vaga encerrada")).toBeTruthy();
-    expect(screen.getByText("A compatibilidade só é mostrada para vagas abertas.")).toBeTruthy();
+    expect(screen.getByText(/fica disponível depois do encerramento para quem se candidatou/)).toBeTruthy();
+  });
+  it("shows the result registered with the application on a closed job", async () => {
+    await show({ ...base, availability: { code: "CLOSED", label: "Encerrada", message: "Esta vaga foi encerrada e não recebe candidaturas." }, compatibilityFromApplication: "2026-10-31T15:00:00.000Z",
+      action: { allowed: false, applied: true, message: "Você se candidatou em 31/10/2026 às 12:00. Etapa atual: Inscrito." } });
+    expect(screen.getByText(/Resultado registrado na sua candidatura, em 31\/10\/2026/)).toBeTruthy();
+    expect(screen.getByText("86%", { selector: "strong" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Você já se candidatou" })).toBeTruthy();
   });
   it("returns not found for drafts or unknown jobs", async () => {
     detailMock.mockResolvedValue(null);

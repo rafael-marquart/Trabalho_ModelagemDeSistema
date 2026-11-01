@@ -1586,6 +1586,7 @@ async function main() {
     assert.ok(!afterClose.jobs.some(job => job.id === compatJob.id), "closed jobs leave the search (current status respected)");
     const closedDetail = await expectStatus(await fetch(`${BASE_URL}/candidato/vagas/${compatJob.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate opens a closed job");
     assert.ok(closedDetail.includes("Vaga encerrada") && closedDetail.includes("Você já se candidatou"), "a closed job shows its status and the existing application");
+    assert.ok(closedDetail.includes("Resultado registrado na sua candidatura"), "a candidate who applied still sees the compatibility registered with the application");
     const afterCloseApply = await apply({ jobId: compatJob.id }, compatCookie);
     assert.equal(afterCloseApply.status, 409, "a closed job does not accept applications");
     assert.equal(JSON.parse(await afterCloseApply.text()).code, "JOB_UNAVAILABLE");
