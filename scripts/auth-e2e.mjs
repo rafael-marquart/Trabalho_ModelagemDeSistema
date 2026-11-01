@@ -1610,6 +1610,42 @@ async function main() {
     await expectStatus(await fetch(`${BASE_URL}/empresa/vagas/${compatJob.id}/candidaturas`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company funnel page");
     await expectStatus(await fetch(`${BASE_URL}/empresa/vagas/${compatJob.id}/candidaturas/${applicationId}`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company application page");
 
+    // SPEC-012/016: the candidate follows and cancels only their own application; the history is preserved.
+    const myUrl = `${BASE_URL}/api/candidato/candidaturas`;
+    const mine = JSON.parse(await expectStatus(await fetch(myUrl, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate lists own applications")).applications;
+    assert.deepEqual(mine.map(item => item.id), [applicationId], "only the candidate's own applications are listed");
+    assert.equal(mine[0].stageLabel, "Em triagem");
+    await expectStatus(await fetch(myUrl, { headers: { cookie: companyCookie }, redirect: "manual" }), 401, "a company cannot use the candidate's list");
+    await expectStatus(await fetch(myUrl, { redirect: "manual" }), 401, "anonymous list of applications");
+    const myDetail = JSON.parse(await expectStatus(await fetch(`${myUrl}/${applicationId}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate opens own application")).application;
+    assert.deepEqual(myDetail.timeline.map(event => event.title), ["Status: Em triagem", "Candidatura realizada"], "timeline most recent first");
+    assert.ok(myDetail.canCancel, "an active application on an open job can be cancelled");
+    assert.ok(!JSON.stringify(myDetail).includes("Perfil aderente"), "internal recruiter notes are not shown to the candidate");
+    await expectStatus(await fetch(`${myUrl}/${applicationId}`, { headers: { cookie: companyCookie }, redirect: "manual" }), 401, "a company cannot open the candidate's view");
+    await expectStatus(await fetch(`${myUrl}/nao-existe`, { headers: { cookie: compatCookie }, redirect: "manual" }), 404, "unknown application");
+    const cancel = (id, cookie, extra = {}) => fetch(`${myUrl}/${id}/cancelar`, { method: "POST", headers: { "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie, ...extra }, redirect: "manual" });
+    await expectStatus(await cancel(applicationId, compatCookie, { origin: "https://evil.example" }), 403, "cross-origin cancellation");
+    await expectStatus(await cancel(applicationId, companyCookie), 401, "a company cannot cancel for the candidate");
+    await expectStatus(await cancel("nao-existe", compatCookie), 404, "cancelling an unknown application");
+    assert.equal((await prisma.application.findUnique({ where: { id: applicationId } })).stage, "TRIAGEM", "refused cancellations change nothing");
+    const myListPage = await expectStatus(await fetch(`${BASE_URL}/candidato/candidaturas`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "Minhas candidaturas page");
+    assert.ok(myListPage.includes("Minhas candidaturas"), "the list page renders");
+    const myDetailPage = await expectStatus(await fetch(`${BASE_URL}/candidato/candidaturas/${applicationId}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "application detail page");
+    assert.ok(myDetailPage.includes("Histórico da candidatura") && myDetailPage.includes("Cancelar candidatura"), "detail shows history and the cancel action");
+    await expectStatus(await cancel(applicationId, compatCookie), 200, "candidate cancels own application after confirming");
+    assert.equal((await prisma.application.findUnique({ where: { id: applicationId } })).stage, "CANCELADA");
+    const cancelEvents = await prisma.applicationStageEvent.findMany({ where: { applicationId }, orderBy: { createdAt: "asc" } });
+    assert.deepEqual(cancelEvents.map(event => `${event.fromStage}>${event.toStage}`), ["null>INSCRITO", "INSCRITO>TRIAGEM", "TRIAGEM>CANCELADA"], "cancelling keeps the whole history");
+    assert.equal(cancelEvents[2].kind, "CANCELLED");
+    assert.ok(await prisma.auditEvent.findFirst({ where: { eventType: "APPLICATION_CANCELLED", subjectId: applicationId } }), "the cancellation is audited");
+    await expectStatus(await cancel(applicationId, compatCookie), 409, "a cancelled application cannot be cancelled again");
+    const cancelledPage = await expectStatus(await fetch(`${BASE_URL}/candidato/candidaturas/${applicationId}?cancelada=1`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "cancellation result page");
+    assert.ok(cancelledPage.includes("O cancelamento foi registrado") && !cancelledPage.includes("Confirmar cancelamento") && !cancelledPage.includes(">Cancelar candidatura</button>"), "the result screen has no cancel button");
+    const afterCancelList = JSON.parse(await expectStatus(await fetch(myUrl, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "list after cancelling")).applications;
+    assert.equal(afterCancelList[0].stageLabel, "Cancelada", "the cancelled application stays listed as Cancelada");
+    const reapplied = JSON.parse(await expectStatus(await apply({ jobId: compatJob.id }, compatCookie), 201, "a cancelled application frees a new one")).application;
+    await expectStatus(await fetch(`${BASE_URL}/api/candidaturas/${reapplied.id}/etapa`, { method: "POST", headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie: companyCookie }, body: JSON.stringify({ toStage: "TRIAGEM" }), redirect: "manual" }), 200, "company screens the new application");
+
     await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}/acao`, "POST", { action: "close" }, companyCookie), 200, "company closes the analyzed job");
     await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 404, "closed jobs are not analyzed");
     const afterClose = JSON.parse(await expectStatus(await search("q=analista%20E2E"), 200, "search after closing"));
@@ -1625,6 +1661,15 @@ async function main() {
     const closeAudit = await prisma.auditEvent.findFirst({ where: { subjectId: compatJob.id, eventType: "JOB_CLOSED" }, orderBy: { createdAt: "desc" } });
     assert.equal(closeAudit.metadata.activeCandidatesToNotify, 1, "closing identifies the candidate with an active application for notification");
     assert.equal(await prisma.application.count({ where: { jobId: compatJob.id, stage: "TRIAGEM" } }), 1, "closing keeps the existing application in its stage");
+    // Decision of 01/11/2026: the funnel may continue after closing, so the candidate can still cancel up to Entrevista.
+    const moveReapplied = (toStage) => fetch(`${BASE_URL}/api/candidaturas/${reapplied.id}/etapa`, { method: "POST", headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie: companyCookie }, body: JSON.stringify({ toStage }), redirect: "manual" });
+    await expectStatus(await moveReapplied("ENTREVISTA"), 200, "the company keeps working the funnel after closing the job");
+    const closedApplication = JSON.parse(await expectStatus(await fetch(`${myUrl}/${reapplied.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "application of a closed job")).application;
+    assert.ok(closedApplication.canCancel && closedApplication.job.closedAt && closedApplication.historyVisibleUntil, "closure is reflected, starts the 60-day window and still allows cancelling at Entrevista");
+    const closedApplicationPage = await expectStatus(await fetch(`${BASE_URL}/candidato/candidaturas/${reapplied.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "closed application page");
+    assert.ok(closedApplicationPage.includes("A vaga foi encerrada pela empresa em") && closedApplicationPage.includes("Até a etapa de entrevista, você ainda pode cancelar."), "closed job: status shown with the cancel action");
+    await expectStatus(await cancel(reapplied.id, compatCookie), 200, "a candidate at Entrevista cancels after the job is closed");
+    assert.equal((await prisma.application.findUnique({ where: { id: reapplied.id } })).stage, "CANCELADA");
 
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });

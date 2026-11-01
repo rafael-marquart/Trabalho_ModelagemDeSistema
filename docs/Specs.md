@@ -2302,8 +2302,8 @@ As OPEN-047, OPEN-048 e OPEN-049 foram resolvidas e registradas em `docs/OPEN.md
 | Campo | Valor |
 |---|---|
 | ID | SPEC-012 |
-| Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada em 01/11/2026; ver `docs/Implementacao/SPEC-012.md` |
+| Estado do layout | aprovado pelo responsável em 01/11/2026 sobre as telas implementadas (Minhas candidaturas com busca e filtro, detalhe e histórico, confirmação e resultado do cancelamento) |
 | Capacidade | Gerenciar candidatura pelo candidato |
 
 ## 2. Rastreabilidade
@@ -2313,14 +2313,14 @@ As OPEN-047, OPEN-048 e OPEN-049 foram resolvidas e registradas em `docs/OPEN.md
 - **Questões abertas:** OPEN-050, OPEN-051 e OPEN-052 foram resolvidas e registradas em `docs/OPEN.md`.
 
 ## 3. Escopo
-Escopo de RF-28: (1) consultar somente candidaturas próprias; (2) acompanhar status, etapas e histórico disponível; e (3) cancelar a própria candidatura nos estados ativos `Inscrito`, `Triagem`, `Entrevista` e `Finalista`, desde que a vaga não esteja encerrada nem bloqueada de forma que impeça o cancelamento; preservar histórico após cancelamento. Editar uma candidatura já enviada, excluir seu registro ou alterar etapas do processo seletivo não fazem parte deste escopo.
+Escopo de RF-28: (1) consultar somente candidaturas próprias; (2) acompanhar status, etapas e histórico disponível; e (3) cancelar a própria candidatura nos estados ativos `Inscrito`, `Triagem`, `Entrevista` e `Finalista`, com a vaga aberta; com a vaga encerrada, o processo seletivo pode continuar e o cancelamento permanece permitido nos estados `Inscrito`, `Triagem` e `Entrevista` (revisão de 01/11/2026, OPEN-050); preservar histórico após cancelamento. Editar uma candidatura já enviada, excluir seu registro ou alterar etapas do processo seletivo não fazem parte deste escopo.
 
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Minhas candidaturas | Listar candidaturas próprias e apresentar estado atualizado, inclusive Cancelada | Protótipo disponível; aprovação visual pendente |
-| Detalhe e histórico da candidatura | Analisar candidatura e iniciar cancelamento quando permitido | Protótipo disponível; aprovação visual pendente |
-| Confirmação e resultado do cancelamento | Confirmar a ação e informar o resultado; a tela de resultado não oferece novo botão de cancelamento | Protótipo disponível; aprovação visual pendente |
+| Minhas candidaturas | Listar candidaturas próprias e apresentar estado atualizado, inclusive Cancelada | Aprovado em 01/11/2026 sobre a tela implementada |
+| Detalhe e histórico da candidatura | Analisar candidatura e iniciar cancelamento quando permitido | Aprovado em 01/11/2026 sobre a tela implementada |
+| Confirmação e resultado do cancelamento | Confirmar a ação e informar o resultado; a tela de resultado não oferece novo botão de cancelamento | Aprovado em 01/11/2026 sobre a tela implementada |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -2333,13 +2333,13 @@ SPEC-001, 011, 013, 016, 017. As dependências fornecem dados e capacidades; est
 3. Candidato seleciona uma candidatura para analisar; o sistema apresenta estado atual, vaga e histórico disponível na tela de detalhe/análise.
 4. A linha do tempo inclui, quando aplicáveis, os eventos “Candidatura realizada”, “Status” e “Candidatura cancelada”. Cada evento apresenta a data, sem exigir horário, uma descrição breve e compreensível e o status ou etapa resultante quando aplicável. Os eventos são exibidos do mais recente para o mais antigo.
 5. O histórico exibido é limitado à própria candidatura do candidato autenticado e não expõe dados de terceiros nem informações internas não destinadas ao acompanhamento.
-6. Na tela de detalhe/análise, se a candidatura estiver em estado `Inscrito`, `Triagem`, `Entrevista` ou `Finalista` e a vaga não estiver encerrada nem bloqueada de forma que impeça o cancelamento, o sistema disponibiliza a ação **Cancelar candidatura**. O botão não aparece na tela de resultado do cancelamento.
+6. Na tela de detalhe/análise, se a candidatura estiver em estado `Inscrito`, `Triagem`, `Entrevista` ou `Finalista` com a vaga aberta — ou em `Inscrito`, `Triagem` ou `Entrevista` com a vaga encerrada (revisão de 01/11/2026) —, o sistema disponibiliza a ação **Cancelar candidatura**. O botão não aparece na tela de resultado do cancelamento.
 7. Ao acionar **Cancelar candidatura**, o sistema solicita confirmação explícita. Se o candidato confirmar, valida novamente a titularidade e as condições de cancelamento e registra o estado final `Cancelada`; se cancelar a confirmação ou se a validação falhar, não altera o estado.
 8. Após cancelamento confirmado, a candidatura permanece no histórico e aparece como **Cancelada** na área Minhas candidaturas. O sistema registra o evento “Candidatura cancelada” e disponibiliza o estado atualizado para acompanhamento/notificação conforme SPEC-017.
 9. Uma candidatura `Contratado`, `Recusada` ou já `Cancelada` não pode ser cancelada novamente.
 
 ## 6. Regras e invariantes
-- Candidato só acessa seus processos. A ação `Cancelar candidatura` fica na tela de detalhe/análise da candidatura e só é oferecida nos estados `Inscrito`, `Triagem`, `Entrevista` e `Finalista`, se a vaga não estiver encerrada nem bloqueada de forma que impeça a operação. Ao acioná-la, o sistema exige confirmação; após confirmação e validação, muda o estado para `Cancelada`, preserva registro/histórico e apresenta a candidatura como cancelada em Minhas candidaturas. O botão não aparece na tela de resultado do cancelamento. `Contratado`, `Recusada` e `Cancelada` não permitem novo cancelamento.
+- Candidato só acessa seus processos. A ação `Cancelar candidatura` fica na tela de detalhe/análise da candidatura e só é oferecida nos estados `Inscrito`, `Triagem`, `Entrevista` e `Finalista`, com a vaga aberta; com a vaga encerrada, apenas em `Inscrito`, `Triagem` e `Entrevista` (revisão de 01/11/2026, OPEN-050). Ao acioná-la, o sistema exige confirmação; após confirmação e validação, muda o estado para `Cancelada`, preserva registro/histórico e apresenta a candidatura como cancelada em Minhas candidaturas. O botão não aparece na tela de resultado do cancelamento. `Contratado`, `Recusada` e `Cancelada` não permitem novo cancelamento.
 - Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
 - Operações protegidas são validadas no backend.
 - Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
@@ -2365,17 +2365,19 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
-- [ ] Um candidato não consulta nem cancela candidaturas de outra pessoa (RNF-07/RNF-08).
-- [ ] Cancelamento permitido preserva o registro e seu histórico; tentativa recusada não altera o estado (RNF-09/RNF-14).
+- [x] Um candidato não consulta nem cancela candidaturas de outra pessoa (RNF-07/RNF-08).
+- [x] Cancelamento permitido preserva o registro e seu histórico; tentativa recusada não altera o estado (RNF-09/RNF-14).
 
-- [ ] Acesso limitado ao ator autorizado.
-- [ ] Pré-condições e regras são validadas no backend.
-- [ ] Operações inválidas são recusadas sem alteração indevida.
-- [ ] Operação válida produz o estado esperado.
-- [ ] Dados pessoais e de acessibilidade respeitam autorização.
-- [ ] Alterações relevantes ficam rastreáveis.
-- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
-- [ ] Lacunas permanecem explicitadas em OPEN.md.
+- [x] Acesso limitado ao ator autorizado.
+- [x] Pré-condições e regras são validadas no backend.
+- [x] Operações inválidas são recusadas sem alteração indevida.
+- [x] Operação válida produz o estado esperado.
+- [x] Dados pessoais e de acessibilidade respeitam autorização.
+- [x] Alterações relevantes ficam rastreáveis.
+- [x] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [x] Lacunas permanecem explicitadas em OPEN.md.
+
+> Evidência: testes Vitest e E2E verdes na CI; teste manual executado pelo responsável em 01/11/2026 sem problemas; layout aprovado na mesma data. Regra de cancelamento revisada em 01/11/2026 (OPEN-050): com a vaga encerrada, o cancelamento continua permitido até a etapa Entrevista.
 
 ## 12. Casos de teste derivados
 
@@ -2383,7 +2385,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 |---|---|---|
 | T-012-01 | Candidato consulta suas candidaturas | Somente registros próprios são apresentados |
 | T-012-02 | Candidato tenta consultar candidatura de outra pessoa | Acesso negado sem revelar os dados |
-| T-012-03 | Candidatura em `Inscrito`, `Triagem`, `Entrevista` ou `Finalista`, com vaga não encerrada/bloqueada | Na tela de detalhe, ação de cancelamento é oferecida; após confirmação, estado `Cancelada` é registrado, candidatura aparece como cancelada e histórico é preservado |
+| T-012-03 | Candidatura em `Inscrito`, `Triagem`, `Entrevista` ou `Finalista` com vaga aberta, ou em `Inscrito`, `Triagem` ou `Entrevista` com vaga encerrada | Na tela de detalhe, ação de cancelamento é oferecida; após confirmação, estado `Cancelada` é registrado, candidatura aparece como cancelada e histórico é preservado |
 | T-012-04 | Candidatura em `Contratado`, `Recusada` ou já cancelada | Operação recusada e estado mantido |
 | T-012-08 | Vaga encerrada ou bloqueada de forma que impeça cancelamento | Operação recusada sem alteração de estado |
 | T-012-05 | Duas solicitações de cancelamento concorrentes | Não ocorre duplicação nem corrupção do estado |
@@ -2397,12 +2399,12 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 OPEN-050, OPEN-051 e OPEN-052 foram resolvidas e registradas em `docs/OPEN.md`.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
-- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
-- [ ] Questões decididas ou mantidas explicitamente em aberto.
-- [ ] Layout funcional anexado e aprovado quando aplicável.
-- [ ] Critérios de aceitação e testes revisados.
-- [ ] Nenhuma implementação antes das aprovações exigidas.
+- [x] Texto revisado e aprovado.
+- [x] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [x] Questões decididas ou mantidas explicitamente em aberto.
+- [x] Layout funcional anexado e aprovado quando aplicável.
+- [x] Critérios de aceitação e testes revisados.
+- [x] Nenhuma implementação antes das aprovações exigidas.
 
 ---
 
@@ -2527,8 +2529,8 @@ OPEN-055 e OPEN-056 foram resolvidas e estão registradas em `docs/OPEN.md`. O a
 |---|---|
 | ID | SPEC-016 |
 |
-| Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada em 01/11/2026; ver `docs/Implementacao/SPEC-016.md` |
+| Estado do layout | aprovado pelo responsável em 01/11/2026 sobre as telas implementadas (painel Minhas candidaturas, linha do tempo no detalhe, situação atual e estados encerrado/cancelado) |
 | Capacidade | Acompanhar candidatura e processo seletivo |
 
 ## 2. Rastreabilidade
@@ -2543,10 +2545,10 @@ Listar candidaturas próprias; apresentar status/etapa atual e linha do tempo; r
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Painel de acompanhamento | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
-| Linha do tempo | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
-| Detalhes da etapa | Apoiar a consulta de status e histórico da candidatura | Pendente |
-| Estado encerrado/cancelado | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Painel de acompanhamento | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Aprovado em 01/11/2026 sobre a tela implementada |
+| Linha do tempo | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Aprovado em 01/11/2026 sobre a tela implementada |
+| Detalhes da etapa | Apoiar a consulta de status e histórico da candidatura | Aprovado em 01/11/2026 sobre a tela implementada |
+| Estado encerrado/cancelado | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Aprovado em 01/11/2026 sobre a tela implementada |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -2592,17 +2594,19 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
-- [ ] O candidato consulta apenas o próprio histórico e dados compatíveis com sua autorização (RNF-07/RNF-08).
-- [ ] Eventos apresentados correspondem aos registros persistidos e não são duplicados ou alterados silenciosamente (RNF-09/RNF-14).
+- [x] O candidato consulta apenas o próprio histórico e dados compatíveis com sua autorização (RNF-07/RNF-08).
+- [x] Eventos apresentados correspondem aos registros persistidos e não são duplicados ou alterados silenciosamente (RNF-09/RNF-14).
 
-- [ ] Acesso limitado ao ator autorizado.
-- [ ] Pré-condições e regras são validadas no backend.
-- [ ] Operações inválidas são recusadas sem alteração indevida.
-- [ ] Operação válida produz o estado esperado.
-- [ ] Dados pessoais e de acessibilidade respeitam autorização.
-- [ ] Alterações relevantes ficam rastreáveis.
-- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
-- [ ] Lacunas permanecem explicitadas em OPEN.md.
+- [x] Acesso limitado ao ator autorizado.
+- [x] Pré-condições e regras são validadas no backend.
+- [x] Operações inválidas são recusadas sem alteração indevida.
+- [x] Operação válida produz o estado esperado.
+- [x] Dados pessoais e de acessibilidade respeitam autorização.
+- [x] Alterações relevantes ficam rastreáveis.
+- [x] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [x] Lacunas permanecem explicitadas em OPEN.md.
+
+> Evidência: testes Vitest e E2E verdes na CI; teste manual executado pelo responsável em 01/11/2026 sem problemas; layout aprovado na mesma data.
 
 ## 12. Casos de teste derivados
 
@@ -2619,12 +2623,12 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 OPEN-063 a OPEN-065 estão resolvidas conforme `docs/OPEN.md`. A linha do tempo apresenta eventos relevantes da candidatura, em ordem do mais recente para o mais antigo, com data (sem exigir horário), tipo, descrição breve e status/etapa resultante quando aplicável. O histórico funcional fica disponível por 60 dias após cancelamento da candidatura ou encerramento da vaga, conforme o evento ocorrido. Esse prazo não define retenção de auditoria técnica.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
-- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
-- [ ] Questões decididas ou mantidas explicitamente em aberto.
-- [ ] Layout funcional anexado e aprovado quando aplicável.
-- [ ] Critérios de aceitação e testes revisados.
-- [ ] Nenhuma implementação antes das aprovações exigidas.
+- [x] Texto revisado e aprovado.
+- [x] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [x] Questões decididas ou mantidas explicitamente em aberto.
+- [x] Layout funcional anexado e aprovado quando aplicável.
+- [x] Critérios de aceitação e testes revisados.
+- [x] Nenhuma implementação antes das aprovações exigidas.
 
 ---
 

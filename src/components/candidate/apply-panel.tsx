@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-type Applied = { appliedAt: string; stageLabel: string; score: number | null };
+type Applied = { id?: string; appliedAt: string; stageLabel: string; score: number | null };
 const dateTime = (iso: string) => new Date(iso).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).replace(", ", " às ");
 
 /**
@@ -36,6 +37,7 @@ export default function ApplyPanel({ jobId, jobTitle, companyName, score }: { jo
     return <div className="apply-result" role="status">
       <h3 ref={resultRef} tabIndex={-1}>Candidatura registrada</h3>
       <p>{`Registrada em ${dateTime(applied.appliedAt)}, na etapa ${applied.stageLabel}, ${applied.score !== null ? `com ${applied.score}% de compatibilidade` : "sem score de compatibilidade calculado"}.`}</p>
+      {applied.id ? <Link className="secondary-button" href={`/candidato/candidaturas/${applied.id}`}>Acompanhar minha candidatura</Link> : null}
     </div>;
   }
   return <div className="apply-panel">

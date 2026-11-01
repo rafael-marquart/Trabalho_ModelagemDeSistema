@@ -21,6 +21,8 @@ export type JobDetail = {
   // Set when the result shown is the one registered with the application (job no longer open): the application date.
   compatibilityFromApplication: string | null;
   action: ActionDecision;
+  // The candidate's application that still counts for this job (in progress or approved), to link to its detail (SPEC-012).
+  applicationId: string | null;
   jobId: string;
 };
 
@@ -47,6 +49,7 @@ export async function getJobDetailForCandidate(userId: string, jobId: string, de
     if (registered) { compatibility = registered.result; compatibilityFromApplication = registered.appliedAt; }
   }
   const infrastructure = await getCompanyInfrastructure(row.companyId);
+  const existing = await findBlockingApplication(userId, jobId);
   return {
     jobId: row.id,
     title: fields.title || "Vaga sem título",
@@ -71,6 +74,7 @@ export async function getJobDetailForCandidate(userId: string, jobId: string, de
     },
     compatibility,
     compatibilityFromApplication,
-    action: decideAction(availability, compatibility, await findBlockingApplication(userId, jobId))
+    action: decideAction(availability, compatibility, existing),
+    applicationId: existing?.id ?? null
   };
 }

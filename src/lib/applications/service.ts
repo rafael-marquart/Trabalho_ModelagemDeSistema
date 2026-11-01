@@ -6,14 +6,14 @@ import { BLOCKING_STAGES } from "@/lib/jobs/applications";
 import { stageLabels } from "./stages";
 
 export type RefusalCode = "JOB_NOT_FOUND" | "JOB_UNAVAILABLE" | "INCOMPATIBLE" | "DUPLICATE";
-export type ApplicationView = { appliedAt: string; stage: string; stageLabel: string; score: number | null };
+export type ApplicationView = { id: string; appliedAt: string; stage: string; stageLabel: string; score: number | null };
 export type ApplyResult =
   | { ok: true; application: ApplicationView }
   | { ok: false; code: RefusalCode; message: string; status: number };
 
 const refuse = (code: RefusalCode, message: string, status = 409): ApplyResult => ({ ok: false, code, message, status });
-const view = (row: { appliedAt: Date; stage: string; score: number | null }): ApplicationView =>
-  ({ appliedAt: row.appliedAt.toISOString(), stage: row.stage, stageLabel: stageLabels[row.stage] ?? row.stage, score: row.score });
+const view = (row: { id: string; appliedAt: Date; stage: string; score: number | null }): ApplicationView =>
+  ({ id: row.id, appliedAt: row.appliedAt.toISOString(), stage: row.stage, stageLabel: stageLabels[row.stage] ?? row.stage, score: row.score });
 const lowerFirst = (text: string) => text.charAt(0).toLocaleLowerCase("pt-BR") + text.slice(1);
 
 class Refused extends Error {
