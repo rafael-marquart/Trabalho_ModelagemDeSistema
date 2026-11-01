@@ -75,6 +75,21 @@ export async function submitEvaluation(userId: string, interviewId: string, inpu
         accessibilityRating: input.accessibilityRating, inclusionRating: input.inclusionRating, comment: input.comment ?? null, submittedAt: now
       } });
       await tx.auditEvent.create({ data: { actorUserId: userId, eventType: "EVALUATION_SUBMITTED", subjectType: "InterviewEvaluation", subjectId: created.id, metadata: { interviewId: interview.id, companyId: interview.application.job.companyId } } });
+      // SPEC-021: the public note changed; the new distribution (counts only) is recorded for traceability.
+      const companyId = interview.application.job.companyId;
+      const [accessibility, inclusion] = await Promise.all([
+        tx.interviewEvaluation.groupBy({ by: ["accessibilityRating"], where: { companyId }, _count: { _all: true } }),
+        tx.interviewEvaluation.groupBy({ by: ["inclusionRating"], where: { companyId }, _count: { _all: true } })
+      ]);
+      const counts = (rows: { _count: { _all: number } }[], key: (row: never) => number) => Object.fromEntries([1, 2, 3, 4, 5].map((star) => [star, rows.find((row) => key(row as never) === star)?._count._all ?? 0]));
+      await tx.auditEvent.create({ data: {
+        actorUserId: null, eventType: "PUBLIC_RATING_UPDATED", subjectType: "Company", subjectId: companyId,
+        metadata: {
+          total: accessibility.reduce((sum, row) => sum + row._count._all, 0),
+          accessibility: counts(accessibility, (row: { accessibilityRating: number }) => row.accessibilityRating),
+          inclusion: counts(inclusion, (row: { inclusionRating: number }) => row.inclusionRating)
+        }
+      } });
     });
   } catch (error) {
     if (typeof error === "object" && error !== null && "code" in error && (error as { code: string }).code === "P2002") {

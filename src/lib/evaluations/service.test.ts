@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { prismaMock, tx } = vi.hoisted(() => {
-  const tx = { interviewEvaluation: { create: vi.fn() }, auditEvent: { create: vi.fn() } };
+  const tx = { interviewEvaluation: { create: vi.fn(), groupBy: vi.fn() }, auditEvent: { create: vi.fn() } };
   return { tx, prismaMock: {
     interview: { findFirst: vi.fn() }, auditEvent: { create: vi.fn(), count: vi.fn(), findFirst: vi.fn() },
     interviewEvaluation: { groupBy: vi.fn() }, $transaction: vi.fn(async (cb: (t: typeof tx) => unknown) => cb(tx))
@@ -19,6 +19,7 @@ describe("post-interview evaluation (SPEC-018)", () => {
     vi.clearAllMocks();
     prismaMock.auditEvent.count.mockResolvedValue(1);
     tx.interviewEvaluation.create.mockResolvedValue({ id: "e1" });
+    tx.interviewEvaluation.groupBy.mockImplementation(async ({ by }: { by: string[] }) => by[0] === "accessibilityRating" ? [{ accessibilityRating: 4, _count: { _all: 1 } }] : [{ inclusionRating: 5, _count: { _all: 1 } }]);
   });
 
   it("requires both ratings from 1 to 5 and accepts an empty comment", () => {
@@ -39,6 +40,8 @@ describe("post-interview evaluation (SPEC-018)", () => {
     expect(prismaMock.interview.findFirst.mock.calls[0][0].where).toEqual({ id: "i1", application: { candidateUserId: "cand" } });
     expect(tx.interviewEvaluation.create.mock.calls[0][0].data).toMatchObject({ interviewId: "i1", candidateUserId: "cand", companyId: "c1", accessibilityRating: 4, inclusionRating: 5, comment: "Ótimo atendimento" });
     expect(tx.auditEvent.create.mock.calls[0][0].data).toMatchObject({ eventType: "EVALUATION_SUBMITTED" });
+    // SPEC-021: the new public distribution (counts only) is recorded.
+    expect(tx.auditEvent.create.mock.calls[1][0].data).toMatchObject({ eventType: "PUBLIC_RATING_UPDATED", subjectId: "c1", metadata: { total: 1, accessibility: { 4: 1, 5: 0 }, inclusion: { 5: 1 } } });
     expect(JSON.stringify(tx.auditEvent.create.mock.calls)).not.toContain("Ótimo atendimento");
   });
 
