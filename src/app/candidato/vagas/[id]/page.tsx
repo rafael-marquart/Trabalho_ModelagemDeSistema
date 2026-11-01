@@ -99,6 +99,7 @@ export default async function CandidateJobDetailPage({ params }: { params: Promi
         {job.applicationId ? <Link className="secondary-button" href={`/candidato/candidaturas/${job.applicationId}`}>Acompanhar minha candidatura</Link> : null}
         {job.action.allowed ? <ApplyPanel jobId={id} jobTitle={job.title} companyName={job.companyName} score={result?.score ?? null} /> : null}
       </section>
+      <p className="report-link-row"><Link className="link-button" href={`/candidato/vagas/${id}/denunciar`}>Denunciar esta vaga</Link> <span className="muted">— possível incompatibilidade de acessibilidade ou falsa inclusão</span></p>
     </main>
   </CompanyShell>;
 }

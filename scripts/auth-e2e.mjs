@@ -5,6 +5,7 @@ import { createServer as createSmtpServer } from "node:net";
 import { createServer as createHttpServer } from "node:http";
 import { setTimeout as delay } from "node:timers/promises";
 import { PrismaClient } from "@prisma/client";
+import argon2 from "argon2";
 
 const prisma = new PrismaClient();
 const PORT = Number(process.env.AUTH_E2E_PORT || "3187");
@@ -20,6 +21,7 @@ const EMAIL = `spec001-e2e-${randomUUID()}@example.test`;
 const COMPANY_EMAIL = `spec001-company-${randomUUID()}@example.test`;
 const RECRUITER_EMAIL = `spec001-recruiter-${randomUUID()}@example.test`;
 const SECOND_COMPANY_EMAIL = `spec001-company-two-${randomUUID()}@example.test`;
+const ADMIN_EMAIL = `spec020-admin-${randomUUID()}@example.test`;
 const CROSS_COMPANY_INVITATION_EMAIL = `spec001-cross-company-invite-${randomUUID()}@example.test`;
 const UNKNOWN_COMPANY_EMAIL = `unknown-company-${randomUUID()}@example.test`;
 const OLD_PASSWORD = "InitialPassword123";
@@ -202,7 +204,7 @@ async function expectStatus(response, expected, description) {
 
 async function cleanupTestData() {
   const users = await prisma.user.findMany({
-    where: { email: { in: [EMAIL, COMPANY_EMAIL, RECRUITER_EMAIL, SECOND_COMPANY_EMAIL, CROSS_COMPANY_INVITATION_EMAIL] } },
+    where: { email: { in: [EMAIL, COMPANY_EMAIL, RECRUITER_EMAIL, SECOND_COMPANY_EMAIL, CROSS_COMPANY_INVITATION_EMAIL, ADMIN_EMAIL] } },
     select: { id: true, company: { select: { id: true } } }
   });
   if (!users.length) return;
@@ -245,6 +247,12 @@ async function cleanupTestData() {
     await tx.$executeRawUnsafe('ALTER TABLE "ApplicationStageEvent" DISABLE TRIGGER "ApplicationStageEvent_no_change"');
     await tx.applicationStageEvent.deleteMany({ where: { application: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } } });
     await tx.$executeRawUnsafe('ALTER TABLE "ApplicationStageEvent" ENABLE TRIGGER "ApplicationStageEvent_no_change"');
+    // Moderation history is immutable by trigger too; the test database drops it with the trigger disabled.
+    const relatedReports = await tx.report.findMany({ where: { OR: [{ reporterUserId: { in: userIds } }, { companyId: { in: companyIds } }] }, select: { id: true } });
+    await tx.$executeRawUnsafe('ALTER TABLE "ReportEvent" DISABLE TRIGGER "ReportEvent_no_change"');
+    await tx.reportEvent.deleteMany({ where: { reportId: { in: relatedReports.map(report => report.id) } } });
+    await tx.$executeRawUnsafe('ALTER TABLE "ReportEvent" ENABLE TRIGGER "ReportEvent_no_change"');
+    await tx.report.deleteMany({ where: { id: { in: relatedReports.map(report => report.id) } } });
     await tx.interviewEvaluation.deleteMany({ where: { OR: [{ candidateUserId: { in: userIds } }, { companyId: { in: companyIds } }] } });
     await tx.interview.deleteMany({ where: { application: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } } });
     await tx.notification.deleteMany({ where: { OR: [{ recipientUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } });
@@ -1808,6 +1816,85 @@ async function main() {
     }
     const evaluatedPage = await expectStatus(await fetch(`${BASE_URL}/candidato/candidaturas/${interviewApp.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate page with the evaluation");
     assert.ok(evaluatedPage.includes("Sua avaliação") && evaluatedPage.includes("A avaliação não pode ser alterada."), "the candidate sees their own evaluation, read-only");
+
+    // SPEC-019: the candidate reports a job; SPEC-020: only the platform administrator moderates.
+    const reportsUrl = `${BASE_URL}/api/candidato/denuncias`;
+    const sendReport = (payload, cookie) => fetch(reportsUrl, { method: "POST", headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie }, body: JSON.stringify(payload), redirect: "manual" });
+    const reportBody = { jobId: interviewJob.id, category: "FALSE_INCLUSION", description: "A vaga se diz inclusiva, mas a entrevista foi em sala sem rampa e sem intérprete.", evidence: "https://exemplo.org/registro" };
+    await expectStatus(await sendReport(reportBody, ""), 401, "anonymous report");
+    await expectStatus(await sendReport(reportBody, companyCookie), 401, "a company cannot report as a candidate");
+    await expectStatus(await sendReport({ ...reportBody, category: undefined }, compatCookie), 400, "the category is required");
+    await expectStatus(await sendReport({ ...reportBody, companyId: "other" }, compatCookie), 400, "the body cannot choose the company");
+    await expectStatus(await sendReport({ ...reportBody, jobId: detailDraft.id }, compatCookie), 404, "a draft job cannot be reported");
+    await expectStatus(await sendReport({ ...reportBody, evaluationId: "not-mine" }, compatCookie), 400, "only the reporter's own evaluation can be linked");
+    const reportId = JSON.parse(await expectStatus(await sendReport({ ...reportBody, evaluationId: storedEvaluation.id }, compatCookie), 201, "candidate reports the job")).reportId;
+    await expectStatus(await sendReport(reportBody, compatCookie), 409, "a second open report for the same job is refused");
+    const storedReport = await prisma.report.findUnique({ where: { id: reportId } });
+    assert.equal(storedReport.companyId, interviewJob.companyId ?? storedReport.companyId, "the report is linked to the job's company");
+    assert.equal(storedReport.evaluationId, storedEvaluation.id, "the report is linked to the evaluation");
+    assert.equal((await prisma.job.findUnique({ where: { id: interviewJob.id } })).status, "OPEN", "registering a report does not change the job");
+    const myReports = JSON.parse(await expectStatus(await fetch(reportsUrl, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate lists own reports")).reports;
+    assert.deepEqual(myReports.map(item => [item.id, item.statusLabel]), [[reportId, "Recebida"]]);
+    await expectStatus(await sendReport({ ...reportBody, jobId: compatJob.id, category: "ACCESSIBILITY_INCOMPATIBILITY" }, compatCookie), 201, "a report about another job is allowed");
+    const thirdJob = JSON.parse(await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas`, "POST", { ...compatJobBody, title: "Terceira vaga E2E" }, companyCookie), 201, "a third job")).job;
+    await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${thirdJob.id}/acao`, "POST", { action: "publish" }, companyCookie), 200, "publish the third job");
+    await expectStatus(await sendReport({ ...reportBody, jobId: thirdJob.id }, compatCookie), 201, "a third report within 24 hours");
+    const limited = await sendReport({ ...reportBody, jobId: thirdJob.id, category: "ACCESSIBILITY_INCOMPATIBILITY" }, compatCookie);
+    assert.equal(limited.status, 429, "a fourth report in 24 hours is refused");
+    assert.ok(JSON.parse(await limited.text()).message.includes("3 denúncias"), "the limit is explained");
+
+    const adminPassword = "Admin-E2E-2026";
+    await prisma.user.create({ data: { email: ADMIN_EMAIL, fullName: "Administração E2E", role: "ADMIN", isActive: true, passwordHash: await argon2.hash(adminPassword, { type: argon2.argon2id }) } });
+    const adminLogin = await postJson("/api/auth/login", { profile: "admin", identifier: ADMIN_EMAIL, password: adminPassword, rememberMe: false });
+    await expectStatus(adminLogin, 200, "administrator login");
+    const adminCookie = `acessa_session=${(adminLogin.headers.get("set-cookie") || "").match(/(?:^|,\s*)acessa_session=([^;]+)/)[1]}`;
+    const queueUrl = `${BASE_URL}/api/admin/denuncias`;
+    await expectStatus(await fetch(queueUrl, { headers: { cookie: companyCookie }, redirect: "manual" }), 401, "a company cannot see the moderation queue");
+    await expectStatus(await fetch(queueUrl, { headers: { cookie: compatCookie }, redirect: "manual" }), 401, "a candidate cannot see the moderation queue");
+    const queue = JSON.parse(await expectStatus(await fetch(queueUrl, { headers: { cookie: adminCookie }, redirect: "manual" }), 200, "administrator sees the queue")).reports;
+    assert.ok(queue.some(item => item.id === reportId), "the report is in the queue");
+    const adminView = await expectStatus(await fetch(`${queueUrl}/${reportId}`, { headers: { cookie: adminCookie }, redirect: "manual" }), 200, "administrator opens the report");
+    assert.ok(adminView.includes("sala sem rampa") && !adminView.includes(EMAIL), "the administrator sees the content, not the reporter's e-mail");
+    const moderate = (payload, cookie = adminCookie) => fetch(`${queueUrl}/${reportId}/acao`, { method: "POST", headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie }, body: JSON.stringify(payload), redirect: "manual" });
+    await expectStatus(await moderate({ action: "start" }, companyCookie), 401, "a company cannot moderate");
+    await expectStatus(await moderate({ action: "start" }, compatCookie), 401, "a candidate cannot moderate");
+    await expectStatus(await moderate({ action: "conclude", decision: "IMPROCEDENTE", reporterSummary: "Sem elementos.", justification: "Sem elementos suficientes." }), 409, "a report must be under analysis to be concluded");
+    await expectStatus(await moderate({ action: "start" }), 200, "administrator starts the analysis");
+    await expectStatus(await moderate({ action: "priority", highPriority: true }), 200, "administrator raises the priority");
+    await expectStatus(await moderate({ action: "request", pointsForCompany: "x", extensionReason: "y" }), 400, "the request needs real points and a reason");
+    await expectStatus(await moderate({ action: "request", pointsForCompany: "Informe se a sala da entrevista tinha rampa e intérprete.", extensionReason: "Aguardar a resposta da empresa" }), 200, "administrator asks the company");
+    const companyReports = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/empresa/denuncias`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company sees the request"));
+    const companyText = JSON.stringify(companyReports);
+    assert.ok(companyText.includes("tinha rampa e intérprete") && !companyText.includes("sala sem rampa e sem intérprete") && !companyText.includes(EMAIL) && !companyText.includes("exemplo.org"), "the company gets the points, never the reporter, the original text or the evidence");
+    const otherCompanyReports = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/empresa/denuncias`, { headers: { cookie: secondCompanyCookie }, redirect: "manual" }), 200, "another company's view"));
+    assert.equal(otherCompanyReports.reports.length, 0, "another company sees nothing");
+    const respond = cookie => fetch(`${BASE_URL}/api/empresa/denuncias/${reportId}/resposta`, { method: "POST", headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie }, body: JSON.stringify({ response: "A sala tem rampa; o intérprete faltou naquele dia." }), redirect: "manual" });
+    await expectStatus(await respond(secondCompanyCookie), 404, "another company cannot answer");
+    await expectStatus(await respond(companyCookie), 200, "the company answers");
+    await expectStatus(await respond(companyCookie), 409, "an answered request cannot be answered again");
+    const decision = { action: "conclude", decision: "PARCIALMENTE_PROCEDENTE", reporterSummary: "Parte da denúncia foi confirmada.", justification: "Faltou o intérprete declarado; a rampa existe." };
+    await expectStatus(await moderate(decision), 400, "an upheld decision needs measures");
+    await expectStatus(await moderate({ ...decision, measures: "Garantir intérprete de Libras nas próximas entrevistas." }), 200, "administrator concludes");
+    await expectStatus(await moderate({ ...decision, measures: "Outra." }), 409, "a concluded report cannot be decided again");
+    assert.equal((await prisma.job.findUnique({ where: { id: interviewJob.id } })).status, "OPEN", "the decision does not change the job automatically");
+    assert.deepEqual([storedEvaluation.accessibilityRating, storedEvaluation.inclusionRating], [(await prisma.interviewEvaluation.findUnique({ where: { id: storedEvaluation.id } })).accessibilityRating, (await prisma.interviewEvaluation.findUnique({ where: { id: storedEvaluation.id } })).inclusionRating], "the decision does not change the evaluation");
+    const reporterResult = JSON.parse(await expectStatus(await fetch(`${reportsUrl}/${reportId}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "reporter sees the result")).report;
+    assert.equal(reporterResult.decisionLabel, "Parcialmente procedente");
+    assert.equal(reporterResult.summary, "Parte da denúncia foi confirmada.");
+    assert.ok(!JSON.stringify(reporterResult).includes("Garantir intérprete") && !JSON.stringify(reporterResult).includes("Faltou o intérprete declarado"), "the reporter gets the summary, not the internal justification or measures");
+    const companyAfter = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/empresa/denuncias`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company sees the conclusion")).reports;
+    assert.ok(companyAfter[0].justification.includes("Faltou o intérprete") && companyAfter[0].measures.includes("Garantir intérprete"), "the company gets the justification and measures");
+    await expectStatus(await fetch(`${reportsUrl}/${reportId}`, { headers: { cookie: companyCookie }, redirect: "manual" }), 401, "a company cannot read the reporter's view");
+    const reportEvents = await prisma.reportEvent.findMany({ where: { reportId }, orderBy: { createdAt: "asc" } });
+    assert.deepEqual(reportEvents.map(event => event.kind), ["SUBMITTED", "ANALYSIS_STARTED", "PRIORITY_RAISED", "INFO_REQUESTED", "COMPANY_RESPONDED", "CONCLUDED"], "the moderation history keeps every step");
+    await assert.rejects(prisma.$executeRaw`UPDATE "ReportEvent" SET "note" = 'x' WHERE "id" = ${reportEvents[0].id}`, "the moderation history cannot be edited");
+    const reportNotices = await prisma.notification.findMany({ where: { type: { in: ["REPORT_STATUS_CHANGED", "REPORT_INFO_REQUESTED", "REPORT_CONCLUDED"] }, recipientUserId: { in: [candidateUser.id, companyAccount.id] } } });
+    assert.deepEqual(reportNotices.map(row => `${row.type}:${row.recipientUserId === candidateUser.id ? "reporter" : "company"}`).sort(), ["REPORT_CONCLUDED:company", "REPORT_CONCLUDED:reporter", "REPORT_INFO_REQUESTED:company", "REPORT_STATUS_CHANGED:reporter", "REPORT_STATUS_CHANGED:reporter"], "the parties are told");
+    for (const [path, cookie] of [[`/candidato/denuncias`, compatCookie], [`/candidato/denuncias/${reportId}`, compatCookie], [`/candidato/vagas/${thirdJob.id}/denunciar`, compatCookie], [`/admin/denuncias`, adminCookie], [`/admin/denuncias/${reportId}`, adminCookie], [`/empresa/denuncias`, companyCookie]]) {
+      await expectStatus(await fetch(`${BASE_URL}${path}`, { headers: { cookie }, redirect: "manual" }), 200, `page ${path}`);
+    }
+    const blocked = await fetch(`${BASE_URL}/admin/denuncias`, { headers: { cookie: compatCookie }, redirect: "manual" });
+    assert.ok([302, 303, 307, 308].includes(blocked.status), "a candidate is sent away from the moderation pages");
 
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });

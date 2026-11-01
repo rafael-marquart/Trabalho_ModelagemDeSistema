@@ -12,7 +12,7 @@ vi.mock("@/lib/email", async () => {
   return { ...actual, sendEmail: vi.fn() };
 });
 import { countUnreadNotices, deliverDueNotifications, enqueueApplicationCancelled, enqueueJobClosed, listNotices, markNoticesRead, MAX_ATTEMPTS, RETRY_DELAYS_MS, responsibleRecipient } from "./service";
-import { notificationEmail } from "./messages";
+import { notificationEmail, notificationSummary } from "./messages";
 
 const tx = prismaMock as never;
 const now = new Date("2026-11-01T12:00:00Z");
@@ -138,5 +138,13 @@ describe("notification content", () => {
     expect(scheduled.text).toContain("Link: https://meet.example/x");
     expect(scheduled.text).toContain("Recursos de acessibilidade previstos: Intérprete de Libras");
     expect(notificationEmail("INTERVIEW_CANCELLED", payload, link).text).toContain("Sua candidatura continua no processo seletivo");
+  });
+  it("tells the reporter the result and the company only that it must look at Denúncias", () => {
+    const toReporter = notificationSummary("REPORT_CONCLUDED", { reportId: "r1", area: "candidato", jobTitle: "Analista", decisionLabel: "Procedente", summary: "Confirmado." }, {});
+    expect(toReporter).toMatchObject({ title: "Sua denúncia foi concluída", href: "/candidato/denuncias/r1" });
+    expect(toReporter.body).toContain("Procedente. Confirmado.");
+    const toCompany = notificationSummary("REPORT_INFO_REQUESTED", { reportId: "r1", area: "empresa", jobTitle: "Analista" }, {});
+    expect(toCompany.href).toBe("/empresa/denuncias");
+    expect(notificationEmail("REPORT_CONCLUDED", { reportId: "r1", area: "empresa", jobTitle: "Analista", decisionLabel: "Improcedente" }, link).text).toContain("https://app.example/empresa/denuncias");
   });
 });

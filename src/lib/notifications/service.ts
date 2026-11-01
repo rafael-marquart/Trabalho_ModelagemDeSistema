@@ -69,6 +69,11 @@ export async function enqueueInterviewNotice(tx: Tx, type: "INTERVIEW_SCHEDULED"
   } });
 }
 
+/** SPEC-019/020: progress of a report for the reporter, requests and conclusion for the company. */
+export async function enqueueReportNotice(tx: Tx, type: "REPORT_STATUS_CHANGED" | "REPORT_INFO_REQUESTED" | "REPORT_CONCLUDED", recipientUserId: string, payload: NotificationPayload) {
+  await tx.notification.create({ data: { type, recipientUserId, payload: json(payload) } });
+}
+
 /** RB-42/OPEN-042: one e-mail per candidate still active when the job closes. */
 export async function enqueueJobClosed(tx: Tx, input: { jobId: string; jobTitle: string; companyName: string; applications: { id: string; candidateUserId: string }[] }) {
   if (!input.applications.length) return;

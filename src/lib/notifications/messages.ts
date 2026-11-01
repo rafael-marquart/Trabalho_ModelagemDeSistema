@@ -14,10 +14,32 @@ export type NotificationPayload = {
   modality?: string;
   locationOrLink?: string;
   accessibilityResources?: string;
+  reportId?: string;
+  area?: "candidato" | "empresa" | "recrutador";
+  statusLabel?: string;
+  decisionLabel?: string;
+  summary?: string;
+  delayed?: boolean;
 };
 
 export type NotificationKind = "APPLICATION_SUBMITTED" | "APPLICATION_STAGE_CHANGED" | "APPLICATION_CANCELLED" | "JOB_CLOSED"
-  | "INTERVIEW_SCHEDULED" | "INTERVIEW_UPDATED" | "INTERVIEW_CANCELLED";
+  | "INTERVIEW_SCHEDULED" | "INTERVIEW_UPDATED" | "INTERVIEW_CANCELLED"
+  | "REPORT_STATUS_CHANGED" | "REPORT_INFO_REQUESTED" | "REPORT_CONCLUDED";
+
+const reportHref = (payload: NotificationPayload) => payload.area === "candidato" ? `/candidato/denuncias/${payload.reportId ?? ""}` : `/${payload.area === "recrutador" ? "recrutador" : "empresa"}/denuncias`;
+/** SPEC-019/020 notices: progress and result only; the company never learns who reported (OPEN-077/081). */
+function reportNotice(kind: "REPORT_STATUS_CHANGED" | "REPORT_INFO_REQUESTED" | "REPORT_CONCLUDED", payload: NotificationPayload) {
+  const job = payload.jobTitle || "a vaga";
+  if (kind === "REPORT_INFO_REQUESTED") return { title: "Pedido de informações sobre uma denúncia", body: `A moderação da plataforma pede esclarecimentos sobre uma denúncia relacionada à vaga ${job}. Veja os pontos e responda em Denúncias.` };
+  if (kind === "REPORT_CONCLUDED") {
+    return payload.area === "candidato"
+      ? { title: "Sua denúncia foi concluída", body: `Resultado da denúncia sobre ${job}: ${payload.decisionLabel ?? "concluída"}.${payload.summary ? ` ${payload.summary}` : ""}` }
+      : { title: "Denúncia concluída", body: `A moderação concluiu a análise de uma denúncia sobre a vaga ${job}: ${payload.decisionLabel ?? "concluída"}. Veja a justificativa e as medidas em Denúncias.` };
+  }
+  return { title: `Sua denúncia: ${payload.statusLabel ?? "atualizada"}`, body: payload.delayed
+    ? `A moderação pediu informações adicionais sobre a denúncia de ${job}. A análise pode levar mais tempo que o previsto.`
+    : `A denúncia sobre ${job} está ${(payload.statusLabel ?? "atualizada").toLocaleLowerCase("pt-BR")}.` };
+}
 
 const interviewWhen = (iso?: string) => {
   if (!iso) return "data a confirmar";
@@ -85,6 +107,16 @@ export function notificationEmail(kind: NotificationKind, payload: NotificationP
         action: { label: "Ver detalhes da candidatura", url: tracking },
         closing: [OFFICIAL, OPT_OUT]
       });
+    case "REPORT_STATUS_CHANGED":
+    case "REPORT_INFO_REQUESTED":
+    case "REPORT_CONCLUDED": {
+      const notice = reportNotice(kind, payload);
+      return buildEmail({
+        subject: `${notice.title} — Acessa Vagas`, heading: notice.title, intro: [notice.body],
+        action: { label: "Ver na plataforma", url: `${link.baseUrl}${reportHref(payload)}` },
+        closing: [OPT_OUT]
+      });
+    }
     case "JOB_CLOSED":
       return buildEmail({
         subject: `Vaga encerrada: ${job} — Acessa Vagas`,
@@ -124,6 +156,10 @@ export function notificationSummary(kind: NotificationKind, payload: Notificatio
       return { title: interviewHeading[kind], body: `${company}, ${job}: ${interviewWhen(payload.scheduledAt)}, ${payload.modality === "ONLINE" ? "on-line" : "presencial"}.`, href: tracking };
     case "INTERVIEW_CANCELLED":
       return { title: "Entrevista cancelada", body: `${company} cancelou a entrevista de ${job} marcada para ${interviewWhen(payload.scheduledAt)}.`, href: tracking };
+    case "REPORT_STATUS_CHANGED":
+    case "REPORT_INFO_REQUESTED":
+    case "REPORT_CONCLUDED":
+      return { ...reportNotice(kind, payload), href: reportHref(payload) };
     case "JOB_CLOSED":
       return { title: "Vaga encerrada", body: `${company} encerrou a vaga ${job}. Sua candidatura continua registrada e o processo seletivo pode continuar.`, href: tracking };
   }

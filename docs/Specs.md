@@ -2870,7 +2870,7 @@ OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado
 | Campo | Valor |
 |---|---|
 | ID | SPEC-019 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-019.md` |
 | Estado do layout | pendente |
 | Capacidade | Denunciar incompatibilidade ou falsa inclusão |
 
@@ -2979,7 +2979,7 @@ OPEN-074 a OPEN-077 estão resolvidas. As decisões aprovadas sobre elegibilidad
 | Campo | Valor |
 |---|---|
 | ID | SPEC-020 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-020.md` |
 | Estado do layout | pendente |
 | Capacidade | Moderar denúncias de incompatibilidade |
 
