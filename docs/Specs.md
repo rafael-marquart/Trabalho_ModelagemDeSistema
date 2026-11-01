@@ -2413,7 +2413,7 @@ OPEN-050, OPEN-051 e OPEN-052 foram resolvidas e registradas em `docs/OPEN.md`.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-013 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-013.md` |
 | Estado do layout | pendente |
 | Capacidade | Gerenciar processo seletivo e funil |
 

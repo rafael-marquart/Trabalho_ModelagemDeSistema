@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { jobModalityLabels, jobStatusLabels, type JobAction, type JobModalityValue, type JobStatusValue } from "@/lib/jobs/constants";
 
-type JobRow = { id: string; status: JobStatusValue; title: string; modality: JobModalityValue | ""; deadline: string; locationCity: string; locationState: string };
+type JobRow = { id: string; status: JobStatusValue; title: string; modality: JobModalityValue | ""; deadline: string; locationCity: string; locationState: string; applicationCount?: number };
 type Counts = Record<JobStatusValue, number>;
 
 const tabs: { status: JobStatusValue; label: string }[] = [
@@ -80,6 +80,7 @@ export default function JobsPanel({ basePath }: { basePath: string }) {
           <td data-label="Situação"><span className={`status-pill ${pillClass[job.status]}`}>{jobStatusLabels[job.status]}</span></td>
           <td className="job-actions" data-label="Ações">
             <Link className="secondary-button" href={`${basePath}/${job.id}`}>{job.status === "CLOSED" ? "Ver" : "Editar"}</Link>
+            {job.status !== "DRAFT" ? <Link className="secondary-button" href={`${basePath}/${job.id}/candidaturas`} aria-label={`Candidaturas de ${job.title || "vaga sem título"}: ${job.applicationCount ?? 0}`}>Candidaturas ({job.applicationCount ?? 0})</Link> : null}
             {job.status === "OPEN" ? <button type="button" className="secondary-button" disabled={busyId === job.id} onClick={() => act(job, "pause")}>Pausar</button> : null}
             {job.status === "PAUSED" ? <button type="button" className="secondary-button" disabled={busyId === job.id} onClick={() => act(job, "reopen")}>Reabrir</button> : null}
             {job.status === "OPEN" || job.status === "PAUSED" ? <button type="button" className="secondary-button" disabled={busyId === job.id} onClick={() => act(job, "close")}>Encerrar</button> : null}
