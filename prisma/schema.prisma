@@ -1,0 +1,620 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CANDIDATE
+  COMPANY
+  RECRUITER
+  ADMIN
+}
+
+enum InvitationStatus {
+  PENDING
+  REFUSED
+  EXPIRED
+  CANCELLED
+  ACCEPTED
+}
+
+enum AccessibilityDeclarationStatus {
+  NOT_INFORMED
+  NO_NEEDS_DECLARED
+  NEEDS_DECLARED
+}
+
+model User {
+  id                String                @id @default(cuid())
+  email             String                @unique
+  cpf               String?               @unique
+  fullName          String
+  passwordHash      String
+  role              UserRole
+  isActive          Boolean               @default(true)
+  pendingActivation Boolean               @default(false)
+  failedLoginCount  Int                   @default(0)
+  lastFailedLoginAt DateTime?
+  lockedUntil       DateTime?
+  passwordChangedAt DateTime              @default(now())
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  sessions          Session[]
+  passwordResetTokens PasswordResetToken[]
+  company           Company?              @relation("CompanyAccount")
+  recruiterLinks    RecruiterLink[]       @relation("RecruiterLinks")
+  invitationsSent   RecruiterInvitation[] @relation("InvitationsSent")
+  invitationsTo     RecruiterInvitation[] @relation("InvitationsTo")
+  auditEvents       AuditEvent[]          @relation("AuditActor")
+  candidateProfile  CandidateProfile?
+
+  @@index([role, isActive])
+  jobsCreated       Job[]    @relation("JobCreator")
+  preference        UserPreference?
+  compatibilityResults CompatibilityResult[]
+  applications         Application[]
+}
+
+model CandidateProfile {
+  id                              String                         @id @default(cuid())
+  userId                          String                         @unique
+  education                       Json                           @default("[]")
+  skills                          Json                           @default("[]")
+  languages                       Json                           @default("[]")
+  professionalExperience          Json                           @default("[]")
+  courses                         Json                           @default("[]")
+  certifications                  Json                           @default("[]")
+  professionalLinks               Json                           @default("[]")
+  workPreferences                 Json                           @default("{}")
+  accessibilityDeclaration        AccessibilityDeclarationStatus @default(NOT_INFORMED)
+  accessibilityNeeds              Json                           @default("[]")
+  accessibilityNeedOptionCodes    Json                           @default("[]")
+  mandatoryNeedOptionCodes        Json                           @default("[]")
+  essentialAccessibilityResources Json                           @default("[]")
+  createdAt                       DateTime                       @default(now())
+  updatedAt                       DateTime                       @updatedAt
+  user                            User                           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  documents                       CandidateProfileDocument[]
+
+  @@index([updatedAt])
+}
+
+model CandidateProfileDocument {
+  id                String          @id @default(cuid())
+  candidateProfileId String
+  category          CandidateDocumentCategory
+  displayName       String
+  originalName      String
+  storedName        String          @unique
+  mimeType          String
+  sizeBytes         Int
+  createdAt         DateTime        @default(now())
+  candidateProfile  CandidateProfile @relation(fields: [candidateProfileId], references: [id], onDelete: Cascade)
+  content           CandidateDocumentContent?
+
+  @@index([candidateProfileId, category, createdAt])
+}
+
+/// File bytes of a candidate document, kept in the database so the app runs without a local disk (serverless hosting).
+/// Separate from the metadata so listing documents never loads file contents. Older rows may have no content here:
+/// their bytes are still in the local upload folder (development installs before 01/11/2026).
+model CandidateDocumentContent {
+  documentId String                   @id
+  bytes      Bytes
+  document   CandidateProfileDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+enum CandidateDocumentCategory {
+  COURSE
+  CERTIFICATION
+}
+
+enum AccessibilityNeedGroup {
+  ARCHITECTURAL
+  COMMUNICATION
+  TECHNOLOGICAL
+}
+
+model AccessibilityNeedOption {
+  code        String                @id
+  name        String
+  description String
+  group       AccessibilityNeedGroup
+  isMandatory Boolean               @default(false)
+  isActive    Boolean               @default(true)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  @@index([group, isActive])
+  @@index([isMandatory, isActive])
+}
+
+model Company {
+  id               String                @id @default(cuid())
+  legalName        String
+  tradeName        String?
+  officialId       String?               @unique
+  contactEmail     String
+  emailConfirmedAt DateTime?
+  accountUserId    String                @unique
+  accountUser      User                  @relation("CompanyAccount", fields: [accountUserId], references: [id], onDelete: Restrict)
+  recruiterLinks   RecruiterLink[]
+  invitations      RecruiterInvitation[]
+  emailVerificationTokens CompanyEmailVerificationToken[]
+  infrastructure   CompanyInfrastructure?
+  jobs             Job[]
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+}
+
+model CompanyInfrastructure {
+  id        String   @id @default(cuid())
+  companyId String   @unique
+  answers   Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Restrict)
+}
+
+model RecruiterLink {
+  id          String   @id @default(cuid())
+  companyId   String
+  recruiterId String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  endedAt     DateTime?
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  recruiter   User     @relation("RecruiterLinks", fields: [recruiterId], references: [id], onDelete: Restrict)
+
+  @@index([companyId, active])
+  @@index([recruiterId, active])
+}
+
+model RecruiterInvitation {
+  id              String           @id @default(cuid())
+  companyId       String
+  recipientUserId String?
+  recipientName   String
+  recipientEmail  String
+  sentByUserId    String?
+  tokenHash       String           @unique
+  status          InvitationStatus @default(PENDING)
+  expiresAt       DateTime
+  respondedAt     DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  company         Company          @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  recipient       User?            @relation("InvitationsTo", fields: [recipientUserId], references: [id], onDelete: Restrict)
+  sentBy          User?            @relation("InvitationsSent", fields: [sentByUserId], references: [id], onDelete: Restrict)
+
+  @@index([companyId, status])
+  @@index([recipientUserId, status])
+  @@index([expiresAt, status])
+}
+
+model Session {
+  id                String   @id @default(cuid())
+  tokenHash         String   @unique
+  userId            String
+  rememberMe        Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  lastSeenAt        DateTime @default(now())
+  expiresAt         DateTime
+  absoluteExpiresAt DateTime
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@index([expiresAt])
+}
+
+model AuditEvent {
+  id          String   @id @default(cuid())
+  actorUserId String?
+  eventType   String
+  subjectType String?
+  subjectId   String?
+  metadata      Json?
+  retentionHold Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  actor         User?    @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([actorUserId, createdAt])
+  @@index([eventType, createdAt])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([expiresAt])
+}
+
+model RecoveryAttempt {
+  id            String   @id @default(cuid())
+  identifierKey String
+  ipKey         String
+  createdAt     DateTime @default(now())
+
+  @@index([identifierKey, createdAt])
+  @@index([ipKey, createdAt])
+}
+
+
+model RecoveryBlock {
+  scopeKey    String   @id
+  blockedUntil DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([blockedUntil])
+}
+
+model LoginAttempt {
+  id            String   @id @default(cuid())
+  identifierKey String
+  ipKey         String
+  succeeded     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@index([identifierKey, createdAt])
+  @@index([ipKey, createdAt])
+}
+
+model LoginBlock {
+  ipKey           String   @id
+  blockedUntil    DateTime
+  cooldownSeconds Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([blockedUntil])
+}
+
+model CompanyEmailVerificationToken {
+  id        String   @id @default(cuid())
+  companyId String
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, createdAt])
+  @@index([expiresAt])
+}
+
+enum JobStatus {
+  DRAFT
+  OPEN
+  PAUSED
+  CLOSED
+}
+
+enum JobModality {
+  PRESENCIAL
+  HIBRIDO
+  REMOTO
+}
+
+enum JobOrigin {
+  OWN
+}
+
+model Job {
+  id              String       @id @default(cuid())
+  companyId       String
+  createdByUserId String
+  status          JobStatus    @default(DRAFT)
+  origin          JobOrigin    @default(OWN)
+  title           String       @default("")
+  description     String       @default("")
+  requirements    String       @default("")
+  modality        JobModality?
+  professionalArea String      @default("")
+  locationCity    String       @default("")
+  locationState   String       @default("")
+  locationAddress String       @default("")
+  deadline        DateTime?    @db.Date
+  salaryMin       Decimal?     @db.Decimal(12, 2)
+  salaryMax       Decimal?     @db.Decimal(12, 2)
+  technicalCriteria Json       @default("{}")
+  accessibility   Json         @default("{}")
+  publishedAt     DateTime?
+  closedAt        DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  company         Company      @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  createdBy       User         @relation("JobCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+
+  @@index([companyId, status])
+  @@index([status, origin])
+  compatibilityResults CompatibilityResult[]
+  applications         Application[]
+}
+
+// Interface preferences saved per account (SPEC-003, OPEN-013). Values are stored by stable code.
+model UserPreference {
+  userId      String   @id
+  user        User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  preferences Json     @default("{}")
+  updatedAt   DateTime @updatedAt
+}
+
+// Immutable history of each compatibility calculation (SPEC-007 section 6.2). Rows are never updated; a recalculation adds a row.
+model CompatibilityResult {
+  id            String   @id @default(cuid())
+  candidateUserId String
+  candidate     User     @relation(fields: [candidateUserId], references: [id], onDelete: Restrict)
+  jobId         String
+  job           Job      @relation(fields: [jobId], references: [id], onDelete: Restrict)
+  executedAt    DateTime @default(now())
+  rulesVersion  String
+  status        String
+  score         Int?
+  // Minimized snapshot of what was used, the sub-results and the factors; no address or full profile is copied.
+  snapshot      Json
+  outcome       Json
+  applications  Application[]
+  // Fingerprint of the inputs (including addresses, never stored here); a new row is written only when it or the outcome changes (D-01).
+  inputHash     String?
+
+  @@index([candidateUserId, jobId, executedAt])
+  @@index([executedAt])
+}
+
+/// Monthly count of HERE requests sent by this installation (SPEC-007 / OPEN-088 safety cap).
+model HereUsage {
+  month     String
+  service   String
+  count     Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@id([month, service])
+}
+
+/// Saved travel estimates (SPEC-007/008): one HERE call per trip. The key is a hash of the normalized addresses, the means
+/// of transport and the reference departure policy; addresses are never stored here.
+model TravelTimeCache {
+  key        String   @id
+  minutes    Float
+  method     String
+  computedAt DateTime @default(now())
+
+  @@index([computedAt])
+}
+
+/// Selection funnel stages (docs/Fluxos e Estados/estados-trilha.md). New applications start as INSCRITO (OPEN-049).
+enum ApplicationStage {
+  INSCRITO
+  TRIAGEM
+  ENTREVISTA
+  FINALISTA
+  CONTRATADO
+  RECUSADA
+  CANCELADA
+}
+
+/// CANDIDATURA (SPEC-011): one active application per candidate and job (RB-14), enforced by a partial unique index in SQL.
+/// The SPEC-007 result used is always kept; the score is empty when that analysis lacked data (decision of 31/10/2026:
+/// only a critical barrier prevents applying).
+model Application {
+  id                    String              @id @default(cuid())
+  candidateUserId       String
+  candidate             User                @relation(fields: [candidateUserId], references: [id], onDelete: Restrict)
+  jobId                 String
+  job                   Job                 @relation(fields: [jobId], references: [id], onDelete: Restrict)
+  stage                 ApplicationStage    @default(INSCRITO)
+  appliedAt             DateTime            @default(now())
+  score                 Int?
+  compatibilityResultId String
+  compatibilityResult   CompatibilityResult @relation(fields: [compatibilityResultId], references: [id], onDelete: Restrict)
+  updatedAt             DateTime            @updatedAt
+  // Decision of 01/11/2026: the candidate may hide a refused or cancelled application from "Minhas candidaturas"
+  // before the 60 days; the record, its history and the company's view are kept.
+  hiddenByCandidateAt   DateTime?
+  stageEvents           ApplicationStageEvent[]
+  interviews            Interview[]
+
+  @@index([jobId, stage])
+  @@index([candidateUserId, appliedAt])
+}
+
+/// Funnel history (SPEC-013, OPEN-056): previous and resulting stage, when, who and what kind of move, with an optional note.
+/// Rows are never updated or deleted (database trigger), so earlier events are always preserved.
+model ApplicationStageEvent {
+  id            String            @id @default(cuid())
+  applicationId String
+  application   Application       @relation(fields: [applicationId], references: [id], onDelete: Restrict)
+  fromStage     ApplicationStage?
+  toStage       ApplicationStage
+  kind          String
+  actorUserId   String?
+  note          String?
+  createdAt     DateTime          @default(now())
+
+  @@index([applicationId, createdAt])
+}
+
+// SPEC-017: e-mail notifications of the selection process (OPEN-066 to OPEN-068). Each row is created in the same
+// transaction as the event that causes it (outbox), then sent with automatic retries. Technical record only: there is no
+// notification centre for users (OPEN-069); rows are kept for 1 year like the audit (OPEN-006).
+enum NotificationType {
+  APPLICATION_SUBMITTED
+  APPLICATION_STAGE_CHANGED
+  APPLICATION_CANCELLED
+  JOB_CLOSED
+  INTERVIEW_SCHEDULED
+  INTERVIEW_UPDATED
+  INTERVIEW_CANCELLED
+  REPORT_STATUS_CHANGED
+  REPORT_INFO_REQUESTED
+  REPORT_CONCLUDED
+}
+
+enum NotificationStatus {
+  PENDING
+  SENDING
+  SENT
+  FAILED
+  SKIPPED // the recipient chose not to receive notifications by e-mail; the in-site notice still exists
+}
+
+model Notification {
+  id              String             @id @default(cuid())
+  type            NotificationType
+  recipientUserId String
+  applicationId   String?
+  jobId           String?
+  // Minimal content captured when the event happened (job title, company name, stage); never another person's data.
+  payload         Json               @default("{}")
+  status          NotificationStatus @default(PENDING)
+  attempts        Int                @default(0)
+  nextAttemptAt   DateTime           @default(now())
+  lastError       String?
+  sentAt          DateTime?
+  // In-site notice (decision of 01/11/2026, revising OPEN-069): when the recipient opened or marked it as read.
+  readAt          DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([status, nextAttemptAt])
+  @@index([recipientUserId, createdAt])
+  @@index([createdAt])
+}
+
+// SPEC-018 (decision of 01/11/2026): interviews registered by the company in the funnel (conceptual entity ENTREVISTA).
+// Scheduling, changes and cancellation notify the candidate (SPEC-017, OPEN-066 item 3); a completed interview opens the
+// post-interview evaluation for 60 days (OPEN-070).
+enum InterviewStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum InterviewModality {
+  PRESENCIAL
+  ONLINE
+}
+
+model Interview {
+  id                     String            @id @default(cuid())
+  applicationId          String
+  application            Application       @relation(fields: [applicationId], references: [id], onDelete: Restrict)
+  scheduledAt            DateTime
+  modality               InterviewModality
+  locationOrLink         String
+  accessibilityResources String            @default("")
+  status                 InterviewStatus   @default(SCHEDULED)
+  completedAt            DateTime?
+  cancelledAt            DateTime?
+  createdByUserId        String
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
+  evaluation             InterviewEvaluation?
+
+  @@index([applicationId, status])
+}
+
+// SPEC-018: one evaluation per completed interview, never edited (OPEN-071/072). Individual rows are restricted and,
+// one year after submission, anonymized: links to the person and the comment are removed, only the company and the two
+// ratings stay for the aggregate distribution (OPEN-073).
+model InterviewEvaluation {
+  id                  String     @id @default(cuid())
+  interviewId         String?    @unique
+  interview           Interview? @relation(fields: [interviewId], references: [id], onDelete: SetNull)
+  applicationId       String?
+  candidateUserId     String?
+  companyId           String
+  accessibilityRating Int
+  inclusionRating     Int
+  comment             String?
+  submittedAt         DateTime   @default(now())
+  anonymizedAt        DateTime?
+
+  @@index([companyId])
+  @@index([submittedAt])
+}
+
+// SPEC-019/020: reports of possible accessibility incompatibility or false inclusion (entity DENUNCIA_FALSA_INCLUSAO).
+// A report never blocks a job nor changes ratings by itself (RB-44); only the platform administrator decides (RB-25).
+enum ReportCategory {
+  ACCESSIBILITY_INCOMPATIBILITY
+  FALSE_INCLUSION
+}
+
+enum ReportStatus {
+  RECEBIDA
+  EM_ANALISE
+  AGUARDANDO_INFORMACOES
+  CONCLUIDA
+}
+
+enum ReportDecision {
+  PROCEDENTE
+  PARCIALMENTE_PROCEDENTE
+  IMPROCEDENTE
+  INCONCLUSIVA
+}
+
+model Report {
+  id                    String          @id @default(cuid())
+  reporterUserId        String
+  jobId                 String
+  // The company always comes from the job; the candidate never chooses it (OPEN-075).
+  companyId             String
+  // Optional link to the reporter's own post-interview evaluation that the report is about (OPEN-075).
+  evaluationId          String?
+  category              ReportCategory
+  description           String
+  evidence              String?
+  reporterFlaggedRisk   Boolean         @default(false)
+  highPriority          Boolean         @default(false)
+  status                ReportStatus    @default(RECEBIDA)
+  // Target of 5 business days from registration (OPEN-080); may be extended with a recorded reason.
+  dueAt                 DateTime
+  extensionReason       String?
+  // What the administrator asks the company (never the reporter's identity) and the company's answer (OPEN-077).
+  companyRequest        String?
+  companyResponse       String?
+  companyRespondedAt    DateTime?
+  decision              ReportDecision?
+  // OPEN-081: short justification for the reporter; full justification and measures for the company.
+  reporterSummary       String?
+  justification         String?
+  measures              String?
+  decidedByUserId       String?
+  concludedAt           DateTime?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  events                ReportEvent[]
+
+  @@index([status, highPriority, createdAt])
+  @@index([reporterUserId, createdAt])
+  @@index([companyId])
+}
+
+// Moderation history (SPEC-020): every step with actor and date. Rows are never changed (database trigger).
+model ReportEvent {
+  id          String        @id @default(cuid())
+  reportId    String
+  report      Report        @relation(fields: [reportId], references: [id], onDelete: Restrict)
+  kind        String
+  fromStatus  ReportStatus?
+  toStatus    ReportStatus?
+  actorUserId String?
+  note        String?
+  createdAt   DateTime      @default(now())
+
+  @@index([reportId, createdAt])
+}

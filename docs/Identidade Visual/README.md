@@ -4,7 +4,7 @@ Esta pasta reúne os materiais de identidade visual e as referências de interfa
 
 ## Estado e aprovação
 
-Em 20/10/2026, o usuário aprovou os materiais visuais e rascunhos apresentados até então nesta etapa do trabalho. Em 25/10/2026, aprovou explicitamente os protótipos de **Entrada/login e seleção de perfil**, **Login de Candidato** e **Login de Empresa**, conforme registrados na SPEC-001. A aprovação é limitada às referências visuais existentes dessas três telas; não aprova automaticamente os cadastros, recuperação de senha, configurações de recrutadores ou mensagens de autenticação. A aprovação visual não substitui aprovação dos textos das Specs nem autoriza implementação por si só.
+Em 20/10/2026, o usuário aprovou os materiais visuais e rascunhos apresentados até então nesta etapa do trabalho. Em 25/10/2026, aprovou explicitamente os protótipos existentes de **Entrada/login e seleção de perfil**, **Login de Candidato**, **Login de Empresa**, **Cadastro de Candidato**, **Cadastro de Empresa** e **Recuperação de senha**. Em seguida, aprovou explicitamente os protótipos de **Gestão de recrutadores** e **Mensagens de autenticação**, criados como SVGs estáticos seguindo a identidade visual aprovada. Todos os protótipos catalogados nesta etapa estão aprovados visualmente; os SVGs são referências estáticas e não substituem a fonte editável do Figma. A aprovação visual não substitui aprovação dos textos das Specs nem autoriza integração ou publicação.
 
 **Importante:** o arquivo editável de referência está no [Figma do AcessaVagas](https://www.figma.com/design/VngDm0L22cFu2wQBZDVy95). Os arquivos locais desta pasta são referências estáticas; não são a fonte editável original nem código funcional.
 
@@ -22,6 +22,8 @@ Em 20/10/2026, o usuário aprovou os materiais visuais e rascunhos apresentados 
 - [Cadastro — Candidato](Cadastro-Candidato.svg)
 - [Cadastro — Empresa](Cadastro-Empresa.svg)
 - [Recuperação de senha](Recuperacao-de-Senha.svg)
+- [Gestão de recrutadores](Gestao-Recrutadores.svg) — referência estática aprovada em 25/10/2026.
+- [Mensagens de autenticação](Mensagens-Autenticacao.svg) — referência estática aprovada em 25/10/2026.
 - [Página inicial — Candidato](Pagina-Inicial-Candidato.svg)
 - [Página inicial — Empresa](Pagina-Inicial-Empresa.svg)
 
@@ -39,7 +41,9 @@ Os seguintes protótipos foram adicionados como SVGs nesta pasta:
 - [Confirmação de cancelamento](Confirmacao-Cancelamento.svg)
 - [Resultado do cancelamento](Resultado-Cancelamento.svg)
 
-**Ajuste visual ainda pendente:** o SVG de resultado do cancelamento foi incluído como exportado, mas a tela ainda precisa remover/ocultar o controle de cancelamento e aplicar cinza ao status “Cancelada”. A edição no Figma não foi aplicada por limite de uso da ferramenta; portanto, esse arquivo não deve ser tratado como versão corrigida desse ajuste.
+**Ajuste visual ainda pendente:** o SVG de resultado do cancelamento foi incluído como exportado, mas a tela ainda precisa remover/ocultar o controle de cancelamento e aplicar cinza ao status “Cancelada”. A edição no Figma não foi aplicada; portanto, esse arquivo não deve ser tratado como versão corrigida desse ajuste.
+
+Os novos protótipos de Gestão de recrutadores e Mensagens de autenticação foram criados como SVGs estáticos de referência. A fonte editável Figma ainda precisa ser atualizada para incorporar essas duas telas.
 
 ## Direção visual
 
@@ -48,6 +52,20 @@ Os seguintes protótipos foram adicionados como SVGs nesta pasta:
 - **Slogan:** “Acesso que transforma.”
 - **Cores de referência:** roxo e lilás, com fundos claros e contrastes legíveis.
 - **Princípios:** interface acessível, navegação clara, cartões simples, indicadores de compatibilidade e apresentação explícita dos estados.
+
+## Comparação estática com a implementação
+
+Revisão estática do código da branch em 25/10/2026; não representa homologação visual em navegador.
+
+- **Login de Candidato e de Empresa:** as páginas agora compartilham um layout responsivo de duas colunas, painel de marca/slogan, alternância de perfil com `aria-current`, formulário e links de recuperação/cadastro, seguindo a estrutura principal dos SVGs aprovados. A comparação visual final em navegador ainda está pendente.
+- **Recuperação de senha:** agora compartilha o painel de marca à esquerda e o cartão à direita, sem alternância de perfil durante a redefinição; a solicitação continua permitindo escolher Candidato ou Empresa. As mensagens permanecem inline e ainda precisam de comparação com os cartões de estado do SVG.
+- **Gestão de recrutadores:** a implementação agora reproduz os elementos estruturais principais do SVG aprovado: cabeçalho, menu lateral, formulário amplo e tabela responsiva com nome, e-mail, status e ações de reenviar/cancelar convite ou encerrar vínculo. O GET empresarial fornece nome e e-mail do destinatário somente no escopo da empresa autenticada. A comparação final em navegador ainda está pendente.
+- **Mensagens de autenticação:** o SVG mostra cartões de referência para sucesso, informação e erro; a aplicação apresenta mensagens contextuais inline com `role="alert"` ou `role="status"`. A semântica acessível é positiva, mas a composição visual não replica o protótipo.
+- **Paleta e temas:** os tokens principais do tema claro agora correspondem à paleta dos SVGs aprovados (`#1F1440`, `#6B6380`, `#6B29BF`, `#4A148C`, `#F5F0FC`, `#E0D9EB` e `#FBFAFE`). O foco visível usa `#6B29BF` no tema claro e `#C5A9FF` no escuro; testes estáticos calculam contraste superior a 3:1 contra fundos e superfícies dos dois temas. Os SVGs continuam sendo referência apenas para o tema claro.
+
+Pontos positivos identificados estaticamente: campos principais têm rótulos associados; erros e estados têm anúncios semânticos; o controle de tema expõe nome acessível e `aria-pressed`; há foco visível e regra para movimento reduzido. Testes automatizados mantêm os tokens claros sincronizados com os SVGs versionados e verificam contraste estático de pelo menos 3:1 para o contorno de foco nos dois temas. Isso não substitui testes manuais de zoom, reflow, teclado e leitor de tela.
+
+**Pendências concretas:** comparar login, recuperação e gestão de recrutadores em navegador nos tamanhos desktop e móvel; revisar visualmente as mensagens inline contra os cartões de estado do SVG; revisar teclado, zoom/reflow, leitor de tela, estados de foco e tema escuro manualmente. Esta alteração foi revisada estaticamente e por CI; não foi executada homologação manual.
 
 ## Limites dos arquivos
 

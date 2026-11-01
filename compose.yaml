@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: acessavagas-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: acessa_vagas
+    ports:
+      - "5432:5432"
+    volumes:
+      - acessavagas-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d acessa_vagas"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: acessavagas-mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025" # SMTP de captura, sem entrega externa
+      - "8025:8025" # Caixa de entrada web
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: "1"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "1"
+      # Falhas simuladas de SMTP para testes (npm run mailpit:chaos); desligadas até serem ativadas.
+      MP_ENABLE_CHAOS: "true"
+
+volumes:
+  acessavagas-postgres-data:

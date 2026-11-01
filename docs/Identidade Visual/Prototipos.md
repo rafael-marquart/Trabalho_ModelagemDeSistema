@@ -1,6 +1,6 @@
 # Protótipos de interface — AcessaVagas
 
-Este documento cataloga os arquivos SVG existentes nesta pasta e registra telas adicionais trabalhadas no Figma.
+Este documento cataloga os arquivos SVG existentes nesta pasta e registra o estado de aprovação e as telas adicionais trabalhadas.
 
 ## Fonte editável
 A referência editável original está no [Figma do AcessaVagas](https://www.figma.com/design/VngDm0L22cFu2wQBZDVy95). Os arquivos SVG aqui são referências estáticas vetoriais, legíveis em navegadores e editores de imagem vetorial; não substituem o Figma nem representam código funcional.
@@ -13,8 +13,14 @@ A referência editável original está no [Figma do AcessaVagas](https://www.fig
 - [Cadastro — Candidato](Cadastro-Candidato.svg): nome, e-mail, CPF, data de nascimento e senha.
 - [Cadastro — Empresa](Cadastro-Empresa.svg): empresa, CNPJ, e-mail corporativo, responsável e senha.
 - [Recuperação de senha](Recuperacao-de-Senha.svg): formulário para candidato iniciar recuperação por e-mail ou CPF; contas de Empresa usam e-mail cadastrado.
+- [Gestão de recrutadores](Gestao-Recrutadores.svg): protótipo aprovado em 25/10/2026; painel para convidar recrutadores e administrar convites/vínculos.
+- [Mensagens de autenticação](Mensagens-Autenticacao.svg): protótipo aprovado em 25/10/2026; estados de sucesso, informação e erro que evitam revelar a existência de uma conta.
 - [Página inicial — Candidato](Pagina-Inicial-Candidato.svg): painel com navegação lateral, banner, vagas em destaque e status de candidaturas.
 - [Página inicial — Empresa](Pagina-Inicial-Empresa.svg): painel de gestão de vagas e candidaturas.
+
+## Estado de aprovação visual
+
+Em 25/10/2026, o usuário aprovou explicitamente os protótipos existentes de Entrada/login e seleção de perfil, Login de Candidato, Login de Empresa, Cadastro de Candidato, Cadastro de Empresa e Recuperação de senha. Em 25/10/2026, o usuário aprovou também os protótipos de Gestão de recrutadores e Mensagens de autenticação. Os oito protótipos da SPEC-001 citados acima estão aprovados visualmente. Essa aprovação não se estende automaticamente aos protótipos de outras Specs. Os SVGs são estáticos e não substituem a fonte editável do Figma.
 
 ## Telas adicionais trabalhadas no Figma
 

@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "feat/**"
+      - "fix/**"
+      - "test/**"
+      - "desenvolvimento-do-projeto"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: acessa_vagas
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d acessa_vagas"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/acessa_vagas?schema=public
+      SESSION_SECRET: ci-only-not-a-production-secret
+      APP_BASE_URL: http://localhost:3000
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm ci
+      - name: Validate Prisma schema
+        run: npx prisma validate
+      - name: Generate Prisma Client
+        run: npm run db:generate
+      - name: Apply migrations to PostgreSQL
+        run: npx prisma migrate deploy
+      - name: Verify active recruiter link database constraint
+        run: psql "postgresql://postgres:postgres@localhost:5432/acessa_vagas" -v ON_ERROR_STOP=1 -f scripts/test-active-recruiter-link-constraint.sql
+      - name: Verify concurrent active recruiter link constraint
+        run: bash scripts/test-active-recruiter-link-concurrency.sh
+      - name: Check TypeScript
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Unit tests
+        run: npm test
+      - name: Production build (same script as Vercel, with its migration step)
+        env:
+          VERCEL_ENV: production
+        run: npm run vercel-build
+      - name: End-to-end auth flow with PostgreSQL and test SMTP
+        run: node scripts/auth-e2e.mjs

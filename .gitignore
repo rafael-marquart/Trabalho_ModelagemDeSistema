@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+*.tsbuildinfo
+.private-uploads/
+
+# Gerado pelo Next.js ao rodar o servidor
+next-env.d.ts
+.vercel
