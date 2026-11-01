@@ -89,4 +89,21 @@ describe("candidate document item API", () => {
     });
     await expect(response.json()).resolves.toEqual({ ok: true });
   });
+
+  it("serves the bytes kept in the database without touching the local folder", async () => {
+    prismaMock.candidateProfileDocument.findFirst.mockResolvedValueOnce({ ...document, content: { bytes: new TextEncoder().encode("%PDF-db") } });
+    const response = await GET(new Request("https://example.test"), context);
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe("%PDF-db");
+    expect(readFileMock).not.toHaveBeenCalled();
+    expect(prismaMock.candidateProfileDocument.findFirst.mock.calls[0][0].include).toEqual({ content: true });
+  });
+
+  it("still serves an older document from the local upload folder, and answers 404 when it is gone", async () => {
+    prismaMock.candidateProfileDocument.findFirst.mockResolvedValue({ ...document, content: null });
+    expect((await GET(new Request("https://example.test"), context)).status).toBe(200);
+    expect(readFileMock).toHaveBeenCalledWith(expect.stringContaining("safe-random-id"));
+    readFileMock.mockRejectedValueOnce(Object.assign(new Error("missing"), { code: "ENOENT" }));
+    expect((await GET(new Request("https://example.test"), context)).status).toBe(404);
+  });
 });

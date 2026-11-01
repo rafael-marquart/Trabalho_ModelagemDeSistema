@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import nodemailer, { type Transporter } from "nodemailer";
 import { EmailConfigError, readEmailConfig, type EmailConfig } from "./email-config";
 
 export type EmailFailureKind = "CONFIG" | "AUTH" | "CONNECTION" | "TIMEOUT" | "TLS" | "REJECTED" | "UNKNOWN";
@@ -38,7 +38,7 @@ const explanations: Record<EmailFailureKind, string> = {
 export const explainEmailFailure = (error: EmailDeliveryError) =>
   `${explanations[error.kind]}${error.responseCode ? ` (resposta ${error.responseCode})` : error.code ? ` (${error.code})` : ""}`;
 
-let cached: { key: string; transporter: nodemailer.Transporter } | null = null;
+let cached: { key: string; transporter: Transporter } | null = null;
 
 function transporterFor(config: EmailConfig) {
   const key = JSON.stringify([config.host, config.port, config.secure, config.requireTLS, config.auth?.user, config.auth?.pass, config.timeouts]);

@@ -1,3 +1,4 @@
+import { after } from "next/server";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { classifyEmailError, sendEmail } from "@/lib/email";
@@ -148,20 +149,32 @@ export async function deliverDueNotifications(deps: Deps = {}) {
 let running = false;
 let again = false;
 
-/**
- * Starts a delivery round without making the request wait for the SMTP server. A call during a round schedules one more
- * round right after it, so a notification created meanwhile is not left for the periodic worker.
- */
-export function kickNotificationDelivery() {
-  if (process.env.NOTIFICATIONS_WORKER === "off") return;
+function backgroundRound() {
   if (running) { again = true; return; }
   running = true;
   void deliverDueNotifications()
     .catch((error) => console.error("[notificações] rodada de envio falhou:", error instanceof Error ? error.message : error))
     .finally(() => {
       running = false;
-      if (again) { again = false; kickNotificationDelivery(); }
+      if (again) { again = false; backgroundRound(); }
     });
+}
+
+/**
+ * Starts a delivery round without making the request wait for the SMTP server. Inside a request it uses after(), which
+ * keeps a serverless function (Vercel) alive until the round ends; outside a request (server start, scripts) it runs in
+ * the background, and a call during a round schedules one more round right after it.
+ */
+export function kickNotificationDelivery() {
+  if (process.env.NOTIFICATIONS_WORKER === "off") return;
+  try {
+    after(() => deliverDueNotifications().then(() => undefined)
+      .catch((error) => console.error("[notificações] rodada de envio falhou:", error instanceof Error ? error.message : error)));
+    return;
+  } catch {
+    // after() is only available while handling a request.
+  }
+  backgroundRound();
 }
 
 // In-site notices (decision of 01/11/2026, revising OPEN-069): every notification row is also shown to its recipient in

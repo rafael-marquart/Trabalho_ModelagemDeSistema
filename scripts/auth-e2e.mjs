@@ -14,6 +14,7 @@ const HERE_PORT = Number(process.env.AUTH_E2E_HERE_PORT || "2529");
 const HERE_KEY = "e2e-here-key";
 const HERE_REQUESTS = [];
 const BASE_URL = `http://127.0.0.1:${PORT}`;
+const CRON_SECRET = `e2e-cron-${randomUUID()}`;
 const PUBLIC_URL = `https://127.0.0.1:${PORT}`;
 const TEST_IP = "192.0.2.77";
 const LOCKOUT_TEST_IP = "198.51.100.42";
@@ -352,7 +353,8 @@ async function main() {
       HERE_GEOCODE_URL: `http://127.0.0.1:${HERE_PORT}/geocode`,
       HERE_ROUTER_URL: `http://127.0.0.1:${HERE_PORT}/router`,
       HERE_TRANSIT_URL: `http://127.0.0.1:${HERE_PORT}/transit`,
-      NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_TELEMETRY_DISABLED: "1",
+      CRON_SECRET
     };
 
     app = spawn(process.execPath, [
@@ -569,6 +571,11 @@ async function main() {
     await expectStatus(await upload(uploadForm("script.exe", pdfBytes), profileCookie), 400, "upload with forbidden extension");
     const uploaded = JSON.parse(await expectStatus(await upload(uploadForm("curso.pdf", pdfBytes), profileCookie), 201, "valid upload"));
     const documentId = uploaded.document.id;
+    // Serverless hosting has no persistent disk: the bytes live in the database, next to (not inside) the metadata.
+    const storedContent = await prisma.candidateDocumentContent.findUnique({ where: { documentId } });
+    assert.deepEqual(Buffer.from(storedContent.bytes), pdfBytes, "the uploaded bytes are stored in the database");
+    const oversized = Buffer.concat([pdfBytes, Buffer.alloc(4 * 1024 * 1024)]);
+    await expectStatus(await upload(uploadForm("grande.pdf", oversized), profileCookie), 400, "upload above 4 MB (hosting request limit)");
     const listed = JSON.parse(await expectStatus(
       await fetch(`${BASE_URL}/api/candidato/documentos`, { headers: profileCookie, redirect: "manual" }), 200, "list documents"
     ));
@@ -585,6 +592,7 @@ async function main() {
     }), 200, "owner deletes own document");
     await expectStatus(await fetch(`${BASE_URL}/api/candidato/documentos/${documentId}`, { headers: profileCookie, redirect: "manual" }),
       404, "deleted document is gone");
+    assert.equal(await prisma.candidateDocumentContent.count({ where: { documentId } }), 0, "removing a document removes its stored bytes");
     const documentAudit = await prisma.auditEvent.findMany({
       where: { actorUserId: account.id, eventType: { in: ["CANDIDATE_PROFILE_DOCUMENT_ADDED", "CANDIDATE_PROFILE_DOCUMENT_REMOVED"] } },
       select: { eventType: true }
@@ -1923,6 +1931,17 @@ async function main() {
     assert.ok(anonymized.candidateUserId === null && anonymized.submittedAt.getUTCMonth() === 0 && anonymized.submittedAt.getUTCDate() === 1, "the anonymized row keeps only company, ratings and year");
     const noteAfter = await expectStatus(await fetch(`${BASE_URL}/candidato/vagas/${interviewJob.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "note after anonymization");
     assert.ok(noteAfter.includes("1 avaliação"), "anonymized evaluations still count in the distribution");
+
+    // Scheduled routes (Vercel Cron / GitHub Actions): only the bearer secret runs them.
+    for (const path of ["/api/cron/notificacoes", "/api/cron/retencao"]) {
+      await expectStatus(await fetch(`${BASE_URL}${path}`, { redirect: "manual" }), 401, `${path} without the secret`);
+      await expectStatus(await fetch(`${BASE_URL}${path}`, { headers: { authorization: "Bearer wrong-secret-value-123" }, redirect: "manual" }), 401, `${path} with a wrong secret`);
+    }
+    const cronRound = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/cron/notificacoes`, { headers: { authorization: `Bearer ${CRON_SECRET}` }, redirect: "manual" }), 200, "scheduled notification round"));
+    assert.equal(cronRound.ok, true, "the notification round reports its counts");
+    const retention = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/cron/retencao`, { headers: { authorization: `Bearer ${CRON_SECRET}` }, redirect: "manual" }), 200, "scheduled retention"));
+    assert.deepEqual(Object.keys(retention.results).sort(), ["audit", "compatibility", "evaluations", "loginSecurity", "notifications"], "every retention routine runs");
+    assert.ok(Object.values(retention.results).every(result => result.executed === true), "retention runs for real, not as a simulation");
 
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });

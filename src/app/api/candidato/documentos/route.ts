@@ -1,15 +1,13 @@
 import { randomUUID } from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
+import { MAX_DOCUMENT_BYTES } from "@/lib/candidate-profile/documents";
 import { prisma } from "@/lib/prisma";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 
 export const runtime = "nodejs";
-const MAX_FILE_BYTES = 10 * 1024 * 1024;
 const allowedExtensions = new Set([".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"]);
-const storageDirectory = () => process.env.CANDIDATE_UPLOAD_DIR || path.join(process.cwd(), ".private-uploads", "candidate-profile");
 
 function detectedMime(bytes: Uint8Array): string | null {
   if (bytes.length >= 5 && new TextDecoder().decode(bytes.slice(0, 5)) === "%PDF-") return "application/pdf";
@@ -55,8 +53,8 @@ export async function POST(request: Request) {
   if (!category || typeof displayName !== "string" || !displayName.trim() || displayName.trim().length > 160 || !(file instanceof File)) {
     return NextResponse.json({ message: "Informe categoria, nome e arquivo válido." }, { status: 400 });
   }
-  if (file.size < 1 || file.size > MAX_FILE_BYTES) {
-    return NextResponse.json({ message: "O arquivo deve ter até 10 MB." }, { status: 400 });
+  if (file.size < 1 || file.size > MAX_DOCUMENT_BYTES) {
+    return NextResponse.json({ message: "O arquivo deve ter até 4 MB." }, { status: 400 });
   }
   const extension = path.extname(file.name).toLowerCase();
   if (!allowedExtensions.has(extension)) {
@@ -75,34 +73,25 @@ export async function POST(request: Request) {
   const profile = await prisma.candidateProfile.upsert({
     where: { userId: user.id }, create: { userId: user.id }, update: {}, select: { id: true }
   });
-  const storedName = randomUUID();
-  const directory = storageDirectory();
-  await mkdir(directory, { recursive: true });
-  try {
-    await writeFile(path.join(directory, storedName), bytes, { flag: "wx", mode: 0o600 });
-    // Metadata and audit event are written atomically; if either fails the stored file is removed below.
-    const document = await prisma.$transaction(async (tx) => {
-      const created = await tx.candidateProfileDocument.create({
-        data: {
-          candidateProfileId: profile.id, category, displayName: displayName.trim(),
-          originalName: path.basename(file.name).slice(0, 200), storedName,
-          mimeType: extension === ".doc" ? "application/msword" : mime!, sizeBytes: bytes.byteLength
-        },
-        select: { id: true, category: true, displayName: true, originalName: true, mimeType: true, sizeBytes: true, createdAt: true }
-      });
-      await tx.auditEvent.create({
-        data: {
-          actorUserId: user.id, eventType: "CANDIDATE_PROFILE_DOCUMENT_ADDED",
-          subjectType: "CandidateProfileDocument", subjectId: created.id,
-          metadata: { category }
-        }
-      });
-      return created;
+  // Metadata, file bytes and audit event are written in one transaction: a failure leaves nothing behind.
+  const document = await prisma.$transaction(async (tx) => {
+    const created = await tx.candidateProfileDocument.create({
+      data: {
+        candidateProfileId: profile.id, category, displayName: displayName.trim(),
+        originalName: path.basename(file.name).slice(0, 200), storedName: randomUUID(),
+        mimeType: extension === ".doc" ? "application/msword" : mime!, sizeBytes: bytes.byteLength,
+        content: { create: { bytes } }
+      },
+      select: { id: true, category: true, displayName: true, originalName: true, mimeType: true, sizeBytes: true, createdAt: true }
     });
-    return NextResponse.json({ document }, { status: 201 });
-  } catch (error) {
-    const { unlink } = await import("node:fs/promises");
-    await unlink(path.join(directory, storedName)).catch(() => undefined);
-    throw error;
-  }
+    await tx.auditEvent.create({
+      data: {
+        actorUserId: user.id, eventType: "CANDIDATE_PROFILE_DOCUMENT_ADDED",
+        subjectType: "CandidateProfileDocument", subjectId: created.id,
+        metadata: { category }
+      }
+    });
+    return created;
+  });
+  return NextResponse.json({ document }, { status: 201 });
 }

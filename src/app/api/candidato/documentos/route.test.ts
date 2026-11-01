@@ -1,22 +1,19 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { prismaMock, getCurrentUserMock, mkdirMock, writeFileMock, unlinkMock } = vi.hoisted(() => ({
+const { prismaMock, getCurrentUserMock } = vi.hoisted(() => ({
   prismaMock: {
     $transaction: vi.fn(), auditEvent: { create: vi.fn() },
     candidateProfile: { upsert: vi.fn(), findUnique: vi.fn() },
     candidateProfileDocument: { create: vi.fn(), findMany: vi.fn() }
   },
-  getCurrentUserMock: vi.fn(),
-  mkdirMock: vi.fn(),
-  writeFileMock: vi.fn(),
-  unlinkMock: vi.fn()
+  getCurrentUserMock: vi.fn()
 }));
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
 vi.mock("@/lib/auth/session", () => ({ getCurrentUser: getCurrentUserMock }));
-vi.mock("node:fs/promises", async (importOriginal) => { const actual = await importOriginal<typeof import("node:fs/promises")>(); return { ...actual, default: actual, mkdir: mkdirMock, writeFile: writeFileMock, unlink: unlinkMock }; });
 
 import { GET, POST } from "./route";
+import { MAX_DOCUMENT_BYTES } from "@/lib/candidate-profile/documents";
 
 describe("candidate documents collection API", () => {
   const candidate = { id: "candidate-1", role: "CANDIDATE" };
@@ -53,7 +50,7 @@ describe("candidate documents collection API", () => {
     invalidExtension.set("displayName", "Arquivo");
     invalidExtension.set("file", new File(["%PDF-"], "arquivo.exe", { type: "application/pdf" }));
     expect((await POST(new Request("https://example.test/api/candidato/documentos", { method: "POST", body: invalidExtension }))).status).toBe(400);
-    expect(writeFileMock).not.toHaveBeenCalled();
+    expect(prismaMock.candidateProfileDocument.create).not.toHaveBeenCalled();
   });
 
   it("rejects a file whose extension does not match its content", async () => {
@@ -63,17 +60,18 @@ describe("candidate documents collection API", () => {
     form.set("file", new File(["not a PDF"], "documento.pdf", { type: "application/pdf" }));
     const response = await POST(new Request("https://example.test/api/candidato/documentos", { method: "POST", body: form }));
     expect(response.status).toBe(400);
-    expect(writeFileMock).not.toHaveBeenCalled();
+    expect(prismaMock.candidateProfileDocument.create).not.toHaveBeenCalled();
   });
 
-  it("rejects uploads larger than 10 MB before writing to storage", async () => {
+  it("rejects uploads larger than 4 MB (serverless request limit) before writing anything", async () => {
+    expect(MAX_DOCUMENT_BYTES).toBe(4 * 1024 * 1024);
     const form = new FormData();
     form.set("category", "COURSE");
     form.set("displayName", "Documento");
-    form.set("file", new File([new Uint8Array(10 * 1024 * 1024 + 1)], "documento.pdf", { type: "application/pdf" }));
+    form.set("file", new File([new Uint8Array(4 * 1024 * 1024 + 1)], "documento.pdf", { type: "application/pdf" }));
     const response = await POST(new Request("https://example.test/api/candidato/documentos", { method: "POST", body: form }));
     expect(response.status).toBe(400);
-    expect(writeFileMock).not.toHaveBeenCalled();
+    expect(prismaMock.candidateProfileDocument.create).not.toHaveBeenCalled();
   });
 
   it("rejects cross-origin upload requests before reading the form or writing files", async () => {
@@ -85,17 +83,20 @@ describe("candidate documents collection API", () => {
       method: "POST", headers: { origin: "https://attacker.example" }, body: form
     }));
     expect(response.status).toBe(403);
-    expect(writeFileMock).not.toHaveBeenCalled();
+    expect(prismaMock.candidateProfileDocument.create).not.toHaveBeenCalled();
   });
 
-  it("stores a valid PDF with private file permissions and returns only metadata", async () => {
+  it("stores a valid PDF in the database, in the same transaction as its metadata, and returns only metadata", async () => {
     const form = new FormData();
     form.set("category", "COURSE");
     form.set("displayName", "Certificado de curso");
     form.set("file", new File(["%PDF-"], "certificado.pdf", { type: "application/pdf" }));
     const response = await POST(new Request("https://example.test/api/candidato/documentos", { method: "POST", body: form }));
     expect(response.status).toBe(201);
-    expect(writeFileMock).toHaveBeenCalledWith(expect.any(String), expect.any(Uint8Array), { flag: "wx", mode: 0o600 });
+    expect(prismaMock.$transaction).toHaveBeenCalledTimes(1);
+    const data = prismaMock.candidateProfileDocument.create.mock.calls[0][0].data;
+    expect(data).toMatchObject({ candidateProfileId: "profile-1", category: "COURSE", sizeBytes: 5, mimeType: "application/pdf" });
+    expect(Buffer.from(data.content.create.bytes).toString()).toBe("%PDF-");
     const body = await response.json();
     expect(body.document).toMatchObject({ id: "document-1", mimeType: "application/pdf" });
     expect(JSON.stringify(body)).not.toContain("storedName");

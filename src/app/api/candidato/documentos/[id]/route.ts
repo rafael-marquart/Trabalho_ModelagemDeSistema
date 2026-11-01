@@ -6,7 +6,8 @@ import { prisma } from "@/lib/prisma";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 
 export const runtime = "nodejs";
-const storageDirectory = () => process.env.CANDIDATE_UPLOAD_DIR || path.join(process.cwd(), ".private-uploads", "candidate-profile");
+// Documents uploaded before 01/11/2026 on a local install have their bytes in this folder instead of the database.
+const legacyDirectory = () => process.env.CANDIDATE_UPLOAD_DIR || path.join(process.cwd(), ".private-uploads", "candidate-profile");
 
 type Context = { params: Promise<{ id: string }> };
 
@@ -15,11 +16,12 @@ export async function GET(_request: Request, context: Context) {
   if (!user || user.role !== "CANDIDATE") return NextResponse.json({ message: "Acesso não autorizado." }, { status: 401 });
   const { id } = await context.params;
   const document = await prisma.candidateProfileDocument.findFirst({
-    where: { id, candidateProfile: { userId: user.id } }
+    where: { id, candidateProfile: { userId: user.id } },
+    include: { content: true }
   });
   if (!document) return NextResponse.json({ message: "Arquivo não encontrado." }, { status: 404 });
   try {
-    const bytes = await readFile(path.join(storageDirectory(), document.storedName));
+    const bytes = document.content ? document.content.bytes : await readFile(path.join(legacyDirectory(), document.storedName));
     const safeName = document.originalName.replace(/[\r\n"\\]/g, "_");
     const asciiName = safeName.replace(/[^\x20-\x7E]/g, "_");
     const encodedName = encodeURIComponent(safeName);
@@ -33,7 +35,7 @@ export async function GET(_request: Request, context: Context) {
       }
     });
   } catch {
-    return NextResponse.json({ message: "O arquivo não está disponível no armazenamento local." }, { status: 404 });
+    return NextResponse.json({ message: "O arquivo não está disponível." }, { status: 404 });
   }
 }
 
@@ -57,6 +59,7 @@ export async function DELETE(request: Request, context: Context) {
       }
     });
   });
-  await unlink(path.join(storageDirectory(), document.storedName)).catch(() => undefined);
+  // The database content goes with the row (cascade); an older local file is removed too, when there is one.
+  await unlink(path.join(legacyDirectory(), document.storedName)).catch(() => undefined);
   return NextResponse.json({ ok: true });
 }
