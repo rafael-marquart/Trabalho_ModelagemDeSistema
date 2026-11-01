@@ -57,7 +57,7 @@ describe("candidate side of applications (SPEC-012/016)", () => {
       stageEvents: [{ createdAt: day("2026-10-01"), toStage: "INSCRITO", kind: "SUBMITTED" }]
     });
     const detail = await getCandidateApplication("cand-1", "a1", day("2026-11-01"));
-    expect(detail).toMatchObject({ stageLabel: "Em entrevista", canCancel: false, job: { status: "CLOSED" } });
+    expect(detail).toMatchObject({ stageLabel: "Em entrevista", canCancel: true, job: { status: "CLOSED" } });
     expect(detail?.historyVisibleUntil?.slice(0, 10)).toBe("2026-12-19");
     expect(JSON.stringify(detail)).not.toMatch(/actor|note|email/i);
   });
@@ -67,7 +67,10 @@ describe("candidate side of applications (SPEC-012/016)", () => {
     expect(cancellationBlock("CONTRATADO", "OPEN")).toMatch(/aprovada não pode/);
     expect(cancellationBlock("RECUSADA", "OPEN")).toMatch(/recusada não pode/);
     expect(cancellationBlock("CANCELADA", "OPEN")).toMatch(/já foi cancelada/);
-    expect(cancellationBlock("INSCRITO", "CLOSED")).toMatch(/encerrada/);
+    expect(cancellationBlock("INSCRITO", "CLOSED")).toBeNull();
+    expect(cancellationBlock("ENTREVISTA", "CLOSED")).toBeNull();
+    expect(cancellationBlock("FINALISTA", "OPEN")).toBeNull();
+    expect(cancellationBlock("FINALISTA", "CLOSED")).toMatch(/até a etapa de entrevista/);
   });
 
   it("cancels with a conditional update, a history event and an audit entry", async () => {
@@ -78,16 +81,23 @@ describe("candidate side of applications (SPEC-012/016)", () => {
     expect(tx.auditEvent.create.mock.calls[0][0].data).toMatchObject({ eventType: "APPLICATION_CANCELLED", actorUserId: "cand-1", subjectId: "a1" });
   });
 
+  it("still cancels up to the interview stage after the job is closed (decision of 01/11/2026)", async () => {
+    prismaMock.application.findFirst.mockResolvedValue({ id: "a1", stage: "ENTREVISTA", jobId: "job-1", job: { status: "CLOSED" } });
+    tx.job.findFirst.mockResolvedValueOnce({ status: "CLOSED" });
+    expect(await cancelApplication("cand-1", "a1")).toEqual({ ok: true, stage: "CANCELADA" });
+    expect(tx.applicationStageEvent.create).toHaveBeenCalledTimes(1);
+  });
+
   it("refuses someone else's application, final stages, closed jobs and concurrent changes without writing", async () => {
     prismaMock.application.findFirst.mockResolvedValueOnce(null);
     expect(await cancelApplication("intruder", "a1")).toMatchObject({ ok: false, status: 404 });
     prismaMock.application.findFirst.mockResolvedValueOnce({ id: "a1", stage: "CONTRATADO", jobId: "job-1", job: { status: "OPEN" } });
     expect(await cancelApplication("cand-1", "a1")).toMatchObject({ ok: false, status: 409 });
-    prismaMock.application.findFirst.mockResolvedValueOnce({ id: "a1", stage: "INSCRITO", jobId: "job-1", job: { status: "CLOSED" } });
+    prismaMock.application.findFirst.mockResolvedValueOnce({ id: "a1", stage: "FINALISTA", jobId: "job-1", job: { status: "CLOSED" } });
     expect(await cancelApplication("cand-1", "a1")).toMatchObject({ ok: false, status: 409 });
     expect(tx.application.updateMany).not.toHaveBeenCalled();
 
-    prismaMock.application.findFirst.mockResolvedValueOnce({ id: "a1", stage: "INSCRITO", jobId: "job-1", job: { status: "OPEN" } });
+    prismaMock.application.findFirst.mockResolvedValueOnce({ id: "a1", stage: "FINALISTA", jobId: "job-1", job: { status: "OPEN" } });
     tx.job.findFirst.mockResolvedValueOnce({ status: "CLOSED" });
     expect(await cancelApplication("cand-1", "a1")).toMatchObject({ ok: false, status: 409 });
     prismaMock.application.findFirst.mockResolvedValueOnce({ id: "a1", stage: "INSCRITO", jobId: "job-1", job: { status: "OPEN" } });

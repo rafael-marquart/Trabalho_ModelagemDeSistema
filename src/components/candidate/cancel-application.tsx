@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
  * SPEC-012: "Cancelar candidatura" on the detail screen. It always asks for an explicit confirmation; the server checks
  * ownership, stage and job status again. "Voltar" (or Esc) leaves the application untouched.
  */
-export default function CancelApplication({ applicationId, jobTitle }: { applicationId: string; jobTitle: string }) {
+export default function CancelApplication({ applicationId, jobTitle, jobClosed = false }: { applicationId: string; jobTitle: string; jobClosed?: boolean }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -53,7 +53,7 @@ export default function CancelApplication({ applicationId, jobTitle }: { applica
 
   return <section className="job-detail-section cancel-application" aria-labelledby="cancel-title">
     <h2 id="cancel-title">Cancelar candidatura</h2>
-    <p className="muted">Você pode cancelar enquanto a candidatura estiver em andamento e a vaga não estiver encerrada. O cancelamento não pode ser desfeito.</p>
+    <p className="muted">{jobClosed ? "A vaga foi encerrada, mas o processo seletivo pode continuar. Até a etapa de entrevista, você ainda pode cancelar. O cancelamento não pode ser desfeito." : "Você pode cancelar enquanto a candidatura estiver em andamento. O cancelamento não pode ser desfeito."}</p>
     {error ? <p className="form-error" role="alert">{error}</p> : null}
     <button ref={triggerRef} type="button" className="danger-button" aria-haspopup="dialog" onClick={() => { setError(""); setOpen(true); }}>Cancelar candidatura</button>
     <dialog ref={dialogRef} className="confirm-dialog" aria-labelledby={titleId} aria-describedby={textId} onCancel={(event) => { event.preventDefault(); close(); }}>

@@ -54,11 +54,18 @@ export const visibleUntil = (row: Row) => {
 };
 const isVisible = (row: Row, now: Date) => { const until = visibleUntil(row); return !until || now < until; };
 
-/** The application can be cancelled while active and while the job is not closed (RB-36, OPEN-050). */
+/**
+ * The application can be cancelled while active (RB-36, OPEN-050). Revised 01/11/2026: the company may keep working
+ * the funnel after closing the job, so on a closed job the candidate can still cancel up to the interview stage
+ * (Inscrito, Triagem, Entrevista); a Finalista on a closed job can no longer cancel.
+ */
+const CANCELLABLE_AFTER_CLOSE = ["INSCRITO", "TRIAGEM", "ENTREVISTA"];
+const CLOSED_MESSAGE = "Com a vaga encerrada, a candidatura só pode ser cancelada até a etapa de entrevista.";
+
 export function cancellationBlock(stage: string, jobStatus: string): string | null {
   if (stage === "CANCELADA") return "Esta candidatura já foi cancelada.";
   if (!isActive(stage)) return `Uma candidatura ${candidateStageLabels[stage]?.toLocaleLowerCase("pt-BR") ?? "encerrada"} não pode ser cancelada.`;
-  if (jobStatus === "CLOSED") return "A vaga foi encerrada; a candidatura não pode mais ser cancelada.";
+  if (jobStatus === "CLOSED" && !CANCELLABLE_AFTER_CLOSE.includes(stage)) return CLOSED_MESSAGE;
   return null;
 }
 
@@ -122,7 +129,7 @@ export async function cancelApplication(userId: string, applicationId: string): 
   const from = row.stage;
   const done = await prisma.$transaction(async (tx) => {
     const job = await tx.job.findFirst({ where: { id: row.jobId }, select: { status: true } });
-    if (!job || job.status === "CLOSED") return "CLOSED" as const;
+    if (!job || cancellationBlock(from, job.status)) return "CLOSED" as const;
     const changed = await tx.application.updateMany({ where: { id: row.id, candidateUserId: userId, stage: from }, data: { stage: "CANCELADA" } });
     if (changed.count !== 1) return "CHANGED" as const;
     await tx.applicationStageEvent.create({ data: { applicationId: row.id, fromStage: from, toStage: "CANCELADA", kind: "CANCELLED", actorUserId: userId } });
@@ -131,7 +138,7 @@ export async function cancelApplication(userId: string, applicationId: string): 
     });
     return "OK" as const;
   });
-  if (done === "CLOSED") return { ok: false, status: 409, message: "A vaga foi encerrada; a candidatura não pode mais ser cancelada." };
+  if (done === "CLOSED") return { ok: false, status: 409, message: CLOSED_MESSAGE };
   if (done === "CHANGED") return { ok: false, status: 409, message: "A etapa desta candidatura mudou enquanto você confirmava. Atualize a página e confira a situação atual." };
   return { ok: true, stage: "CANCELADA" };
 }

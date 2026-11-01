@@ -1661,12 +1661,15 @@ async function main() {
     const closeAudit = await prisma.auditEvent.findFirst({ where: { subjectId: compatJob.id, eventType: "JOB_CLOSED" }, orderBy: { createdAt: "desc" } });
     assert.equal(closeAudit.metadata.activeCandidatesToNotify, 1, "closing identifies the candidate with an active application for notification");
     assert.equal(await prisma.application.count({ where: { jobId: compatJob.id, stage: "TRIAGEM" } }), 1, "closing keeps the existing application in its stage");
-    await expectStatus(await cancel(reapplied.id, compatCookie), 409, "an application cannot be cancelled after the job is closed");
-    assert.equal((await prisma.application.findUnique({ where: { id: reapplied.id } })).stage, "TRIAGEM", "the refused cancellation changes nothing");
+    // Decision of 01/11/2026: the funnel may continue after closing, so the candidate can still cancel up to Entrevista.
+    const moveReapplied = (toStage) => fetch(`${BASE_URL}/api/candidaturas/${reapplied.id}/etapa`, { method: "POST", headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie: companyCookie }, body: JSON.stringify({ toStage }), redirect: "manual" });
+    await expectStatus(await moveReapplied("ENTREVISTA"), 200, "the company keeps working the funnel after closing the job");
     const closedApplication = JSON.parse(await expectStatus(await fetch(`${myUrl}/${reapplied.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "application of a closed job")).application;
-    assert.ok(!closedApplication.canCancel && closedApplication.job.closedAt && closedApplication.historyVisibleUntil, "closure is reflected and starts the 60-day history window");
+    assert.ok(closedApplication.canCancel && closedApplication.job.closedAt && closedApplication.historyVisibleUntil, "closure is reflected, starts the 60-day window and still allows cancelling at Entrevista");
     const closedApplicationPage = await expectStatus(await fetch(`${BASE_URL}/candidato/candidaturas/${reapplied.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "closed application page");
-    assert.ok(closedApplicationPage.includes("A vaga foi encerrada pela empresa em") && !closedApplicationPage.includes(">Cancelar candidatura</button>"), "closed job: status shown, no cancel action");
+    assert.ok(closedApplicationPage.includes("A vaga foi encerrada pela empresa em") && closedApplicationPage.includes("Até a etapa de entrevista, você ainda pode cancelar."), "closed job: status shown with the cancel action");
+    await expectStatus(await cancel(reapplied.id, compatCookie), 200, "a candidate at Entrevista cancels after the job is closed");
+    assert.equal((await prisma.application.findUnique({ where: { id: reapplied.id } })).stage, "CANCELADA");
 
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });

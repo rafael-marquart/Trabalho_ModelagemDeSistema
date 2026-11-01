@@ -57,7 +57,7 @@ export default async function MyApplicationDetailPage({ params, searchParams }: 
         </ol> : <p className="job-empty">Ainda não há eventos registrados no histórico desta candidatura.</p>}
       </section>
 
-      {application.canCancel ? <CancelApplication applicationId={application.id} jobTitle={job.title} /> : null}
+      {application.canCancel ? <CancelApplication applicationId={application.id} jobTitle={job.title} jobClosed={job.status === "CLOSED"} /> : null}
     </main>
   </CompanyShell>;
 }
