@@ -3,12 +3,12 @@
 
 export type EmailContent = { subject: string; text: string; html: string };
 
-type Message = {
+export type EmailMessage = {
   subject: string;
   heading: string;
   intro: string[];
   action: { label: string; url: string };
-  validity: string;
+  validity?: string;
   closing: string[];
 };
 
@@ -17,12 +17,12 @@ const escapeHtml = (value: string) => value
 
 const FOOTER = "Mensagem automática do Acessa Vagas. Não responda a este e-mail.";
 
-function render(message: Message): EmailContent {
+export function buildEmail(message: EmailMessage): EmailContent {
   const text = [
     message.heading, "",
     ...message.intro.flatMap((line) => [line, ""]),
     `${message.action.label}: ${message.action.url}`, "",
-    message.validity, "",
+    ...(message.validity ? [message.validity, ""] : []),
     ...message.closing.flatMap((line) => [line, ""]),
     "—", FOOTER
   ].join("\n");
@@ -48,7 +48,7 @@ function render(message: Message): EmailContent {
 ${message.intro.map(paragraph).join("\n")}
 <p style="margin:24px 0;"><a href="${url}" style="display:inline-block;padding:14px 22px;border-radius:8px;background:#5b21b6;color:#ffffff;font-size:16px;font-weight:bold;text-decoration:none;">${escapeHtml(message.action.label)}</a></p>
 <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#3d3450;">Se o botão não funcionar, copie e cole este endereço no navegador:<br><a href="${url}" style="color:#4a1d8a;word-break:break-all;">${url}</a></p>
-${paragraph(message.validity)}
+${message.validity ? paragraph(message.validity) : ""}
 ${message.closing.map(paragraph).join("\n")}
 </td></tr>
 <tr><td style="padding:16px 28px 24px;border-top:1px solid #e6dff0;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.5;color:#4b4060;">${escapeHtml(FOOTER)}</td></tr>
@@ -61,7 +61,7 @@ ${message.closing.map(paragraph).join("\n")}
 }
 
 export const emailTemplates = {
-  companyEmailVerification: (url: string) => render({
+  companyEmailVerification: (url: string) => buildEmail({
     subject: "Confirme o e-mail corporativo — Acessa Vagas",
     heading: "Confirme o e-mail corporativo",
     intro: ["Recebemos o cadastro de uma conta empresarial com este e-mail. A confirmação do e-mail ativa a conta empresarial."],
@@ -72,7 +72,7 @@ export const emailTemplates = {
       "Se você não solicitou este cadastro, ignore esta mensagem."
     ]
   }),
-  companyEmailVerificationResend: (url: string) => render({
+  companyEmailVerificationResend: (url: string) => buildEmail({
     subject: "Novo link de confirmação — Acessa Vagas",
     heading: "Novo link de confirmação",
     intro: ["Você pediu um novo link para confirmar o e-mail corporativo. Os links enviados antes deixam de valer."],
@@ -80,7 +80,7 @@ export const emailTemplates = {
     validity: "O link vale por 24 horas e pode ser usado apenas uma vez.",
     closing: ["Se você não solicitou este envio, ignore esta mensagem."]
   }),
-  passwordRecovery: (url: string) => render({
+  passwordRecovery: (url: string) => buildEmail({
     subject: "Recuperação de senha — Acessa Vagas",
     heading: "Recuperação de senha",
     intro: ["Recebemos uma solicitação de recuperação de senha para a sua conta."],
@@ -88,7 +88,7 @@ export const emailTemplates = {
     validity: "O link vale por 30 minutos e pode ser usado apenas uma vez.",
     closing: ["Se você não solicitou, ignore esta mensagem. Sua senha atual continua valendo."]
   }),
-  recruiterInvitation: (companyName: string, url: string) => render({
+  recruiterInvitation: (companyName: string, url: string) => buildEmail({
     subject: "Convite para se vincular a uma empresa — Acessa Vagas",
     heading: "Convite para recrutador",
     intro: [`A empresa ${companyName} convidou você para se vincular à organização como recrutador no Acessa Vagas.`],

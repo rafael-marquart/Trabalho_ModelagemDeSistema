@@ -9,6 +9,8 @@ const { prismaMock, tx, availabilityMock, analyzeMock } = vi.hoisted(() => {
   };
 });
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
+const notify = vi.hoisted(() => ({ enqueueApplicationSubmitted: vi.fn(), enqueueStageChanged: vi.fn(), enqueueApplicationCancelled: vi.fn(), kickNotificationDelivery: vi.fn() }));
+vi.mock("@/lib/notifications/service", () => notify);
 vi.mock("@/lib/jobs/availability", () => ({ checkJobAvailability: availabilityMock }));
 vi.mock("@/lib/compatibility/service", () => ({ loadCandidateContext: vi.fn().mockResolvedValue({}), analyzeWithContext: analyzeMock }));
 import { applyToJob } from "./service";
@@ -21,7 +23,7 @@ describe("register an application (SPEC-011)", () => {
     vi.clearAllMocks();
     availabilityMock.mockResolvedValue(open);
     prismaMock.application.findFirst.mockResolvedValue(null);
-    prismaMock.job.findFirst.mockResolvedValue({ id: "job-1", status: "OPEN" });
+    prismaMock.job.findFirst.mockResolvedValue({ id: "job-1", status: "OPEN", title: "Analista", company: { tradeName: null, legalName: "Empresa Ltda" } });
     tx.job.findFirst.mockResolvedValue({ id: "job-1" });
     tx.application.create.mockImplementation(async ({ data }: { data: Record<string, unknown> }) => ({ id: "app-1", stage: "INSCRITO", appliedAt: new Date("2026-10-31T15:00:00Z"), ...data }));
     analyzeMock.mockResolvedValue(complete);
@@ -32,6 +34,8 @@ describe("register an application (SPEC-011)", () => {
     expect(result).toMatchObject({ ok: true, application: { stage: "INSCRITO", stageLabel: "Inscrito", score: 84 } });
     expect(tx.application.create).toHaveBeenCalledWith({ data: { candidateUserId: "cand", jobId: "job-1", score: 84, compatibilityResultId: "result-1" } });
     expect(tx.auditEvent.create.mock.calls[0][0].data).toMatchObject({ actorUserId: "cand", eventType: "APPLICATION_SUBMITTED", metadata: { jobId: "job-1", stage: "INSCRITO" } });
+    expect(notify.enqueueApplicationSubmitted).toHaveBeenCalledWith(tx, expect.objectContaining({ candidateUserId: "cand", jobId: "job-1", jobTitle: "Analista", companyName: "Empresa Ltda" }));
+    expect(notify.kickNotificationDelivery).toHaveBeenCalled();
   });
 
   it.each([
@@ -43,6 +47,7 @@ describe("register an application (SPEC-011)", () => {
     const result = await applyToJob("cand", "job-1");
     expect(result).toMatchObject({ ok: false, code });
     expect(tx.application.create).not.toHaveBeenCalled();
+    expect(notify.enqueueApplicationSubmitted).not.toHaveBeenCalled();
   });
 
   it("lets a candidate apply with missing data, keeping the score empty (decision of 31/10/2026)", async () => {

@@ -431,3 +431,41 @@ model ApplicationStageEvent {
 
   @@index([applicationId, createdAt])
 }
+
+// SPEC-017: e-mail notifications of the selection process (OPEN-066 to OPEN-068). Each row is created in the same
+// transaction as the event that causes it (outbox), then sent with automatic retries. Technical record only: there is no
+// notification centre for users (OPEN-069); rows are kept for 1 year like the audit (OPEN-006).
+enum NotificationType {
+  APPLICATION_SUBMITTED
+  APPLICATION_STAGE_CHANGED
+  APPLICATION_CANCELLED
+  JOB_CLOSED
+}
+
+enum NotificationStatus {
+  PENDING
+  SENDING
+  SENT
+  FAILED
+}
+
+model Notification {
+  id              String             @id @default(cuid())
+  type            NotificationType
+  recipientUserId String
+  applicationId   String?
+  jobId           String?
+  // Minimal content captured when the event happened (job title, company name, stage); never another person's data.
+  payload         Json               @default("{}")
+  status          NotificationStatus @default(PENDING)
+  attempts        Int                @default(0)
+  nextAttemptAt   DateTime           @default(now())
+  lastError       String?
+  sentAt          DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([status, nextAttemptAt])
+  @@index([recipientUserId])
+  @@index([createdAt])
+}

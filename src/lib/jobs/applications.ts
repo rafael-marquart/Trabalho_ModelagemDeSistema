@@ -9,9 +9,3 @@ export const BLOCKING_STAGES = [...ACTIVE_STAGES, "CONTRATADO"] as const;
 export async function jobHasApplications(jobId: string): Promise<boolean> {
   return (await prisma.application.count({ where: { jobId } })) > 0;
 }
-
-/** RB-42/OPEN-042: candidates whose application is still in progress when the job closes (to be notified by SPEC-017). */
-export async function listActiveCandidatesForJob(jobId: string): Promise<string[]> {
-  const rows = await prisma.application.findMany({ where: { jobId, stage: { in: [...ACTIVE_STAGES] } }, select: { candidateUserId: true } });
-  return rows.map((row) => row.candidateUserId);
-}

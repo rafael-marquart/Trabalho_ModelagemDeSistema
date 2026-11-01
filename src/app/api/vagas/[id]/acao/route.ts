@@ -3,7 +3,8 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 import { resolveJobActor } from "@/lib/jobs/access";
-import { listActiveCandidatesForJob } from "@/lib/jobs/applications";
+import { ACTIVE_STAGES } from "@/lib/jobs/applications";
+import { enqueueJobClosed, kickNotificationDelivery } from "@/lib/notifications/service";
 import { jobActions, transitions } from "@/lib/jobs/constants";
 import { rowToFields, toJobResponse, validateForPublication } from "@/lib/jobs/schema";
 
@@ -37,8 +38,8 @@ export async function POST(request: Request, context: Context) {
   }
   const { user } = actor;
   const now = new Date();
-  // Closing never moves candidates or removes applications; it identifies who is still active so SPEC-017 can notify them (RB-42).
-  const activeCandidates = action === "close" ? await listActiveCandidatesForJob(job.id) : [];
+  // Closing never moves candidates or removes applications; the candidates still active are notified (RB-42, SPEC-017).
+  let activeCandidates: { id: string; candidateUserId: string }[] = [];
   const updated = await prisma.$transaction(async (tx) => {
     // SPEC-009 (RNF-09): the change only applies if the status is still the one that was checked; a concurrent change wins.
     const changed = await tx.job.updateMany({
@@ -50,6 +51,11 @@ export async function POST(request: Request, context: Context) {
       }
     });
     if (changed.count !== 1) return null;
+    if (action === "close") {
+      activeCandidates = await tx.application.findMany({ where: { jobId: job.id, stage: { in: [...ACTIVE_STAGES] } }, select: { id: true, candidateUserId: true } });
+      const company = await tx.company.findUnique({ where: { id: job.companyId }, select: { tradeName: true, legalName: true } });
+      await enqueueJobClosed(tx, { jobId: job.id, jobTitle: job.title || "Vaga sem título", companyName: company?.tradeName || company?.legalName || "", applications: activeCandidates });
+    }
     await tx.auditEvent.create({
       data: {
         actorUserId: user.id, eventType: eventTypes[action], subjectType: "Job", subjectId: job.id,
@@ -62,5 +68,6 @@ export async function POST(request: Request, context: Context) {
     return tx.job.findUnique({ where: { id: job.id } });
   });
   if (!updated) return NextResponse.json({ message: "O status da vaga mudou enquanto você operava. Atualize a página e tente de novo." }, { status: 409 });
+  if (action === "close" && activeCandidates.length) kickNotificationDelivery();
   return NextResponse.json({ ok: true, job: toJobResponse(updated), activeCandidates: activeCandidates.length });
 }

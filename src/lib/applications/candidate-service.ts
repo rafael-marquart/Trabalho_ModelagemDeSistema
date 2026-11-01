@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { ACTIVE_STAGES } from "@/lib/jobs/applications";
 import { candidateStageLabels, stageLabels } from "./stages";
+import { enqueueApplicationCancelled, kickNotificationDelivery } from "@/lib/notifications/service";
 
 // SPEC-012 and SPEC-016: the candidate's side of their own applications. Every read and write is scoped to the user of
 // the session; another person's application is reported exactly like one that does not exist.
@@ -121,7 +122,7 @@ export type CancelResult = { ok: true; stage: "CANCELADA" } | { ok: false; statu
  */
 export async function cancelApplication(userId: string, applicationId: string): Promise<CancelResult> {
   const row = await prisma.application.findFirst({
-    where: { id: applicationId, candidateUserId: userId }, select: { id: true, stage: true, jobId: true, job: { select: { status: true } } }
+    where: { id: applicationId, candidateUserId: userId }, select: { id: true, stage: true, jobId: true, job: { select: { status: true } }, candidate: { select: { fullName: true } } }
   });
   if (!row) return { ok: false, status: 404, message: "Candidatura não encontrada." };
   const block = cancellationBlock(row.stage, row.job.status);
@@ -136,9 +137,12 @@ export async function cancelApplication(userId: string, applicationId: string): 
     await tx.auditEvent.create({
       data: { actorUserId: userId, eventType: "APPLICATION_CANCELLED", subjectType: "Application", subjectId: row.id, metadata: { jobId: row.jobId, fromStage: from, toStage: "CANCELADA" } }
     });
+    // SPEC-017: the recruiter responsible for the job is told (OPEN-066, item 4).
+    await enqueueApplicationCancelled(tx, { applicationId: row.id, jobId: row.jobId, candidateName: row.candidate.fullName });
     return "OK" as const;
   });
   if (done === "CLOSED") return { ok: false, status: 409, message: CLOSED_MESSAGE };
   if (done === "CHANGED") return { ok: false, status: 409, message: "A etapa desta candidatura mudou enquanto você confirmava. Atualize a página e confira a situação atual." };
+  kickNotificationDelivery();
   return { ok: true, stage: "CANCELADA" };
 }

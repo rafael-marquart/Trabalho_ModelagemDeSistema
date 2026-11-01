@@ -245,6 +245,7 @@ async function cleanupTestData() {
     await tx.$executeRawUnsafe('ALTER TABLE "ApplicationStageEvent" DISABLE TRIGGER "ApplicationStageEvent_no_change"');
     await tx.applicationStageEvent.deleteMany({ where: { application: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } } });
     await tx.$executeRawUnsafe('ALTER TABLE "ApplicationStageEvent" ENABLE TRIGGER "ApplicationStageEvent_no_change"');
+    await tx.notification.deleteMany({ where: { OR: [{ recipientUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } });
     await tx.application.deleteMany({ where: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } });
     await tx.compatibilityResult.deleteMany({ where: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } });
     await tx.userPreference.deleteMany({ where: { userId: { in: userIds } } });
@@ -1691,6 +1692,32 @@ async function main() {
     assert.ok(closedApplicationPage.includes("A vaga foi encerrada pela empresa em") && closedApplicationPage.includes("Até a etapa de entrevista, você ainda pode cancelar."), "closed job: status shown with the cancel action");
     await expectStatus(await cancel(reapplied.id, compatCookie), 200, "a candidate at Entrevista cancels after the job is closed");
     assert.equal((await prisma.application.findUnique({ where: { id: reapplied.id } })).stage, "CANCELADA");
+
+    // SPEC-017: each event left one e-mail notification, sent right away to the authorized person only.
+    const candidateUser = await prisma.user.findUnique({ where: { email: EMAIL }, select: { id: true } });
+    const waitForNotifications = async () => {
+      for (let i = 0; i < 60; i += 1) {
+        const rows = await prisma.notification.findMany({ where: { jobId: compatJob.id }, orderBy: { createdAt: "asc" } });
+        if (rows.length && rows.every(row => row.status === "SENT")) return rows;
+        await new Promise(resolve => setTimeout(resolve, 250));
+      }
+      return prisma.notification.findMany({ where: { jobId: compatJob.id }, orderBy: { createdAt: "asc" } });
+    };
+    const notifications = await waitForNotifications();
+    assert.ok(notifications.every(row => row.status === "SENT"), `notifications must be sent: ${notifications.map(row => `${row.type}=${row.status}/${row.lastError}`).join(", ")}`);
+    const countOf = type => notifications.filter(row => row.type === type).length;
+    assert.equal(countOf("APPLICATION_SUBMITTED"), 2, "each application is confirmed to the candidate");
+    assert.equal(countOf("APPLICATION_STAGE_CHANGED"), 3, "each stage change is told to the candidate");
+    assert.equal(countOf("APPLICATION_CANCELLED"), 2, "each cancellation is told to the responsible recruiter");
+    assert.equal(countOf("JOB_CLOSED"), 1, "the closing is told to the candidate still active");
+    for (const row of notifications) {
+      const expected = row.type === "APPLICATION_CANCELLED" ? companyAccount.id : candidateUser.id;
+      assert.equal(row.recipientUserId, expected, `${row.type} goes only to the authorized person`);
+    }
+    const sentTexts = SMTP_MESSAGES.flatMap(mimeParts).filter(part => part.type === "text/plain").map(part => part.content).join("\n");
+    assert.ok(sentTexts.includes("A vaga foi encerrada") && sentTexts.includes("não receberá novas candidaturas"), "the closing e-mail reached the SMTP server");
+    assert.ok(sentTexts.includes(`/candidato/candidaturas/${reapplied.id}`), "the candidate is pointed to the official state");
+    assert.ok(sentTexts.includes(`/empresa/vagas/${compatJob.id}/candidaturas/${applicationId}`), "the company is pointed to the funnel");
 
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });

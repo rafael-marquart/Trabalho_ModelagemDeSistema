@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { toEducationList, toExperienceList, toLanguageList, toStringList } from "@/lib/candidate-profile/schema";
 import { canMove, FUNNEL_ORDER, kindLabels, knownBlockingIssues, moveKind, RECRUITER_TRANSITIONS, type Stage } from "./funnel";
 import { stageLabels } from "./stages";
+import { enqueueStageChanged, kickNotificationDelivery } from "@/lib/notifications/service";
 
 // SPEC-013: the company side of applications. Every read and write is scoped to the company resolved from the session
 // (company account or recruiter with an active link); the client never chooses the company.
@@ -91,7 +92,10 @@ export type StageChangeResult = { ok: true; stage: Stage } | { ok: false; status
  * audit entry are written together; a refusal changes nothing.
  */
 export async function changeApplicationStage(params: { companyId: string; actorUserId: string; applicationId: string; toStage: Stage; note?: string }): Promise<StageChangeResult> {
-  const application = await prisma.application.findFirst({ where: { id: params.applicationId, job: { companyId: params.companyId } }, select: { id: true, stage: true, jobId: true } });
+  const application = await prisma.application.findFirst({
+    where: { id: params.applicationId, job: { companyId: params.companyId } },
+    select: { id: true, stage: true, jobId: true, candidateUserId: true, job: { select: { title: true, company: { select: { tradeName: true, legalName: true } } } } }
+  });
   if (!application) return { ok: false, status: 404, message: "Candidatura não encontrada." };
   const from = application.stage as Stage;
   if (!canMove(from, params.toStage)) {
@@ -112,8 +116,14 @@ export async function changeApplicationStage(params: { companyId: string; actorU
         metadata: { jobId: application.jobId, companyId: params.companyId, fromStage: from, toStage: params.toStage }
       }
     });
+    // SPEC-017: the candidate is told about every move (advance, refusal, hiring).
+    await enqueueStageChanged(tx, {
+      applicationId: application.id, jobId: application.jobId, candidateUserId: application.candidateUserId, toStage: params.toStage,
+      jobTitle: application.job.title || "Vaga sem título", companyName: application.job.company.tradeName || application.job.company.legalName
+    });
     return true;
   });
   if (!moved) return { ok: false, status: 409, message: "A etapa desta candidatura mudou enquanto você operava. Atualize a página e tente de novo." };
+  kickNotificationDelivery();
   return { ok: true, stage: params.toStage };
 }

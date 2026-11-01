@@ -164,7 +164,7 @@ Resultados confirmados pelo responsável durante a sessão de validação; este 
 - [ ] Matriz de autorização das APIs protegidas; o teste anônimo de uma página não comprova autorização de todas as rotas.
 
 ### Limites operacionais fora da validação local
-- [ ] Entrega real de SMTP em homologação/produção.
+- [ ] Entrega real de SMTP em homologação/produção. *(01/11/2026: entrega real verificada no ambiente local com o Brevo e roteiro `docs/operacao/validacao-manual-email.md` executado sem problemas; layout dos e-mails aprovado; homologação/produção pendentes)*
 - [ ] URL HTTPS canônica e configuração efetiva do proxy confiável.
 - [ ] Agendamento e monitoramento da rotina de retenção em produção.
 - [ ] Homologação externa e teste de invasão independente.
