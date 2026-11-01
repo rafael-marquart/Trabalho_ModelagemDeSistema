@@ -70,6 +70,9 @@ export async function applyToJob(userId: string, jobId: string, deps: { estimato
       const application = await tx.application.create({
         data: { candidateUserId: userId, jobId, score, compatibilityResultId: result.id }
       });
+      await tx.applicationStageEvent.create({
+        data: { applicationId: application.id, fromStage: null, toStage: application.stage, kind: "SUBMITTED", actorUserId: userId }
+      });
       await tx.auditEvent.create({
         data: { actorUserId: userId, eventType: "APPLICATION_SUBMITTED", subjectType: "Application", subjectId: application.id, metadata: { jobId, stage: application.stage } }
       });

@@ -1051,3 +1051,10 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .company-access > p.muted { margin-top: 0; }
 .job-detail > .job-action { margin-top: 24px; }
 @media (prefers-reduced-motion: reduce) { .company-access > summary::before { transition: none; } }
+/* SPEC-013: funnel */
+.application-actions { margin-top: 24px; }
+.application-actions h2 { margin-bottom: 12px; }
+.stage-history { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.stage-history li { display: grid; gap: 2px; padding-left: 14px; border-left: 3px solid var(--purple-soft); }
+.stage-history span { color: var(--muted); font-size: 14px; }
+.stage-history .stage-note { color: var(--ink); font-style: italic; }

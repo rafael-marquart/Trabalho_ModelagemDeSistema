@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { prismaMock, tx, availabilityMock, analyzeMock } = vi.hoisted(() => {
-  const tx = { job: { findFirst: vi.fn() }, application: { create: vi.fn() }, auditEvent: { create: vi.fn() } };
+  const tx = { job: { findFirst: vi.fn() }, application: { create: vi.fn() }, applicationStageEvent: { create: vi.fn() }, auditEvent: { create: vi.fn() } };
   return {
     tx,
     prismaMock: { job: { findFirst: vi.fn() }, application: { findFirst: vi.fn() }, $transaction: vi.fn(async (cb: (t: typeof tx) => unknown) => cb(tx)) },

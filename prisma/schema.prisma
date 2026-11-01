@@ -410,7 +410,24 @@ model Application {
   compatibilityResultId String
   compatibilityResult   CompatibilityResult @relation(fields: [compatibilityResultId], references: [id], onDelete: Restrict)
   updatedAt             DateTime            @updatedAt
+  stageEvents           ApplicationStageEvent[]
 
   @@index([jobId, stage])
   @@index([candidateUserId, appliedAt])
+}
+
+/// Funnel history (SPEC-013, OPEN-056): previous and resulting stage, when, who and what kind of move, with an optional note.
+/// Rows are never updated or deleted (database trigger), so earlier events are always preserved.
+model ApplicationStageEvent {
+  id            String            @id @default(cuid())
+  applicationId String
+  application   Application       @relation(fields: [applicationId], references: [id], onDelete: Restrict)
+  fromStage     ApplicationStage?
+  toStage       ApplicationStage
+  kind          String
+  actorUserId   String?
+  note          String?
+  createdAt     DateTime          @default(now())
+
+  @@index([applicationId, createdAt])
 }

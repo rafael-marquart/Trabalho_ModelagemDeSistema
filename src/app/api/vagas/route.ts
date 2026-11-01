@@ -12,12 +12,13 @@ export async function GET(request: Request) {
   const status = new URL(request.url).searchParams.get("status");
   const where = { companyId: actor.companyId, ...(status && (jobStatuses as readonly string[]).includes(status) ? { status: status as (typeof jobStatuses)[number] } : {}) };
   const [jobs, grouped] = await Promise.all([
-    prisma.job.findMany({ where, orderBy: { updatedAt: "desc" } }),
+    prisma.job.findMany({ where, orderBy: { updatedAt: "desc" }, include: { _count: { select: { applications: true } } } }),
     prisma.job.groupBy({ by: ["status"], where: { companyId: actor.companyId }, _count: { _all: true } })
   ]);
   const counts: Record<string, number> = { DRAFT: 0, OPEN: 0, PAUSED: 0, CLOSED: 0 };
   for (const group of grouped) counts[group.status] = group._count._all;
-  return NextResponse.json({ jobs: jobs.map(toJobResponse), counts });
+  // SPEC-013: number of applications per job, to reach each job's funnel from the list.
+  return NextResponse.json({ jobs: jobs.map((job) => ({ ...toJobResponse(job), applicationCount: (job as { _count?: { applications: number } })._count?.applications ?? 0 })), counts });
 }
 
 export async function POST(request: Request) {

@@ -220,6 +220,10 @@ async function cleanupTestData() {
       ...relatedInvitations.map(invitation => invitation.id)
     ];
 
+    // Stage history is immutable by trigger; the test database drops it with the trigger temporarily disabled.
+    await tx.$executeRawUnsafe('ALTER TABLE "ApplicationStageEvent" DISABLE TRIGGER "ApplicationStageEvent_no_change"');
+    await tx.applicationStageEvent.deleteMany({ where: { application: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } } });
+    await tx.$executeRawUnsafe('ALTER TABLE "ApplicationStageEvent" ENABLE TRIGGER "ApplicationStageEvent_no_change"');
     await tx.application.deleteMany({ where: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } });
     await tx.compatibilityResult.deleteMany({ where: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } });
     await tx.userPreference.deleteMany({ where: { userId: { in: userIds } } });
@@ -1580,6 +1584,32 @@ async function main() {
     assert.ok(appliedDetail.includes("Você já se candidatou"), "the detail shows the existing application");
     await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}`, "PUT", { ...compatJobBody, title: "Título alterado depois da candidatura" }, companyCookie), 409, "job conditions are locked once it has applications (OPEN-022)");
 
+    // SPEC-013: the company works the funnel of its own job (RB-39), with an immutable history.
+    const funnelUrl = `${BASE_URL}/api/vagas/${compatJob.id}/candidaturas`;
+    const funnel = JSON.parse(await expectStatus(await fetch(funnelUrl, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company lists the applications of its job"));
+    assert.equal(funnel.counts.INSCRITO, 1);
+    const applicationId = funnel.applications[0].id;
+    await expectStatus(await fetch(funnelUrl, { headers: { cookie: secondCompanyCookie }, redirect: "manual" }), 404, "another company cannot see the applications");
+    await expectStatus(await fetch(funnelUrl, { headers: { cookie: compatCookie }, redirect: "manual" }), 401, "a candidate cannot see the funnel");
+    const applicationDetail = await expectStatus(await fetch(`${BASE_URL}/api/candidaturas/${applicationId}`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company opens the application");
+    const candidateRecord = await prisma.user.findUnique({ where: { email: EMAIL }, select: { cpf: true } });
+    assert.ok(!candidateRecord?.cpf || !applicationDetail.includes(candidateRecord.cpf), "the company does not receive the candidate's CPF");
+    assert.ok(applicationDetail.includes("nextStages"), "the allowed moves are listed");
+    await expectStatus(await fetch(`${BASE_URL}/api/candidaturas/${applicationId}`, { headers: { cookie: secondCompanyCookie }, redirect: "manual" }), 404, "another company cannot open the application");
+    const moveStage = (payload, cookie) => fetch(`${BASE_URL}/api/candidaturas/${applicationId}/etapa`, { method: "POST", headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie }, body: JSON.stringify(payload), redirect: "manual" });
+    await expectStatus(await moveStage({ toStage: "ENTREVISTA" }, companyCookie), 409, "skipping a stage is refused");
+    await expectStatus(await moveStage({ toStage: "TRIAGEM" }, compatCookie), 401, "a candidate cannot move the funnel");
+    await expectStatus(await moveStage({ toStage: "TRIAGEM" }, secondCompanyCookie), 404, "another company cannot move the application");
+    assert.equal((await prisma.application.findUnique({ where: { id: applicationId } })).stage, "INSCRITO", "refused moves change nothing");
+    await expectStatus(await moveStage({ toStage: "TRIAGEM", note: "Perfil aderente" }, companyCookie), 200, "company moves the application to screening");
+    const events = await prisma.applicationStageEvent.findMany({ where: { applicationId }, orderBy: { createdAt: "asc" } });
+    assert.deepEqual(events.map(event => `${event.fromStage}>${event.toStage}`), ["null>INSCRITO", "INSCRITO>TRIAGEM"], "the history keeps every move");
+    assert.ok(events[1].actorUserId && events[1].note === "Perfil aderente" && events[1].kind === "ADVANCED", "the move records actor, kind and note");
+    await assert.rejects(prisma.$executeRaw`UPDATE "ApplicationStageEvent" SET "note" = 'x' WHERE "id" = ${events[0].id}`, "the history cannot be edited");
+    await assert.rejects(prisma.$executeRaw`DELETE FROM "ApplicationStageEvent" WHERE "id" = ${events[0].id}`, "the history cannot be deleted");
+    await expectStatus(await fetch(`${BASE_URL}/empresa/vagas/${compatJob.id}/candidaturas`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company funnel page");
+    await expectStatus(await fetch(`${BASE_URL}/empresa/vagas/${compatJob.id}/candidaturas/${applicationId}`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company application page");
+
     await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}/acao`, "POST", { action: "close" }, companyCookie), 200, "company closes the analyzed job");
     await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 404, "closed jobs are not analyzed");
     const afterClose = JSON.parse(await expectStatus(await search("q=analista%20E2E"), 200, "search after closing"));
@@ -1594,7 +1624,7 @@ async function main() {
     await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}/acao`, "POST", { action: "reopen" }, companyCookie), 409, "a closed job cannot be reopened");
     const closeAudit = await prisma.auditEvent.findFirst({ where: { subjectId: compatJob.id, eventType: "JOB_CLOSED" }, orderBy: { createdAt: "desc" } });
     assert.equal(closeAudit.metadata.activeCandidatesToNotify, 1, "closing identifies the candidate with an active application for notification");
-    assert.equal(await prisma.application.count({ where: { jobId: compatJob.id, stage: "INSCRITO" } }), 1, "closing keeps the existing application");
+    assert.equal(await prisma.application.count({ where: { jobId: compatJob.id, stage: "TRIAGEM" } }), 1, "closing keeps the existing application in its stage");
 
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });
