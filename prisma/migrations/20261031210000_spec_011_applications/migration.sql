@@ -7,7 +7,7 @@ CREATE TABLE "Application" (
     "jobId" TEXT NOT NULL,
     "stage" "ApplicationStage" NOT NULL DEFAULT 'INSCRITO',
     "appliedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "score" INTEGER NOT NULL,
+    "score" INTEGER,
     "compatibilityResultId" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "Application_pkey" PRIMARY KEY ("id"),

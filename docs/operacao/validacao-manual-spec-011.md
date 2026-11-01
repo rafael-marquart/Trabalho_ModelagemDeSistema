@@ -9,8 +9,8 @@ Antes: `git pull`, `npm.cmd install`, `npm.cmd run db:generate`, `npx.cmd prisma
 | 3 | "Voltar" | Volta ao botão, sem registrar |
 | 4 | "Confirmar candidatura" | "Candidatura registrada" com data, etapa Inscrito e score |
 | 5 | Recarregar a página | "Você já se candidatou", com data e etapa |
-| 6 | Vaga com "Dados insuficientes" por falta no perfil | Sem botão; mensagem para completar o perfil |
-| 7 | Vaga com "Dados insuficientes" por falta da empresa | Sem botão; mensagem dizendo que a empresa precisa completar a vaga |
+| 6 | Vaga com "Dados insuficientes" por falta no perfil | Botão disponível; a mensagem explica que falta completar o perfil; a confirmação diz que será registrada sem score |
+| 7 | Vaga com "Dados insuficientes" por falta da empresa | Botão disponível; a mensagem explica que a empresa não informou todos os dados; registro sem score |
 | 8 | Vaga incompatível (recurso indispensável ausente) | Sem botão; motivo da incompatibilidade |
 | 9 | Empresa tenta editar título/descrição da vaga que já tem candidatura | Não salva; aviso de que a vaga já recebeu candidaturas |
 | 10 | Empresa pausa a vaga com o detalhe aberto no candidato (sem ter se candidatado, use outra vaga) e o candidato confirma a candidatura | Recusa: a vaga não está aberta; nada é registrado |

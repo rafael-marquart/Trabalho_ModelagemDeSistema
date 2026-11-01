@@ -396,7 +396,8 @@ enum ApplicationStage {
 }
 
 /// CANDIDATURA (SPEC-011): one active application per candidate and job (RB-14), enforced by a partial unique index in SQL.
-/// The deterministic score is required (OPEN-049) and the SPEC-007 result it came from is kept for traceability.
+/// The SPEC-007 result used is always kept; the score is empty when that analysis lacked data (decision of 31/10/2026:
+/// only a critical barrier prevents applying).
 model Application {
   id                    String              @id @default(cuid())
   candidateUserId       String
@@ -405,7 +406,7 @@ model Application {
   job                   Job                 @relation(fields: [jobId], references: [id], onDelete: Restrict)
   stage                 ApplicationStage    @default(INSCRITO)
   appliedAt             DateTime            @default(now())
-  score                 Int
+  score                 Int?
   compatibilityResultId String
   compatibilityResult   CompatibilityResult @relation(fields: [compatibilityResultId], references: [id], onDelete: Restrict)
   updatedAt             DateTime            @updatedAt

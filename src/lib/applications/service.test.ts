@@ -37,14 +37,19 @@ describe("register an application (SPEC-011)", () => {
   it.each([
     ["closed or paused job", () => availabilityMock.mockResolvedValue({ code: "CLOSED", label: "Encerrada", message: "Esta vaga foi encerrada." }), "JOB_UNAVAILABLE"],
     ["active application", () => prismaMock.application.findFirst.mockResolvedValue({ appliedAt: new Date(), stage: "TRIAGEM", score: 70 }), "DUPLICATE"],
-    ["critical barrier", () => analyzeMock.mockResolvedValue({ ...complete, status: "INCOMPATIBLE", score: null }), "INCOMPATIBLE"],
-    ["unverifiable indispensable need", () => analyzeMock.mockResolvedValue({ ...complete, status: "INSUFFICIENT_DATA", score: null, critical: { applied: false, barriers: [], pending: [{ needName: "Rampa" }] } }), "ELIGIBILITY_PENDING"],
-    ["missing score", () => analyzeMock.mockResolvedValue({ ...complete, status: "INSUFFICIENT_DATA", score: null, missing: [{ responsible: "CANDIDATE" }] }), "SCORE_UNAVAILABLE"]
+    ["critical barrier", () => analyzeMock.mockResolvedValue({ ...complete, status: "INCOMPATIBLE", score: null }), "INCOMPATIBLE"]
   ])("refuses a %s and creates nothing", async (_name, arrange, code) => {
     arrange();
     const result = await applyToJob("cand", "job-1");
     expect(result).toMatchObject({ ok: false, code });
     expect(tx.application.create).not.toHaveBeenCalled();
+  });
+
+  it("lets a candidate apply with missing data, keeping the score empty (decision of 31/10/2026)", async () => {
+    analyzeMock.mockResolvedValue({ ...complete, status: "INSUFFICIENT_DATA", score: null, missing: [{ responsible: "COMPANY" }], critical: { applied: false, barriers: [], pending: [{ needName: "Rampa" }] } });
+    const result = await applyToJob("cand", "job-1");
+    expect(result).toMatchObject({ ok: true, application: { stage: "INSCRITO", score: null } });
+    expect(tx.application.create).toHaveBeenCalledWith({ data: expect.objectContaining({ score: null, compatibilityResultId: "result-1" }) });
   });
 
   it("refuses when the job closes between the checks and the record, leaving nothing behind", async () => {

@@ -28,4 +28,9 @@ describe("apply panel (SPEC-011)", () => {
     expect((await screen.findByRole("alert")).textContent).toContain("esta vaga foi encerrada");
     expect(screen.getByRole("button", { name: "Candidatar-se" })).toBeTruthy();
   });
+  it("says when the application will be registered without a score", () => {
+    render(<ApplyPanel jobId="job-1" jobTitle="Analista" companyName="TechPlus" score={null} />);
+    fireEvent.click(screen.getByRole("button", { name: "Candidatar-se" }));
+    expect(screen.getByText(/sem score de compatibilidade, porque faltam dados/)).toBeTruthy();
+  });
 });

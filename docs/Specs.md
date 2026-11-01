@@ -2201,6 +2201,8 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 - **Questões abertas:** nenhuma pendente desta SPEC entre OPEN-047 e OPEN-049; as três foram resolvidas em `docs/OPEN.md`.
 
 ## 3. Escopo
+> **Revisão de 31/10/2026 (responsável):** somente a trava crítica impede a candidatura. Dados insuficientes não impedem: a candidatura é registrada com o resultado da SPEC-007 como está e score vazio quando ele não pôde ser calculado (revisão das OPEN-048/049). As menções a score obrigatório abaixo ficam substituídas por esta decisão.
+
 Validar autenticação, status atual da vaga, compatibilidade/trava crítica, existência de candidatura ativa e disponibilidade do score determinístico. Se válido, registrar candidato, vaga, score obrigatório, data gerada pelo sistema no momento do registro e estado inicial `Inscrito`. Não permitir candidatura duplicada ativa nem criar registro parcial.
 
 ## 3.1. Telas e evidência de layout
