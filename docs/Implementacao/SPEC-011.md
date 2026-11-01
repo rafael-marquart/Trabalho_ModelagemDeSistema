@@ -26,3 +26,4 @@
 - Vitest: registro completo e auditado; recusas por vaga indisponível, duplicidade e trava crítica sem criar registro; candidatura com dados insuficientes registrada com score vazio; vaga que fecha durante o registro; duplicidade simultânea; API (sessão, origem, corpo); tela (confirmação, sucesso, recusa).
 - E2E: acessos recusados, rascunho, registro com etapa e score, vínculo com o resultado da SPEC-007, auditoria, duplicidade, detalhe "já se candidatou", trava de edição da vaga, encerramento identifica 1 candidato ativo e mantém a candidatura, vaga encerrada recusa nova candidatura.
 - Teste manual: `docs/operacao/validacao-manual-spec-011.md`.
+- Teste manual executado pelo responsável em 31/10/2026; layout aprovado na mesma data. SPEC-011 encerrada.

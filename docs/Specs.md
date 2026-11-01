@@ -916,7 +916,7 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 | Campo | Valor |
 |---|---|
 | ID | SPEC-005 |
-| Estado do texto | aprovada; implementada em 27/10/2026, exceto os pontos que dependem de candidaturas e catálogo (ver critérios de aceitação) |
+| Estado do texto | aprovada; implementada em 27/10/2026; pontos que dependiam de candidaturas e catálogo atendidos em 31/10/2026 (SPEC-008 e SPEC-011) |
 | Estado do layout | aprovado pelo responsável em 27/10/2026, sobre as telas implementadas (menu lateral da empresa, painel e editor de vagas; sem protótipo em docs/layout/) |
 | Decisões de implementação (27/10/2026) | a Empresa e o Recrutador vinculado gerenciam as vagas da Empresa (extensão do texto, que menciona o Recrutador); os critérios de acessibilidade da vaga são os seis itens da infraestrutura (SPEC-004), cada um Presente, Ausente ou Não informado, com escolha explícita para publicar; estados: rascunho, publicada, pausada e encerrada; a trava por candidaturas e a lista de candidatos ativos ao encerrar dependem das Specs de candidatura e estão isoladas em `src/lib/jobs/applications.ts` |
 | Capacidade | Criar, editar, publicar e gerenciar vagas cadastradas diretamente por uma Empresa |
@@ -1142,16 +1142,16 @@ Contratos conceituais; não especificam endpoints HTTP.
 - [x] Vaga válida pode ser salva como rascunho.
 - [x] Vaga válida pode ser publicada.
 - [x] Prazo de encerramento inválido impede publicação.
-- [ ] Vaga publicada fica disponível para candidatos elegíveis no catálogo. *(pendente: depende de candidaturas/catálogo — SPEC-008 e Specs de candidatura; ponto de ligação em `src/lib/jobs/applications.ts`)*
+- [x] Vaga publicada fica disponível para candidatos elegíveis no catálogo. *(atendido em 31/10/2026 com a SPEC-008 e a SPEC-011; verificado no E2E)*
 - [x] Informações de acessibilidade são mantidas sem presumir valores ausentes.
 - [x] Publicação e alterações relevantes são rastreáveis.
 - [x] Rascunhos podem ser editados e salvos incompletos.
 - [x] Vagas publicadas sem candidaturas podem ser editadas se as validações forem satisfeitas.
-- [ ] Após existir candidatura, alterações dos campos que definem as condições da oportunidade são bloqueadas. *(pendente: depende de candidaturas/catálogo — SPEC-008 e Specs de candidatura; ponto de ligação em `src/lib/jobs/applications.ts`)*
+- [x] Após existir candidatura, alterações dos campos que definem as condições da oportunidade são bloqueadas. *(atendido em 31/10/2026 com a SPEC-008 e a SPEC-011; verificado no E2E)*
 - [x] Alteração inválida não substitui os dados válidos existentes.
 - [x] Usuários sem autorização não conseguem editar nem encerrar vagas.
-- [ ] Encerrar a vaga bloqueia novas candidaturas e preserva candidaturas e histórico. *(pendente: depende de candidaturas/catálogo — SPEC-008 e Specs de candidatura; ponto de ligação em `src/lib/jobs/applications.ts`)*
-- [ ] Encerramento identifica candidatos ativos para comunicação e não os movimenta automaticamente no funil. *(pendente: depende de candidaturas/catálogo — SPEC-008 e Specs de candidatura; ponto de ligação em `src/lib/jobs/applications.ts`)*
+- [x] Encerrar a vaga bloqueia novas candidaturas e preserva candidaturas e histórico. *(atendido em 31/10/2026 com a SPEC-008 e a SPEC-011; verificado no E2E)*
+- [x] Encerramento identifica candidatos ativos para comunicação e não os movimenta automaticamente no funil. *(atendido em 31/10/2026 com a SPEC-008 e a SPEC-011; verificado no E2E)*
 - [x] Compatibilidade e gestão do funil não são implementadas nesta capacidade.
 - [x] A declaração de acessibilidade específica da vaga permanece distinta das informações gerais da Empresa.
 - [x] A infraestrutura geral não preenche automaticamente TRAVA_CRITICA_VAGA nem presume aplicabilidade por vaga.
@@ -1991,7 +1991,7 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 - [x] Candidato visualiza estado atual.
 - [x] Vaga encerrada/indisponível bloqueia novas candidaturas.
 - [x] Mudança após a busca é respeitada pela operação seguinte.
-- [ ] Encerramento identifica candidatos ativos para comunicação. (ponto de identificação e registro implementados; sem candidaturas até a SPEC-011, e o envio pertence à SPEC-017)
+- [x] Encerramento identifica candidatos ativos para comunicação. (com as candidaturas da SPEC-011, verificado no E2E em 31/10/2026; o envio pertence à SPEC-017)
 - [x] O sistema não inventa status.
 - [x] Consulta e restrições são consistentes no backend.
 - [x] Mensagens são acessíveis e compreensíveis.
@@ -2190,8 +2190,8 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 |---|---|
 | ID | SPEC-011 |
 |
-| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-011.md` |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada em 31/10/2026 (notificação do registro pertence à SPEC-017); ver `docs/Implementacao/SPEC-011.md` |
+| Estado do layout | aprovado pelo responsável em 31/10/2026 sobre as telas implementadas (confirmação, resultado do registro, estado não elegível e "já se candidatou" no detalhe da vaga) |
 | Capacidade | Registrar candidatura |
 
 ## 2. Rastreabilidade
@@ -2255,17 +2255,19 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
-- [ ] Tentativa sem autenticação, com vaga não elegível ou com candidatura ativa duplicada é recusada sem criar registro parcial.
-- [ ] O registro confirmado mantém vínculo íntegro entre candidato e vaga e é rastreável conforme RNF-09/RNF-14.
+- [x] Tentativa sem autenticação, com vaga não elegível ou com candidatura ativa duplicada é recusada sem criar registro parcial.
+- [x] O registro confirmado mantém vínculo íntegro entre candidato e vaga e é rastreável conforme RNF-09/RNF-14.
 
-- [ ] Acesso limitado ao ator autorizado.
-- [ ] Pré-condições e regras são validadas no backend.
-- [ ] Operações inválidas são recusadas sem alteração indevida.
-- [ ] Operação válida produz o estado esperado.
-- [ ] Dados pessoais e de acessibilidade respeitam autorização.
-- [ ] Alterações relevantes ficam rastreáveis.
-- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
-- [ ] Lacunas permanecem explicitadas em OPEN.md.
+- [x] Acesso limitado ao ator autorizado.
+- [x] Pré-condições e regras são validadas no backend.
+- [x] Operações inválidas são recusadas sem alteração indevida.
+- [x] Operação válida produz o estado esperado.
+- [x] Dados pessoais e de acessibilidade respeitam autorização.
+- [x] Alterações relevantes ficam rastreáveis.
+- [x] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [x] Lacunas permanecem explicitadas em OPEN.md.
+
+> Evidência: testes Vitest e E2E verdes na CI; teste manual executado pelo responsável em 31/10/2026, com ajustes aplicados (dados insuficientes não impedem a candidatura, só a trava crítica — revisão das OPEN-048/049; compatibilidade registrada visível após o encerramento; informações da empresa recolhíveis e candidatura no final da página). O acionamento de notificação do registro fica com a SPEC-017.
 
 ## 12. Casos de teste derivados
 
@@ -2284,12 +2286,12 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 As OPEN-047, OPEN-048 e OPEN-049 foram resolvidas e registradas em `docs/OPEN.md`. Novas lacunas identificadas para esta SPEC devem ser registradas ali antes de alterar comportamentos não definidos.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
-- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
-- [ ] Questões decididas ou mantidas explicitamente em aberto.
-- [ ] Layout funcional anexado e aprovado quando aplicável.
-- [ ] Critérios de aceitação e testes revisados.
-- [ ] Nenhuma implementação antes das aprovações exigidas.
+- [x] Texto revisado e aprovado.
+- [x] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [x] Questões decididas ou mantidas explicitamente em aberto.
+- [x] Layout funcional anexado e aprovado quando aplicável.
+- [x] Critérios de aceitação e testes revisados.
+- [x] Nenhuma implementação antes das aprovações exigidas.
 
 ---
 
