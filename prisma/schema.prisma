@@ -447,6 +447,9 @@ enum NotificationType {
   INTERVIEW_SCHEDULED
   INTERVIEW_UPDATED
   INTERVIEW_CANCELLED
+  REPORT_STATUS_CHANGED
+  REPORT_INFO_REQUESTED
+  REPORT_CONCLUDED
 }
 
 enum NotificationStatus {
@@ -531,4 +534,77 @@ model InterviewEvaluation {
 
   @@index([companyId])
   @@index([submittedAt])
+}
+
+// SPEC-019/020: reports of possible accessibility incompatibility or false inclusion (entity DENUNCIA_FALSA_INCLUSAO).
+// A report never blocks a job nor changes ratings by itself (RB-44); only the platform administrator decides (RB-25).
+enum ReportCategory {
+  ACCESSIBILITY_INCOMPATIBILITY
+  FALSE_INCLUSION
+}
+
+enum ReportStatus {
+  RECEBIDA
+  EM_ANALISE
+  AGUARDANDO_INFORMACOES
+  CONCLUIDA
+}
+
+enum ReportDecision {
+  PROCEDENTE
+  PARCIALMENTE_PROCEDENTE
+  IMPROCEDENTE
+  INCONCLUSIVA
+}
+
+model Report {
+  id                    String          @id @default(cuid())
+  reporterUserId        String
+  jobId                 String
+  // The company always comes from the job; the candidate never chooses it (OPEN-075).
+  companyId             String
+  // Optional link to the reporter's own post-interview evaluation that the report is about (OPEN-075).
+  evaluationId          String?
+  category              ReportCategory
+  description           String
+  evidence              String?
+  reporterFlaggedRisk   Boolean         @default(false)
+  highPriority          Boolean         @default(false)
+  status                ReportStatus    @default(RECEBIDA)
+  // Target of 5 business days from registration (OPEN-080); may be extended with a recorded reason.
+  dueAt                 DateTime
+  extensionReason       String?
+  // What the administrator asks the company (never the reporter's identity) and the company's answer (OPEN-077).
+  companyRequest        String?
+  companyResponse       String?
+  companyRespondedAt    DateTime?
+  decision              ReportDecision?
+  // OPEN-081: short justification for the reporter; full justification and measures for the company.
+  reporterSummary       String?
+  justification         String?
+  measures              String?
+  decidedByUserId       String?
+  concludedAt           DateTime?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  events                ReportEvent[]
+
+  @@index([status, highPriority, createdAt])
+  @@index([reporterUserId, createdAt])
+  @@index([companyId])
+}
+
+// Moderation history (SPEC-020): every step with actor and date. Rows are never changed (database trigger).
+model ReportEvent {
+  id          String        @id @default(cuid())
+  reportId    String
+  report      Report        @relation(fields: [reportId], references: [id], onDelete: Restrict)
+  kind        String
+  fromStatus  ReportStatus?
+  toStatus    ReportStatus?
+  actorUserId String?
+  note        String?
+  createdAt   DateTime      @default(now())
+
+  @@index([reportId, createdAt])
 }

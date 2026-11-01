@@ -5,7 +5,7 @@ import BrandLogo from "@/components/brand-logo";
 import NotificationsNavLink from "@/components/notifications/notifications-nav-link";
 
 export type ShellRole = "COMPANY" | "RECRUITER" | "CANDIDATE" | "ADMIN";
-export type ShellSection = "home" | "jobs" | "recruiters" | "settings" | "profile" | "catalog" | "applications" | "notifications";
+export type ShellSection = "home" | "jobs" | "recruiters" | "settings" | "profile" | "catalog" | "applications" | "notifications" | "reports";
 
 const menus: Record<ShellRole, { key: ShellSection; label: string; href: string }[]> = {
   COMPANY: [
@@ -13,12 +13,14 @@ const menus: Record<ShellRole, { key: ShellSection; label: string; href: string 
     { key: "jobs", label: "Vagas", href: "/empresa/vagas" },
     { key: "recruiters", label: "Recrutadores", href: "/empresa/recrutadores" },
     { key: "notifications", label: "Notificações", href: "/empresa/notificacoes" },
+    { key: "reports", label: "Denúncias", href: "/empresa/denuncias" },
     { key: "settings", label: "Configurações", href: "/empresa/configuracoes" }
   ],
   RECRUITER: [
     { key: "home", label: "Visão geral", href: "/recrutador" },
     { key: "jobs", label: "Vagas", href: "/recrutador/vagas" },
-    { key: "notifications", label: "Notificações", href: "/recrutador/notificacoes" }
+    { key: "notifications", label: "Notificações", href: "/recrutador/notificacoes" },
+    { key: "reports", label: "Denúncias", href: "/recrutador/denuncias" }
   ],
   // D-02 (29/10/2026): applications (SPEC-012/016) and notifications (SPEC-017) joined the menu when implemented.
   CANDIDATE: [
@@ -26,10 +28,12 @@ const menus: Record<ShellRole, { key: ShellSection; label: string; href: string 
     { key: "jobs", label: "Vagas", href: "/candidato/vagas" },
     { key: "applications", label: "Minhas candidaturas", href: "/candidato/candidaturas" },
     { key: "notifications", label: "Notificações", href: "/candidato/notificacoes" },
+    { key: "reports", label: "Minhas denúncias", href: "/candidato/denuncias" },
     { key: "profile", label: "Meu perfil", href: "/candidato/perfil" }
   ],
   ADMIN: [
-    { key: "catalog", label: "Catálogo de acessibilidade", href: "/admin/catalogo-acessibilidade" }
+    { key: "catalog", label: "Catálogo de acessibilidade", href: "/admin/catalogo-acessibilidade" },
+    { key: "reports", label: "Denúncias", href: "/admin/denuncias" }
   ]
 };
 const areaText: Record<ShellRole, { home: string; label: string; menu: string; nav: string }> = {

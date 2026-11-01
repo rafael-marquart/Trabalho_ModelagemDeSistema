@@ -816,7 +816,7 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .job-add-language { margin-top:14px; }
 .compat-list { display:grid; gap:20px; }
 .compat-card h2 { margin:0; }
-.compat-actions { display:flex; flex-wrap:wrap; align-items:end; gap:16px; margin-top:16px; }
+.compat-actions { display:flex; flex-wrap:wrap; align-items:flex-end; gap:16px; margin-top:16px; }
 .compat-mode { min-width:240px; }
 .compat-mode select { margin-top:8px; }
 .compat-actions .primary-button { padding:0 22px; }
@@ -1158,3 +1158,22 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .evaluation-summary { display: grid; gap: 6px; margin: 0; }
 .evaluation-summary dt { color: var(--muted); font-size: 13px; }
 .evaluation-summary dd { margin: 0 0 6px; font-weight: 600; overflow-wrap: anywhere; }
+
+/* SPEC-019/020 — Denúncias e moderação */
+.report-form { display: grid; gap: 20px; }
+.report-form textarea, .report-form select, .moderation-form textarea, .moderation-form select { display: block; width: 100%; margin-top: 8px; padding: 12px 14px; border: 1px solid var(--field-border); border-radius: 10px; color: var(--ink); background: var(--surface); font: inherit; }
+.report-categories { display: grid; gap: 10px; }
+.report-category { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border: 2px solid var(--field-border); border-radius: 12px; background: var(--surface); cursor: pointer; }
+.report-category input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--purple); }
+.report-category > span { display: grid; gap: 2px; }
+.report-category:has(input:checked) { border-color: var(--purple); background: var(--purple-soft); }
+.report-link-row { margin: 8px 0 0; }
+.report-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.report-steps { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; padding: 0; list-style: none; counter-reset: step; }
+.report-steps li { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 14px; }
+.report-steps li.report-step-done { border-color: var(--purple); color: var(--ink); font-weight: 600; }
+.moderation-table td, .moderation-table th { vertical-align: top; }
+.moderation-flag { color: var(--danger); font-weight: 700; }
+.moderation-form { display: grid; gap: 14px; }
+.moderation-columns { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .moderation-columns { grid-template-columns: minmax(0, 1fr); } }

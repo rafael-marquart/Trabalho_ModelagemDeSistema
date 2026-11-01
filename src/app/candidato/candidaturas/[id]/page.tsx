@@ -71,6 +71,7 @@ export default async function MyApplicationDetailPage({ params, searchParams }: 
               <p className="muted">{`Enviada em ${dateOnly(interview.evaluation.submittedAt)}. A avaliação não pode ser alterada.`}</p>
             </div>
             : interview.evaluation?.kind === "EXPIRED" ? <p className="muted">{`O prazo para avaliar esta entrevista terminou em ${dateOnly(interview.evaluation.deadline)}.`}</p> : null}
+          {interview.status === "COMPLETED" ? <p className="report-link-row"><Link className="link-button" href={`/candidato/vagas/${job.id}/denunciar`}>Denunciar esta vaga</Link> <span className="muted">— possível incompatibilidade de acessibilidade ou falsa inclusão no processo</span></p> : null}
         </div>)}
       </section> : null}
 
