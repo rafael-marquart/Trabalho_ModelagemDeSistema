@@ -7,6 +7,7 @@ import { jobModalityLabels, type JobModalityValue } from "./constants";
 import { availabilityOf, decideAction, formatDate, locationText, salaryText, type ActionDecision, type Availability } from "./detail";
 import { rowToFields, todayInBrazil } from "./schema";
 import { findApplicationResult, findBlockingApplication } from "@/lib/applications/service";
+import { getPublicRating, type PublicRating } from "@/lib/public-rating/service";
 
 const label = (status: string) => statusLabels[status as keyof typeof statusLabels] ?? statusLabels.NOT_INFORMED;
 
@@ -23,6 +24,8 @@ export type JobDetail = {
   action: ActionDecision;
   // The candidate's application that still counts for this job (in progress or approved), to link to its detail (SPEC-012).
   applicationId: string | null;
+  // SPEC-021: the company's public note (distribution of valid evaluations by number of stars).
+  publicRating: PublicRating;
   jobId: string;
 };
 
@@ -48,10 +51,11 @@ export async function getJobDetailForCandidate(userId: string, jobId: string, de
     const registered = await findApplicationResult(userId, jobId);
     if (registered) { compatibility = registered.result; compatibilityFromApplication = registered.appliedAt; }
   }
-  const infrastructure = await getCompanyInfrastructure(row.companyId);
+  const [infrastructure, publicRating] = await Promise.all([getCompanyInfrastructure(row.companyId), getPublicRating(row.companyId)]);
   const existing = await findBlockingApplication(userId, jobId);
   return {
     jobId: row.id,
+    publicRating,
     title: fields.title || "Vaga sem título",
     companyName: row.company.tradeName || row.company.legalName,
     description: fields.description || "Não informada",

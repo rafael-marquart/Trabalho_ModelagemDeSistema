@@ -6,6 +6,7 @@ vi.mock("@/lib/compatibility/service", () => ({ loadCandidateContext: vi.fn().mo
 const { appResultMock } = vi.hoisted(() => ({ appResultMock: vi.fn() }));
 vi.mock("@/lib/applications/service", () => ({ findBlockingApplication: vi.fn().mockResolvedValue(null), findApplicationResult: appResultMock }));
 vi.mock("@/lib/company-infrastructure/service", () => ({ getCompanyInfrastructure: infraMock, categoryLabel: (code: string) => code }));
+vi.mock("@/lib/public-rating/service", () => ({ getPublicRating: vi.fn().mockResolvedValue({ available: false, total: 0 }) }));
 import { getJobDetailForCandidate } from "./detail-service";
 
 const row = (over: Record<string, unknown> = {}) => ({

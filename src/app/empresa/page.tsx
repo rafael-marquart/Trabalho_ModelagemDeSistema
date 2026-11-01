@@ -4,6 +4,8 @@ import CompanyShell from "@/components/company-shell";
 import Icon from "@/components/icons";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
+import PublicRating from "@/components/public-rating";
+import { getPublicRating } from "@/lib/public-rating/service";
 
 export default async function CompanyHomePage() {
   const user = await getCurrentUser();
@@ -11,6 +13,7 @@ export default async function CompanyHomePage() {
   const company = await prisma.company.findUnique({ where: { accountUserId: user.id }, select: { id: true, tradeName: true, legalName: true } });
   const open = company ? await prisma.job.count({ where: { companyId: company.id, status: "OPEN" } }) : 0;
   const drafts = company ? await prisma.job.count({ where: { companyId: company.id, status: "DRAFT" } }) : 0;
+  const rating = company ? await getPublicRating(company.id) : null;
 
   return (
     <CompanyShell role="COMPANY" active="home" userName={company?.tradeName || company?.legalName || user.fullName}>
@@ -42,6 +45,10 @@ export default async function CompanyHomePage() {
             <span className="muted">Infraestrutura de acessibilidade da empresa.</span>
           </Link>
         </div>
+        {rating && company ? <section className="job-detail-section company-rating" aria-label="Sua nota pública de acessibilidade">
+          <PublicRating rating={rating} companyName={company.tradeName || company.legalName} headingLevel={2} />
+          <p className="muted">É assim que os candidatos veem a sua nota, no detalhe de cada vaga. Ela é formada só pelas avaliações dos candidatos após entrevistas concluídas; nem a empresa nem a moderação podem alterá-la.</p>
+        </section> : null}
       </main>
     </CompanyShell>
   );

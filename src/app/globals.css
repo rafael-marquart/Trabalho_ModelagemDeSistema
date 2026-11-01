@@ -1177,3 +1177,16 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .moderation-form { display: grid; gap: 14px; }
 .moderation-columns { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px; align-items: start; }
 @media (max-width: 900px) { .moderation-columns { grid-template-columns: minmax(0, 1fr); } }
+
+/* SPEC-021 — Nota pública de acessibilidade */
+.public-rating { display: grid; gap: 10px; }
+.public-rating h2, .public-rating h3, .public-rating h4, .public-rating p { margin: 0; }
+.rating-criterion { display: grid; gap: 6px; }
+.rating-criterion h4 { font-size: 15px; }
+.rating-bars { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.rating-bars li { display: grid; grid-template-columns: 82px minmax(60px, 1fr) 11ch; align-items: center; gap: 10px; font-size: 14px; }
+.rating-track { height: 12px; border-radius: 999px; background: var(--status-neutral-bg); overflow: hidden; border: 1px solid var(--line); }
+.rating-fill { display: block; height: 100%; background: var(--purple); }
+.rating-count { color: var(--muted); white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
+:root[data-contrast="high"] .rating-fill { background: var(--ink); }
+.company-rating { margin-top: 24px; }

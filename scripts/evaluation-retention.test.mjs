@@ -9,9 +9,11 @@ describe("evaluation retention (SPEC-018)", () => {
     expect(await anonymizeExpiredEvaluations(prisma, { now })).toMatchObject({ eligibleCount: 2, executed: false });
     expect(prisma.interviewEvaluation.updateMany).not.toHaveBeenCalled();
   });
-  it("removes the links to people and the comment, keeping only company and ratings", async () => {
-    const prisma = { interviewEvaluation: { updateMany: vi.fn().mockResolvedValue({ count: 3 }) } };
-    expect(await anonymizeExpiredEvaluations(prisma, { now, execute: true })).toMatchObject({ anonymizedCount: 3, executed: true });
-    expect(prisma.interviewEvaluation.updateMany).toHaveBeenCalledWith({ where, data: { interviewId: null, applicationId: null, candidateUserId: null, comment: null, anonymizedAt: now } });
+  it("removes the links to people and the comment, keeping company, ratings and only the year", async () => {
+    const tx = { interviewEvaluation: { findMany: vi.fn().mockResolvedValue([{ id: "e1", submittedAt: new Date("2025-06-17T14:00:00Z") }]), update: vi.fn() } };
+    const prisma = { $transaction: vi.fn(async cb => cb(tx)) };
+    expect(await anonymizeExpiredEvaluations(prisma, { now, execute: true })).toMatchObject({ anonymizedCount: 1, executed: true });
+    expect(tx.interviewEvaluation.findMany.mock.calls[0][0].where).toEqual(where);
+    expect(tx.interviewEvaluation.update).toHaveBeenCalledWith({ where: { id: "e1" }, data: { interviewId: null, applicationId: null, candidateUserId: null, comment: null, anonymizedAt: now, submittedAt: new Date("2025-01-01T00:00:00Z") } });
   });
 });

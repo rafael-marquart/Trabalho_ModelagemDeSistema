@@ -23,7 +23,8 @@ const base = {
   companyInfrastructure: { updatedAt: "2026-10-27T00:00:00Z", items: [{ category: "Acesso físico e circulação", label: "Rampas de acesso", status: "PRESENT", statusLabel: "Presente", note: "Só no térreo" }] },
   compatibility: { id: "r", status: "COMPLETE", score: 86, executedAt: "", factors: [], missing: [], appliedWeights: { A: 0.5, T: 0.3, D: 0.2 }, critical: { applied: false, barriers: [], pending: [] },
     dimensions: { A: dim(100), T: dim(60), D: { status: "EVALUATED", score: 90, components: [{ label: "Deslocamento", score: 75, detail: "Tempo estimado de cerca de 31 min (carro, saindo às 7h em dia útil)." }] } } },
-  action: { allowed: true, message: "Você atende às condições indispensáveis desta vaga." }
+  action: { allowed: true, message: "Você atende às condições indispensáveis desta vaga." },
+  publicRating: { available: false, total: 0 }
 };
 const show = async (detail: unknown) => { detailMock.mockResolvedValue(detail); return render(await Page({ params: Promise.resolve({ id: "job-1" }) })); };
 
@@ -83,5 +84,14 @@ describe("job detail page", () => {
     reportGate.canReportJob.mockResolvedValueOnce(true);
     await show(base);
     expect(screen.getByRole("link", { name: "Denunciar esta vaga" }).getAttribute("href")).toBe("/candidato/vagas/job-1/denunciar");
+  });
+  it("shows the company's public note as a distribution by number of stars (SPEC-021)", async () => {
+    await show({ ...base, publicRating: { available: true, total: 3, accessibility: { 1: 0, 2: 0, 3: 1, 4: 0, 5: 2 }, inclusion: { 1: 0, 2: 0, 3: 0, 4: 3, 5: 0 } } });
+    expect(screen.getByRole("heading", { name: "Avaliações de candidatos" })).toBeTruthy();
+    expect(screen.getAllByText("2 avaliações").length).toBeGreaterThan(0);
+    expect(document.body.textContent).not.toMatch(/média [\d,]/i);
+    cleanup();
+    await show(base);
+    expect(screen.getByText(/Ainda não há dados suficientes/)).toBeTruthy();
   });
 });

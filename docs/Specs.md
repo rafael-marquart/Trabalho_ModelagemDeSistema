@@ -3084,7 +3084,7 @@ OPEN-078 a OPEN-081 estão resolvidas. As decisões sobre critérios/evidências
 | Campo | Valor |
 |---|---|
 | ID | SPEC-021 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | aprovada; implementada em 01/11/2026 (aguardando teste manual e aprovação do layout); ver `docs/Implementacao/SPEC-021.md` e `docs/operacao/validacao-manual-spec-021.md`; risco de identificação com poucas avaliações registrado em OPEN-098 |
 | Estado do layout | pendente |
 | Capacidade | Gerenciar nota pública de acessibilidade |
 

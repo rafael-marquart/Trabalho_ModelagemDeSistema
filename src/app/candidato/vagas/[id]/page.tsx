@@ -9,6 +9,7 @@ import type { Compatibility } from "@/components/candidate/types";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getJobDetailForCandidate } from "@/lib/jobs/detail-service";
 import { canReportJob } from "@/lib/reports/reporter-service";
+import PublicRating from "@/components/public-rating";
 
 const accessClass: Record<string, string> = { PRESENT: "access-present", ABSENT: "access-absent", NOT_INFORMED: "access-unknown" };
 
@@ -78,6 +79,10 @@ export default async function CandidateJobDetailPage({ params }: { params: Promi
                 </ul>
               </div>) : <p className="muted">A empresa ainda não informou a infraestrutura de acessibilidade.</p>}
             </details>
+          </section>
+
+          <section className="job-detail-section" aria-label="Nota pública de acessibilidade da empresa">
+            <PublicRating rating={job.publicRating} companyName={job.companyName} headingLevel={2} />
           </section>
         </div>
 

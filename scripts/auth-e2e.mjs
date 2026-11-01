@@ -1900,6 +1900,22 @@ async function main() {
     const blocked = await fetch(`${BASE_URL}/admin/denuncias`, { headers: { cookie: compatCookie }, redirect: "manual" });
     assert.ok([302, 303, 307, 308].includes(blocked.status), "a candidate is sent away from the moderation pages");
 
+    // SPEC-021: the public note is the distribution of valid evaluations by number of stars, per company.
+    const notePage = await expectStatus(await fetch(`${BASE_URL}/candidato/vagas/${interviewJob.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "job page with the public note");
+    assert.ok(notePage.includes("Avaliações de candidatos") && notePage.includes("1 avaliação"), "one valid evaluation is enough to show the distribution");
+    assert.ok(!notePage.includes(storedEvaluation.id) && !notePage.includes(EMAIL), "the public note shows no identifiers");
+    const companyHome = await expectStatus(await fetch(`${BASE_URL}/empresa`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company home with its note");
+    assert.ok(companyHome.includes("Avaliações de candidatos") && companyHome.includes("1 avaliação"), "the company sees its own public note, aggregated for the company");
+    const ratingAudit = await prisma.auditEvent.findFirst({ where: { eventType: "PUBLIC_RATING_UPDATED", subjectId: storedReport.companyId }, orderBy: { createdAt: "desc" } });
+    assert.deepEqual([ratingAudit.metadata.total, ratingAudit.metadata.accessibility["4"], ratingAudit.metadata.inclusion["5"]], [1, 1, 1], "each change of the note is recorded with counts only");
+    // One-year anonymization keeps the ratings and only the year; nothing else may change.
+    await assert.rejects(prisma.interviewEvaluation.update({ where: { id: storedEvaluation.id }, data: { submittedAt: new Date("2020-01-01T00:00:00Z") } }), "the date cannot be changed outside the anonymization");
+    await prisma.$executeRaw`UPDATE "InterviewEvaluation" SET "interviewId" = NULL, "applicationId" = NULL, "candidateUserId" = NULL, "comment" = NULL, "anonymizedAt" = now(), "submittedAt" = date_trunc('year', "submittedAt") WHERE "id" = ${storedEvaluation.id}`;
+    const anonymized = await prisma.interviewEvaluation.findUnique({ where: { id: storedEvaluation.id } });
+    assert.ok(anonymized.candidateUserId === null && anonymized.submittedAt.getUTCMonth() === 0 && anonymized.submittedAt.getUTCDate() === 1, "the anonymized row keeps only company, ratings and year");
+    const noteAfter = await expectStatus(await fetch(`${BASE_URL}/candidato/vagas/${interviewJob.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "note after anonymization");
+    assert.ok(noteAfter.includes("1 avaliação"), "anonymized evaluations still count in the distribution");
+
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });
     assert.equal(companySessionsBeforeLogout, 1, "company login must have one active session before logout");
