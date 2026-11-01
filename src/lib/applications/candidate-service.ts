@@ -75,7 +75,7 @@ const companyName = (company: { tradeName: string | null; legalName: string }) =
 
 export async function listCandidateApplications(userId: string, now: Date = new Date()) {
   const rows = await prisma.application.findMany({
-    where: { candidateUserId: userId },
+    where: { candidateUserId: userId, hiddenByCandidateAt: null },
     orderBy: [{ appliedAt: "desc" }, { id: "desc" }],
     select: {
       id: true, stage: true, appliedAt: true, updatedAt: true, job: { select: jobSelect },
@@ -84,13 +84,14 @@ export async function listCandidateApplications(userId: string, now: Date = new 
   });
   return rows.filter((row) => isVisible(row, now)).map((row) => ({
     id: row.id, appliedAt: row.appliedAt.toISOString(), stage: row.stage, stageLabel: candidateStageLabels[row.stage] ?? row.stage,
-    job: { id: row.job.id, title: row.job.title || "Vaga sem título", companyName: companyName(row.job.company), closed: row.job.status === "CLOSED" }
+    job: { id: row.job.id, title: row.job.title || "Vaga sem título", companyName: companyName(row.job.company), closed: row.job.status === "CLOSED" },
+    canHide: HIDEABLE.includes(row.stage)
   }));
 }
 
 export async function getCandidateApplication(userId: string, applicationId: string, now: Date = new Date()) {
   const row = await prisma.application.findFirst({
-    where: { id: applicationId, candidateUserId: userId },
+    where: { id: applicationId, candidateUserId: userId, hiddenByCandidateAt: null },
     select: {
       id: true, stage: true, appliedAt: true, updatedAt: true, job: { select: jobSelect },
       stageEvents: { select: { createdAt: true, kind: true, toStage: true }, orderBy: [{ createdAt: "asc" }, { id: "asc" }] }
@@ -109,8 +110,32 @@ export async function getCandidateApplication(userId: string, applicationId: str
     },
     timeline: toTimeline(row.stageEvents),
     canCancel: block === null,
+    canHide: HIDEABLE.includes(row.stage),
     historyVisibleUntil: until ? until.toISOString() : null
   };
+}
+
+/** Decision of 01/11/2026: refused and cancelled applications can leave the candidate's list before the 60 days. */
+const HIDEABLE = ["RECUSADA", "CANCELADA"];
+
+/**
+ * Hides one of the candidate's own refused or cancelled applications from "Minhas candidaturas". Nothing is deleted: the
+ * record, its history, the audit and the company's funnel stay as they are. The hiding itself is audited.
+ */
+export async function hideApplication(userId: string, applicationId: string): Promise<{ ok: true } | { ok: false; status: number; message: string }> {
+  const row = await prisma.application.findFirst({ where: { id: applicationId, candidateUserId: userId, hiddenByCandidateAt: null }, select: { id: true, stage: true, jobId: true } });
+  if (!row) return { ok: false, status: 404, message: "Candidatura não encontrada." };
+  if (!HIDEABLE.includes(row.stage)) return { ok: false, status: 409, message: "Só candidaturas recusadas ou canceladas podem ser removidas da lista." };
+  const done = await prisma.$transaction(async (tx) => {
+    const changed = await tx.application.updateMany({
+      where: { id: row.id, candidateUserId: userId, hiddenByCandidateAt: null, stage: { in: HIDEABLE as ("RECUSADA" | "CANCELADA")[] } },
+      data: { hiddenByCandidateAt: new Date() }
+    });
+    if (changed.count !== 1) return false;
+    await tx.auditEvent.create({ data: { actorUserId: userId, eventType: "APPLICATION_HIDDEN_BY_CANDIDATE", subjectType: "Application", subjectId: row.id, metadata: { jobId: row.jobId, stage: row.stage } } });
+    return true;
+  });
+  return done ? { ok: true } : { ok: false, status: 409, message: "A candidatura mudou enquanto você confirmava. Atualize a página." };
 }
 
 export type CancelResult = { ok: true; stage: "CANCELADA" } | { ok: false; status: number; message: string };

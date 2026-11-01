@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import CompanyShell from "@/components/company-shell";
 import CancelApplication from "@/components/candidate/cancel-application";
 import CancelResult from "@/components/candidate/cancel-result";
+import HideApplication from "@/components/candidate/hide-application";
 import { candidatePill, dateOnly, initialsOf } from "@/components/candidate/application-format";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getCandidateApplication } from "@/lib/applications/candidate-service";
@@ -56,6 +57,12 @@ export default async function MyApplicationDetailPage({ params, searchParams }: 
           </li>)}
         </ol> : <p className="job-empty">Ainda não há eventos registrados no histórico desta candidatura.</p>}
       </section>
+
+      {application.canHide ? <section className="job-detail-section hide-application" aria-labelledby="hide-title">
+        <h2 id="hide-title">Remover da lista</h2>
+        <p className="muted">Esta candidatura está encerrada. Você pode tirá-la de Minhas candidaturas sem esperar os 60 dias; nada é apagado.</p>
+        <HideApplication applicationId={application.id} jobTitle={job.title} afterHref="/candidato/candidaturas?removida=1" />
+      </section> : null}
 
       {application.canCancel ? <CancelApplication applicationId={application.id} jobTitle={job.title} jobClosed={job.status === "CLOSED"} /> : null}
     </main>

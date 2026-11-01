@@ -410,6 +410,9 @@ model Application {
   compatibilityResultId String
   compatibilityResult   CompatibilityResult @relation(fields: [compatibilityResultId], references: [id], onDelete: Restrict)
   updatedAt             DateTime            @updatedAt
+  // Decision of 01/11/2026: the candidate may hide a refused or cancelled application from "Minhas candidaturas"
+  // before the 60 days; the record, its history and the company's view are kept.
+  hiddenByCandidateAt   DateTime?
   stageEvents           ApplicationStageEvent[]
 
   @@index([jobId, stage])
@@ -447,6 +450,7 @@ enum NotificationStatus {
   SENDING
   SENT
   FAILED
+  SKIPPED // the recipient chose not to receive notifications by e-mail; the in-site notice still exists
 }
 
 model Notification {
@@ -462,10 +466,12 @@ model Notification {
   nextAttemptAt   DateTime           @default(now())
   lastError       String?
   sentAt          DateTime?
+  // In-site notice (decision of 01/11/2026, revising OPEN-069): when the recipient opened or marked it as read.
+  readAt          DateTime?
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
 
   @@index([status, nextAttemptAt])
-  @@index([recipientUserId])
+  @@index([recipientUserId, createdAt])
   @@index([createdAt])
 }

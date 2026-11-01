@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { prismaMock } = vi.hoisted(() => ({ prismaMock: {
-  notification: { create: vi.fn(), createMany: vi.fn(), findMany: vi.fn(), updateMany: vi.fn(), update: vi.fn((args: { data: Record<string, unknown> }) => args) },
+  notification: { create: vi.fn(), createMany: vi.fn(), findMany: vi.fn(), updateMany: vi.fn(), count: vi.fn(), update: vi.fn((args: { data: Record<string, unknown> }) => args) },
   user: { findUnique: vi.fn() }, company: { findUnique: vi.fn() }, recruiterLink: { findFirst: vi.fn() }, job: { findUnique: vi.fn() },
   auditEvent: { create: vi.fn((args: { data: Record<string, unknown> }) => args) },
   $transaction: vi.fn(async (ops: unknown[]) => ops)
@@ -11,7 +11,7 @@ vi.mock("@/lib/email", async () => {
   const actual = await vi.importActual<typeof import("@/lib/email")>("@/lib/email");
   return { ...actual, sendEmail: vi.fn() };
 });
-import { deliverDueNotifications, enqueueApplicationCancelled, enqueueJobClosed, MAX_ATTEMPTS, RETRY_DELAYS_MS, responsibleRecipient } from "./service";
+import { countUnreadNotices, deliverDueNotifications, enqueueApplicationCancelled, enqueueJobClosed, listNotices, markNoticesRead, MAX_ATTEMPTS, RETRY_DELAYS_MS, responsibleRecipient } from "./service";
 import { notificationEmail } from "./messages";
 
 const tx = prismaMock as never;
@@ -54,7 +54,7 @@ describe("notifications (SPEC-017)", () => {
   it("claims, sends and marks a notification as accepted by the server", async () => {
     prismaMock.notification.findMany.mockResolvedValue([row()]);
     const send = vi.fn().mockResolvedValue(undefined);
-    expect(await deliverDueNotifications({ now, send })).toEqual({ sent: 1, retrying: 0, failed: 0 });
+    expect(await deliverDueNotifications({ now, send })).toEqual({ sent: 1, retrying: 0, failed: 0, skipped: 0 });
     expect(prismaMock.notification.updateMany).toHaveBeenCalledWith({ where: { id: "n1", status: "PENDING" }, data: { status: "SENDING" } });
     expect(send.mock.calls[0][0]).toMatchObject({ to: "ana@example.com", subject: "Sua candidatura mudou: Em entrevista — Acessa Vagas" });
     expect(send.mock.calls[0][0].text).toContain("https://acessavagas.example/candidato/candidaturas/a1");
@@ -65,29 +65,52 @@ describe("notifications (SPEC-017)", () => {
     prismaMock.notification.findMany.mockResolvedValue([row()]);
     prismaMock.notification.updateMany.mockResolvedValueOnce({ count: 0 }).mockResolvedValueOnce({ count: 0 });
     const send = vi.fn();
-    expect(await deliverDueNotifications({ now, send })).toEqual({ sent: 0, retrying: 0, failed: 0 });
+    expect(await deliverDueNotifications({ now, send })).toEqual({ sent: 0, retrying: 0, failed: 0, skipped: 0 });
     expect(send).not.toHaveBeenCalled();
   });
 
   it("retries temporary failures with growing intervals and records the final failure", async () => {
     const send = vi.fn().mockRejectedValue(Object.assign(new Error("down"), { code: "ECONNECTION" }));
     prismaMock.notification.findMany.mockResolvedValueOnce([row({ attempts: 0 })]);
-    expect(await deliverDueNotifications({ now, send })).toEqual({ sent: 0, retrying: 1, failed: 0 });
+    expect(await deliverDueNotifications({ now, send })).toEqual({ sent: 0, retrying: 1, failed: 0, skipped: 0 });
     const retry = prismaMock.notification.update.mock.calls[0][0].data;
     expect(retry).toMatchObject({ status: "PENDING", attempts: 1, lastError: "CONNECTION" });
     expect((retry.nextAttemptAt as Date).getTime() - now.getTime()).toBe(RETRY_DELAYS_MS[0]);
 
     prismaMock.notification.findMany.mockResolvedValueOnce([row({ attempts: MAX_ATTEMPTS - 1 })]);
-    expect(await deliverDueNotifications({ now, send })).toEqual({ sent: 0, retrying: 0, failed: 1 });
+    expect(await deliverDueNotifications({ now, send })).toEqual({ sent: 0, retrying: 0, failed: 1, skipped: 0 });
     expect(prismaMock.notification.update.mock.calls[1][0].data).toMatchObject({ status: "FAILED", attempts: MAX_ATTEMPTS });
     expect(prismaMock.auditEvent.create.mock.calls[0][0].data).toMatchObject({ eventType: "NOTIFICATION_DELIVERY_FAILED", metadata: { reason: "CONNECTION", attempts: MAX_ATTEMPTS } });
     expect(JSON.stringify(prismaMock.auditEvent.create.mock.calls)).not.toContain("ana@example.com");
   });
 
+  it("keeps the notice in the site but skips the e-mail when the recipient turned it off", async () => {
+    prismaMock.notification.findMany.mockResolvedValue([row()]);
+    prismaMock.user.findUnique.mockResolvedValue({ email: "ana@example.com", isActive: true, preference: { preferences: { EMAIL_NOTIFICATIONS: "OFF" } } });
+    const send = vi.fn();
+    expect(await deliverDueNotifications({ now, send })).toEqual({ sent: 0, retrying: 0, failed: 0, skipped: 1 });
+    expect(send).not.toHaveBeenCalled();
+    expect(prismaMock.notification.update.mock.calls[0][0].data).toMatchObject({ status: "SKIPPED" });
+  });
+
+  it("lists, counts and marks only the person's own notices", async () => {
+    prismaMock.notification.findMany.mockResolvedValue([{ id: "n1", type: "JOB_CLOSED", payload: { jobTitle: "Analista", companyName: "Loja" }, applicationId: "a1", jobId: "j1", createdAt: now, readAt: null }]);
+    const notices = await listNotices("cand");
+    expect(prismaMock.notification.findMany.mock.calls[0][0].where).toEqual({ recipientUserId: "cand" });
+    expect(notices[0]).toMatchObject({ id: "n1", read: false, title: "Vaga encerrada", href: "/candidato/candidaturas/a1" });
+    prismaMock.notification.count.mockResolvedValue(3);
+    expect(await countUnreadNotices("cand")).toBe(3);
+    expect(prismaMock.notification.count).toHaveBeenCalledWith({ where: { recipientUserId: "cand", readAt: null } });
+    await markNoticesRead("cand", "n1");
+    expect(prismaMock.notification.updateMany).toHaveBeenLastCalledWith({ where: { recipientUserId: "cand", readAt: null, id: "n1" }, data: { readAt: expect.any(Date) } });
+    await markNoticesRead("cand");
+    expect(prismaMock.notification.updateMany).toHaveBeenLastCalledWith({ where: { recipientUserId: "cand", readAt: null }, data: { readAt: expect.any(Date) } });
+  });
+
   it("does not retry a permanent refusal (5xx)", async () => {
     prismaMock.notification.findMany.mockResolvedValue([row()]);
     const send = vi.fn().mockRejectedValue(Object.assign(new Error("no such user"), { code: "EENVELOPE", responseCode: 550 }));
-    expect(await deliverDueNotifications({ now, send })).toEqual({ sent: 0, retrying: 0, failed: 1 });
+    expect(await deliverDueNotifications({ now, send })).toEqual({ sent: 0, retrying: 0, failed: 1, skipped: 0 });
   });
 });
 

@@ -1,6 +1,6 @@
 # Roteiro de validação manual — SPEC-017 (notificações)
 
-Antes: `git pull`, `npm.cmd install`, `npm.cmd run db:generate`, `npx.cmd prisma migrate deploy` (migração nova), `.env` apontando para o Mailpit, `docker compose up -d mailpit`, `npm.cmd run dev`. Abra o Mailpit em http://localhost:8025. Use uma vaga publicada e uma conta de candidato.
+Antes: `git pull`, `npm.cmd install`, `npm.cmd run db:generate`, `npx.cmd prisma migrate deploy` (duas migrações novas), `.env` apontando para o Mailpit, `docker compose up -d mailpit`, `npm.cmd run dev`. Abra o Mailpit em http://localhost:8025. Use uma vaga publicada e uma conta de candidato.
 
 | # | Passo | Resultado esperado |
 |---|---|---|
@@ -14,6 +14,14 @@ Antes: `git pull`, `npm.cmd install`, `npm.cmd run db:generate`, `npx.cmd prisma
 | 8 | `npm.cmd run mailpit:chaos -- off` e esperar cerca de 1 minuto | O e-mail do passo 7 chega sozinho (nova tentativa automática) |
 | 9 | `docker compose stop mailpit`, candidatar-se a outra vaga, `docker compose start mailpit` | A candidatura é registrada normalmente; o e-mail chega depois que o Mailpit volta (até alguns minutos, conforme as esperas de 1 min e 5 min) |
 | 10 | `npm.cmd run mailpit:chaos -- destinatario 550 100`, mover uma candidatura, depois `off` | Recusa definitiva: não há nova tentativa; o evento `NOTIFICATION_DELIVERY_FAILED` aparece na auditoria (`npm.cmd run db:studio`, tabela AuditEvent) e a etapa continua alterada |
+| 11a | Candidato abre "Notificações" no menu | Contador de não lidas no menu; avisos dos passos anteriores, do mais recente para o mais antigo; os não lidos destacados |
+| 11b | Clicar em "Ver detalhes" de um aviso | Abre a candidatura; o aviso fica como lido e o contador diminui |
+| 11c | "Marcar todas como lidas" | Contador some do menu |
+| 11d | Empresa (ou recrutador) abre "Notificações" | Vê só os avisos de cancelamento das suas vagas; nada dos avisos do candidato |
+| 11e | Candidato desmarca "Receber também por e-mail" e a empresa move uma candidatura dele | O aviso aparece na aba Notificações, mas nenhum e-mail chega ao Mailpit; marcar de novo volta a enviar nos próximos eventos |
+| 11f | Em Minhas candidaturas, "Remover da lista" numa candidatura Recusada ou Cancelada → Voltar | Nada muda |
+| 11g | Repetir e confirmar | Some da lista na hora; candidaturas em andamento não têm a opção; a empresa continua vendo a candidatura no funil |
+| 11h | Abrir uma candidatura Recusada/Cancelada e usar "Remover da lista" no detalhe | Volta para a lista com o aviso "A candidatura foi removida da sua lista" |
 | 11 | `npm.cmd run notifications:retention` | Simulação: mostra quantos registros com mais de 1 ano seriam apagados (provavelmente 0) |
 | 12 | (Opcional) Repetir os passos 1 e 2 com o `.env` do Brevo e endereços seus com `+` | E-mails chegam na caixa de entrada real |
 

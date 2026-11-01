@@ -2,26 +2,30 @@ import React, { ReactNode } from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
 import BrandLogo from "@/components/brand-logo";
+import NotificationsNavLink from "@/components/notifications/notifications-nav-link";
 
 export type ShellRole = "COMPANY" | "RECRUITER" | "CANDIDATE" | "ADMIN";
-export type ShellSection = "home" | "jobs" | "recruiters" | "settings" | "profile" | "catalog" | "applications";
+export type ShellSection = "home" | "jobs" | "recruiters" | "settings" | "profile" | "catalog" | "applications" | "notifications";
 
 const menus: Record<ShellRole, { key: ShellSection; label: string; href: string }[]> = {
   COMPANY: [
     { key: "home", label: "Início", href: "/empresa" },
     { key: "jobs", label: "Vagas", href: "/empresa/vagas" },
     { key: "recruiters", label: "Recrutadores", href: "/empresa/recrutadores" },
+    { key: "notifications", label: "Notificações", href: "/empresa/notificacoes" },
     { key: "settings", label: "Configurações", href: "/empresa/configuracoes" }
   ],
   RECRUITER: [
     { key: "home", label: "Visão geral", href: "/recrutador" },
-    { key: "jobs", label: "Vagas", href: "/recrutador/vagas" }
+    { key: "jobs", label: "Vagas", href: "/recrutador/vagas" },
+    { key: "notifications", label: "Notificações", href: "/recrutador/notificacoes" }
   ],
-  // D-02 (29/10/2026): applications (SPEC-012/016) joined the menu; notifications join when SPEC-017 is implemented.
+  // D-02 (29/10/2026): applications (SPEC-012/016) and notifications (SPEC-017) joined the menu when implemented.
   CANDIDATE: [
     { key: "home", label: "Início", href: "/candidato" },
     { key: "jobs", label: "Vagas", href: "/candidato/vagas" },
     { key: "applications", label: "Minhas candidaturas", href: "/candidato/candidaturas" },
+    { key: "notifications", label: "Notificações", href: "/candidato/notificacoes" },
     { key: "profile", label: "Meu perfil", href: "/candidato/perfil" }
   ],
   ADMIN: [
@@ -62,8 +66,10 @@ export default function CompanyShell({ role, active, userName, children }: {
       <aside className="company-sidebar">
         <p className="company-sidebar-title">{text.menu}</p>
         <nav className="company-nav" aria-label={text.nav}>
-          {menus[role].map((item) => <Link key={item.key} className="company-nav-item" href={item.href}
-            aria-current={item.key === active ? "page" : undefined}>{item.label}</Link>)}
+          {menus[role].map((item) => item.key === "notifications"
+            ? <NotificationsNavLink key={item.key} href={item.href} current={item.key === active} />
+            : <Link key={item.key} className="company-nav-item" href={item.href}
+              aria-current={item.key === active ? "page" : undefined}>{item.label}</Link>)}
         </nav>
       </aside>
       {children}

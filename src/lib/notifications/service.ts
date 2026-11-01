@@ -2,7 +2,8 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { classifyEmailError, sendEmail } from "@/lib/email";
 import { getPublicBaseUrl } from "@/lib/security/public-base-url";
-import { notificationEmail, type NotificationKind, type NotificationPayload } from "./messages";
+import { normalizePreferences } from "@/lib/accessibility-preferences/catalog";
+import { notificationEmail, notificationSummary, type NotificationKind, type NotificationPayload } from "./messages";
 
 // SPEC-017 (OPEN-066 to OPEN-068). Notifications are written in the same transaction as the event that causes them, so
 // a confirmed event always leaves a pending notification and a failed send never undoes the event. Delivery happens
@@ -87,14 +88,20 @@ export async function deliverDueNotifications(deps: Deps = {}) {
   const due = await prisma.notification.findMany({
     where: { status: "PENDING", nextAttemptAt: { lte: now } }, orderBy: { nextAttemptAt: "asc" }, take: deps.limit ?? 20
   });
-  const result = { sent: 0, retrying: 0, failed: 0 };
+  const result = { sent: 0, retrying: 0, failed: 0, skipped: 0 };
   for (const row of due) {
     const claimed = await prisma.notification.updateMany({ where: { id: row.id, status: "PENDING" }, data: { status: "SENDING" } });
     if (claimed.count !== 1) continue;
     const attempts = row.attempts + 1;
     try {
-      const recipient = await prisma.user.findUnique({ where: { id: row.recipientUserId }, select: { email: true, isActive: true } });
+      const recipient = await prisma.user.findUnique({ where: { id: row.recipientUserId }, select: { email: true, isActive: true, preference: { select: { preferences: true } } } });
       if (!recipient) throw Object.assign(new Error("RECIPIENT_NOT_FOUND"), { responseCode: 550 });
+      // The notice is always in the site; the e-mail copy follows the recipient's choice (decision of 01/11/2026).
+      if (normalizePreferences(recipient.preference?.preferences).EMAIL_NOTIFICATIONS === "OFF") {
+        await prisma.notification.update({ where: { id: row.id }, data: { status: "SKIPPED", attempts: row.attempts } });
+        result.skipped += 1;
+        continue;
+      }
       const url = baseUrl();
       if (!url) throw Object.assign(new Error("APP_BASE_URL"), { code: "CONFIG" });
       await send({ to: recipient.email, ...notificationEmail(row.type as NotificationKind, row.payload as NotificationPayload, { baseUrl: url, applicationId: row.applicationId, jobId: row.jobId }) });
@@ -139,4 +146,28 @@ export function kickNotificationDelivery() {
       running = false;
       if (again) { again = false; kickNotificationDelivery(); }
     });
+}
+
+// In-site notices (decision of 01/11/2026, revising OPEN-069): every notification row is also shown to its recipient in
+// "Notificações", whatever happened to the e-mail copy. Only the recipient reads or marks their own notices.
+
+export const NOTICES_SHOWN = 50;
+
+export async function listNotices(userId: string) {
+  const rows = await prisma.notification.findMany({
+    where: { recipientUserId: userId }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: NOTICES_SHOWN,
+    select: { id: true, type: true, payload: true, applicationId: true, jobId: true, createdAt: true, readAt: true }
+  });
+  return rows.map((row) => ({
+    id: row.id, createdAt: row.createdAt.toISOString(), read: row.readAt !== null,
+    ...notificationSummary(row.type as NotificationKind, row.payload as NotificationPayload, { applicationId: row.applicationId, jobId: row.jobId })
+  }));
+}
+
+export const countUnreadNotices = (userId: string) => prisma.notification.count({ where: { recipientUserId: userId, readAt: null } });
+
+/** Marks one notice (only if it belongs to the user) or all of the user's notices as read. Returns how many changed. */
+export async function markNoticesRead(userId: string, id?: string) {
+  const changed = await prisma.notification.updateMany({ where: { recipientUserId: userId, readAt: null, ...(id ? { id } : {}) }, data: { readAt: new Date() } });
+  return changed.count;
 }

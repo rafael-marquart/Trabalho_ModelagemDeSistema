@@ -10,7 +10,7 @@ const { prismaMock, tx } = vi.hoisted(() => {
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
 const notify = vi.hoisted(() => ({ enqueueApplicationSubmitted: vi.fn(), enqueueStageChanged: vi.fn(), enqueueApplicationCancelled: vi.fn(), kickNotificationDelivery: vi.fn() }));
 vi.mock("@/lib/notifications/service", () => notify);
-import { cancelApplication, cancellationBlock, getCandidateApplication, listCandidateApplications, toTimeline } from "./candidate-service";
+import { cancelApplication, cancellationBlock, getCandidateApplication, hideApplication, listCandidateApplications, toTimeline } from "./candidate-service";
 
 const day = (iso: string) => new Date(`${iso}T12:00:00Z`);
 const company = { tradeName: "Empresa Exemplo", legalName: "Empresa Exemplo LTDA" };
@@ -33,7 +33,7 @@ describe("candidate side of applications (SPEC-012/016)", () => {
       { id: "a5", stage: "RECUSADA", appliedAt: day("2026-01-01"), updatedAt: day("2026-02-01"), job: job(), stageEvents: [] }
     ]);
     const list = await listCandidateApplications("cand-1", now);
-    expect(prismaMock.application.findMany.mock.calls[0][0].where).toEqual({ candidateUserId: "cand-1" });
+    expect(prismaMock.application.findMany.mock.calls[0][0].where).toEqual({ candidateUserId: "cand-1", hiddenByCandidateAt: null });
     expect(list.map((item) => item.id)).toEqual(["a1", "a3", "a5"]);
     expect(list[1]).toMatchObject({ stageLabel: "Cancelada", job: { title: "Analista", companyName: "Empresa Exemplo" } });
   });
@@ -52,7 +52,7 @@ describe("candidate side of applications (SPEC-012/016)", () => {
   it("returns the detail only to its owner and offers cancellation only when allowed", async () => {
     prismaMock.application.findFirst.mockResolvedValueOnce(null);
     expect(await getCandidateApplication("intruder", "a1")).toBeNull();
-    expect(prismaMock.application.findFirst.mock.calls[0][0].where).toEqual({ id: "a1", candidateUserId: "intruder" });
+    expect(prismaMock.application.findFirst.mock.calls[0][0].where).toEqual({ id: "a1", candidateUserId: "intruder", hiddenByCandidateAt: null });
 
     prismaMock.application.findFirst.mockResolvedValueOnce({
       id: "a1", stage: "ENTREVISTA", appliedAt: day("2026-10-01"), updatedAt: day("2026-10-05"), job: job("CLOSED", day("2026-10-20")),
@@ -110,5 +110,17 @@ describe("candidate side of applications (SPEC-012/016)", () => {
     expect(tx.applicationStageEvent.create).not.toHaveBeenCalled();
     expect(tx.auditEvent.create).not.toHaveBeenCalled();
     expect(notify.enqueueApplicationCancelled).not.toHaveBeenCalled();
+  });
+
+  it("hides only the candidate's own refused or cancelled applications, keeping the record", async () => {
+    prismaMock.application.findFirst.mockResolvedValueOnce(null);
+    expect(await hideApplication("intruder", "a1")).toMatchObject({ ok: false, status: 404 });
+    prismaMock.application.findFirst.mockResolvedValueOnce({ id: "a1", stage: "TRIAGEM", jobId: "job-1" });
+    expect(await hideApplication("cand-1", "a1")).toMatchObject({ ok: false, status: 409 });
+    expect(tx.application.updateMany).not.toHaveBeenCalled();
+    prismaMock.application.findFirst.mockResolvedValueOnce({ id: "a1", stage: "RECUSADA", jobId: "job-1" });
+    expect(await hideApplication("cand-1", "a1")).toEqual({ ok: true });
+    expect(tx.application.updateMany.mock.calls[0][0]).toMatchObject({ where: { id: "a1", candidateUserId: "cand-1", hiddenByCandidateAt: null }, data: { hiddenByCandidateAt: expect.any(Date) } });
+    expect(tx.auditEvent.create.mock.calls[0][0].data).toMatchObject({ eventType: "APPLICATION_HIDDEN_BY_CANDIDATE", subjectId: "a1" });
   });
 });

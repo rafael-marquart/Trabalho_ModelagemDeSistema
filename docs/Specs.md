@@ -2653,7 +2653,7 @@ OPEN-063 a OPEN-065 estão resolvidas conforme `docs/OPEN.md`. A linha do tempo 
 Diante de alteração relevante, identificar destinatários autorizados, preparar e enviar comunicação pelo canal aprovado, registrar resultado conforme política; falha no envio não reverte alteração de domínio.
 
 ## 3.1. Telas e evidência de layout
-Não há tela própria para central ou histórico de notificações enviadas no escopo atual. O candidato acompanha os acontecimentos do processo na linha do tempo funcional da candidatura, conforme SPEC-016/OPEN-065; essa linha do tempo não representa uma lista de e-mails enviados.
+**Revisão de 01/11/2026 (OPEN-067/OPEN-069):** há a tela **Notificações** no site para candidato, Empresa e Recrutador; o e-mail passou a ser opcional. Texto original: Não há tela própria para central ou histórico de notificações enviadas no escopo atual. O candidato acompanha os acontecimentos do processo na linha do tempo funcional da candidatura, conforme SPEC-016/OPEN-065; essa linha do tempo não representa uma lista de e-mails enviados.
 
 ## 4. Dependências
 SPEC-009, 011 a 016. As dependências fornecem dados e capacidades; esta Spec não duplica regras pertencentes a outras Specs.

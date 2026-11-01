@@ -15,6 +15,7 @@ export type NotificationPayload = {
 export type NotificationKind = "APPLICATION_SUBMITTED" | "APPLICATION_STAGE_CHANGED" | "APPLICATION_CANCELLED" | "JOB_CLOSED";
 
 const OFFICIAL = "O e-mail é um aviso: a situação oficial é a que aparece na plataforma.";
+const OPT_OUT = "Este aviso também fica em Notificações, na plataforma, onde você pode desligar o envio por e-mail.";
 
 export function notificationEmail(kind: NotificationKind, payload: NotificationPayload, link: { baseUrl: string; applicationId?: string | null; jobId?: string | null }): EmailContent {
   const job = payload.jobTitle || "a vaga";
@@ -27,7 +28,7 @@ export function notificationEmail(kind: NotificationKind, payload: NotificationP
         heading: "Candidatura registrada",
         intro: [`Sua candidatura para ${job}, em ${company}, foi registrada e está na etapa Inscrita.`],
         action: { label: "Acompanhar candidatura", url: tracking },
-        closing: [OFFICIAL]
+        closing: [OFFICIAL, OPT_OUT]
       });
     case "APPLICATION_STAGE_CHANGED": {
       const stage = candidateStageLabels[payload.toStage ?? ""] ?? "atualizada";
@@ -41,7 +42,7 @@ export function notificationEmail(kind: NotificationKind, payload: NotificationP
         heading: `Situação da candidatura: ${stage}`,
         intro: [sentence],
         action: { label: "Ver detalhes da candidatura", url: tracking },
-        closing: [OFFICIAL]
+        closing: [OFFICIAL, OPT_OUT]
       });
     }
     case "APPLICATION_CANCELLED": {
@@ -51,7 +52,7 @@ export function notificationEmail(kind: NotificationKind, payload: NotificationP
         heading: "Candidatura cancelada pelo candidato",
         intro: [`${payload.candidateName || "Um candidato"} cancelou a candidatura para ${job}. A candidatura e o histórico continuam registrados no funil, na etapa Cancelada.`],
         action: { label: "Ver candidatura", url: `${link.baseUrl}/${area}/vagas/${link.jobId ?? ""}/candidaturas/${link.applicationId ?? ""}` },
-        closing: [OFFICIAL]
+        closing: [OFFICIAL, OPT_OUT]
       });
     }
     case "JOB_CLOSED":
@@ -63,7 +64,32 @@ export function notificationEmail(kind: NotificationKind, payload: NotificationP
           "Sua candidatura continua registrada e não foi excluída por causa do encerramento. O processo seletivo pode continuar."
         ],
         action: { label: "Acompanhar candidatura", url: tracking },
-        closing: [OFFICIAL]
+        closing: [OFFICIAL, OPT_OUT]
       });
+  }
+}
+
+/** Short version shown in the site's "Notificações" list, with a link inside the site to the official state. */
+export function notificationSummary(kind: NotificationKind, payload: NotificationPayload, ids: { applicationId?: string | null; jobId?: string | null }): { title: string; body: string; href: string } {
+  const job = payload.jobTitle || "a vaga";
+  const company = payload.companyName || "a empresa";
+  const tracking = `/candidato/candidaturas/${ids.applicationId ?? ""}`;
+  switch (kind) {
+    case "APPLICATION_SUBMITTED":
+      return { title: "Candidatura registrada", body: `Sua candidatura para ${job}, em ${company}, foi registrada na etapa Inscrita.`, href: tracking };
+    case "APPLICATION_STAGE_CHANGED": {
+      const stage = candidateStageLabels[payload.toStage ?? ""] ?? "atualizada";
+      const body = payload.toStage === "RECUSADA" ? `${company} encerrou a sua participação no processo seletivo de ${job}.`
+        : payload.toStage === "CONTRATADO" ? `${company} registrou a aprovação da sua candidatura para ${job}.`
+        : `Sua candidatura para ${job}, em ${company}, avançou para a etapa ${stage}.`;
+      const title = payload.toStage === "RECUSADA" ? "Candidatura recusada" : payload.toStage === "CONTRATADO" ? "Candidatura aprovada" : `Nova etapa: ${stage}`;
+      return { title, body, href: tracking };
+    }
+    case "APPLICATION_CANCELLED": {
+      const area = payload.recipientArea === "recrutador" ? "recrutador" : "empresa";
+      return { title: "Candidatura cancelada pelo candidato", body: `${payload.candidateName || "Um candidato"} cancelou a candidatura para ${job}.`, href: `/${area}/vagas/${ids.jobId ?? ""}/candidaturas/${ids.applicationId ?? ""}` };
+    }
+    case "JOB_CLOSED":
+      return { title: "Vaga encerrada", body: `${company} encerrou a vaga ${job}. Sua candidatura continua registrada e o processo seletivo pode continuar.`, href: tracking };
   }
 }

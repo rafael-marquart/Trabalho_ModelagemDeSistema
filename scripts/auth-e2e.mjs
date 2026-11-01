@@ -1719,6 +1719,43 @@ async function main() {
     assert.ok(sentTexts.includes(`/candidato/candidaturas/${reapplied.id}`), "the candidate is pointed to the official state");
     assert.ok(sentTexts.includes(`/empresa/vagas/${compatJob.id}/candidaturas/${applicationId}`), "the company is pointed to the funnel");
 
+    // Decision of 01/11/2026: the same notices appear inside the site ("Notificações"), only to their recipient.
+    const noticesOf = async cookie => JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/notificacoes`, { headers: { cookie }, redirect: "manual" }), 200, "notices of the signed-in person"));
+    const candidateNotices = await noticesOf(compatCookie);
+    assert.equal(candidateNotices.notices.length, 6, "the candidate sees their 6 notices");
+    assert.equal(candidateNotices.unread, 6);
+    assert.equal(candidateNotices.emailNotifications, "ON", "e-mail copies are on by default");
+    const companyNotices = await noticesOf(companyCookie);
+    assert.equal(companyNotices.notices.filter(notice => notice.title === "Candidatura cancelada pelo candidato").length, 2, "the company sees the cancellations");
+    assert.ok(!JSON.stringify(companyNotices).includes("Nova etapa"), "the company does not see the candidate's notices");
+    await expectStatus(await fetch(`${BASE_URL}/api/notificacoes`, { redirect: "manual" }), 401, "anonymous notices");
+    const markNotices = (body, cookie) => fetch(`${BASE_URL}/api/notificacoes/lidas`, { method: "POST", headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie }, body: JSON.stringify(body), redirect: "manual" });
+    const foreign = JSON.parse(await expectStatus(await markNotices({ id: companyNotices.notices[0].id }, compatCookie), 200, "marking someone else's notice"));
+    assert.equal(foreign.changed, 0, "someone else's notice is never marked");
+    const markedOne = JSON.parse(await expectStatus(await markNotices({ id: candidateNotices.notices[0].id }, compatCookie), 200, "marking one notice"));
+    assert.equal(markedOne.unread, 5);
+    const markedAll = JSON.parse(await expectStatus(await markNotices({}, compatCookie), 200, "marking all notices"));
+    assert.equal(markedAll.unread, 0);
+    const countAfter = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/notificacoes/contagem`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "unread count"));
+    assert.equal(countAfter.unread, 0);
+    for (const [path, cookie] of [["/candidato/notificacoes", compatCookie], ["/empresa/notificacoes", companyCookie]]) {
+      const page = await expectStatus(await fetch(`${BASE_URL}${path}`, { headers: { cookie }, redirect: "manual" }), 200, `notices page ${path}`);
+      assert.ok(page.includes("Notificações"), "the notices page renders");
+    }
+
+    // Decision of 01/11/2026: a refused or cancelled application can leave the candidate's list; nothing is deleted.
+    const hide = (id, cookie) => fetch(`${myUrl}/${id}/ocultar`, { method: "POST", headers: { "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie }, redirect: "manual" });
+    await expectStatus(await hide(applicationId, companyCookie), 401, "a company cannot hide the candidate's application");
+    await expectStatus(await hide(applicationId, compatCookie), 200, "the candidate hides a cancelled application");
+    const afterHide = JSON.parse(await expectStatus(await fetch(myUrl, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "list after hiding")).applications;
+    assert.ok(!afterHide.some(item => item.id === applicationId) && afterHide.some(item => item.id === reapplied.id), "only the hidden application leaves the list");
+    await expectStatus(await fetch(`${myUrl}/${applicationId}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 404, "a hidden application is no longer shown");
+    await expectStatus(await hide(applicationId, compatCookie), 404, "hiding twice");
+    assert.ok(await prisma.application.findUnique({ where: { id: applicationId } }), "the hidden application is kept");
+    assert.ok(await prisma.auditEvent.findFirst({ where: { eventType: "APPLICATION_HIDDEN_BY_CANDIDATE", subjectId: applicationId } }), "hiding is audited");
+    const funnelAfterHide = JSON.parse(await expectStatus(await fetch(funnelUrl, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "funnel after hiding"));
+    assert.ok(funnelAfterHide.applications.some(item => item.id === applicationId), "the company still sees the hidden application");
+
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });
     assert.equal(companySessionsBeforeLogout, 1, "company login must have one active session before logout");
