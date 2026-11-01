@@ -9,6 +9,8 @@ vi.mock("next/navigation", () => ({ redirect: vi.fn(), notFound: vi.fn(() => { t
 vi.mock("@/components/theme-toggle", () => ({ default: () => <button type="button">Tema</button> }));
 vi.mock("@/lib/auth/session", () => ({ getCurrentUser: async () => ({ id: "cand", role: "CANDIDATE", fullName: "Maria Silva", email: "m@example.com", isActive: true }) }));
 vi.mock("@/lib/jobs/detail-service", () => ({ getJobDetailForCandidate: detailMock }));
+const reportGate = vi.hoisted(() => ({ canReportJob: vi.fn(async () => false) }));
+vi.mock("@/lib/reports/reporter-service", () => reportGate);
 import Page from "./page";
 
 const dim = (score: number | null) => ({ status: score === null ? "INSUFFICIENT" : "EVALUATED", score, components: [{ label: "Item", score, detail: "Detalhe do critério." }] });
@@ -73,5 +75,13 @@ describe("job detail page", () => {
     const { container } = await show(base);
     const result = await axe.run(container, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
     expect(result.violations.map(v => `${v.id}: ${v.nodes.map(n => n.html).join(" | ")}`)).toEqual([]);
+  });
+  it("offers the report only after a completed interview (decision of 01/11/2026)", async () => {
+    await show(base);
+    expect(screen.queryByRole("link", { name: "Denunciar esta vaga" })).toBeNull();
+    cleanup();
+    reportGate.canReportJob.mockResolvedValueOnce(true);
+    await show(base);
+    expect(screen.getByRole("link", { name: "Denunciar esta vaga" }).getAttribute("href")).toBe("/candidato/vagas/job-1/denunciar");
   });
 });

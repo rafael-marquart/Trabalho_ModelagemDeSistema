@@ -2904,7 +2904,7 @@ SPEC-001, 018, 020. As dependências fornecem dados e capacidades; esta Spec nã
 6. O denunciante pode consultar andamento e resultado, sem acesso à investigação interna. A Empresa denunciada recebe os pontos necessários para responder, sem identidade ou dados pessoais do denunciante. Exibir os estados “Recebida”, “Em análise”, “Aguardando informações” quando necessário e “Concluída”; restringir denúncia e evidências a pessoas autorizadas.
 
 ## 6. Regras e invariantes
-- Somente candidato autenticado com acesso à vaga pode registrar denúncia.
+- Somente candidato autenticado com acesso à vaga pode registrar denúncia. **Revisão de 01/11/2026 (OPEN-074):** "acesso à vaga" significa ter tido entrevista concluída em candidatura àquela vaga.
 - As situações elegíveis são possível incompatibilidade relacionada à acessibilidade ou possível falsa inclusão associada à vaga.
 - Denúncia não comprova irregularidade, não bloqueia vaga nem altera nota automaticamente; Administrador analisa antes de qualquer consequência; aplicam-se os controles antiabuso existentes.
 - Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.

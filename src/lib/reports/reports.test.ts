@@ -10,7 +10,7 @@ const { prismaMock, tx, notify } = vi.hoisted(() => {
     notify: { enqueueReportNotice: vi.fn(), kickNotificationDelivery: vi.fn() },
     prismaMock: {
       job: { findFirst: vi.fn(), findUnique: vi.fn(), findMany: vi.fn() },
-      interviewEvaluation: { findMany: vi.fn(), findUnique: vi.fn() },
+      interviewEvaluation: { findMany: vi.fn(), findUnique: vi.fn() }, interview: { findFirst: vi.fn() },
       report: { count: vi.fn(), findFirst: vi.fn(), findUnique: vi.fn(), findMany: vi.fn() },
       user: { findMany: vi.fn() }, auditEvent: { create: vi.fn() },
       $transaction: vi.fn(async (cb: (t: typeof tx) => unknown) => cb(tx))
@@ -36,6 +36,7 @@ describe("reports (SPEC-019)", () => {
     prismaMock.job.findMany.mockResolvedValue([job]);
     prismaMock.report.count.mockResolvedValue(0);
     prismaMock.interviewEvaluation.findMany.mockResolvedValue([]);
+    prismaMock.interview.findFirst.mockResolvedValue({ id: "i1" });
     tx.report.create.mockImplementation(async ({ data }: { data: Record<string, unknown> }) => ({ id: "r1", ...data }));
     tx.report.updateMany.mockResolvedValue({ count: 1 });
   });
@@ -58,6 +59,13 @@ describe("reports (SPEC-019)", () => {
     expect(tx.reportEvent.create.mock.calls[0][0].data).toMatchObject({ kind: "SUBMITTED", toStatus: "RECEBIDA" });
     expect(tx.auditEvent.create.mock.calls[0][0].data).toMatchObject({ eventType: "REPORT_SUBMITTED" });
     expect(Object.keys(prismaMock.job)).not.toContain("update");
+  });
+
+  it("is available only after a completed interview in this job (decision of 01/11/2026)", async () => {
+    prismaMock.interview.findFirst.mockResolvedValueOnce(null);
+    expect(await createReport("cand", input, now)).toMatchObject({ ok: false, status: 403 });
+    expect(prismaMock.interview.findFirst.mock.calls[0][0].where).toEqual({ status: "COMPLETED", application: { jobId: "j1", candidateUserId: "cand" } });
+    expect(tx.report.create).not.toHaveBeenCalled();
   });
 
   it("refuses an invisible job, someone else's evaluation, the daily limit and a second open report for the job", async () => {

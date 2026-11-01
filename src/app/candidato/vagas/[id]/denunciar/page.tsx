@@ -21,7 +21,10 @@ export default async function ReportJobPage({ params }: { params: Promise<{ id: 
         <h1 id="report-title">{`Denunciar: ${context.job.title}`}</h1>
         <p className="muted">Use este formulário para relatar possível incompatibilidade de acessibilidade ou possível falsa inclusão nesta vaga. A moderação da plataforma analisa cada denúncia antes de qualquer consequência.</p>
       </div></header>
-      {context.openReportId ? <div className="application-result" role="status">
+      {!context.eligible ? <div className="application-result" role="status">
+        <h2>Denúncia disponível depois da entrevista</h2>
+        <p>Você pode denunciar esta vaga depois de participar de uma entrevista concluída no processo seletivo dela. Assim a denúncia se baseia no que você viveu no processo.</p>
+      </div> : context.openReportId ? <div className="application-result" role="status">
         <h2>Você já tem uma denúncia em andamento sobre esta vaga</h2>
         <p>Enquanto ela estiver em análise, não é possível registrar outra para a mesma vaga.</p>
         <p><Link className="text-link" href={`/candidato/denuncias/${context.openReportId}`}>Acompanhar a denúncia →</Link></p>

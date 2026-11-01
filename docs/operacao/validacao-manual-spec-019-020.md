@@ -12,12 +12,13 @@ e entre por http://localhost:3000/admin/login.
 
 | # | Passo | Resultado esperado |
 |---|---|---|
-| 1 | Candidato abre uma vaga | "Denunciar esta vaga" abaixo da área de candidatura |
+| 1 | Candidato abre uma vaga em que **não** teve entrevista concluída | Não aparece "Denunciar esta vaga"; abrindo o endereço `/candidato/vagas/<id>/denunciar`, a tela explica que a denúncia é liberada após a entrevista |
+| 1b | Vaga com entrevista concluída (SPEC-018) | "Denunciar esta vaga" aparece no detalhe da vaga e na seção Entrevista da candidatura |
 | 2 | Abrir e clicar em "Registrar denúncia" sem preencher | Pede o tipo e a descrição; nada é enviado |
 | 3 | Escolher o tipo, descrever, colocar um link em Evidências, marcar o risco e registrar | "Denúncia registrada", sem prometer decisão; informa a meta de 5 dias úteis e que a empresa não recebe o seu nome |
 | 4 | Menu "Minhas denúncias" | A denúncia aparece como Recebida; o detalhe mostra o andamento e o que você enviou |
 | 5 | Abrir de novo "Denunciar esta vaga" na mesma vaga | Aviso de que já existe uma denúncia em andamento |
-| 6 | Registrar denúncias em outras vagas até passar de 3 em 24 horas | A quarta é recusada com explicação |
+| 6 | Registrar denúncias em outras vagas (com entrevista concluída) até passar de 3 em 24 horas | A quarta é recusada com explicação |
 | 7 | Vaga com entrevista que você avaliou (SPEC-018) | O formulário pergunta se a denúncia é sobre essa entrevista |
 | 8 | Conferir a vaga denunciada | Nada mudou (continua aberta) |
 

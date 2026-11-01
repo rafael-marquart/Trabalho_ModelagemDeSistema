@@ -3,7 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { addBusinessDays, REVIEW_TARGET_BUSINESS_DAYS } from "./business-days";
 import { categoryLabels, decisionLabels, reportStatusLabels, type DecisionCode, type ReportCategoryCode, type ReportStatusCode } from "./labels";
 
-// SPEC-019: a signed-in candidate reports a job they can see (OPEN-074). Category and description are required; evidence
+// SPEC-019: a signed-in candidate reports a job after taking part in its selection process: they must have had a
+// completed interview for that job (decision of 01/11/2026, revising OPEN-074). Category and description are required; evidence
 // is optional free text (links or a description) and never a medical report or personal document (OPEN-075).
 
 export const MAX_REPORTS_PER_DAY = 3;
@@ -35,18 +36,26 @@ const ownEvaluationsForJob = (userId: string, jobId: string) => prisma.interview
   select: { id: true, submittedAt: true, interview: { select: { scheduledAt: true } } }, orderBy: { submittedAt: "desc" }
 });
 
+/** OPEN-074 (revised 01/11/2026): reporting is open to candidates with a completed interview in this job. */
+export async function canReportJob(userId: string, jobId: string) {
+  const interview = await prisma.interview.findFirst({ where: { status: "COMPLETED", application: { jobId, candidateUserId: userId } }, select: { id: true } });
+  return Boolean(interview);
+}
+
 /** What the report form needs: the job, the reporter's own evaluations for it and whether a report is already open. */
 export async function reportFormContext(userId: string, jobId: string) {
   const job = await visibleJob(jobId);
   if (!job) return null;
-  const [evaluations, open] = await Promise.all([
+  const [eligible, evaluations, open] = await Promise.all([
+    canReportJob(userId, jobId),
     ownEvaluationsForJob(userId, jobId),
     prisma.report.findFirst({ where: { reporterUserId: userId, jobId, status: { not: "CONCLUIDA" } }, select: { id: true } })
   ]);
   return {
     job: { id: job.id, title: job.title || "Vaga sem título", companyName: job.company.tradeName || job.company.legalName },
     evaluations: evaluations.map((item) => ({ id: item.id, submittedAt: item.submittedAt.toISOString(), interviewAt: item.interview?.scheduledAt.toISOString() ?? null })),
-    openReportId: open?.id ?? null
+    openReportId: open?.id ?? null,
+    eligible
   };
 }
 
@@ -61,6 +70,7 @@ const fail = (status: number, message: string): Result => ({ ok: false, status, 
 export async function createReport(userId: string, input: ReportInput, now: Date = new Date()): Promise<Result> {
   const job = await visibleJob(input.jobId);
   if (!job) return fail(404, "Vaga não encontrada.");
+  if (!await canReportJob(userId, job.id)) return fail(403, "A denúncia fica disponível depois que você participa de uma entrevista concluída nesta vaga.");
   if (input.evaluationId) {
     const own = await ownEvaluationsForJob(userId, job.id);
     if (!own.some((item) => item.id === input.evaluationId)) return fail(400, "A avaliação indicada não é sua ou não é desta vaga.");

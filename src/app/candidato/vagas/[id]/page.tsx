@@ -8,6 +8,7 @@ import ApplyPanel from "@/components/candidate/apply-panel";
 import type { Compatibility } from "@/components/candidate/types";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getJobDetailForCandidate } from "@/lib/jobs/detail-service";
+import { canReportJob } from "@/lib/reports/reporter-service";
 
 const accessClass: Record<string, string> = { PRESENT: "access-present", ABSENT: "access-absent", NOT_INFORMED: "access-unknown" };
 
@@ -18,6 +19,7 @@ export default async function CandidateJobDetailPage({ params }: { params: Promi
   const { id } = await params;
   const job = await getJobDetailForCandidate(user.id, id);
   if (!job) notFound();
+  const canReport = await canReportJob(user.id, id);
   const result = job.compatibility as Compatibility | null;
   const complete = result?.status === "COMPLETE" && result.score !== null;
   const criteria = job.criteria;
@@ -99,7 +101,7 @@ export default async function CandidateJobDetailPage({ params }: { params: Promi
         {job.applicationId ? <Link className="secondary-button" href={`/candidato/candidaturas/${job.applicationId}`}>Acompanhar minha candidatura</Link> : null}
         {job.action.allowed ? <ApplyPanel jobId={id} jobTitle={job.title} companyName={job.companyName} score={result?.score ?? null} /> : null}
       </section>
-      <p className="report-link-row"><Link className="link-button" href={`/candidato/vagas/${id}/denunciar`}>Denunciar esta vaga</Link> <span className="muted">— possível incompatibilidade de acessibilidade ou falsa inclusão</span></p>
+      {canReport ? <p className="report-link-row"><Link className="link-button" href={`/candidato/vagas/${id}/denunciar`}>Denunciar esta vaga</Link> <span className="muted">— possível incompatibilidade de acessibilidade ou falsa inclusão</span></p> : null}
     </main>
   </CompanyShell>;
 }

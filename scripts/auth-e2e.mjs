@@ -1835,11 +1835,15 @@ async function main() {
     assert.equal((await prisma.job.findUnique({ where: { id: interviewJob.id } })).status, "OPEN", "registering a report does not change the job");
     const myReports = JSON.parse(await expectStatus(await fetch(reportsUrl, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate lists own reports")).reports;
     assert.deepEqual(myReports.map(item => [item.id, item.statusLabel]), [[reportId, "Recebida"]]);
-    await expectStatus(await sendReport({ ...reportBody, jobId: compatJob.id, category: "ACCESSIBILITY_INCOMPATIBILITY" }, compatCookie), 201, "a report about another job is allowed");
+    // Decision of 01/11/2026: reporting is available only after a completed interview in the job.
+    await expectStatus(await sendReport({ ...reportBody, jobId: compatJob.id, category: "ACCESSIBILITY_INCOMPATIBILITY" }, compatCookie), 403, "a job without a completed interview cannot be reported");
     const thirdJob = JSON.parse(await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas`, "POST", { ...compatJobBody, title: "Terceira vaga E2E" }, companyCookie), 201, "a third job")).job;
     await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${thirdJob.id}/acao`, "POST", { action: "publish" }, companyCookie), 200, "publish the third job");
-    await expectStatus(await sendReport({ ...reportBody, jobId: thirdJob.id }, compatCookie), 201, "a third report within 24 hours");
-    const limited = await sendReport({ ...reportBody, jobId: thirdJob.id, category: "ACCESSIBILITY_INCOMPATIBILITY" }, compatCookie);
+    // Test setup: two more reports registered in the last 24 hours (other jobs) to reach the daily limit.
+    for (const job of [compatJob, thirdJob]) {
+      await prisma.report.create({ data: { reporterUserId: candidateUser.id, jobId: job.id, companyId: storedReport.companyId, category: "ACCESSIBILITY_INCOMPATIBILITY", description: "Registro de teste para o limite diário.", dueAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) } });
+    }
+    const limited = await sendReport({ ...reportBody, category: "ACCESSIBILITY_INCOMPATIBILITY" }, compatCookie);
     assert.equal(limited.status, 429, "a fourth report in 24 hours is refused");
     assert.ok(JSON.parse(await limited.text()).message.includes("3 denúncias"), "the limit is explained");
 
