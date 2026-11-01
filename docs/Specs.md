@@ -2639,8 +2639,8 @@ OPEN-063 a OPEN-065 estão resolvidas conforme `docs/OPEN.md`. A linha do tempo 
 | Campo | Valor |
 |---|---|
 | ID | SPEC-017 |
-| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-017.md` |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada em 01/11/2026, exceto o aviso de entrevista (não há operação de entrevista na plataforma) e com o "Recrutador responsável" provisório (OPEN-093); ver `docs/Implementacao/SPEC-017.md` |
+| Estado do layout | aprovado pelo responsável em 01/11/2026 sobre as telas implementadas (aba Notificações com contador no menu e opção de e-mail, e-mails de aviso, "Remover da lista" em Minhas candidaturas) |
 | Capacidade | Notificar alterações do processo seletivo |
 
 ## 2. Rastreabilidade
@@ -2696,18 +2696,20 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
-- [ ] Cada um dos cinco tipos de evento aprovados em OPEN-066 gera comunicação ao destinatário definido para esse evento.
-- [ ] Notificação é disparada apenas para destinatário autorizado e não expõe dados de outro candidato (RNF-07/RNF-08).
-- [ ] Falhas de envio não apagam a alteração de origem nem geram falsa confirmação de entrega (RNF-09/RNF-14, quando aplicável).
+- [ ] Cada um dos cinco tipos de evento aprovados em OPEN-066 gera comunicação ao destinatário definido para esse evento. *(quatro tipos implementados; o aviso de entrevista depende de uma operação de entrevista que não existe nas Specs atuais; destinatário do cancelamento provisório — OPEN-093)*
+- [x] Notificação é disparada apenas para destinatário autorizado e não expõe dados de outro candidato (RNF-07/RNF-08).
+- [x] Falhas de envio não apagam a alteração de origem nem geram falsa confirmação de entrega (RNF-09/RNF-14, quando aplicável).
 
-- [ ] Acesso limitado ao ator autorizado.
-- [ ] Pré-condições e regras são validadas no backend.
-- [ ] Operações inválidas são recusadas sem alteração indevida.
-- [ ] Operação válida produz o estado esperado.
-- [ ] Dados pessoais e de acessibilidade respeitam autorização.
-- [ ] Alterações relevantes ficam rastreáveis.
-- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
-- [ ] Lacunas permanecem explicitadas em OPEN.md.
+- [x] Acesso limitado ao ator autorizado.
+- [x] Pré-condições e regras são validadas no backend.
+- [x] Operações inválidas são recusadas sem alteração indevida.
+- [x] Operação válida produz o estado esperado.
+- [x] Dados pessoais e de acessibilidade respeitam autorização.
+- [x] Alterações relevantes ficam rastreáveis.
+- [x] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [x] Lacunas permanecem explicitadas em OPEN.md.
+
+> Evidência: testes Vitest e E2E verdes na CI; teste manual executado pelo responsável em 01/11/2026 sem problemas, incluindo e-mail pelo Mailpit e por provedor real (Brevo); layout aprovado na mesma data. Revisões de 01/11/2026: aba Notificações no site e e-mail opcional (OPEN-067/OPEN-069), remoção de candidaturas encerradas da lista (OPEN-065).
 
 ## 12. Casos de teste derivados
 
@@ -2728,12 +2730,12 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 OPEN-066 a OPEN-069 estão resolvidas conforme `docs/OPEN.md`. As notificações obrigatórias são enviadas por e-mail para os eventos definidos; o envio é solicitado após confirmação do evento, com novas tentativas automáticas em falhas temporárias e registro de falha final. Não há central/histórico separado de notificações; o acompanhamento funcional ocorre na linha do tempo da candidatura.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
-- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
-- [ ] Questões decididas ou mantidas explicitamente em aberto.
-- [ ] Layout funcional anexado e aprovado quando aplicável.
-- [ ] Critérios de aceitação e testes revisados.
-- [ ] Nenhuma implementação antes das aprovações exigidas.
+- [x] Texto revisado e aprovado.
+- [x] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [x] Questões decididas ou mantidas explicitamente em aberto.
+- [x] Layout funcional anexado e aprovado quando aplicável.
+- [x] Critérios de aceitação e testes revisados.
+- [x] Nenhuma implementação antes das aprovações exigidas.
 
 ---
 
