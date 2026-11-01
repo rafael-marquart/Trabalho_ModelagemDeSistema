@@ -19,6 +19,8 @@ O código de `getPublicBaseUrl` exige `APP_BASE_URL` em produção e só aceita 
 - [ ] Enviar e receber mensagens reais de confirmação empresarial, recuperação de senha e convite/reenvio de recrutador em homologação.
 - [ ] Verificar entrega, rejeições, timeouts, remetente e comportamento de falha. Confirmar que uma falha de entrega não expõe token bruto em logs nem deixa convites em estado inconsistente.
 
+No código (01/11/2026): mensagens em texto e HTML acessível, TLS obrigatório para SMTP remoto (recusa SMTP remoto sem TLS em produção), tempos limite, classificação das falhas sem expor destinatário, link ou token, e categoria da falha gravada na auditoria. Configuração de provedores, comando de teste (`npm run email:test`) e falhas simuladas com Mailpit (`npm run mailpit:chaos`): `docs/operacao/email-smtp.md`; roteiro: `docs/operacao/validacao-manual-email.md`.
+
 O CI usa um servidor SMTP local de captura. Isso valida a geração e a leitura das mensagens de teste, mas **não comprova entrega externa, reputação do remetente ou configuração do provedor SMTP de homologação/produção**.
 
 ## 3. Proxy confiável e endereço IP

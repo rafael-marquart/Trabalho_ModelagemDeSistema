@@ -17,7 +17,9 @@
     "login-security:retention": "node scripts/purge-login-security-records.mjs",
     "compatibility:retention": "node scripts/purge-compatibility-results.mjs",
     "here:usage": "node scripts/here-usage.mjs",
-    "admin:create": "node scripts/create-admin.mjs"
+    "admin:create": "node scripts/create-admin.mjs",
+    "email:test": "node scripts/email-test.mjs",
+    "mailpit:chaos": "node scripts/mailpit-chaos.mjs"
   },
   "dependencies": {
     "@fontsource/atkinson-hyperlegible-next": "5.3.0",

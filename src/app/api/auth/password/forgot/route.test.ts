@@ -13,7 +13,7 @@ const { prismaMock, sendEmailMock } = vi.hoisted(() => ({
 }));
 
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
-vi.mock("@/lib/email", () => ({ sendEmail: sendEmailMock }));
+vi.mock("@/lib/email", () => ({ sendEmail: sendEmailMock, emailFailureMetadata: () => ({ reason: "CONNECTION" }) }));
 
 import { POST } from "./route";
 
@@ -96,7 +96,8 @@ describe("password recovery request", () => {
         actorUserId: "user-1",
         eventType: "AUTH_PASSWORD_RECOVERY_EMAIL_FAILED",
         subjectType: "User",
-        subjectId: "user-1"
+        subjectId: "user-1",
+        metadata: { reason: "CONNECTION" }
       }
     });
   });

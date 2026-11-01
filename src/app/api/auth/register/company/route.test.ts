@@ -13,7 +13,7 @@ const { prismaMock, hashPasswordMock, createTokenMock, sendEmailMock } = vi.hois
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
 vi.mock("@/lib/auth/password", () => ({ hashPassword: hashPasswordMock }));
 vi.mock("@/lib/auth/tokens", () => ({ createOneTimeToken: createTokenMock }));
-vi.mock("@/lib/email", () => ({ sendEmail: sendEmailMock }));
+vi.mock("@/lib/email", () => ({ sendEmail: sendEmailMock, emailFailureMetadata: () => ({ reason: "CONNECTION" }) }));
 
 import { POST } from "./route";
 
@@ -216,7 +216,8 @@ describe("company registration", () => {
         actorUserId: "company-user-1",
         eventType: "AUTH_COMPANY_EMAIL_VERIFICATION_DELIVERY_FAILED",
         subjectType: "User",
-        subjectId: "company-user-1"
+        subjectId: "company-user-1",
+        metadata: { reason: "CONNECTION" }
       }
     });
     expect(response.headers.get("content-type")).toContain("application/json");

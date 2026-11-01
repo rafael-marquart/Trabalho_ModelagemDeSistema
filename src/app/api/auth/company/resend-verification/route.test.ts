@@ -13,7 +13,7 @@ const { prismaMock, sendEmailMock, createTokenMock, rejectOriginMock, getPublicB
 }));
 
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
-vi.mock("@/lib/email", () => ({ sendEmail: sendEmailMock }));
+vi.mock("@/lib/email", () => ({ sendEmail: sendEmailMock, emailFailureMetadata: () => ({ reason: "CONNECTION" }) }));
 vi.mock("@/lib/auth/tokens", () => ({ createOneTimeToken: createTokenMock }));
 vi.mock("@/lib/security/request-origin", () => ({ rejectCrossOriginRequest: rejectOriginMock }));
 vi.mock("@/lib/security/public-base-url", () => ({ getPublicBaseUrl: getPublicBaseUrlMock }));
@@ -97,7 +97,8 @@ describe("resend company email verification", () => {
     expect(sendEmailMock).toHaveBeenCalledWith({
       to: "company@example.com",
       subject: "Novo link de confirmação — Acessa Vagas",
-      text: expect.stringContaining("https://acessavagas.example/empresa/confirmar-email?token=one-time-company-token")
+      text: expect.stringContaining("https://acessavagas.example/empresa/confirmar-email?token=one-time-company-token"),
+      html: expect.stringContaining('href="https://acessavagas.example/empresa/confirmar-email?token=one-time-company-token"')
     });
     expect(await response.json()).toEqual({
       message: "Se houver uma conta empresarial pendente com esse e-mail, enviaremos um novo link de confirmação."
@@ -180,7 +181,8 @@ describe("resend company email verification", () => {
         actorUserId: "company-user-1",
         eventType: "AUTH_COMPANY_EMAIL_VERIFICATION_DELIVERY_FAILED",
         subjectType: "User",
-        subjectId: "company-user-1"
+        subjectId: "company-user-1",
+        metadata: { reason: "CONNECTION" }
       }
     });
   });

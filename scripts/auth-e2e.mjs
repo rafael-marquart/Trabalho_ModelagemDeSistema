@@ -36,28 +36,49 @@ function digest(value) {
   return createHash("sha256").update(value).digest("hex");
 }
 
-function extractEmailToken(previousMessageCount, expectedPath) {
-  const mail = SMTP_MESSAGES.slice(previousMessageCount).join("\n");
-  // Decode the SMTP message's transfer encoding before parsing the URL.
-  // This keeps the assertion aligned with the token a real recipient receives.
-  const transferEncoding = mail.match(/content-transfer-encoding:\s*([\w-]+)/i)?.[1]?.toLowerCase();
-  let decodedMail = mail;
-  if (transferEncoding === "base64") {
-    const body = mail.split(/\r?\n\r?\n/, 2)[1] || "";
-    decodedMail = Buffer.from(body.replace(/\s/g, ""), "base64").toString("utf8");
-  } else if (transferEncoding === "quoted-printable") {
-    decodedMail = mail
-      .replace(/=\r?\n/g, "")
-      .replace(/=([0-9A-F]{2})/gi, (_match, hex) => String.fromCharCode(Number.parseInt(hex, 16)));
+function decodeTransfer(body, encoding) {
+  if (encoding === "base64") return Buffer.from(body.replace(/\s/g, ""), "base64").toString("utf8");
+  if (encoding === "quoted-printable") {
+    const bytes = body.replace(/=\r?\n/g, "").replace(/=([0-9A-F]{2})/gi, (_match, hex) => String.fromCharCode(Number.parseInt(hex, 16)));
+    return Buffer.from(bytes, "latin1").toString("utf8");
   }
-  const tokenMatches = [...decodedMail.matchAll(/(?:\?|&)token=([A-Za-z0-9_-]{43})(?=[\s&"'<>]|$)/g)]
-    .filter(match => decodedMail.slice(Math.max(0, match.index - expectedPath.length - 16), match.index).includes(expectedPath));
-  assert.equal(
-    tokenMatches.length,
-    1,
-    `test SMTP message must contain exactly one 43-character token for ${expectedPath}`
-  );
-  return tokenMatches[0][1];
+  return body;
+}
+
+// Splits one SMTP message into its decoded MIME parts (text/plain and text/html since the e-mails became multipart).
+function mimeParts(raw) {
+  const [head, ...rest] = raw.split(/\r?\n\r?\n/);
+  const body = rest.join("\r\n\r\n");
+  const boundary = head.match(/boundary="?([^";\r\n]+)"?/i)?.[1];
+  const single = (headers, content) => ({
+    type: (headers.match(/content-type:\s*([\w/+-]+)/i)?.[1] || "text/plain").toLowerCase(),
+    content: decodeTransfer(content, headers.match(/content-transfer-encoding:\s*([\w-]+)/i)?.[1]?.toLowerCase())
+  });
+  if (!boundary) return [single(head, body)];
+  return body.split(`--${boundary}`).slice(1).filter(part => !part.startsWith("--")).map(part => {
+    const [partHead, ...partBody] = part.replace(/^\r?\n/, "").split(/\r?\n\r?\n/);
+    return single(partHead, partBody.join("\r\n\r\n"));
+  });
+}
+
+function tokensFor(content, expectedPath) {
+  return [...content.matchAll(/(?:\?|&)token=([A-Za-z0-9_-]{43})(?=[\s&"'<>]|$)/g)]
+    .filter(match => content.slice(Math.max(0, match.index - expectedPath.length - 16), match.index).includes(expectedPath))
+    .map(match => match[1]);
+}
+
+function extractEmailToken(previousMessageCount, expectedPath) {
+  // Decode each MIME part before parsing the URL, so the assertion uses the token a real recipient receives.
+  const parts = SMTP_MESSAGES.slice(previousMessageCount).flatMap(mimeParts);
+  const textTokens = parts.filter(part => part.type === "text/plain").flatMap(part => tokensFor(part.content, expectedPath));
+  assert.equal(textTokens.length, 1, `test SMTP message must contain exactly one 43-character token for ${expectedPath} in the text version`);
+  const htmlParts = parts.filter(part => part.type === "text/html");
+  assert.ok(htmlParts.length > 0, "the e-mail must also have an accessible HTML version");
+  for (const part of htmlParts) {
+    assert.ok(part.content.includes('<html lang="pt-BR">'), "the HTML version declares the language");
+    assert.ok(tokensFor(part.content, expectedPath).every(token => token === textTokens[0]), "the HTML version links to the same token");
+  }
+  return textTokens[0];
 }
 
 function startTestSmtp() {
