@@ -354,7 +354,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
       {sectionError("certifications")}
       <ul className="profile-chip-list">{profile.certifications.map(item => <li key={item}><span>{item}</span><button type="button" className="secondary-button" onClick={() => removeNamedEntry("certifications", item)} aria-label={`Remover certificação: ${item}`}>Remover</button></li>)}</ul>
       <h3 className="profile-subheading">Comprovantes (opcional)</h3>
-      <p className="muted">Se quiser, anexe o comprovante. São aceitos PDF, DOC, DOCX, JPG e PNG, com até 10 MB por arquivo. Não envie laudos ou documentos médicos.</p>
+      <p className="muted">Se quiser, anexe o comprovante. São aceitos PDF, DOC, DOCX, JPG e PNG, com até 4 MB por arquivo. Não envie laudos ou documentos médicos.</p>
       <form className="profile-document-form" onSubmit={uploadDocument}>
         <label>Tipo<select value={documentCategory} onChange={event => setDocumentCategory(event.target.value as "COURSE" | "CERTIFICATION")} disabled={uploading}>
           <option value="COURSE">Curso</option><option value="CERTIFICATION">Certificação</option>

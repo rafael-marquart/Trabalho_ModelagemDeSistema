@@ -7,11 +7,13 @@ const { prismaMock } = vi.hoisted(() => ({ prismaMock: {
   $transaction: vi.fn(async (ops: unknown[]) => ops)
 } }));
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
+const { afterMock } = vi.hoisted(() => ({ afterMock: vi.fn() }));
+vi.mock("next/server", async () => ({ ...(await vi.importActual<typeof import("next/server")>("next/server")), after: afterMock }));
 vi.mock("@/lib/email", async () => {
   const actual = await vi.importActual<typeof import("@/lib/email")>("@/lib/email");
   return { ...actual, sendEmail: vi.fn() };
 });
-import { countUnreadNotices, deliverDueNotifications, enqueueApplicationCancelled, enqueueJobClosed, listNotices, markNoticesRead, MAX_ATTEMPTS, RETRY_DELAYS_MS, responsibleRecipient } from "./service";
+import { countUnreadNotices, deliverDueNotifications, kickNotificationDelivery, enqueueApplicationCancelled, enqueueJobClosed, listNotices, markNoticesRead, MAX_ATTEMPTS, RETRY_DELAYS_MS, responsibleRecipient } from "./service";
 import { notificationEmail, notificationSummary } from "./messages";
 
 const tx = prismaMock as never;
@@ -146,5 +148,36 @@ describe("notification content", () => {
     const toCompany = notificationSummary("REPORT_INFO_REQUESTED", { reportId: "r1", area: "empresa", jobTitle: "Analista" }, {});
     expect(toCompany.href).toBe("/empresa/denuncias");
     expect(notificationEmail("REPORT_CONCLUDED", { reportId: "r1", area: "empresa", jobTitle: "Analista", decisionLabel: "Improcedente" }, link).text).toContain("https://app.example/empresa/denuncias");
+  });
+
+  describe("starting a delivery round", () => {
+    beforeEach(() => { vi.clearAllMocks(); afterMock.mockReset(); });
+
+    it("inside a request, hands the round to after() so a serverless function stays alive until it ends", async () => {
+      prismaMock.notification.findMany.mockResolvedValue([]);
+      afterMock.mockImplementation(() => undefined);
+      kickNotificationDelivery();
+      expect(afterMock).toHaveBeenCalledTimes(1);
+      expect(prismaMock.notification.findMany).not.toHaveBeenCalled();
+      await afterMock.mock.calls[0][0]();
+      expect(prismaMock.notification.findMany).toHaveBeenCalledTimes(1);
+    });
+
+    it("outside a request (server start, scripts), runs the round in the background", async () => {
+      prismaMock.notification.findMany.mockResolvedValue([]);
+      afterMock.mockImplementation(() => { throw new Error("after() was called outside a request scope"); });
+      kickNotificationDelivery();
+      await vi.waitFor(() => expect(prismaMock.notification.findMany).toHaveBeenCalledTimes(1));
+    });
+
+    it("does nothing when another process delivers the notifications", () => {
+      process.env.NOTIFICATIONS_WORKER = "off";
+      try {
+        kickNotificationDelivery();
+        expect(afterMock).not.toHaveBeenCalled();
+      } finally {
+        delete process.env.NOTIFICATIONS_WORKER;
+      }
+    });
   });
 });

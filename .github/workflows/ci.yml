@@ -38,9 +38,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Validate Prisma schema
         run: npx prisma validate
       - name: Generate Prisma Client
@@ -57,7 +57,9 @@ jobs:
         run: npm run lint
       - name: Unit tests
         run: npm test
-      - name: Production build
-        run: npm run build
+      - name: Production build (same script as Vercel, with its migration step)
+        env:
+          VERCEL_ENV: production
+        run: npm run vercel-build
       - name: End-to-end auth flow with PostgreSQL and test SMTP
         run: node scripts/auth-e2e.mjs

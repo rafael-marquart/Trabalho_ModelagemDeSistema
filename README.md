@@ -88,6 +88,10 @@ O serviço Mailpit captura mensagens SMTP e **não envia e-mails para destinatá
 - Para parar os serviços: `docker compose down`. Para apagar também o banco de desenvolvimento: `docker compose down -v` (isso exclui permanentemente os dados locais).
 - O script `node scripts/auth-e2e.mjs` inicia seu próprio servidor SMTP de captura para E2E e usa `AUTH_E2E_PORT`/`AUTH_E2E_SMTP_PORT`; não depende do Mailpit nem envia mensagens externas.
 
+### Publicação (Vercel)
+
+O passo a passo para publicar na Vercel com banco Neon, e-mail Brevo e agendamentos está em [`docs/operacao/deploy-vercel.md`](docs/operacao/deploy-vercel.md).
+
 ### Estado da implementação
 
 A branch de implementação contém a entrada/login, autenticação por credenciais, sessões revogáveis, cadastro inicial de candidato e empresa, recuperação/redefinição de senha, confirmação de e-mail corporativo por link de uso único válido por 24 horas e fluxo inicial de convites de recrutadores (envio, reenvio, cancelamento, aceite e recusa). O cadastro aceita inicialmente apenas empresas brasileiras que informem um CNPJ com exatamente 14 dígitos, sem validar dígitos verificadores ou consultar sua existência em fonte oficial. A conta empresarial permanece inativa até a confirmação do e-mail corporativo e é ativada após essa confirmação. Empresas estrangeiras ou sem CNPJ estão fora do escopo inicial. Convites para recrutadores também podem iniciar uma conta pendente, que só é ativada após a pessoa definir sua senha e aceitar o vínculo pelo link de uso único. A implementação inclui migração PostgreSQL, restrição de unicidade para vínculo ativo, testes SQL de concorrência, CI com validação de Prisma, TypeScript, lint, testes unitários e build. A rotina de retenção de auditoria oferece simulação por padrão e descarte explícito de eventos com mais de um ano-calendário, preservando eventos marcados com `retentionHold`; veja `docs/operacao/retencao-auditoria.md`.

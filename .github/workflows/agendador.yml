@@ -1,0 +1,31 @@
+name: Agendador
+
+# Retries e-mail notifications every 15 minutes on the deployed site (SPEC-017, OPEN-068). The Vercel Hobby plan only
+# runs its own cron once a day, so this scheduler fills the gap. It does nothing until the repository has the secrets
+# APP_URL (e.g. https://acessa-vagas.vercel.app) and CRON_SECRET (the same value as in Vercel).
+# GitHub runs scheduled workflows only from the default branch (main), and may pause them after 60 days without commits.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  notificacoes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      APP_URL: ${{ secrets.APP_URL }}
+      CRON_SECRET: ${{ secrets.CRON_SECRET }}
+    steps:
+      - name: Retry pending e-mail notifications
+        run: |
+          if [ -z "$APP_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "Secrets APP_URL and CRON_SECRET are not set; nothing to do."
+            exit 0
+          fi
+          curl --fail-with-body --silent --show-error --max-time 90 \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "${APP_URL%/}/api/cron/notificacoes"

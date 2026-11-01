@@ -94,8 +94,18 @@ model CandidateProfileDocument {
   sizeBytes         Int
   createdAt         DateTime        @default(now())
   candidateProfile  CandidateProfile @relation(fields: [candidateProfileId], references: [id], onDelete: Cascade)
+  content           CandidateDocumentContent?
 
   @@index([candidateProfileId, category, createdAt])
+}
+
+/// File bytes of a candidate document, kept in the database so the app runs without a local disk (serverless hosting).
+/// Separate from the metadata so listing documents never loads file contents. Older rows may have no content here:
+/// their bytes are still in the local upload folder (development installs before 01/11/2026).
+model CandidateDocumentContent {
+  documentId String                   @id
+  bytes      Bytes
+  document   CandidateProfileDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
 }
 
 enum CandidateDocumentCategory {
