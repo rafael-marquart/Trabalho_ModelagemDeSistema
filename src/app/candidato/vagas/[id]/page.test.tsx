@@ -33,7 +33,9 @@ describe("job detail page", () => {
     expect(screen.getByText("Vaga aberta")).toBeTruthy();
     expect(screen.getAllByText("Não informada").length).toBeGreaterThan(0);
     expect(screen.getByRole("heading", { name: "Declarado para esta vaga" })).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "Informações gerais da empresa" })).toBeTruthy();
+    const companyInfo = screen.getByText("Informações gerais da empresa").closest("details");
+    expect(companyInfo).toBeTruthy();
+    expect(companyInfo?.hasAttribute("open")).toBe(false);
     expect(screen.getByText("Só no térreo")).toBeTruthy();
     expect(screen.getByText("86%", { selector: "strong" })).toBeTruthy();
     expect(screen.getByText(/31 min \(carro, saindo às 7h/, { selector: ".score-travel p" })).toBeTruthy();

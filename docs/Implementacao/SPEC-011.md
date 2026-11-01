@@ -11,6 +11,7 @@
 - **Tela (detalhe da vaga):** "Candidatar-se" abre uma confirmação ("Confirme sua candidatura para … com o seu score atual … etapa Inscrito"); depois do registro aparece "Candidatura registrada" com data, etapa e score. Quem já se candidatou vê "Você já se candidatou", com data e etapa atual. A continuidade é bloqueada apenas por vaga não aberta, candidatura já existente ou trava crítica.
 - **Integração com SPEC-005 e SPEC-009:** a trava de edição das condições da vaga após candidaturas (OPEN-022) e a identificação de candidatos ativos no encerramento (RB-42) passaram a usar as candidaturas reais. O encerramento mantém as candidaturas.
 - **Depois do encerramento (decisão de 31/10/2026):** quem se candidatou continua vendo, no detalhe da vaga, o resultado de compatibilidade registrado na candidatura, com a data; vagas que não estão abertas não são recalculadas.
+- **Ajustes de tela (31/10/2026):** no detalhe da vaga, "Informações gerais da empresa" fica recolhida (abre e fecha como uma pasta) e a caixa de candidatura passou para o final da página, depois das descrições.
 - A retenção de 1 ano dos resultados de compatibilidade preserva os resultados usados por candidaturas.
 - A notificação do registro e do encerramento pertence à SPEC-017; a lista "Minhas candidaturas" e o cancelamento, às SPEC-012/016.
 

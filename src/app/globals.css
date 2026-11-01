@@ -1038,3 +1038,16 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .apply-result p { margin: 0; }
 .job-action-applied { border-left: 4px solid var(--purple); background: var(--purple-soft); }
 .compat-source { margin: 0 0 8px; font-size: 14px; }
+/* Job detail: company information folds like a folder; the application step closes the page */
+.company-access { margin-top: 20px; border: 1px solid var(--line); border-radius: var(--radius-control); }
+.company-access > summary { display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer; list-style: none; }
+.company-access > summary::-webkit-details-marker { display: none; }
+.company-access > summary::before { content: ""; flex: 0 0 auto; width: 8px; height: 8px; border-right: 2px solid var(--purple-dark); border-bottom: 2px solid var(--purple-dark); transform: rotate(-45deg); transition: transform .15s; }
+.company-access[open] > summary::before { transform: rotate(45deg); }
+.company-access-title { color: var(--ink); font-weight: 700; }
+.company-access-hint { margin-left: auto; color: var(--muted); font-size: 13px; }
+.company-access > :not(summary) { margin-left: 16px; margin-right: 16px; }
+.company-access > :last-child { margin-bottom: 16px; }
+.company-access > p.muted { margin-top: 0; }
+.job-detail > .job-action { margin-top: 24px; }
+@media (prefers-reduced-motion: reduce) { .company-access > summary::before { transition: none; } }
