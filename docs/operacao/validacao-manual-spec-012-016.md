@@ -14,7 +14,7 @@ Antes: `git pull`, `npm.cmd install`, `npm.cmd run db:generate`, `npx.cmd prisma
 | 8 | Voltar à lista | A candidatura aparece como Cancelada |
 | 9 | Abrir a vaga cancelada | É possível candidatar-se de novo |
 | 10 | Candidatura Recusada ou Aprovada | Sem a seção de cancelamento |
-| 11 | Empresa encerra uma vaga com candidatura ativa; candidato abre o detalhe | "A vaga foi encerrada pela empresa em …", sem botão de cancelar, aviso dos 60 dias |
+| 11 | Empresa encerra uma vaga com candidatura ativa; candidato abre o detalhe | "A vaga foi encerrada pela empresa em …" e aviso dos 60 dias; até Em entrevista o botão de cancelar continua; em Finalista não aparece |
 | 12 | Empresa abre a candidatura cancelada no funil | Histórico mostra "Cancelada pelo candidato"; etapa Cancelada |
 | 13 | Copiar o endereço do detalhe e abrir com outra conta de candidato | "Página não encontrada" |
 | 14 | Detalhe da vaga com candidatura ativa | Botão "Acompanhar minha candidatura" leva ao detalhe |

@@ -15,3 +15,4 @@ Implementada junto com a SPEC-012, nas mesmas telas (Minhas candidaturas e detal
 
 - As mesmas da SPEC-012 (testes de lista, detalhe, linha do tempo, regra dos 60 dias e E2E).
 - Teste manual: `docs/operacao/validacao-manual-spec-012-016.md`.
+- Teste manual executado pelo responsável em 01/11/2026 sem problemas; layout aprovado na mesma data. SPEC-016 encerrada.
