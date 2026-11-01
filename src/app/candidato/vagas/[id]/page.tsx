@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import CompanyShell from "@/components/company-shell";
 import CompatibilityDetails, { scoreText } from "@/components/candidate/compatibility-details";
 import JobStatusLive from "@/components/candidate/job-status-live";
+import ApplyPanel from "@/components/candidate/apply-panel";
 import type { Compatibility } from "@/components/candidate/types";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getJobDetailForCandidate } from "@/lib/jobs/detail-service";
@@ -77,10 +78,10 @@ export default async function CandidateJobDetailPage({ params }: { params: Promi
         </div>
 
         <aside className="job-detail-aside" aria-labelledby="compat-title">
-          <section className={`job-action ${job.action.allowed ? "job-action-allowed" : "job-action-blocked"}`} aria-labelledby="action-title">
-            <h2 id="action-title">{job.action.allowed ? "Você pode se candidatar" : "Candidatura não disponível"}</h2>
+          <section className={`job-action ${job.action.applied ? "job-action-applied" : job.action.allowed ? "job-action-allowed" : "job-action-blocked"}`} aria-labelledby="action-title">
+            <h2 id="action-title">{job.action.applied ? "Você já se candidatou" : job.action.allowed ? "Você pode se candidatar" : "Candidatura não disponível"}</h2>
             <p>{job.action.message}</p>
-            {job.action.allowed ? <p className="muted">O envio de candidaturas pela plataforma ainda não está disponível.</p> : null}
+            {job.action.allowed ? <ApplyPanel jobId={id} jobTitle={job.title} companyName={job.companyName} score={result?.score ?? null} /> : null}
           </section>
           <section className="job-detail-section">
             <h2 id="compat-title">Compatibilidade com você</h2>

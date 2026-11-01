@@ -11,14 +11,21 @@ export function availabilityOf(status: string, deadline: string, today: string):
   return { code: "OPEN", label: "Aberta", message: deadline ? `Inscrições abertas até ${formatDate(deadline)}.` : "Inscrições abertas." };
 }
 
-type CompatibilitySummary = { status: "COMPLETE" | "INSUFFICIENT_DATA" | "INCOMPATIBLE"; critical?: { pending?: { needName: string }[] } } | null;
-export type ActionDecision = { allowed: boolean; message: string };
+type CompatibilitySummary = {
+  status: "COMPLETE" | "INSUFFICIENT_DATA" | "INCOMPATIBLE"; score?: number | null;
+  critical?: { pending?: { needName: string }[] }; missing?: { responsible?: string }[];
+} | null;
+export type ExistingApplication = { appliedAt: string; stageLabel: string } | null;
+export type ActionDecision = { allowed: boolean; applied?: boolean; message: string };
+
+const dateTime = (iso: string) => new Date(iso).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
 /**
  * Whether the candidate may move on to apply. Status and eligibility both govern it; the final check belongs to SPEC-011,
  * which also provides the application itself.
  */
-export function decideAction(availability: Availability, compatibility: CompatibilitySummary): ActionDecision {
+export function decideAction(availability: Availability, compatibility: CompatibilitySummary, existing: ExistingApplication = null): ActionDecision {
+  if (existing) return { allowed: false, applied: true, message: `Você se candidatou em ${dateTime(existing.appliedAt).replace(", ", " às ")}. Etapa atual: ${existing.stageLabel}.` };
   if (availability.code !== "OPEN") return { allowed: false, message: availability.message };
   if (!compatibility) return { allowed: false, message: "Não foi possível verificar a sua elegibilidade agora. Tente novamente em instantes." };
   if (compatibility.status === "INCOMPATIBLE") {
@@ -28,7 +35,14 @@ export function decideAction(availability: Availability, compatibility: Compatib
   if (pending.length) {
     return { allowed: false, message: `A elegibilidade ainda não foi concluída: a vaga não informou se oferece ${pending.map((item) => item.needName.toLocaleLowerCase("pt-BR")).join(", ")}, que você marcou como indispensável.` };
   }
-  return { allowed: true, message: "Você atende às condições indispensáveis desta vaga." };
+  // OPEN-049: the deterministic score is required to register an application.
+  if (compatibility.status !== "COMPLETE" || compatibility.score === null || compatibility.score === undefined) {
+    const fromProfile = (compatibility.missing ?? []).some((item) => item.responsible === "CANDIDATE");
+    return { allowed: false, message: fromProfile
+      ? "Para se candidatar, o score de compatibilidade precisa estar calculado. Complete os dados indicados no seu perfil."
+      : "Para se candidatar, o score de compatibilidade precisa estar calculado, e faltam informações que a empresa precisa completar na vaga." };
+  }
+  return { allowed: true, message: "Você atende às condições indispensáveis desta vaga e pode se candidatar." };
 }
 
 const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });

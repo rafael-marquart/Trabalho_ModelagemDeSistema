@@ -16,9 +16,13 @@ describe("job detail presentation (SPEC-010)", () => {
     expect(decideAction(open, { status: "INSUFFICIENT_DATA", critical: { pending: [{ needName: "Rampa" }] } })).toMatchObject({ allowed: false, message: expect.stringContaining("não foi concluída") });
     expect(decideAction(open, null).allowed).toBe(false);
   });
-  it("lets an eligible candidate go on even when other data is missing, since no indispensable need is at stake", () => {
-    expect(decideAction(open, { status: "INSUFFICIENT_DATA", critical: { pending: [] } }).allowed).toBe(true);
-    expect(decideAction(open, { status: "COMPLETE" }).allowed).toBe(true);
+  it("requires a complete score to apply and says whose data is missing (OPEN-049)", () => {
+    expect(decideAction(open, { status: "INSUFFICIENT_DATA", critical: { pending: [] }, missing: [{ responsible: "CANDIDATE" }] })).toMatchObject({ allowed: false, message: expect.stringContaining("seu perfil") });
+    expect(decideAction(open, { status: "INSUFFICIENT_DATA", critical: { pending: [] }, missing: [{ responsible: "COMPANY" }] })).toMatchObject({ allowed: false, message: expect.stringContaining("empresa") });
+    expect(decideAction(open, { status: "COMPLETE", score: 80 }).allowed).toBe(true);
+  });
+  it("shows an existing application instead of the apply action", () => {
+    expect(decideAction(open, { status: "COMPLETE", score: 80 }, { appliedAt: "2026-10-31T15:00:00Z", stageLabel: "Inscrito" })).toMatchObject({ allowed: false, applied: true, message: expect.stringContaining("31/10/2026 às 12:00") });
   });
   it("never turns missing salary or location into a value (OPEN-045)", () => {
     expect(salaryText(null, null)).toBe("Não informada");

@@ -6,6 +6,7 @@ import type { TravelEstimator } from "@/lib/compatibility/travel";
 import { jobModalityLabels, type JobModalityValue } from "./constants";
 import { availabilityOf, decideAction, formatDate, locationText, salaryText, type ActionDecision, type Availability } from "./detail";
 import { rowToFields, todayInBrazil } from "./schema";
+import { findBlockingApplication } from "@/lib/applications/service";
 
 const label = (status: string) => statusLabels[status as keyof typeof statusLabels] ?? statusLabels.NOT_INFORMED;
 
@@ -18,6 +19,7 @@ export type JobDetail = {
   companyInfrastructure: { updatedAt: string | null; items: { category: string; label: string; status: string; statusLabel: string; note: string }[] };
   compatibility: CompatibilityView | null;
   action: ActionDecision;
+  jobId: string;
 };
 
 /**
@@ -39,6 +41,7 @@ export async function getJobDetailForCandidate(userId: string, jobId: string, de
   }
   const infrastructure = await getCompanyInfrastructure(row.companyId);
   return {
+    jobId: row.id,
     title: fields.title || "Vaga sem título",
     companyName: row.company.tradeName || row.company.legalName,
     description: fields.description || "Não informada",
@@ -60,6 +63,6 @@ export async function getJobDetailForCandidate(userId: string, jobId: string, de
       items: infrastructure.items.map((item) => ({ category: categoryLabel(item.category), label: item.label, status: item.status, statusLabel: label(item.status), note: item.note }))
     },
     compatibility,
-    action: decideAction(availability, compatibility)
+    action: decideAction(availability, compatibility, await findBlockingApplication(userId, jobId))
   };
 }

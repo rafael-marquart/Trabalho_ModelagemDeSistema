@@ -16,6 +16,6 @@ describe("compatibility result retention", () => {
     const prisma = { $transaction: vi.fn(async cb => cb(tx)) };
     const result = await purgeExpiredCompatibilityResults(prisma, { now: new Date("2026-10-28T12:00:00Z"), execute: true });
     expect(result).toMatchObject({ deletedCount: 2, executed: true });
-    expect(tx.compatibilityResult.deleteMany).toHaveBeenCalledWith({ where: { executedAt: { lt: new Date("2025-10-28T12:00:00Z") } } });
+    expect(tx.compatibilityResult.deleteMany).toHaveBeenCalledWith({ where: { executedAt: { lt: new Date("2025-10-28T12:00:00Z") }, applications: { none: {} } } });
   });
 });

@@ -10,7 +10,8 @@ export function getCompatibilityRetentionCutoff(now = new Date()) {
 
 export async function purgeExpiredCompatibilityResults(prisma, { now = new Date(), execute = false } = {}) {
   const cutoff = getCompatibilityRetentionCutoff(now);
-  const where = { executedAt: { lt: cutoff } };
+  // Results used by an application are kept: they document the score the application was registered with (SPEC-011).
+  const where = { executedAt: { lt: cutoff }, applications: { none: {} } };
   if (!execute) {
     return { cutoff, eligibleCount: await prisma.compatibilityResult.count({ where }), deletedCount: 0, executed: false };
   }

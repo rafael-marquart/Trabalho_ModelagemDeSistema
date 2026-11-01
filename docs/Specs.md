@@ -2190,7 +2190,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 |---|---|
 | ID | SPEC-011 |
 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-011.md` |
 | Estado do layout | pendente |
 | Capacidade | Registrar candidatura |
 

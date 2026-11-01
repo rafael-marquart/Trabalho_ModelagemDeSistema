@@ -1025,3 +1025,15 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 /* SPEC-009: status changed while the page was open */
 .job-status-changed { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; padding: 12px 14px; border-left: 4px solid var(--status-pending-text); border-radius: 8px; background: var(--status-pending-bg); color: var(--ink); }
 .job-status-changed p { margin: 0; }
+/* SPEC-011: application */
+.apply-panel { display: grid; gap: 12px; margin-top: 14px; }
+.apply-panel > .primary-button { justify-self: start; }
+.apply-confirm { display: grid; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--surface); }
+.apply-confirm p { margin: 0; }
+.apply-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.apply-result { margin-top: 14px; }
+.apply-result h3 { margin: 0 0 4px; font-size: 16px; }
+.apply-result h3:focus { outline: none; }
+.apply-result h3:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+.apply-result p { margin: 0; }
+.job-action-applied { border-left: 4px solid var(--purple); background: var(--purple-soft); }

@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const { prismaMock, analyzeMock, infraMock } = vi.hoisted(() => ({ prismaMock: { job: { findFirst: vi.fn() } }, analyzeMock: vi.fn(), infraMock: vi.fn() }));
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
 vi.mock("@/lib/compatibility/service", () => ({ loadCandidateContext: vi.fn().mockResolvedValue({}), analyzeWithContext: analyzeMock }));
+vi.mock("@/lib/applications/service", () => ({ findBlockingApplication: vi.fn().mockResolvedValue(null) }));
 vi.mock("@/lib/company-infrastructure/service", () => ({ getCompanyInfrastructure: infraMock, categoryLabel: (code: string) => code }));
 import { getJobDetailForCandidate } from "./detail-service";
 
@@ -17,7 +18,7 @@ describe("job detail for a candidate", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     infraMock.mockResolvedValue({ companyId: "company-secret", updatedAt: null, items: [{ code: "RAMPS", category: "PHYSICAL_ACCESS", label: "Rampas de acesso", status: "NOT_INFORMED", note: "" }] });
-    analyzeMock.mockResolvedValue({ status: "COMPLETE", score: 80 });
+    analyzeMock.mockResolvedValue({ status: "COMPLETE", score: 80, missing: [] });
   });
   it("shows only published own jobs, never drafts", async () => {
     prismaMock.job.findFirst.mockResolvedValue(null);

@@ -56,6 +56,7 @@ model User {
   jobsCreated       Job[]    @relation("JobCreator")
   preference        UserPreference?
   compatibilityResults CompatibilityResult[]
+  applications         Application[]
 }
 
 model CandidateProfile {
@@ -329,6 +330,7 @@ model Job {
   @@index([companyId, status])
   @@index([status, origin])
   compatibilityResults CompatibilityResult[]
+  applications         Application[]
 }
 
 // Interface preferences saved per account (SPEC-003, OPEN-013). Values are stored by stable code.
@@ -353,6 +355,7 @@ model CompatibilityResult {
   // Minimized snapshot of what was used, the sub-results and the factors; no address or full profile is copied.
   snapshot      Json
   outcome       Json
+  applications  Application[]
   // Fingerprint of the inputs (including addresses, never stored here); a new row is written only when it or the outcome changes (D-01).
   inputHash     String?
 
@@ -379,4 +382,34 @@ model TravelTimeCache {
   computedAt DateTime @default(now())
 
   @@index([computedAt])
+}
+
+/// Selection funnel stages (docs/Fluxos e Estados/estados-trilha.md). New applications start as INSCRITO (OPEN-049).
+enum ApplicationStage {
+  INSCRITO
+  TRIAGEM
+  ENTREVISTA
+  FINALISTA
+  CONTRATADO
+  RECUSADA
+  CANCELADA
+}
+
+/// CANDIDATURA (SPEC-011): one active application per candidate and job (RB-14), enforced by a partial unique index in SQL.
+/// The deterministic score is required (OPEN-049) and the SPEC-007 result it came from is kept for traceability.
+model Application {
+  id                    String              @id @default(cuid())
+  candidateUserId       String
+  candidate             User                @relation(fields: [candidateUserId], references: [id], onDelete: Restrict)
+  jobId                 String
+  job                   Job                 @relation(fields: [jobId], references: [id], onDelete: Restrict)
+  stage                 ApplicationStage    @default(INSCRITO)
+  appliedAt             DateTime            @default(now())
+  score                 Int
+  compatibilityResultId String
+  compatibilityResult   CompatibilityResult @relation(fields: [compatibilityResultId], references: [id], onDelete: Restrict)
+  updatedAt             DateTime            @updatedAt
+
+  @@index([jobId, stage])
+  @@index([candidateUserId, appliedAt])
 }
