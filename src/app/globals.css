@@ -1025,3 +1025,29 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 /* SPEC-009: status changed while the page was open */
 .job-status-changed { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; padding: 12px 14px; border-left: 4px solid var(--status-pending-text); border-radius: 8px; background: var(--status-pending-bg); color: var(--ink); }
 .job-status-changed p { margin: 0; }
+/* SPEC-011: application */
+.apply-panel { display: grid; gap: 12px; margin-top: 14px; }
+.apply-panel > .primary-button { justify-self: start; }
+.apply-confirm { display: grid; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--surface); }
+.apply-confirm p { margin: 0; }
+.apply-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.apply-result { margin-top: 14px; }
+.apply-result h3 { margin: 0 0 4px; font-size: 16px; }
+.apply-result h3:focus { outline: none; }
+.apply-result h3:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+.apply-result p { margin: 0; }
+.job-action-applied { border-left: 4px solid var(--purple); background: var(--purple-soft); }
+.compat-source { margin: 0 0 8px; font-size: 14px; }
+/* Job detail: company information folds like a folder; the application step closes the page */
+.company-access { margin-top: 20px; border: 1px solid var(--line); border-radius: var(--radius-control); }
+.company-access > summary { display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer; list-style: none; }
+.company-access > summary::-webkit-details-marker { display: none; }
+.company-access > summary::before { content: ""; flex: 0 0 auto; width: 8px; height: 8px; border-right: 2px solid var(--purple-dark); border-bottom: 2px solid var(--purple-dark); transform: rotate(-45deg); transition: transform .15s; }
+.company-access[open] > summary::before { transform: rotate(45deg); }
+.company-access-title { color: var(--ink); font-weight: 700; }
+.company-access-hint { margin-left: auto; color: var(--muted); font-size: 13px; }
+.company-access > :not(summary) { margin-left: 16px; margin-right: 16px; }
+.company-access > :last-child { margin-bottom: 16px; }
+.company-access > p.muted { margin-top: 0; }
+.job-detail > .job-action { margin-top: 24px; }
+@media (prefers-reduced-motion: reduce) { .company-access > summary::before { transition: none; } }

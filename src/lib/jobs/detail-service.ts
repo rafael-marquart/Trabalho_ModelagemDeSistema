@@ -6,6 +6,7 @@ import type { TravelEstimator } from "@/lib/compatibility/travel";
 import { jobModalityLabels, type JobModalityValue } from "./constants";
 import { availabilityOf, decideAction, formatDate, locationText, salaryText, type ActionDecision, type Availability } from "./detail";
 import { rowToFields, todayInBrazil } from "./schema";
+import { findApplicationResult, findBlockingApplication } from "@/lib/applications/service";
 
 const label = (status: string) => statusLabels[status as keyof typeof statusLabels] ?? statusLabels.NOT_INFORMED;
 
@@ -17,7 +18,10 @@ export type JobDetail = {
   jobAccessibility: { label: string; status: string; statusLabel: string }[];
   companyInfrastructure: { updatedAt: string | null; items: { category: string; label: string; status: string; statusLabel: string; note: string }[] };
   compatibility: CompatibilityView | null;
+  // Set when the result shown is the one registered with the application (job no longer open): the application date.
+  compatibilityFromApplication: string | null;
   action: ActionDecision;
+  jobId: string;
 };
 
 /**
@@ -34,11 +38,17 @@ export async function getJobDetailForCandidate(userId: string, jobId: string, de
   const fields = rowToFields(row);
   const availability = availabilityOf(row.status, fields.deadline, todayInBrazil(deps.now));
   let compatibility: CompatibilityView | null = null;
+  let compatibilityFromApplication: string | null = null;
   if (availability.code === "OPEN") {
     compatibility = await analyzeWithContext(userId, await loadCandidateContext(userId), row, undefined, deps);
+  } else {
+    // A candidate who applied keeps seeing the result registered with the application (decision of 31/10/2026).
+    const registered = await findApplicationResult(userId, jobId);
+    if (registered) { compatibility = registered.result; compatibilityFromApplication = registered.appliedAt; }
   }
   const infrastructure = await getCompanyInfrastructure(row.companyId);
   return {
+    jobId: row.id,
     title: fields.title || "Vaga sem título",
     companyName: row.company.tradeName || row.company.legalName,
     description: fields.description || "Não informada",
@@ -60,6 +70,7 @@ export async function getJobDetailForCandidate(userId: string, jobId: string, de
       items: infrastructure.items.map((item) => ({ category: categoryLabel(item.category), label: item.label, status: item.status, statusLabel: label(item.status), note: item.note }))
     },
     compatibility,
-    action: decideAction(availability, compatibility)
+    compatibilityFromApplication,
+    action: decideAction(availability, compatibility, await findBlockingApplication(userId, jobId))
   };
 }

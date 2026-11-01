@@ -220,6 +220,7 @@ async function cleanupTestData() {
       ...relatedInvitations.map(invitation => invitation.id)
     ];
 
+    await tx.application.deleteMany({ where: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } });
     await tx.compatibilityResult.deleteMany({ where: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } });
     await tx.userPreference.deleteMany({ where: { userId: { in: userIds } } });
     await tx.job.deleteMany({
@@ -1555,16 +1556,45 @@ async function main() {
     await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}/acao`, "POST", { action: "reopen" }, companyCookie), 200, "company reopens the unavailable job");
     assert.equal((await readStatus()).label, "Aberta");
 
+    // SPEC-011: register an application (candidate from the session; all checks on the server; no partial record).
+    const applyUrl = `${BASE_URL}/api/candidato/candidaturas`;
+    const apply = (payload, cookie, extra = {}) => fetch(applyUrl, { method: "POST", headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie, ...extra }, body: JSON.stringify(payload), redirect: "manual" });
+    await expectStatus(await apply({ jobId: compatJob.id }, ""), 401, "anonymous application");
+    await expectStatus(await apply({ jobId: compatJob.id }, companyCookie), 401, "a company cannot apply");
+    await expectStatus(await apply({ jobId: compatJob.id, candidateUserId: "other" }, compatCookie), 400, "the body cannot choose the candidate");
+    await expectStatus(await apply({ jobId: compatJob.id }, compatCookie, { origin: "https://evil.example" }), 403, "cross-origin application");
+    await expectStatus(await apply({ jobId: detailDraft.id }, compatCookie), 404, "drafts do not accept applications");
+    const applied = JSON.parse(await expectStatus(await apply({ jobId: compatJob.id }, compatCookie), 201, "candidate applies to an open, compatible job")).application;
+    assert.equal(applied.stage, "INSCRITO");
+    assert.equal(typeof applied.score, "number");
+    const storedApplications = await prisma.application.findMany({ where: { jobId: compatJob.id }, include: { compatibilityResult: true } });
+    assert.equal(storedApplications.length, 1, "one application is stored");
+    assert.equal(storedApplications[0].compatibilityResult.candidateUserId, storedApplications[0].candidateUserId, "the application keeps the SPEC-007 result it was registered with");
+    assert.equal(storedApplications[0].score, storedApplications[0].compatibilityResult.score, "the stored score is the calculated one");
+    assert.ok(await prisma.auditEvent.findFirst({ where: { eventType: "APPLICATION_SUBMITTED", subjectId: storedApplications[0].id } }), "the application is audited");
+    const duplicate = await apply({ jobId: compatJob.id }, compatCookie);
+    assert.equal(duplicate.status, 409, "a second active application is refused");
+    assert.equal(JSON.parse(await duplicate.text()).code, "DUPLICATE");
+    assert.equal(await prisma.application.count({ where: { jobId: compatJob.id } }), 1, "no partial or duplicate record is created");
+    const appliedDetail = await expectStatus(await fetch(`${BASE_URL}/candidato/vagas/${compatJob.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "detail after applying");
+    assert.ok(appliedDetail.includes("Você já se candidatou"), "the detail shows the existing application");
+    await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}`, "PUT", { ...compatJobBody, title: "Título alterado depois da candidatura" }, companyCookie), 409, "job conditions are locked once it has applications (OPEN-022)");
+
     await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}/acao`, "POST", { action: "close" }, companyCookie), 200, "company closes the analyzed job");
     await expectStatus(await sendCompat({ jobId: compatJob.id }, compatCookie), 404, "closed jobs are not analyzed");
     const afterClose = JSON.parse(await expectStatus(await search("q=analista%20E2E"), 200, "search after closing"));
     assert.ok(!afterClose.jobs.some(job => job.id === compatJob.id), "closed jobs leave the search (current status respected)");
     const closedDetail = await expectStatus(await fetch(`${BASE_URL}/candidato/vagas/${compatJob.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate opens a closed job");
-    assert.ok(closedDetail.includes("Vaga encerrada") && closedDetail.includes("Candidatura não disponível"), "a closed job shows its status and blocks the next step");
+    assert.ok(closedDetail.includes("Vaga encerrada") && closedDetail.includes("Você já se candidatou"), "a closed job shows its status and the existing application");
+    assert.ok(closedDetail.includes("Resultado registrado na sua candidatura"), "a candidate who applied still sees the compatibility registered with the application");
+    const afterCloseApply = await apply({ jobId: compatJob.id }, compatCookie);
+    assert.equal(afterCloseApply.status, 409, "a closed job does not accept applications");
+    assert.equal(JSON.parse(await afterCloseApply.text()).code, "JOB_UNAVAILABLE");
     assert.equal((await readStatus()).label, "Encerrada");
     await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${compatJob.id}/acao`, "POST", { action: "reopen" }, companyCookie), 409, "a closed job cannot be reopened");
     const closeAudit = await prisma.auditEvent.findFirst({ where: { subjectId: compatJob.id, eventType: "JOB_CLOSED" }, orderBy: { createdAt: "desc" } });
-    assert.equal(closeAudit.metadata.activeCandidatesToNotify, 0, "closing records how many active candidates must be notified");
+    assert.equal(closeAudit.metadata.activeCandidatesToNotify, 1, "closing identifies the candidate with an active application for notification");
+    assert.equal(await prisma.application.count({ where: { jobId: compatJob.id, stage: "INSCRITO" } }), 1, "closing keeps the existing application");
 
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });

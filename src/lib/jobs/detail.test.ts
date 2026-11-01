@@ -10,15 +10,19 @@ describe("job detail presentation (SPEC-010)", () => {
     expect(availabilityOf("CLOSED", "2026-12-31", "2026-10-29")).toMatchObject({ code: "CLOSED", label: "Encerrada" });
     expect(availabilityOf("OPEN", "2026-10-01", "2026-10-29")).toMatchObject({ code: "UNAVAILABLE", message: "O prazo de inscrição terminou em 01/10/2026." });
   });
-  it("blocks the next step when the job is not open or the candidate is not eligible", () => {
+  it("blocks the next step only when the job is not open or a critical barrier applies", () => {
     expect(decideAction(availabilityOf("CLOSED", "", "2026-10-29"), { status: "COMPLETE" }).allowed).toBe(false);
     expect(decideAction(open, { status: "INCOMPATIBLE" })).toMatchObject({ allowed: false, message: expect.stringContaining("não é elegível") });
-    expect(decideAction(open, { status: "INSUFFICIENT_DATA", critical: { pending: [{ needName: "Rampa" }] } })).toMatchObject({ allowed: false, message: expect.stringContaining("não foi concluída") });
+    expect(decideAction(open, { status: "INSUFFICIENT_DATA", critical: { pending: [{ needName: "Rampa" }] } })).toMatchObject({ allowed: true, message: expect.stringContaining("não foi concluída") });
     expect(decideAction(open, null).allowed).toBe(false);
   });
-  it("lets an eligible candidate go on even when other data is missing, since no indispensable need is at stake", () => {
-    expect(decideAction(open, { status: "INSUFFICIENT_DATA", critical: { pending: [] } }).allowed).toBe(true);
-    expect(decideAction(open, { status: "COMPLETE" }).allowed).toBe(true);
+  it("does not block applying for missing data, and says whose data is missing (decision of 31/10/2026)", () => {
+    expect(decideAction(open, { status: "INSUFFICIENT_DATA", critical: { pending: [] }, missing: [{ responsible: "CANDIDATE" }] })).toMatchObject({ allowed: true, message: expect.stringContaining("seu perfil") });
+    expect(decideAction(open, { status: "INSUFFICIENT_DATA", critical: { pending: [] }, missing: [{ responsible: "COMPANY" }] })).toMatchObject({ allowed: true, message: expect.stringContaining("empresa") });
+    expect(decideAction(open, { status: "COMPLETE", score: 80 }).allowed).toBe(true);
+  });
+  it("shows an existing application instead of the apply action", () => {
+    expect(decideAction(open, { status: "COMPLETE", score: 80 }, { appliedAt: "2026-10-31T15:00:00Z", stageLabel: "Inscrito" })).toMatchObject({ allowed: false, applied: true, message: expect.stringContaining("31/10/2026 às 12:00") });
   });
   it("never turns missing salary or location into a value (OPEN-045)", () => {
     expect(salaryText(null, null)).toBe("Não informada");

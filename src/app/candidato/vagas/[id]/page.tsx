@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import CompanyShell from "@/components/company-shell";
 import CompatibilityDetails, { scoreText } from "@/components/candidate/compatibility-details";
 import JobStatusLive from "@/components/candidate/job-status-live";
+import ApplyPanel from "@/components/candidate/apply-panel";
 import type { Compatibility } from "@/components/candidate/types";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getJobDetailForCandidate } from "@/lib/jobs/detail-service";
@@ -63,25 +64,22 @@ export default async function CandidateJobDetailPage({ params }: { params: Promi
             <ul className="access-list">
               {job.jobAccessibility.map(item => <li key={item.label} className={accessClass[item.status]}><span>{item.label}</span><strong>{item.statusLabel}</strong></li>)}
             </ul>
-            <h3>Informações gerais da empresa</h3>
-            <p className="muted">Descrevem a organização como um todo e não garantem que cada recurso esteja disponível no local desta vaga.</p>
-            {job.companyInfrastructure.updatedAt ? companyGroups.map(group => <div key={group} className="access-group">
-              <h4>{group}</h4>
-              <ul className="access-list">
-                {job.companyInfrastructure.items.filter(item => item.category === group).map(item => <li key={item.label} className={accessClass[item.status]}>
-                  <span>{item.label}{item.note ? <span className="access-note">{item.note}</span> : null}</span><strong>{item.statusLabel}</strong>
-                </li>)}
-              </ul>
-            </div>) : <p className="muted">A empresa ainda não informou a infraestrutura de acessibilidade.</p>}
+            <details className="company-access">
+              <summary><span className="company-access-title">Informações gerais da empresa</span><span className="company-access-hint">Mostrar ou ocultar</span></summary>
+              <p className="muted">Descrevem a organização como um todo e não garantem que cada recurso esteja disponível no local desta vaga.</p>
+              {job.companyInfrastructure.updatedAt ? companyGroups.map(group => <div key={group} className="access-group">
+                <h4>{group}</h4>
+                <ul className="access-list">
+                  {job.companyInfrastructure.items.filter(item => item.category === group).map(item => <li key={item.label} className={accessClass[item.status]}>
+                    <span>{item.label}{item.note ? <span className="access-note">{item.note}</span> : null}</span><strong>{item.statusLabel}</strong>
+                  </li>)}
+                </ul>
+              </div>) : <p className="muted">A empresa ainda não informou a infraestrutura de acessibilidade.</p>}
+            </details>
           </section>
         </div>
 
         <aside className="job-detail-aside" aria-labelledby="compat-title">
-          <section className={`job-action ${job.action.allowed ? "job-action-allowed" : "job-action-blocked"}`} aria-labelledby="action-title">
-            <h2 id="action-title">{job.action.allowed ? "Você pode se candidatar" : "Candidatura não disponível"}</h2>
-            <p>{job.action.message}</p>
-            {job.action.allowed ? <p className="muted">O envio de candidaturas pela plataforma ainda não está disponível.</p> : null}
-          </section>
           <section className="job-detail-section">
             <h2 id="compat-title">Compatibilidade com você</h2>
             {result ? <>
@@ -89,11 +87,17 @@ export default async function CandidateJobDetailPage({ params }: { params: Promi
                 <span className={`score-ring-value${complete && (result.score ?? 0) >= 100 ? " score-ring-value-long" : ""}`}>{complete ? `${result.score}%` : result.status === "INCOMPATIBLE" ? "✕" : "?"}</span>
               </div>
               <p className="visually-hidden">Compatibilidade: {scoreText(result)}</p>
+              {job.compatibilityFromApplication ? <p className="muted compat-source">{`Resultado registrado na sua candidatura, em ${new Date(job.compatibilityFromApplication).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}. Como a vaga não está aberta, ele não é recalculado.`}</p> : null}
               <CompatibilityDetails result={result} />
-            </> : <p className="muted">A compatibilidade só é mostrada para vagas abertas.</p>}
+            </> : <p className="muted">A compatibilidade é calculada para vagas abertas e fica disponível depois do encerramento para quem se candidatou.</p>}
           </section>
         </aside>
       </div>
+      <section className={`job-action ${job.action.applied ? "job-action-applied" : job.action.allowed ? "job-action-allowed" : "job-action-blocked"}`} aria-labelledby="action-title">
+        <h2 id="action-title">{job.action.applied ? "Você já se candidatou" : job.action.allowed ? "Você pode se candidatar" : "Candidatura não disponível"}</h2>
+        <p>{job.action.message}</p>
+        {job.action.allowed ? <ApplyPanel jobId={id} jobTitle={job.title} companyName={job.companyName} score={result?.score ?? null} /> : null}
+      </section>
     </main>
   </CompanyShell>;
 }
