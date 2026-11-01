@@ -10,3 +10,6 @@ coverage/
 .DS_Store
 *.tsbuildinfo
 .private-uploads/
+
+# Gerado pelo Next.js ao rodar o servidor
+next-env.d.ts
