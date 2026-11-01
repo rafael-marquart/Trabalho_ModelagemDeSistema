@@ -4,7 +4,7 @@ const { prismaMock, tx } = vi.hoisted(() => {
   const tx = { application: { updateMany: vi.fn() }, applicationStageEvent: { create: vi.fn() }, auditEvent: { create: vi.fn() } };
   return { tx, prismaMock: {
     job: { findFirst: vi.fn() }, application: { findMany: vi.fn(), findFirst: vi.fn() }, candidateProfile: { findUnique: vi.fn() },
-    accessibilityNeedOption: { findMany: vi.fn() }, user: { findMany: vi.fn() }, $transaction: vi.fn(async (cb: (t: typeof tx) => unknown) => cb(tx))
+    accessibilityNeedOption: { findMany: vi.fn() }, user: { findMany: vi.fn() }, interview: { findMany: vi.fn().mockResolvedValue([]) }, $transaction: vi.fn(async (cb: (t: typeof tx) => unknown) => cb(tx))
   } };
 });
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));

@@ -245,6 +245,8 @@ async function cleanupTestData() {
     await tx.$executeRawUnsafe('ALTER TABLE "ApplicationStageEvent" DISABLE TRIGGER "ApplicationStageEvent_no_change"');
     await tx.applicationStageEvent.deleteMany({ where: { application: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } } });
     await tx.$executeRawUnsafe('ALTER TABLE "ApplicationStageEvent" ENABLE TRIGGER "ApplicationStageEvent_no_change"');
+    await tx.interviewEvaluation.deleteMany({ where: { OR: [{ candidateUserId: { in: userIds } }, { companyId: { in: companyIds } }] } });
+    await tx.interview.deleteMany({ where: { application: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } } });
     await tx.notification.deleteMany({ where: { OR: [{ recipientUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } });
     await tx.application.deleteMany({ where: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } });
     await tx.compatibilityResult.deleteMany({ where: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } });
@@ -1755,6 +1757,57 @@ async function main() {
     assert.ok(await prisma.auditEvent.findFirst({ where: { eventType: "APPLICATION_HIDDEN_BY_CANDIDATE", subjectId: applicationId } }), "hiding is audited");
     const funnelAfterHide = JSON.parse(await expectStatus(await fetch(funnelUrl, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "funnel after hiding"));
     assert.ok(funnelAfterHide.applications.some(item => item.id === applicationId), "the company still sees the hidden application");
+
+    // SPEC-018: interviews in the funnel and the candidate's post-interview evaluation.
+    const interviewJob = JSON.parse(await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas`, "POST", { ...compatJobBody, title: "Vaga com entrevista E2E" }, companyCookie), 201, "company creates a job for the interview flow")).job;
+    await expectStatus(await sendJobApi(`${BASE_URL}/api/vagas/${interviewJob.id}/acao`, "POST", { action: "publish" }, companyCookie), 200, "company publishes the interview job");
+    const interviewApp = JSON.parse(await expectStatus(await apply({ jobId: interviewJob.id }, compatCookie), 201, "candidate applies to the interview job")).application;
+    const moveInterviewApp = toStage => fetch(`${BASE_URL}/api/candidaturas/${interviewApp.id}/etapa`, { method: "POST", headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie: companyCookie }, body: JSON.stringify({ toStage }), redirect: "manual" });
+    const interviewsUrl = `${BASE_URL}/api/candidaturas/${interviewApp.id}/entrevistas`;
+    const interviewBody = { scheduledAt: "2099-11-10T14:30", modality: "ONLINE", locationOrLink: "https://meet.example/e2e", accessibilityResources: "Intérprete de Libras" };
+    await expectStatus(await sendJobApi(interviewsUrl, "POST", interviewBody, companyCookie), 409, "an interview needs the Entrevista stage");
+    await expectStatus(await moveInterviewApp("TRIAGEM"), 200, "screening before the interview");
+    await expectStatus(await moveInterviewApp("ENTREVISTA"), 200, "move to the interview stage");
+    await expectStatus(await sendJobApi(interviewsUrl, "POST", { ...interviewBody, scheduledAt: "2020-01-01T10:00" }, companyCookie), 400, "an interview in the past is refused");
+    await expectStatus(await sendJobApi(interviewsUrl, "POST", { ...interviewBody, locationOrLink: "sala" }, companyCookie), 400, "an online interview needs a link");
+    await expectStatus(await sendJobApi(interviewsUrl, "POST", interviewBody, secondCompanyCookie), 404, "another company cannot schedule");
+    await expectStatus(await sendJobApi(interviewsUrl, "POST", interviewBody, compatCookie), 401, "a candidate cannot schedule");
+    const interviewId = JSON.parse(await expectStatus(await sendJobApi(interviewsUrl, "POST", interviewBody, companyCookie), 201, "company schedules the interview")).interviewId;
+    await expectStatus(await sendJobApi(interviewsUrl, "POST", interviewBody, companyCookie), 409, "only one scheduled interview at a time");
+    await expectStatus(await sendJobApi(`${interviewsUrl}/${interviewId}`, "PUT", { ...interviewBody, scheduledAt: "2099-11-11T09:00" }, companyCookie), 200, "company changes the interview");
+    const interviewAction = (id, action, cookie = companyCookie) => sendJobApi(`${interviewsUrl}/${id}/acao`, "POST", { action }, cookie);
+    await expectStatus(await interviewAction(interviewId, "complete"), 409, "an interview cannot be completed before its time");
+    const candidateBefore = JSON.parse(await expectStatus(await fetch(`${myUrl}/${interviewApp.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate sees the scheduled interview")).application;
+    assert.equal(candidateBefore.interviews[0].locationOrLink, "https://meet.example/e2e", "the candidate gets the link");
+    assert.equal(candidateBefore.interviews[0].evaluation, null, "no evaluation before completion");
+    const evaluate = (id, body, cookie) => fetch(`${BASE_URL}/api/candidato/entrevistas/${id}/avaliacao`, { method: "POST", headers: { "content-type": "application/json", "x-forwarded-for": TEST_IP, origin: PUBLIC_URL, cookie }, body: JSON.stringify(body), redirect: "manual" });
+    await expectStatus(await evaluate(interviewId, { accessibilityRating: 4, inclusionRating: 5 }, compatCookie), 409, "an interview that is not completed cannot be evaluated");
+    // Test setup: the interview time is moved to the past so it can be completed (the API only accepts future dates).
+    await prisma.interview.update({ where: { id: interviewId }, data: { scheduledAt: new Date(Date.now() - 60 * 60 * 1000) } });
+    await expectStatus(await interviewAction(interviewId, "complete"), 200, "company marks the interview as completed");
+    const candidateAfter = JSON.parse(await expectStatus(await fetch(`${myUrl}/${interviewApp.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate after completion")).application;
+    assert.equal(candidateAfter.interviews[0].evaluation.kind, "OPEN", "the evaluation opens after completion");
+    await expectStatus(await evaluate(interviewId, { accessibilityRating: 6, inclusionRating: 5 }, compatCookie), 400, "a rating outside 1 to 5 is refused");
+    await expectStatus(await evaluate(interviewId, { accessibilityRating: 4 }, compatCookie), 400, "both ratings are required");
+    await expectStatus(await evaluate(interviewId, { accessibilityRating: 4, inclusionRating: 5 }, companyCookie), 401, "a company cannot evaluate");
+    await expectStatus(await evaluate(interviewId, { accessibilityRating: 4, inclusionRating: 5 }, compatCookie, ), 201, "the candidate evaluates without a comment");
+    await expectStatus(await evaluate(interviewId, { accessibilityRating: 1, inclusionRating: 1, comment: "trocar" }, compatCookie), 409, "a second evaluation is refused");
+    const storedEvaluation = await prisma.interviewEvaluation.findUnique({ where: { interviewId } });
+    assert.deepEqual([storedEvaluation.accessibilityRating, storedEvaluation.inclusionRating, storedEvaluation.comment], [4, 5, null], "the first evaluation is kept unchanged");
+    await assert.rejects(prisma.interviewEvaluation.update({ where: { id: storedEvaluation.id }, data: { accessibilityRating: 1 } }), "a submitted evaluation cannot be edited");
+    const companyDetail = await expectStatus(await fetch(`${BASE_URL}/api/candidaturas/${interviewApp.id}`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company detail after the evaluation");
+    assert.ok(!companyDetail.includes("accessibilityRating") && !companyDetail.includes(storedEvaluation.id), "the company does not see the individual evaluation");
+    const secondInterview = JSON.parse(await expectStatus(await sendJobApi(interviewsUrl, "POST", interviewBody, companyCookie), 201, "a new interview after the completed one")).interviewId;
+    await expectStatus(await interviewAction(secondInterview, "cancel"), 200, "company cancels the interview");
+    await expectStatus(await interviewAction(secondInterview, "cancel"), 409, "a cancelled interview cannot be cancelled again");
+    const interviewNotices = await prisma.notification.findMany({ where: { applicationId: interviewApp.id, type: { in: ["INTERVIEW_SCHEDULED", "INTERVIEW_UPDATED", "INTERVIEW_CANCELLED"] } } });
+    assert.deepEqual(interviewNotices.map(row => row.type).sort(), ["INTERVIEW_CANCELLED", "INTERVIEW_SCHEDULED", "INTERVIEW_SCHEDULED", "INTERVIEW_UPDATED"], "the candidate is told about each interview change");
+    assert.ok(interviewNotices.every(row => row.recipientUserId === candidateUser.id), "interview notices go only to the candidate");
+    for (const type of ["INTERVIEW_SCHEDULED", "INTERVIEW_UPDATED", "INTERVIEW_COMPLETED", "INTERVIEW_CANCELLED", "EVALUATION_SUBMITTED", "EVALUATION_REFUSED"]) {
+      assert.ok(await prisma.auditEvent.findFirst({ where: { eventType: type } }), `${type} is audited`);
+    }
+    const evaluatedPage = await expectStatus(await fetch(`${BASE_URL}/candidato/candidaturas/${interviewApp.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "candidate page with the evaluation");
+    assert.ok(evaluatedPage.includes("Sua avaliação") && evaluatedPage.includes("A avaliação não pode ser alterada."), "the candidate sees their own evaluation, read-only");
 
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });

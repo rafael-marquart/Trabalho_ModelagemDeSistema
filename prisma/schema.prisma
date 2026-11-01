@@ -414,6 +414,7 @@ model Application {
   // before the 60 days; the record, its history and the company's view are kept.
   hiddenByCandidateAt   DateTime?
   stageEvents           ApplicationStageEvent[]
+  interviews            Interview[]
 
   @@index([jobId, stage])
   @@index([candidateUserId, appliedAt])
@@ -443,6 +444,9 @@ enum NotificationType {
   APPLICATION_STAGE_CHANGED
   APPLICATION_CANCELLED
   JOB_CLOSED
+  INTERVIEW_SCHEDULED
+  INTERVIEW_UPDATED
+  INTERVIEW_CANCELLED
 }
 
 enum NotificationStatus {
@@ -474,4 +478,57 @@ model Notification {
   @@index([status, nextAttemptAt])
   @@index([recipientUserId, createdAt])
   @@index([createdAt])
+}
+
+// SPEC-018 (decision of 01/11/2026): interviews registered by the company in the funnel (conceptual entity ENTREVISTA).
+// Scheduling, changes and cancellation notify the candidate (SPEC-017, OPEN-066 item 3); a completed interview opens the
+// post-interview evaluation for 60 days (OPEN-070).
+enum InterviewStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum InterviewModality {
+  PRESENCIAL
+  ONLINE
+}
+
+model Interview {
+  id                     String            @id @default(cuid())
+  applicationId          String
+  application            Application       @relation(fields: [applicationId], references: [id], onDelete: Restrict)
+  scheduledAt            DateTime
+  modality               InterviewModality
+  locationOrLink         String
+  accessibilityResources String            @default("")
+  status                 InterviewStatus   @default(SCHEDULED)
+  completedAt            DateTime?
+  cancelledAt            DateTime?
+  createdByUserId        String
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
+  evaluation             InterviewEvaluation?
+
+  @@index([applicationId, status])
+}
+
+// SPEC-018: one evaluation per completed interview, never edited (OPEN-071/072). Individual rows are restricted and,
+// one year after submission, anonymized: links to the person and the comment are removed, only the company and the two
+// ratings stay for the aggregate distribution (OPEN-073).
+model InterviewEvaluation {
+  id                  String     @id @default(cuid())
+  interviewId         String?    @unique
+  interview           Interview? @relation(fields: [interviewId], references: [id], onDelete: SetNull)
+  applicationId       String?
+  candidateUserId     String?
+  companyId           String
+  accessibilityRating Int
+  inclusionRating     Int
+  comment             String?
+  submittedAt         DateTime   @default(now())
+  anonymizedAt        DateTime?
+
+  @@index([companyId])
+  @@index([submittedAt])
 }

@@ -9,7 +9,7 @@
   | Mudança de etapa (avanço, recusa, aprovação) | o candidato | SPEC-013 |
   | Cancelamento pelo candidato | o "recrutador responsável" (ver OPEN-093) | SPEC-012 |
   | Encerramento da vaga | cada candidato ainda ativo (Inscrito a Finalista), um e-mail por pessoa (RB-42, OPEN-042) | SPEC-009 |
-  | Entrevista agendada/alterada/cancelada | — | **não se aplica ainda:** a plataforma não tem operação de entrevista; o envio será ligado quando houver |
+  | Entrevista agendada, alterada ou cancelada | o candidato, com data/hora, modalidade, link ou local e recursos de acessibilidade | SPEC-018 (cadastro de entrevistas, 01/11/2026) |
 - **Canais (OPEN-067, revisada em 01/11/2026):** todo aviso aparece no site, na aba **Notificações** (candidato, Empresa e Recrutador), com contador de não lidas no menu, "Marcar como lida", "Marcar todas como lidas" e link para a situação oficial. A cópia por e-mail é opcional: vem ligada e a própria pessoa desliga em "Receber também por e-mail", na aba Notificações (preferência `EMAIL_NOTIFICATIONS` da conta). Com o e-mail desligado, o aviso fica só no site e o registro recebe o estado `SKIPPED`. O e-mail usa o SMTP configurado (Mailpit ou provedor real, `docs/operacao/email-smtp.md`).
 - **Registro junto com o evento:** cada notificação é gravada na tabela `Notification` na mesma transação do evento de origem. Um evento confirmado sempre deixa a notificação pendente; uma falha de envio nunca desfaz o evento (seção 5.8).
 - **Envio e novas tentativas (OPEN-068):** o envio é pedido logo após o evento, sem fazer a tela esperar o servidor de e-mail. Uma rodada periódica dentro do servidor (a cada 60 s, `src/instrumentation.ts`) reenvia o que ficou pendente. Até 5 tentativas, com esperas de 1 min, 5 min, 30 min e 2 h. Falhas de conexão, tempo esgotado, autenticação, configuração e respostas 4xx são temporárias; recusa definitiva (5xx) encerra na hora. A falha final fica com estado `FAILED` e gera o evento de auditoria `NOTIFICATION_DELIVERY_FAILED` (tipo, tentativas e motivo; sem endereço nem conteúdo).
@@ -22,7 +22,7 @@
 ## Pontos em aberto
 
 - **OPEN-093:** quem é o "recrutador responsável". Provisório: quem criou a vaga, se ainda puder agir pela empresa; senão, a conta da Empresa.
-- **Entrevistas:** item 3 da OPEN-066 depende de uma capacidade de agendamento que não existe nas Specs atuais.
+- **Entrevistas:** item 3 da OPEN-066 atendido em 01/11/2026 com o cadastro de entrevistas feito na SPEC-018.
 - Em hospedagem sem processo contínuo (serverless), a rodada periódica não roda sozinha; seria preciso um agendador externo chamando o envio. Para o ambiente do projeto (servidor Node), basta o `npm run start`/`dev`.
 
 ## Arquivos principais

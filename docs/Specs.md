@@ -2639,7 +2639,7 @@ OPEN-063 a OPEN-065 estão resolvidas conforme `docs/OPEN.md`. A linha do tempo 
 | Campo | Valor |
 |---|---|
 | ID | SPEC-017 |
-| Estado do texto | aprovada; implementada e encerrada em 01/11/2026, exceto o aviso de entrevista (não há operação de entrevista na plataforma) e com o "Recrutador responsável" provisório (OPEN-093); ver `docs/Implementacao/SPEC-017.md` |
+| Estado do texto | aprovada; implementada e encerrada em 01/11/2026, com o "Recrutador responsável" provisório (OPEN-093); o aviso de entrevista foi incluído com a SPEC-018; ver `docs/Implementacao/SPEC-017.md` |
 | Estado do layout | aprovado pelo responsável em 01/11/2026 sobre as telas implementadas (aba Notificações com contador no menu e opção de e-mail, e-mails de aviso, "Remover da lista" em Minhas candidaturas) |
 | Capacidade | Notificar alterações do processo seletivo |
 
@@ -2696,7 +2696,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
-- [ ] Cada um dos cinco tipos de evento aprovados em OPEN-066 gera comunicação ao destinatário definido para esse evento. *(quatro tipos implementados; o aviso de entrevista depende de uma operação de entrevista que não existe nas Specs atuais; destinatário do cancelamento provisório — OPEN-093)*
+- [x] Cada um dos cinco tipos de evento aprovados em OPEN-066 gera comunicação ao destinatário definido para esse evento. *(o aviso de entrevista passou a existir com o cadastro de entrevistas da SPEC-018, em 01/11/2026; destinatário do cancelamento provisório — OPEN-093)*
 - [x] Notificação é disparada apenas para destinatário autorizado e não expõe dados de outro candidato (RNF-07/RNF-08).
 - [x] Falhas de envio não apagam a alteração de origem nem geram falsa confirmação de entrega (RNF-09/RNF-14, quando aplicável).
 
@@ -2747,8 +2747,8 @@ OPEN-066 a OPEN-069 estão resolvidas conforme `docs/OPEN.md`. As notificações
 |---|---|
 | ID | SPEC-018 |
 |
-| Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada em 01/11/2026, com o cadastro de entrevistas no funil (OPEN-094) e o critério de indício de abuso provisório (OPEN-095); a apresentação pública da distribuição fica para a SPEC-021; ver `docs/Implementacao/SPEC-018.md` |
+| Estado do layout | aprovado pelo responsável em 01/11/2026 sobre as telas implementadas (entrevista no funil da empresa: agendar, alterar, cancelar e concluir; entrevista e formulário de avaliação com revisão, confirmação e consulta da própria avaliação no detalhe da candidatura) |
 | Capacidade | Avaliar processo seletivo |
 
 ## 2. Rastreabilidade
@@ -2763,9 +2763,9 @@ Candidato elegível registra avaliação com campos definidos na baseline; o sis
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
 |---|---|---|
-| Formulário de avaliação | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
-| Confirmação | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
-| Consulta de avaliação própria, se prevista | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Pendente ou não se aplica conforme a área |
+| Formulário de avaliação | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Aprovado em 01/11/2026 sobre a tela implementada |
+| Confirmação | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Aprovado em 01/11/2026 sobre a tela implementada |
+| Consulta de avaliação própria, se prevista | Apoiar a ação indicada pela área/tela, com estados, validações e retorno do fluxo descritos nesta Spec | Aprovado em 01/11/2026 sobre a tela implementada |
 
 O layout funcional é uma evidência visual/protótipo, não código. Deve ser aprovado separadamente quando houver interface própria.
 
@@ -2811,23 +2811,25 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
-- [ ] Apenas candidato elegível registra avaliação associada ao processo correspondente.
-- [ ] As notas de acessibilidade e postura inclusiva são campos separados e obrigatórios, cada uma de 1 a 5 estrelas.
-- [ ] O comentário pode ficar vazio; quando informado, é validado.
-- [ ] Após o envio, o candidato não consegue editar nem substituir a avaliação; uma segunda avaliação do mesmo candidato para a mesma entrevista é recusada.
-- [ ] Eventos relevantes são registrados e indícios pertinentes de abuso podem ser encaminhados para análise administrativa, sem bloqueio automático nem alteração automática da avaliação/distribuição pública.
-- [ ] A apresentação pública mostra somente distribuição agregada por quantidade de estrelas e não expõe identidade, identificadores ou comentários individuais; avaliação inválida não alimenta a nota pública (RNF-08/RNF-09).
-- [ ] Registros individuais e comentários opcionais têm acesso restrito e são excluídos ou irreversivelmente anonimizados após 1 ano do envio, respeitando obrigações aplicáveis de preservação.
-- [ ] A distribuição agregada só é mantida por prazo indeterminado se não permitir reconstruir avaliações individuais nem identificar candidatos.
+- [x] Apenas candidato elegível registra avaliação associada ao processo correspondente.
+- [x] As notas de acessibilidade e postura inclusiva são campos separados e obrigatórios, cada uma de 1 a 5 estrelas.
+- [x] O comentário pode ficar vazio; quando informado, é validado.
+- [x] Após o envio, o candidato não consegue editar nem substituir a avaliação; uma segunda avaliação do mesmo candidato para a mesma entrevista é recusada.
+- [x] Eventos relevantes são registrados e indícios pertinentes de abuso podem ser encaminhados para análise administrativa, sem bloqueio automático nem alteração automática da avaliação/distribuição pública. *(critério de indício provisório — OPEN-095)*
+- [ ] A apresentação pública mostra somente distribuição agregada por quantidade de estrelas e não expõe identidade, identificadores ou comentários individuais; avaliação inválida não alimenta a nota pública (RNF-08/RNF-09). *(depende da SPEC-021: aqui só existe a contagem por estrelas, sem tela pública; avaliação inválida nunca é gravada)*
+- [x] Registros individuais e comentários opcionais têm acesso restrito e são excluídos ou irreversivelmente anonimizados após 1 ano do envio, respeitando obrigações aplicáveis de preservação. *(rotina `npm run evaluations:retention`; o agendamento em produção segue o checklist operacional)*
+- [ ] A distribuição agregada só é mantida por prazo indeterminado se não permitir reconstruir avaliações individuais nem identificar candidatos. *(depende da SPEC-021, que definirá a apresentação e o mínimo de avaliações para não permitir identificação)*
 
-- [ ] Acesso limitado ao ator autorizado.
-- [ ] Pré-condições e regras são validadas no backend.
-- [ ] Operações inválidas são recusadas sem alteração indevida.
-- [ ] Operação válida produz o estado esperado.
-- [ ] Dados pessoais e de acessibilidade respeitam autorização.
-- [ ] Alterações relevantes ficam rastreáveis.
-- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
-- [ ] Lacunas permanecem explicitadas em OPEN.md.
+- [x] Acesso limitado ao ator autorizado.
+- [x] Pré-condições e regras são validadas no backend.
+- [x] Operações inválidas são recusadas sem alteração indevida.
+- [x] Operação válida produz o estado esperado.
+- [x] Dados pessoais e de acessibilidade respeitam autorização.
+- [x] Alterações relevantes ficam rastreáveis.
+- [x] A capacidade não executa responsabilidades atribuídas a outras Specs.
+- [x] Lacunas permanecem explicitadas em OPEN.md.
+
+> Evidência: testes Vitest e E2E verdes na CI; teste manual executado pelo responsável em 01/11/2026 sem problemas; layouts aprovados na mesma data. A entrevista exigida pela OPEN-070 passou a ser cadastrada no funil (OPEN-094).
 
 ## 12. Casos de teste derivados
 
@@ -2852,12 +2854,12 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado à candidatura/entrevista concluída, com prazo de 60 dias corridos após a conclusão. OPEN-071 foi resolvida: duas notas obrigatórias e separadas (acessibilidade e postura inclusiva), cada uma de 1 a 5 estrelas, comentário opcional e impossibilidade de edição após envio. OPEN-072 foi resolvida: uma avaliação por candidato por entrevista concluída, sem edição/substituição, com rejeição de duplicatas e registro/encaminhamento administrativo de indícios relevantes de abuso, sem bloqueio automático. OPEN-073 foi resolvida: publicação apenas da distribuição agregada por quantidade de estrelas, sem comentários individuais, acesso restrito aos registros individuais e retenção por 1 ano após o envio; agregados só podem ser mantidos indefinidamente se não permitirem reconstrução ou identificação.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
-- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
-- [ ] Questões decididas ou mantidas explicitamente em aberto.
-- [ ] Layout funcional anexado e aprovado quando aplicável.
-- [ ] Critérios de aceitação e testes revisados.
-- [ ] Nenhuma implementação antes das aprovações exigidas.
+- [x] Texto revisado e aprovado.
+- [x] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
+- [x] Questões decididas ou mantidas explicitamente em aberto.
+- [x] Layout funcional anexado e aprovado quando aplicável.
+- [x] Critérios de aceitação e testes revisados.
+- [x] Nenhuma implementação antes das aprovações exigidas.
 
 ---
 

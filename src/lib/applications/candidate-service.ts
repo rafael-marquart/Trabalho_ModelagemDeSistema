@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { ACTIVE_STAGES } from "@/lib/jobs/applications";
 import { candidateStageLabels, stageLabels } from "./stages";
 import { enqueueApplicationCancelled, kickNotificationDelivery } from "@/lib/notifications/service";
+import { toInterviewView } from "@/lib/interviews/service";
+import { evaluationState } from "@/lib/evaluations/service";
 
 // SPEC-012 and SPEC-016: the candidate's side of their own applications. Every read and write is scoped to the user of
 // the session; another person's application is reported exactly like one that does not exist.
@@ -94,7 +96,8 @@ export async function getCandidateApplication(userId: string, applicationId: str
     where: { id: applicationId, candidateUserId: userId, hiddenByCandidateAt: null },
     select: {
       id: true, stage: true, appliedAt: true, updatedAt: true, job: { select: jobSelect },
-      stageEvents: { select: { createdAt: true, kind: true, toStage: true }, orderBy: [{ createdAt: "asc" }, { id: "asc" }] }
+      stageEvents: { select: { createdAt: true, kind: true, toStage: true }, orderBy: [{ createdAt: "asc" }, { id: "asc" }] },
+      interviews: { orderBy: [{ scheduledAt: "desc" }, { id: "desc" }], include: { evaluation: { select: { submittedAt: true, accessibilityRating: true, inclusionRating: true, comment: true } } } }
     }
   });
   if (!row || !isVisible(row, now)) return null;
@@ -111,6 +114,8 @@ export async function getCandidateApplication(userId: string, applicationId: str
     timeline: toTimeline(row.stageEvents),
     canCancel: block === null,
     canHide: HIDEABLE.includes(row.stage),
+    // SPEC-018: the candidate's interviews (with the details to attend) and, for completed ones, the evaluation state.
+    interviews: row.interviews.map((interview) => ({ ...toInterviewView(interview), evaluation: evaluationState(interview, now) })),
     historyVisibleUntil: until ? until.toISOString() : null
   };
 }
@@ -162,6 +167,8 @@ export async function cancelApplication(userId: string, applicationId: string): 
     await tx.auditEvent.create({
       data: { actorUserId: userId, eventType: "APPLICATION_CANCELLED", subjectType: "Application", subjectId: row.id, metadata: { jobId: row.jobId, fromStage: from, toStage: "CANCELADA" } }
     });
+    // A scheduled interview of a cancelled application is cancelled too (SPEC-018); the company sees it in the funnel.
+    await tx.interview.updateMany({ where: { applicationId: row.id, status: "SCHEDULED" }, data: { status: "CANCELLED", cancelledAt: new Date() } });
     // SPEC-017: the recruiter responsible for the job is told (OPEN-066, item 4).
     await enqueueApplicationCancelled(tx, { applicationId: row.id, jobId: row.jobId, candidateName: row.candidate.fullName });
     return "OK" as const;

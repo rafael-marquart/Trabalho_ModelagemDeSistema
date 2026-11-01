@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { prismaMock, tx } = vi.hoisted(() => {
-  const tx = { job: { findFirst: vi.fn() }, application: { updateMany: vi.fn() }, applicationStageEvent: { create: vi.fn() }, auditEvent: { create: vi.fn() } };
+  const tx = { job: { findFirst: vi.fn() }, interview: { updateMany: vi.fn() }, application: { updateMany: vi.fn() }, applicationStageEvent: { create: vi.fn() }, auditEvent: { create: vi.fn() } };
   return { tx, prismaMock: {
     application: { findMany: vi.fn(), findFirst: vi.fn() },
     $transaction: vi.fn(async (cb: (t: typeof tx) => unknown) => cb(tx))
@@ -56,12 +56,14 @@ describe("candidate side of applications (SPEC-012/016)", () => {
 
     prismaMock.application.findFirst.mockResolvedValueOnce({
       id: "a1", stage: "ENTREVISTA", appliedAt: day("2026-10-01"), updatedAt: day("2026-10-05"), job: job("CLOSED", day("2026-10-20")),
-      stageEvents: [{ createdAt: day("2026-10-01"), toStage: "INSCRITO", kind: "SUBMITTED" }]
+      stageEvents: [{ createdAt: day("2026-10-01"), toStage: "INSCRITO", kind: "SUBMITTED" }],
+      interviews: [{ id: "i1", scheduledAt: day("2026-10-10"), modality: "ONLINE", locationOrLink: "https://meet.example/x", accessibilityResources: "Legendas", status: "COMPLETED", completedAt: day("2026-10-10"), cancelledAt: null, evaluation: null }]
     });
     const detail = await getCandidateApplication("cand-1", "a1", day("2026-11-01"));
     expect(detail).toMatchObject({ stageLabel: "Em entrevista", canCancel: true, job: { status: "CLOSED" } });
     expect(detail?.historyVisibleUntil?.slice(0, 10)).toBe("2026-12-19");
     expect(JSON.stringify(detail)).not.toMatch(/actor|note|email/i);
+    expect(detail?.interviews[0]).toMatchObject({ statusLabel: "Concluída", evaluation: { kind: "OPEN" } });
   });
 
   it("states why an application cannot be cancelled", () => {
@@ -82,6 +84,7 @@ describe("candidate side of applications (SPEC-012/016)", () => {
     expect(tx.applicationStageEvent.create).toHaveBeenCalledWith({ data: { applicationId: "a1", fromStage: "TRIAGEM", toStage: "CANCELADA", kind: "CANCELLED", actorUserId: "cand-1" } });
     expect(tx.auditEvent.create.mock.calls[0][0].data).toMatchObject({ eventType: "APPLICATION_CANCELLED", actorUserId: "cand-1", subjectId: "a1" });
     expect(notify.enqueueApplicationCancelled).toHaveBeenCalledWith(tx, { applicationId: "a1", jobId: "job-1", candidateName: "Ana Lima" });
+    expect(tx.interview.updateMany).toHaveBeenCalledWith({ where: { applicationId: "a1", status: "SCHEDULED" }, data: { status: "CANCELLED", cancelledAt: expect.any(Date) } });
     expect(notify.kickNotificationDelivery).toHaveBeenCalled();
   });
 

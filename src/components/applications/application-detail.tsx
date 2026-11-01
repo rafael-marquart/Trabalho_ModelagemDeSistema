@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { stagePill } from "./funnel-board";
+import InterviewPanel, { type Interview } from "./interview-panel";
 
 type Detail = {
   id: string; job: { id: string; title: string }; candidate: { fullName: string; email: string }; appliedAt: string;
@@ -14,6 +15,7 @@ type Detail = {
   accessibility: { declaration: string; needs: string[]; essentialResources: string[] };
   history: { at: string; from: string | null; to: string; kind: string; actor: string; note: string | null }[];
   nextStages: { stage: string; label: string }[]; blockingIssues: string[];
+  interviews: Interview[]; canScheduleInterview: boolean;
 };
 
 const dimensionNames = { A: "Acessibilidade", T: "Perfil técnico", D: "Modalidade e deslocamento" } as const;
@@ -88,6 +90,10 @@ export default function ApplicationDetail({ basePath, jobId, applicationId }: { 
             </div>
           </div>}
       </section>
+
+      {data.canScheduleInterview || data.interviews.length ? <InterviewPanel applicationId={applicationId} interviews={data.interviews} canSchedule={data.canScheduleInterview}
+        candidateEssentials={data.accessibility.essentialResources}
+        onChanged={async (message) => { setNotice(message); await load(); setTimeout(() => noticeRef.current?.focus(), 0); }} /> : null}
 
       <div className="job-detail-layout">
         <div className="job-detail-main">

@@ -5,6 +5,8 @@ import CompanyShell from "@/components/company-shell";
 import CancelApplication from "@/components/candidate/cancel-application";
 import CancelResult from "@/components/candidate/cancel-result";
 import HideApplication from "@/components/candidate/hide-application";
+import InterviewEvaluation from "@/components/candidate/interview-evaluation";
+import { interviewDateTime } from "@/lib/interviews/format";
 import { candidatePill, dateOnly, initialsOf } from "@/components/candidate/application-format";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getCandidateApplication } from "@/lib/applications/candidate-service";
@@ -44,6 +46,33 @@ export default async function MyApplicationDetailPage({ params, searchParams }: 
         </div>
         <span className={`status-pill ${candidatePill[application.stage] ?? "status-neutral"}`}><span className="visually-hidden">Situação atual: </span>{application.stageLabel}</span>
       </section>
+
+      {application.interviews.length ? <section className="job-detail-section interview-panel" aria-labelledby="interview-title">
+        <h2 id="interview-title">Entrevista</h2>
+        {application.interviews.map((interview) => <div key={interview.id} className="interview-current">
+          <p><span className={`status-pill ${interview.status === "SCHEDULED" ? "status-pending" : interview.status === "COMPLETED" ? "status-active" : "status-muted"}`}>{`Entrevista ${interview.statusLabel.toLocaleLowerCase("pt-BR")}`}</span></p>
+          <dl className="interview-facts">
+            <div><dt>Quando</dt><dd>{`${interviewDateTime(interview.scheduledAt)} (horário de Brasília)`}</dd></div>
+            <div><dt>Modalidade</dt><dd>{interview.modalityLabel}</dd></div>
+            {interview.status === "SCHEDULED" ? <>
+              <div><dt>{interview.modality === "ONLINE" ? "Link" : "Local"}</dt><dd className="interview-place">{interview.modality === "ONLINE" && /^https?:\/\//i.test(interview.locationOrLink)
+                ? <a href={interview.locationOrLink} target="_blank" rel="noopener noreferrer">{interview.locationOrLink}</a> : interview.locationOrLink}</dd></div>
+              <div><dt>Recursos de acessibilidade previstos</dt><dd>{interview.accessibilityResources || "A empresa não informou"}</dd></div>
+            </> : null}
+          </dl>
+          {interview.evaluation?.kind === "OPEN" ? <InterviewEvaluation interviewId={interview.id} deadline={interview.evaluation.deadline} />
+            : interview.evaluation?.kind === "DONE" ? <div className="evaluation-done">
+              <h3>Sua avaliação</h3>
+              <dl className="evaluation-summary">
+                <dt>Acessibilidade</dt><dd>{`${interview.evaluation.accessibilityRating} de 5 estrelas`}</dd>
+                <dt>Postura inclusiva</dt><dd>{`${interview.evaluation.inclusionRating} de 5 estrelas`}</dd>
+                <dt>Comentário</dt><dd>{interview.evaluation.comment || "Sem comentário"}</dd>
+              </dl>
+              <p className="muted">{`Enviada em ${dateOnly(interview.evaluation.submittedAt)}. A avaliação não pode ser alterada.`}</p>
+            </div>
+            : interview.evaluation?.kind === "EXPIRED" ? <p className="muted">{`O prazo para avaliar esta entrevista terminou em ${dateOnly(interview.evaluation.deadline)}.`}</p> : null}
+        </div>)}
+      </section> : null}
 
       <section aria-labelledby="history-title">
         <h2 id="history-title">Histórico da candidatura</h2>

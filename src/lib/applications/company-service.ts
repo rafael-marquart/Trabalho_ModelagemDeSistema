@@ -3,6 +3,7 @@ import { toEducationList, toExperienceList, toLanguageList, toStringList } from 
 import { canMove, FUNNEL_ORDER, kindLabels, knownBlockingIssues, moveKind, RECRUITER_TRANSITIONS, type Stage } from "./funnel";
 import { stageLabels } from "./stages";
 import { enqueueStageChanged, kickNotificationDelivery } from "@/lib/notifications/service";
+import { listInterviews } from "@/lib/interviews/service";
 
 // SPEC-013: the company side of applications. Every read and write is scoped to the company resolved from the session
 // (company account or recruiter with an active link); the client never chooses the company.
@@ -79,6 +80,8 @@ export async function getApplicationForCompany(companyId: string, applicationId:
       at: event.createdAt.toISOString(), from: event.fromStage ? stageLabels[event.fromStage] : null, to: stageLabels[event.toStage],
       kind: kindLabels[event.kind] ?? event.kind, actor: actorName(event.actorUserId), note: event.note
     })),
+    interviews: await listInterviews(row.id),
+    canScheduleInterview: stage === "ENTREVISTA",
     nextStages: RECRUITER_TRANSITIONS[stage].map((to) => ({ stage: to, label: stageLabels[to] })),
     blockingIssues: knownBlockingIssues()
   };
