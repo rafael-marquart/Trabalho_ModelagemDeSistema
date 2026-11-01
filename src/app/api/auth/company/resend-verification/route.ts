@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { normalizeIdentifier } from "@/lib/auth/login-schema";
 import { createOneTimeToken } from "@/lib/auth/tokens";
-import { sendEmail } from "@/lib/email";
+import { emailFailureMetadata, sendEmail } from "@/lib/email";
+import { emailTemplates } from "@/lib/email-templates";
 import { prisma } from "@/lib/prisma";
 import { getPublicBaseUrl } from "@/lib/security/public-base-url";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
@@ -135,12 +136,8 @@ export async function POST(request: NextRequest) {
   try {
     const baseUrl = getPublicBaseUrl(request);
     if (!baseUrl) throw new Error("APP_BASE_URL is required to send production email links");
-    await sendEmail({
-      to: eligible.email,
-      subject: "Novo link de confirmação — Acessa Vagas",
-      text: `Para confirmar o e-mail corporativo, acesse este link em até 24 horas e use-o apenas uma vez: ${baseUrl}/empresa/confirmar-email?token=${outcome.token}\n\nSe você não solicitou este envio, ignore esta mensagem.`
-    });
-  } catch {
+    await sendEmail({ to: eligible.email, ...emailTemplates.companyEmailVerificationResend(`${baseUrl}/empresa/confirmar-email?token=${outcome.token}`) });
+  } catch (error) {
     await prisma.$transaction(async tx => {
       await tx.companyEmailVerificationToken.deleteMany({
         where: { companyId: outcome.companyId!, tokenHash: token!.tokenHash, usedAt: null }
@@ -150,7 +147,8 @@ export async function POST(request: NextRequest) {
           actorUserId: outcome.userId,
           eventType: "AUTH_COMPANY_EMAIL_VERIFICATION_DELIVERY_FAILED",
           subjectType: "User",
-          subjectId: outcome.userId
+          subjectId: outcome.userId,
+          metadata: emailFailureMetadata(error)
         }
       });
     });

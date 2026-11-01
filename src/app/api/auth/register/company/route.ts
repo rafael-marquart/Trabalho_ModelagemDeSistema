@@ -5,7 +5,8 @@ import { passwordSchema } from "@/lib/auth/password-policy";
 import { normalizeIdentifier } from "@/lib/auth/login-schema";
 import { isValidCnpj, normalizeCnpj } from "@/lib/auth/cnpj";
 import { createOneTimeToken } from "@/lib/auth/tokens";
-import { sendEmail } from "@/lib/email";
+import { emailFailureMetadata, sendEmail } from "@/lib/email";
+import { emailTemplates } from "@/lib/email-templates";
 import { prisma } from "@/lib/prisma";
 import { getPublicBaseUrl } from "@/lib/security/public-base-url";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
@@ -96,18 +97,15 @@ export async function POST(request: Request) {
   const baseUrl = getPublicBaseUrl(request);
   try {
     if (!baseUrl) throw new Error("APP_BASE_URL is required to send production email links");
-    await sendEmail({
-      to: email,
-      subject: "Confirme o e-mail corporativo — Acessa Vagas",
-      text: `Para confirmar o e-mail corporativo, acesse este link em até 24 horas e use-o apenas uma vez: ${baseUrl}/empresa/confirmar-email?token=${token}\n\nA confirmação do e-mail ativa a conta empresarial. Se um CNPJ foi informado, o sistema verifica apenas o formato, sem consultar fonte externa. Se você não solicitou este cadastro, ignore esta mensagem.`
-    });
-  } catch {
+    await sendEmail({ to: email, ...emailTemplates.companyEmailVerification(`${baseUrl}/empresa/confirmar-email?token=${token}`) });
+  } catch (error) {
     await prisma.auditEvent.create({
       data: {
         actorUserId: userId,
         eventType: "AUTH_COMPANY_EMAIL_VERIFICATION_DELIVERY_FAILED",
         subjectType: "User",
-        subjectId: userId
+        subjectId: userId,
+        metadata: emailFailureMetadata(error)
       }
     });
   }

@@ -27,6 +27,8 @@ services:
     environment:
       MP_SMTP_AUTH_ACCEPT_ANY: "1"
       MP_SMTP_AUTH_ALLOW_INSECURE: "1"
+      # Falhas simuladas de SMTP para testes (npm run mailpit:chaos); desligadas até serem ativadas.
+      MP_ENABLE_CHAOS: "true"
 
 volumes:
   acessavagas-postgres-data:

@@ -17,7 +17,7 @@ const { prismaMock, getCurrentUserMock, createTokenMock, sendEmailMock, rejectOr
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
 vi.mock("@/lib/auth/session", () => ({ getCurrentUser: getCurrentUserMock }));
 vi.mock("@/lib/auth/tokens", () => ({ createOneTimeToken: createTokenMock }));
-vi.mock("@/lib/email", () => ({ sendEmail: sendEmailMock }));
+vi.mock("@/lib/email", () => ({ sendEmail: sendEmailMock, emailFailureMetadata: () => ({ reason: "CONNECTION" }) }));
 vi.mock("@/lib/security/request-origin", () => ({ rejectCrossOriginRequest: rejectOriginMock }));
 
 import { GET, POST } from "./route";

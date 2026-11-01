@@ -4,7 +4,8 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { createOneTimeToken } from "@/lib/auth/tokens";
 import { hashPassword } from "@/lib/auth/password";
 import { randomBytes } from "node:crypto";
-import { sendEmail } from "@/lib/email";
+import { emailFailureMetadata, sendEmail } from "@/lib/email";
+import { emailTemplates } from "@/lib/email-templates";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 import { prisma } from "@/lib/prisma";
 import { getPublicBaseUrl } from "@/lib/security/public-base-url";
@@ -178,12 +179,8 @@ export async function POST(request: NextRequest) {
   const baseUrl = getPublicBaseUrl(request);
   try {
     if (!baseUrl) throw new Error("APP_BASE_URL is required to send production email links");
-    await sendEmail({
-      to: recipient.email,
-      subject: "Convite para se vincular a uma empresa — Acessa Vagas",
-      text: `A empresa ${company.legalName} convidou você para se vincular à organização. Aceite ou recuse em até 7 dias: ${baseUrl}/recrutador/convite?token=${token}\n\nSe você ainda não tem uma conta ativa, poderá definir sua senha antes de aceitar o vínculo. Se não esperava este convite, pode recusá-lo ou ignorar esta mensagem.`
-    });
-  } catch {
+    await sendEmail({ to: recipient.email, ...emailTemplates.recruiterInvitation(company.legalName, `${baseUrl}/recrutador/convite?token=${token}`) });
+  } catch (error) {
     const replacement = createOneTimeToken();
     await prisma.$transaction(async tx => {
       const changed = await tx.recruiterInvitation.updateMany({
@@ -191,7 +188,7 @@ export async function POST(request: NextRequest) {
         data: { tokenHash: replacement.tokenHash }
       });
       if (changed.count === 1) await tx.auditEvent.create({
-        data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_DELIVERY_FAILED", subjectType: "RecruiterInvitation", subjectId: invitation.id }
+        data: { actorUserId: user.id, eventType: "RECRUITER_INVITATION_DELIVERY_FAILED", subjectType: "RecruiterInvitation", subjectId: invitation.id, metadata: emailFailureMetadata(error) }
       });
     });
     return NextResponse.json({ ok: true, message: genericMessage }, { status: 202 });

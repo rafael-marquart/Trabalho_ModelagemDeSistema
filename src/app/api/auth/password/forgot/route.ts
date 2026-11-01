@@ -4,7 +4,8 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { normalizeCpf, normalizeIdentifier } from "@/lib/auth/login-schema";
 import { createOneTimeToken } from "@/lib/auth/tokens";
-import { sendEmail } from "@/lib/email";
+import { emailFailureMetadata, sendEmail } from "@/lib/email";
+import { emailTemplates } from "@/lib/email-templates";
 import { getPublicBaseUrl } from "@/lib/security/public-base-url";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 
@@ -137,19 +138,16 @@ export async function POST(request: NextRequest) {
     const baseUrl = getPublicBaseUrl(request);
     try {
       if (!baseUrl) throw new Error("APP_BASE_URL is required to send production email links");
-      await sendEmail({
-        to: user.email,
-        subject: "Recuperação de senha — Acessa Vagas",
-        text: `Recebemos uma solicitação de recuperação de senha. Use este link em até 30 minutos e apenas uma vez: ${baseUrl}/recuperar-senha?token=${outcome.token}\n\nSe você não solicitou, ignore esta mensagem.`
-      });
-    } catch {
+      await sendEmail({ to: user.email, ...emailTemplates.passwordRecovery(`${baseUrl}/recuperar-senha?token=${outcome.token}`) });
+    } catch (error) {
       // Keep the public response generic if email delivery is not configured.
       await prisma.auditEvent.create({
         data: {
           actorUserId: user.id,
           eventType: "AUTH_PASSWORD_RECOVERY_EMAIL_FAILED",
           subjectType: "User",
-          subjectId: user.id
+          subjectId: user.id,
+          metadata: emailFailureMetadata(error)
         }
       });
     }
