@@ -4,7 +4,7 @@ import ThemeToggle from "@/components/theme-toggle";
 import BrandLogo from "@/components/brand-logo";
 
 export type ShellRole = "COMPANY" | "RECRUITER" | "CANDIDATE" | "ADMIN";
-export type ShellSection = "home" | "jobs" | "recruiters" | "settings" | "profile" | "catalog";
+export type ShellSection = "home" | "jobs" | "recruiters" | "settings" | "profile" | "catalog" | "applications";
 
 const menus: Record<ShellRole, { key: ShellSection; label: string; href: string }[]> = {
   COMPANY: [
@@ -17,10 +17,11 @@ const menus: Record<ShellRole, { key: ShellSection; label: string; href: string 
     { key: "home", label: "Visão geral", href: "/recrutador" },
     { key: "jobs", label: "Vagas", href: "/recrutador/vagas" }
   ],
-  // D-02 (29/10/2026): applications and notifications join the menu only when their Specs are implemented.
+  // D-02 (29/10/2026): applications (SPEC-012/016) joined the menu; notifications join when SPEC-017 is implemented.
   CANDIDATE: [
     { key: "home", label: "Início", href: "/candidato" },
     { key: "jobs", label: "Vagas", href: "/candidato/vagas" },
+    { key: "applications", label: "Minhas candidaturas", href: "/candidato/candidaturas" },
     { key: "profile", label: "Meu perfil", href: "/candidato/perfil" }
   ],
   ADMIN: [

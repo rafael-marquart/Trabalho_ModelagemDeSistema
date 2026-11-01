@@ -1058,3 +1058,51 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .stage-history li { display: grid; gap: 2px; padding-left: 14px; border-left: 3px solid var(--purple-soft); }
 .stage-history span { color: var(--muted); font-size: 14px; }
 .stage-history .stage-note { color: var(--ink); font-style: italic; }
+
+/* SPEC-012/016 — Minhas candidaturas, detalhe e cancelamento */
+.status-danger { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, var(--surface)); }
+.status-muted { color: var(--status-neutral-text); background: color-mix(in srgb, var(--status-neutral-text) 18%, var(--surface)); }
+.my-applications-filters { display: grid; grid-template-columns: minmax(0, 1fr) minmax(180px, 240px); gap: 12px; margin: 20px 0 8px; }
+.my-applications-filters .field { display: grid; gap: 6px; color: var(--ink); font-size: 14px; font-weight: 600; }
+.my-applications-filters input, .my-applications-filters select { width: 100%; min-height: 48px; padding: 10px 14px; border: 1px solid var(--field-border); border-radius: 12px; color: var(--ink); background: var(--surface); font-size: 16px; font-weight: 400; }
+.my-applications-list { display: grid; gap: 16px; margin: 16px 0 0; padding: 0; list-style: none; }
+.my-application-card, .application-summary { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: start; gap: 16px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.my-application-avatar { display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; color: var(--purple); background: var(--purple-soft); font-family: var(--font-display); font-weight: 800; }
+.my-application-main { display: grid; gap: 4px; min-width: 0; }
+.my-application-main p { margin: 0; }
+.my-application-title { margin: 0; font-size: 19px; overflow-wrap: anywhere; }
+.my-application-side { display: grid; justify-items: end; gap: 14px; }
+.text-link { color: var(--purple); font-weight: 700; text-decoration: none; }
+.text-link:hover { text-decoration: underline; }
+.application-detail { display: grid; gap: 24px; align-content: start; }
+.application-detail > h1 { margin: 0; }
+.application-detail > .back-link { margin: 0; }
+.application-detail section > h2 { margin: 0 0 6px; }
+.application-state-note { margin: 12px 0 0; padding: 12px 14px; border-radius: 10px; background: var(--status-neutral-bg); color: var(--ink); }
+.application-result { padding: 16px 18px; border-left: 4px solid var(--status-neutral-text); border-radius: 10px; background: var(--surface); }
+.application-result h2 { margin: 0 0 4px; font-size: 18px; }
+.application-result p { margin: 0; }
+.application-timeline { position: relative; display: grid; gap: 22px; margin: 16px 0 0; padding: 0 0 0 28px; list-style: none; }
+.application-timeline::before { content: ""; position: absolute; top: 6px; bottom: 6px; left: 7px; width: 2px; background: var(--line); }
+.application-timeline li { position: relative; display: grid; gap: 3px; }
+.application-timeline li::before { content: ""; position: absolute; top: 4px; left: -28px; width: 16px; height: 16px; border: 2px solid var(--purple); border-radius: 50%; background: var(--purple-soft); }
+.application-timeline time { color: var(--muted); font-size: 13px; }
+.application-timeline h3 { margin: 0; font-size: 17px; }
+.application-timeline p { margin: 0; }
+.application-timeline .timeline-stage { color: var(--purple); font-size: 14px; font-weight: 700; }
+.cancel-application { display: grid; gap: 10px; justify-items: start; }
+.cancel-application h2, .cancel-application p { margin: 0; }
+.danger-button { min-height: 44px; padding: 0 18px; border: 1px solid var(--danger); border-radius: 10px; color: var(--danger); background: color-mix(in srgb, var(--danger) 10%, var(--surface)); font-weight: 700; cursor: pointer; }
+.danger-button-solid { color: var(--surface); background: var(--danger); }
+.danger-button:disabled { opacity: .65; cursor: progress; }
+.confirm-dialog { width: min(480px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--line); border-radius: 18px; color: var(--ink); background: var(--surface); }
+.confirm-dialog::backdrop { background: rgba(20, 12, 40, .55); }
+.confirm-dialog-body { display: grid; gap: 14px; padding: 24px; }
+.confirm-dialog-body h2, .confirm-dialog-body p { margin: 0; }
+.confirm-dialog-note { padding: 10px 12px; border-radius: 10px; color: var(--status-pending-text); background: var(--status-pending-bg); font-size: 14px; }
+.confirm-dialog .apply-actions { justify-content: flex-end; }
+@media (max-width: 720px) {
+  .my-applications-filters { grid-template-columns: minmax(0, 1fr); }
+  .my-application-card, .application-summary { grid-template-columns: auto minmax(0, 1fr); }
+  .my-application-side { grid-column: 1 / -1; justify-items: start; grid-auto-flow: column; align-items: center; justify-content: space-between; }
+}

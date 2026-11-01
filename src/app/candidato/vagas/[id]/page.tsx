@@ -96,6 +96,7 @@ export default async function CandidateJobDetailPage({ params }: { params: Promi
       <section className={`job-action ${job.action.applied ? "job-action-applied" : job.action.allowed ? "job-action-allowed" : "job-action-blocked"}`} aria-labelledby="action-title">
         <h2 id="action-title">{job.action.applied ? "Você já se candidatou" : job.action.allowed ? "Você pode se candidatar" : "Candidatura não disponível"}</h2>
         <p>{job.action.message}</p>
+        {job.applicationId ? <Link className="secondary-button" href={`/candidato/candidaturas/${job.applicationId}`}>Acompanhar minha candidatura</Link> : null}
         {job.action.allowed ? <ApplyPanel jobId={id} jobTitle={job.title} companyName={job.companyName} score={result?.score ?? null} /> : null}
       </section>
     </main>

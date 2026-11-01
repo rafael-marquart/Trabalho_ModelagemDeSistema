@@ -2302,7 +2302,7 @@ As OPEN-047, OPEN-048 e OPEN-049 foram resolvidas e registradas em `docs/OPEN.md
 | Campo | Valor |
 |---|---|
 | ID | SPEC-012 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-012.md` |
 | Estado do layout | pendente |
 | Capacidade | Gerenciar candidatura pelo candidato |
 
@@ -2527,7 +2527,7 @@ OPEN-055 e OPEN-056 foram resolvidas e estão registradas em `docs/OPEN.md`. O a
 |---|---|
 | ID | SPEC-016 |
 |
-| Estado do texto | aprovada; pronta para implementação |
+| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-016.md` |
 | Estado do layout | pendente |
 | Capacidade | Acompanhar candidatura e processo seletivo |
 
