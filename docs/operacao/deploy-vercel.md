@@ -6,7 +6,8 @@ Guia para colocar o AcessaVagas no ar com **Vercel (Hobby, grátis)** + **Neon (
 
 | Ponto | Como ficou |
 |---|---|
-| Build | `vercel.json` usa `npm run vercel-build` (`scripts/vercel-build.mjs`): na **produção** aplica as migrações pendentes (`prisma migrate deploy`) e depois gera o Prisma Client e o build do Next. Deploys de preview nunca mexem no banco. |
+| Build | `vercel.json` usa `npm run vercel-build` (`scripts/vercel-build.mjs`): na **produção** (`main`) e no **ambiente de testes** (`desenvolvimento-do-projeto` com `APP_ENV=staging`) aplica as migrações pendentes no banco daquele ambiente e depois gera o Prisma Client e o build do Next. Outros previews nunca mexem no banco. |
+| Branches publicadas | `ignoreCommand` do `vercel.json`: só `main` (produção) e `desenvolvimento-do-projeto` (testes) geram deploy; as demais branches são ignoradas. |
 | Região | Funções em `gru1` (São Paulo), perto do banco. |
 | Documentos do candidato | Guardados no banco (tabela `CandidateDocumentContent`), porque a Vercel não tem disco persistente. Limite de **4 MB** por arquivo (a Vercel recusa requisições acima de 4,5 MB) — OPEN-099. |
 | E-mails de notificação | Enviados logo após cada evento com `after()`; as novas tentativas vêm de `/api/cron/notificacoes`. |
@@ -95,9 +96,68 @@ No GitHub: **Settings → Secrets and variables → Actions → New repository s
 
 Teste em **Actions → Agendador → Run workflow**: o passo deve terminar com `{"ok":true,...}`. Observação: o GitHub pode pausar agendamentos depois de 60 dias sem commits no repositório (basta reativar em Actions).
 
-### 8. Previews
+### 8. Outras branches
 
-Cada push em outra branch gera um deploy de preview. Como as variáveis do banco estão só em Production, o preview abre mas não funciona com dados. Para evitar deploys inúteis: **Settings → Git → Ignored Build Step → "Only build production"** (ou deixe como está, se quiser ver as telas).
+Só `main` e `desenvolvimento-do-projeto` geram deploy (`ignoreCommand` no `vercel.json`); as branches de feature aparecem como "Ignored" na Vercel, sem gastar build.
+
+## Ambiente de testes (branch `desenvolvimento-do-projeto`)
+
+Um segundo site, com **banco próprio** e **e-mails presos numa caixa de teste**, para criar à vontade vagas, empresas e candidatos fictícios sem tocar na produção. Cada merge em `desenvolvimento-do-projeto` atualiza esse site.
+
+| | Produção | Testes |
+|---|---|---|
+| Branch | `main` | `desenvolvimento-do-projeto` |
+| Ambiente na Vercel | Production | Preview |
+| Endereço | `acessa-vagas.vercel.app` | `acessa-vagas-dev.vercel.app` |
+| Banco | Neon `acessavagas` | Neon `acessavagas-dev` (separado) |
+| E-mail | Brevo (chega de verdade) | Ethereal (caixa de teste na web; nada chega a ninguém) |
+| Faixa no topo | — | "Ambiente de testes" |
+| Agendamentos | Vercel Cron + GitHub a cada 15 min | Não (os e-mails saem na hora; sem novas tentativas) |
+
+### T1. Caixa de e-mail de teste (Ethereal)
+
+1. Em **ethereal.email**, clique em **Create Ethereal Account**.
+2. Anote o **Username** e o **Password** que aparecem (são da caixa de teste, não de um e-mail real). Para ver as mensagens depois: **Login** no site com esses dados → **Messages**.
+3. Limites: grátis, até 200 e-mails por hora; as mensagens ficam guardadas por algumas horas.
+
+### T2. Banco de testes (Neon)
+
+1. Na Vercel: **Storage → Create Database → Neon**, região **São Paulo**, **Auth desligado**, plano Free, nome `acessavagas-dev`.
+2. **Connect Project** → `acessa-vagas`, marcando **só Preview** (desmarque Production e Development) e **Custom Prefix vazio**.
+3. Confira em **Settings → Environment Variables**: agora há `DATABASE_URL` em *Production and Development* (banco de produção) e outra `DATABASE_URL` em *Preview* (banco de testes). **Nunca** conecte o banco de produção ao Preview.
+
+### T3. Endereço fixo do site de testes
+
+**Settings → Domains → Add Domain** → `acessa-vagas-dev.vercel.app` → em *Connect to an environment* escolha **Preview** e, em **Git Branch**, `desenvolvimento-do-projeto` → **Save**.
+
+### T4. Variáveis do ambiente de testes
+
+**Settings → Environment Variables → Add**, ambiente **Preview** (e, se a tela oferecer, branch `desenvolvimento-do-projeto`):
+
+| Tipo | Key | Value |
+|---|---|---|
+| Config | `APP_ENV` | `staging` (liga a faixa "Ambiente de testes" e autoriza as migrações no banco de testes) |
+| Config | `APP_BASE_URL` | `https://acessa-vagas-dev.vercel.app` |
+| Config | `SESSION_COOKIE_NAME` | `acessa_session` |
+| Config | `SMTP_HOST` | `smtp.ethereal.email` |
+| Config | `SMTP_PORT` | `587` |
+| Config | `SMTP_SECURE` | `false` |
+| Config | `SMTP_REQUIRE_TLS` | `true` |
+| Config | `SMTP_FROM` | `AcessaVagas Testes <nao-responda@acessavagas.test>` |
+| Config | `HERE_QUOTA_PERCENT` | `20` (a cota grátis da HERE é dividida: produção 60% + testes 20%) |
+| Secret | `SMTP_USER` | Username do Ethereal |
+| Secret | `SMTP_PASSWORD` | Password do Ethereal |
+| Secret | `HERE_API_KEY` | A mesma chave da produção |
+| Secret | `CRON_SECRET` | Outro valor aleatório (mesmo comando `node -e ...` da produção) |
+
+### T5. Quem pode abrir o site de testes
+
+No plano Hobby, os deploys de Preview ficam protegidos por login da Vercel (**Settings → Deployment Protection → Vercel Authentication**): só você, logado, consegue abrir. Para a equipe ou o professor testarem, desative essa proteção (os dados ali são fictícios e a Vercel não deixa previews aparecerem em buscadores).
+
+### T6. Primeiro deploy e administrador de testes
+
+1. **Deployments** → no último deploy de `desenvolvimento-do-projeto`, **⋯ → Redeploy** (ou faça um merge nessa branch). O log mostra "Aplicando migrações (ambiente de testes)".
+2. Crie um administrador de testes como no passo 6, usando a `DATABASE_URL_UNPOOLED` do **Preview**.
 
 ## Conferência depois do deploy
 
