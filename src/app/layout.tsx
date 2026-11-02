@@ -9,6 +9,7 @@ import "./globals.css";
 import ThemeProvider from "@/components/theme-provider";
 import ContrastProvider from "@/components/contrast-provider";
 import SkipLink from "@/components/skip-link";
+import StagingBanner from "@/components/staging-banner";
 
 export const metadata: Metadata = {
   title: "Acessa Vagas",
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="pt-BR" suppressHydrationWarning>
       <body>
         <SkipLink />
+        <StagingBanner />
         <ThemeProvider><ContrastProvider>{children}</ContrastProvider></ThemeProvider>
       </body>
     </html>

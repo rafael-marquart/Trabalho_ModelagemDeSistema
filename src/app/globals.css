@@ -1199,3 +1199,6 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 /* Not found (404): centered message with a way back. */
 .not-found-page { display: grid; place-content: center; gap: 12px; min-height: 100vh; padding: 24px 16px; text-align: center; }
 .not-found-page p { margin: 0; color: var(--muted); }
+
+/* Test environment (APP_ENV="staging"): a strip on top of every page; text and background keep 7:1 contrast. */
+.staging-banner { position: relative; z-index: 900; margin: 0; padding: 8px 16px; color: #1F1300; background: #FFD866; font-size: 14px; line-height: 1.4; text-align: center; border-bottom: 2px solid #1F1300; }
