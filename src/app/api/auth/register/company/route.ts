@@ -10,13 +10,16 @@ import { emailTemplates } from "@/lib/email-templates";
 import { prisma } from "@/lib/prisma";
 import { getPublicBaseUrl } from "@/lib/security/public-base-url";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
+import { recordTermsAcceptance, termsAcceptanceSchema } from "@/lib/legal/consent";
 
 const schema = z.object({
   legalName: z.string().trim().min(2).max(200),
   tradeName: z.string().trim().max(200).optional(),
   officialId: z.string().trim().max(30).optional(),
   contactEmail: z.string().trim().email().max(254),
-  password: passwordSchema
+  password: passwordSchema,
+  // OPEN-100: explicit acceptance of the Terms of Use and Privacy Policy, recorded with the text version.
+  acceptTerms: termsAcceptanceSchema
 });
 const EMAIL_VERIFICATION_MS = 24 * 60 * 60 * 1000;
 
@@ -27,7 +30,7 @@ export async function POST(request: Request) {
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
     return NextResponse.json(
-      { message: "Confira os dados informados.", issues: parsed.error.flatten().fieldErrors },
+      { message: (parsed.error.flatten().fieldErrors as Record<string, string[] | undefined>).acceptTerms?.[0] ?? "Confira os dados informados.", issues: parsed.error.flatten().fieldErrors },
       { status: 400 }
     );
   }
@@ -65,6 +68,7 @@ export async function POST(request: Request) {
       });
       userId = user.id;
       if (!user.company) throw new Error("COMPANY_CREATION_FAILED");
+      await recordTermsAcceptance(tx, user.id);
       await tx.companyEmailVerificationToken.create({
         data: { companyId: user.company.id, tokenHash, expiresAt }
       });

@@ -59,7 +59,7 @@ export default function CandidateLoginPage() {
         <input id="password" type="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required />
         <div className="form-options">
           <label className="checkbox-label"><input type="checkbox" checked={rememberMe} onChange={event => setRememberMe(event.target.checked)} /> Manter conectado</label>
-          <Link href="/recuperar-senha">Esqueci minha senha</Link>
+          <Link href="/recuperar-senha?perfil=candidato">Esqueci minha senha</Link>
         </div>
         {notice && <p className="form-success" role="status" aria-live="polite">{notice}</p>}
         {error && <p className="form-error" role="alert">{error}</p>}

@@ -10,7 +10,7 @@ import { getPublicBaseUrl } from "@/lib/security/public-base-url";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 
 const schema = z.object({
-  profile: z.enum(["candidate", "company"]),
+  profile: z.enum(["candidate", "company", "recruiter"]),
   identifier: z.string().trim().min(1).max(160)
 });
 const WINDOW_MS = 15 * 60 * 1000;
@@ -34,9 +34,10 @@ export async function POST(request: NextRequest) {
   const identifier = normalizeIdentifier(input.identifier);
   const cpf = normalizeCpf(input.identifier);
   const user = await prisma.user.findFirst({
+    // Candidates recover by e-mail or CPF; Company and Recruiter accounts by e-mail (OPEN-001, recruiters added 05/11/2026).
     where: input.profile === "candidate"
       ? { role: "CANDIDATE", isActive: true, OR: [{ email: identifier }, ...(cpf ? [{ cpf }] : [])] }
-      : { role: "COMPANY", email: identifier, isActive: true },
+      : { role: input.profile === "company" ? "COMPANY" : "RECRUITER", email: identifier, isActive: true },
     select: { id: true, email: true }
   });
 

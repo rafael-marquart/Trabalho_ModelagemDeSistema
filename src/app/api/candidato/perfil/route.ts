@@ -5,6 +5,7 @@ import {
   candidateProfileInputSchema, canonicalJson, toEducationList, toExperienceList, toLanguageList, toProfileResponse, toWorkPreferences, toStringList
 } from "@/lib/candidate-profile/schema";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
+import { accessibilityConsent, grantAccessibilityConsent, hasAccessibilityData } from "@/lib/legal/consent";
 
 export async function GET() {
   const user = await getCurrentUser();
@@ -24,8 +25,10 @@ export async function GET() {
     certifications: [], professionalLinks: [], workPreferences: {}, accessibilityDeclaration: "NOT_INFORMED" as const,
     accessibilityNeeds: [], accessibilityNeedOptionCodes: [], mandatoryNeedOptionCodes: [], essentialAccessibilityResources: [], updatedAt: new Date(0)
   };
+  const consent = await accessibilityConsent(prisma, user.id);
   return NextResponse.json({
-    profile: { fullName: user.fullName, email: user.email, ...toProfileResponse(profile ?? emptyProfile) }
+    profile: { fullName: user.fullName, email: user.email, ...toProfileResponse(profile ?? emptyProfile) },
+    accessibilityConsent: { active: consent.active, at: consent.at?.toISOString() ?? null }
   });
 }
 
@@ -64,6 +67,12 @@ export async function PUT(request: Request) {
           accessibilityNeedOptionCodes: true, mandatoryNeedOptionCodes: true, essentialAccessibilityResources: true
         }
       });
+      // OPEN-100 (LGPD art. 11, I): accessibility data is saved only with the candidate's specific consent.
+      const consent = await accessibilityConsent(tx, user.id);
+      if (hasAccessibilityData(fields) && !consent.active) {
+        if (input.accessibilityConsent !== true) throw new Error("ACCESSIBILITY_CONSENT_REQUIRED");
+        await grantAccessibilityConsent(tx, user.id);
+      }
       if (input.accessibilityNeedOptionCodes.length) {
         const requestedOptions = await tx.accessibilityNeedOption.findMany({
           where: { code: { in: input.accessibilityNeedOptionCodes } },
@@ -111,8 +120,13 @@ export async function PUT(request: Request) {
       }
       return profile;
     });
-    return NextResponse.json({ ok: true, profile: toProfileResponse(result) });
+    const consent = await accessibilityConsent(prisma, user.id);
+    return NextResponse.json({ ok: true, profile: toProfileResponse(result), accessibilityConsent: { active: consent.active, at: consent.at?.toISOString() ?? null } });
   } catch (error) {
+    if (error instanceof Error && error.message === "ACCESSIBILITY_CONSENT_REQUIRED") {
+      const message = "Para salvar informações de acessibilidade, marque a autorização de uso dessas informações.";
+      return NextResponse.json({ message, issues: { accessibilityConsent: [message] } }, { status: 400 });
+    }
     if (error instanceof Error && error.message === "INVALID_ACCESSIBILITY_OPTION") {
       return NextResponse.json({ message: "Uma ou mais opções de acessibilidade não estão disponíveis para nova seleção." }, { status: 400 });
     }

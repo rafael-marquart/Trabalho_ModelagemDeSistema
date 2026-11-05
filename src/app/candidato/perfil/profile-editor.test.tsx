@@ -136,4 +136,40 @@ describe("candidate profile editor", () => {
     const titles = Array.from(document.querySelectorAll("h2")).map((heading) => heading.textContent);
     expect(titles.indexOf("Preferências de trabalho e deslocamento")).toBe(titles.indexOf("Cursos e certificações") + 1);
   });
+
+  it("asks for the specific authorization before saving accessibility resources and sends it with the save (OPEN-100)", async () => {
+    const fetchMock = await renderEditor();
+    fireEvent.change(screen.getByLabelText("Recurso necessário"), { target: { value: "Rampa de acesso" } });
+    fireEvent.click(screen.getByRole("button", { name: "Adicionar recurso" }));
+    expect(screen.getByRole("heading", { name: "Autorização para usar as informações de acessibilidade" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Salvar perfil" }));
+    expect(await screen.findByText("Para salvar informações de acessibilidade, marque a autorização de uso dessas informações.")).toBeTruthy();
+    expect(fetchMock.mock.calls.some((call) => (call as unknown as [string, RequestInit?])[1]?.method === "PUT")).toBe(false);
+    const box = screen.getByRole("checkbox", { name: /Autorizo o AcessaVagas a usar as informações de acessibilidade/ }) as HTMLInputElement;
+    expect(box.checked).toBe(false);
+    fireEvent.click(box);
+    fireEvent.click(screen.getByRole("button", { name: "Salvar perfil" }));
+    await waitFor(() => expect(fetchMock.mock.calls.some((call) => (call as unknown as [string, RequestInit?])[1]?.method === "PUT")).toBe(true));
+    const put = fetchMock.mock.calls.find((call) => (call as unknown as [string, RequestInit?])[1]?.method === "PUT") as unknown as [string, RequestInit];
+    expect(JSON.parse(String(put[1].body))).toMatchObject({ essentialAccessibilityResources: ["Rampa de acesso"], accessibilityConsent: true });
+  });
+
+  it("shows when the authorization was given and lets the candidate withdraw it, erasing the information", async () => {
+    const fetchMock = vi.fn(async (url: string, init?: RequestInit) => ({
+      ok: true,
+      json: async () => url.includes("catalogo") ? { options: [] }
+        : url.includes("documentos") ? { documents: [] }
+        : init?.method === "DELETE" ? { ok: true, message: "Autorização retirada. Suas informações de acessibilidade foram apagadas do perfil." }
+        : { profile: { fullName: "Maria", email: "maria@example.com", ...emptyProfile, essentialAccessibilityResources: ["Rampa"] }, accessibilityConsent: { active: true, at: "2026-11-05T15:00:00.000Z" } }
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+    vi.stubGlobal("confirm", () => true);
+    render(<ProfileEditor accountName="Maria" accountEmail="maria@example.com" />);
+    expect(await screen.findByText(/Você autorizou em 05\/11\/2026/)).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Retirar autorização e apagar estas informações" }));
+    expect(await screen.findByText("Autorização retirada. Suas informações de acessibilidade foram apagadas do perfil.")).toBeTruthy();
+    expect(fetchMock).toHaveBeenCalledWith("/api/candidato/perfil/consentimento-acessibilidade", { method: "DELETE" });
+    expect(screen.queryByText("Rampa")).toBeNull();
+    expect(screen.queryByRole("heading", { name: "Autorização para usar as informações de acessibilidade" })).toBeNull();
+  });
 });

@@ -61,6 +61,32 @@ describe("password recovery request", () => {
     expect(stored.tokenHash).toBe(createHash("sha256").update(rawToken).digest("hex"));
   });
 
+  it.each([
+    ["company", { role: "COMPANY", email: "pessoa@example.com", isActive: true }],
+    ["recruiter", { role: "RECRUITER", email: "pessoa@example.com", isActive: true }]
+  ])("looks up %s accounts by e-mail only, among active accounts of that role", async (profile, where) => {
+    const request = new Request("https://acessavagas.example/api/auth/password/forgot", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-forwarded-for": "192.0.2.11" },
+      body: JSON.stringify({ profile, identifier: " PESSOA@example.com " })
+    });
+    const response = await POST(request as never);
+    expect(response.status).toBe(200);
+    expect(prismaMock.user.findFirst.mock.calls[0][0].where).toEqual(where);
+    expect(sendEmailMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("answers an unknown account type with the same generic message and does nothing", async () => {
+    const request = new Request("https://acessavagas.example/api/auth/password/forgot", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ profile: "admin", identifier: "admin@example.com" })
+    });
+    const response = await POST(request as never);
+    expect(response.status).toBe(200);
+    expect(prismaMock.user.findFirst).not.toHaveBeenCalled();
+  });
+
   it("does not create or send a reset token for an unknown identifier", async () => {
     prismaMock.user.findFirst.mockResolvedValueOnce(null);
     const request = new Request("https://acessavagas.example/api/auth/password/forgot", {

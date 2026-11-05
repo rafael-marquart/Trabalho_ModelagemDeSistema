@@ -4,6 +4,7 @@ import { canMove, FUNNEL_ORDER, kindLabels, knownBlockingIssues, moveKind, RECRU
 import { stageLabels } from "./stages";
 import { enqueueStageChanged, kickNotificationDelivery } from "@/lib/notifications/service";
 import { listInterviews } from "@/lib/interviews/service";
+import { accessibilityConsent, accessibilityFieldsWithoutConsent } from "@/lib/legal/consent";
 
 // SPEC-013: the company side of applications. Every read and write is scoped to the company resolved from the session
 // (company account or recruiter with an active link); the client never chooses the company.
@@ -46,7 +47,9 @@ export async function getApplicationForCompany(companyId: string, applicationId:
     }
   });
   if (!row) return null;
-  const profile = await prisma.candidateProfile.findUnique({ where: { userId: row.candidateUserId } });
+  const stored = await prisma.candidateProfile.findUnique({ where: { userId: row.candidateUserId } });
+  // OPEN-100: the company sees accessibility information only while the candidate's consent is active.
+  const profile = stored && !(await accessibilityConsent(prisma, row.candidateUserId)).active ? { ...stored, ...accessibilityFieldsWithoutConsent } : stored;
   const needCodes = toStringList(profile?.accessibilityNeedOptionCodes);
   const needs = needCodes.length ? await prisma.accessibilityNeedOption.findMany({ where: { code: { in: needCodes } }, select: { name: true } }) : [];
   const actorIds = [...new Set(row.stageEvents.map((event) => event.actorUserId).filter((id): id is string => Boolean(id)))];

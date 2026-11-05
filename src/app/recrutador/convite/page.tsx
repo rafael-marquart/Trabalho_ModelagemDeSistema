@@ -5,6 +5,7 @@ import ThemeToggle from "@/components/theme-toggle";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import BrandLogo from "@/components/brand-logo";
+import TermsAcceptance from "@/components/terms-acceptance";
 
 export default function RecruiterInvitationPage() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function RecruiterInvitationPage() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
 
   useEffect(() => {
     const value = new URLSearchParams(window.location.search).get("token") || "";
@@ -22,13 +24,18 @@ export default function RecruiterInvitationPage() {
   }, []);
 
   async function respond(action: "accept" | "refuse") {
+    if (action === "accept" && password && !acceptTerms) {
+      setMessage("Para ativar a conta, leia e aceite os Termos de Uso e a Política de Privacidade.");
+      setError(true);
+      return;
+    }
     setLoading(true);
     setError(false);
     try {
       const response = await fetch("/api/recruiter/invitations/respond", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, action, ...(password ? { password } : {}) })
+        body: JSON.stringify({ token, action, ...(password ? { password, acceptTerms } : {}) })
       });
       const result = await response.json();
       if (response.status === 401 && !(action === "accept" && password)) {
@@ -62,6 +69,7 @@ export default function RecruiterInvitationPage() {
           <label htmlFor="new-recruiter-password">Se este for seu primeiro acesso, crie uma senha para ativar a conta</label>
           <input id="new-recruiter-password" type="password" autoComplete="new-password" value={password} onChange={event => setPassword(event.target.value)} minLength={10} maxLength={128} aria-describedby="recruiter-password-help" />
           <p id="recruiter-password-help" className="muted">Mínimo de 10 caracteres, com letra maiúscula, minúscula e número. Contas existentes podem entrar antes de aceitar.</p>
+          {password ? <TermsAcceptance checked={acceptTerms} onChange={setAcceptTerms} disabled={loading} /> : null}
           <button className="primary-button" disabled={loading} onClick={() => respond("accept")}>{loading ? "Processando…" : "Aceitar convite"}</button>
           <button className="secondary-button" disabled={loading} onClick={() => respond("refuse")}>Recusar convite</button>
         </div>}

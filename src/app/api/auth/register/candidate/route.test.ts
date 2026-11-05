@@ -11,7 +11,7 @@ vi.mock("@/lib/auth/password", () => ({ hashPassword: hashPasswordMock }));
 import { POST } from "./route";
 
 describe("candidate registration", () => {
-  const tx = { user: { create: vi.fn() }, auditEvent: { create: vi.fn() } };
+  const tx = { user: { create: vi.fn() }, auditEvent: { create: vi.fn() }, consentRecord: { create: vi.fn() } };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -30,6 +30,7 @@ describe("candidate registration", () => {
         email: " Pessoa@Exemplo.com ",
         cpf: "529.982.247-25",
         password: "StrongPassword123",
+        acceptTerms: true,
         ...overrides
       })
     });
@@ -125,5 +126,19 @@ describe("candidate registration", () => {
     const response = await POST(makeRequest());
 
     expect(response.status).toBe(409);
+  });
+
+  it("refuses an account without the explicit acceptance of the Terms and Privacy Policy, creating nothing", async () => {
+    for (const acceptTerms of [false, undefined, "true"]) {
+      const response = await POST(makeRequest({ acceptTerms }));
+      expect(response.status).toBe(400);
+      expect((await response.json()).message).toBe("Para criar a conta, leia e aceite os Termos de Uso e a Política de Privacidade.");
+    }
+    expect(tx.user.create).not.toHaveBeenCalled();
+  });
+
+  it("records the acceptance with the text version in the same transaction as the account", async () => {
+    await POST(makeRequest());
+    expect(tx.consentRecord.create).toHaveBeenCalledWith({ data: { userId: "candidate-1", kind: "TERMS_AND_PRIVACY", version: "2026-11-05", granted: true } });
   });
 });

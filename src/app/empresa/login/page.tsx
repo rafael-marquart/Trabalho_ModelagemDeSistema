@@ -52,7 +52,7 @@ export default function CompanyLoginPage() {
         <input id="password" type="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required />
         <div className="form-options">
           <label className="checkbox-label"><input type="checkbox" checked={rememberMe} onChange={event => setRememberMe(event.target.checked)} /> Manter conectado</label>
-          <Link href="/recuperar-senha">Esqueci minha senha</Link>
+          <Link href="/recuperar-senha?perfil=empresa">Esqueci minha senha</Link>
         </div>
         {error && <p className="form-error" role="alert">{error}</p>}
         <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar na plataforma"}</button>

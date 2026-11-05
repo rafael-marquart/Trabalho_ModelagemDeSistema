@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const { prismaMock, tx } = vi.hoisted(() => {
   const tx = { application: { updateMany: vi.fn() }, applicationStageEvent: { create: vi.fn() }, auditEvent: { create: vi.fn() } };
   return { tx, prismaMock: {
-    job: { findFirst: vi.fn() }, application: { findMany: vi.fn(), findFirst: vi.fn() }, candidateProfile: { findUnique: vi.fn() },
+    job: { findFirst: vi.fn() }, application: { findMany: vi.fn(), findFirst: vi.fn() }, candidateProfile: { findUnique: vi.fn() }, consentRecord: { findFirst: vi.fn().mockResolvedValue({ granted: true, createdAt: new Date("2026-11-05T12:00:00Z") }), create: vi.fn() },
     accessibilityNeedOption: { findMany: vi.fn() }, user: { findMany: vi.fn() }, interview: { findMany: vi.fn().mockResolvedValue([]) }, $transaction: vi.fn(async (cb: (t: typeof tx) => unknown) => cb(tx))
   } };
 });
@@ -48,6 +48,21 @@ describe("company side of applications (SPEC-013)", () => {
     expect(JSON.stringify(detail)).not.toContain("descrição livre sensível");
     expect(detail?.nextStages.map(item => item.stage)).toEqual(["ENTREVISTA", "RECUSADA"]);
     expect(detail?.history[0]).toMatchObject({ to: "Inscrito", kind: "Candidatura registrada", actor: "Ana (candidato)" });
+  });
+
+  it("shows no accessibility information when the candidate has not authorized it or withdrew it (OPEN-100)", async () => {
+    prismaMock.application.findFirst.mockResolvedValue({
+      id: "a1", stage: "TRIAGEM", score: 80, appliedAt: new Date(), candidateUserId: "cand",
+      job: { id: "job-1", title: "Analista" }, candidate: { id: "cand", fullName: "Ana", email: "ana@example.com" },
+      compatibilityResult: { outcome: {} }, stageEvents: []
+    });
+    prismaMock.candidateProfile.findUnique.mockResolvedValue({ accessibilityDeclaration: "NEEDS_DECLARED", accessibilityNeedOptionCodes: ["A01"], accessibilityNeeds: [], essentialAccessibilityResources: ["mesa adaptada"], education: [], professionalExperience: [], languages: [], courses: [], certifications: [], professionalLinks: [] });
+    prismaMock.user.findMany.mockResolvedValue([]);
+    prismaMock.consentRecord.findFirst.mockResolvedValueOnce({ granted: false, createdAt: new Date() });
+    const detail = await getApplicationForCompany("company-1", "a1");
+    expect(detail?.accessibility).toEqual({ declaration: "NOT_INFORMED", needs: [], essentialResources: [] });
+    expect(prismaMock.accessibilityNeedOption.findMany).not.toHaveBeenCalled();
+    expect(JSON.stringify(detail)).not.toContain("mesa adaptada");
   });
 
   it("moves along RB-39, writing stage, history and audit together", async () => {
