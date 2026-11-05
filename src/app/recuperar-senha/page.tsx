@@ -4,7 +4,9 @@ import React, { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import AuthSplitLayout from "@/components/auth-split-layout";
 
-type Profile = "candidate" | "company";
+type Profile = "candidate" | "company" | "recruiter";
+// "Esqueci minha senha" on each login page opens this page with the account type already chosen.
+const profileFromQuery: Record<string, Profile> = { candidato: "candidate", empresa: "company", recrutador: "recruiter" };
 
 export default function PasswordRecoveryPage() {
   const [token, setToken] = useState("");
@@ -17,7 +19,10 @@ export default function PasswordRecoveryPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setToken(new URLSearchParams(window.location.search).get("token") || "");
+    const query = new URLSearchParams(window.location.search);
+    setToken(query.get("token") || "");
+    const preset = profileFromQuery[query.get("perfil") || ""];
+    if (preset) setProfile(preset);
   }, []);
 
   async function requestReset(event: FormEvent<HTMLFormElement>) {
@@ -83,7 +88,7 @@ export default function PasswordRecoveryPage() {
       description={token
         ? "O link de recuperação é válido por 30 minutos e pode ser usado uma única vez."
         : "Informe os dados da sua conta. Se ela for elegível, enviaremos as instruções ao e-mail cadastrado."}
-      footer={<p className="auth-footer">Voltar ao login: <Link href="/candidato/login">Candidato</Link> · <Link href="/empresa/login">Empresa</Link></p>}
+      footer={<p className="auth-footer">Voltar ao login: <Link href="/candidato/login">Candidato</Link> · <Link href="/empresa/login">Empresa</Link> · <Link href="/recrutador/login">Recrutador</Link></p>}
     >
       {token ? (
         <form className="auth-form" onSubmit={resetPassword}>
@@ -100,9 +105,10 @@ export default function PasswordRecoveryPage() {
           <select id="profile" value={profile} onChange={event => setProfile(event.target.value as Profile)}>
             <option value="candidate">Candidato</option>
             <option value="company">Empresa</option>
+            <option value="recruiter">Recrutador</option>
           </select>
           <label htmlFor="identifier">{profile === "candidate" ? "E-mail ou CPF" : "E-mail"}</label>
-          <input id="identifier" type={profile === "company" ? "email" : "text"} autoComplete="username" value={identifier} onChange={event => setIdentifier(event.target.value)} required maxLength={160} />
+          <input id="identifier" type={profile === "candidate" ? "text" : "email"} autoComplete="username" value={identifier} onChange={event => setIdentifier(event.target.value)} required maxLength={160} />
           <button className="primary-button" type="submit" disabled={loading}>{loading ? "Enviando..." : "Enviar instruções"}</button>
         </form>
       )}

@@ -18,6 +18,8 @@ const CRON_SECRET = `e2e-cron-${randomUUID()}`;
 const PUBLIC_URL = `https://127.0.0.1:${PORT}`;
 const TEST_IP = "192.0.2.77";
 const LOCKOUT_TEST_IP = "198.51.100.42";
+// Own IP for the recruiter recovery requests, so the per-IP limit (3 in 15 min) of the other recovery tests is untouched.
+const RECOVERY_TEST_IP = "203.0.113.55";
 const EMAIL = `spec001-e2e-${randomUUID()}@example.test`;
 const COMPANY_EMAIL = `spec001-company-${randomUUID()}@example.test`;
 const RECRUITER_EMAIL = `spec001-recruiter-${randomUUID()}@example.test`;
@@ -285,8 +287,9 @@ async function cleanupTestData() {
       where: {
         OR: [
           { ipKey },
+          { ipKey: digest(RECOVERY_TEST_IP) },
           { ipKey: companyVerificationIpKey },
-          { identifierKey: { in: [...recoveryKeys, ...companyVerificationKeys] } }
+          { identifierKey: { in: [...recoveryKeys, ...companyVerificationKeys, digest(`input:company:${RECRUITER_EMAIL}`)] } }
         ]
       }
     });
@@ -296,6 +299,8 @@ async function cleanupTestData() {
           in: [
             ...recoveryKeys.map(key => `identifier:${key}`),
             `ip:${ipKey}`,
+            `ip:${digest(RECOVERY_TEST_IP)}`,
+            `identifier:${digest(`input:company:${RECRUITER_EMAIL}`)}`,
             ...companyVerificationKeys.map(key => `company-verification:identifier:${key}`),
             `company-verification:ip:${companyVerificationIpKey}`
           ]
@@ -852,6 +857,17 @@ async function main() {
     });
     const listedLinksBody = await expectStatus(listedLinks, 200, "company recruiter links list");
     assert.ok(JSON.parse(listedLinksBody).links.some(link => link.recruiter.email === RECRUITER_EMAIL), "company must see its active recruiter link");
+
+    // Recruiters recover their password by e-mail too (OPEN-001, 05/11/2026); the account type is part of the lookup.
+    const recoveryHeaders = { "x-forwarded-for": RECOVERY_TEST_IP };
+    emailCount = SMTP_MESSAGES.length;
+    await expectStatus(await postJson("/api/auth/password/forgot", { profile: "company", identifier: RECRUITER_EMAIL }, recoveryHeaders), 200, "recovery with the wrong account type");
+    assert.equal(SMTP_MESSAGES.length, emailCount, "a recruiter e-mail under the Company type sends nothing");
+    const recruiterRecovery = await postJson("/api/auth/password/forgot", { profile: "recruiter", identifier: RECRUITER_EMAIL }, recoveryHeaders);
+    assert.match(await expectStatus(recruiterRecovery, 200, "recruiter password recovery request"), /Se os dados corresponderem a uma conta elegível/);
+    const recruiterRecoveryToken = extractEmailToken(emailCount, "/recuperar-senha");
+    await expectStatus(await postJson("/api/auth/password/reset", { token: recruiterRecoveryToken, password: RECRUITER_PASSWORD, confirmPassword: RECRUITER_PASSWORD }), 200, "recruiter password reset");
+    await expectStatus(await postJson("/api/auth/password/reset", { token: recruiterRecoveryToken, password: RECRUITER_PASSWORD, confirmPassword: RECRUITER_PASSWORD }), 400, "recruiter recovery token reuse");
 
     const recruiterLogin = await postJson("/api/auth/login", {
       profile: "recruiter",

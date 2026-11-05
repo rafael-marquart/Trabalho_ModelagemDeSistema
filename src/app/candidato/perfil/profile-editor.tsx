@@ -207,7 +207,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
       setDocumentName(""); setDocumentFile(null);
       const input = document.getElementById("profileDocumentFile") as HTMLInputElement | null;
       if (input) input.value = "";
-      setNotice("Arquivo enviado com segurança para o armazenamento privado local.");
+      setNotice("Arquivo enviado e guardado com segurança.");
     } catch { fail("documents", "Não foi possível enviar o arquivo. Tente novamente."); }
     finally { setUploading(false); }
   }
@@ -364,7 +364,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
         <button className="primary-button" type="submit" disabled={uploading || loading}>{uploading ? "Enviando arquivo..." : "Adicionar arquivo"}</button>
       </form>
       {sectionError("documents")}
-      <p className="profile-privacy-note">Os arquivos ficam em armazenamento privado local, fora da pasta pública. Somente a conta proprietária pode baixá-los ou removê-los.</p>
+      <p className="profile-privacy-note">Os arquivos ficam guardados de forma privada. Somente a conta proprietária pode baixá-los ou removê-los.</p>
       <ul className="profile-document-list">{documents.map(document => <li key={document.id}>
         <div><strong>{document.displayName}</strong><span>{document.category === "COURSE" ? "Curso" : "Certificação"} · {document.originalName} · {formatBytes(document.sizeBytes)}</span></div>
         <div className="profile-document-actions"><a className="secondary-button" href={`/api/candidato/documentos/${encodeURIComponent(document.id)}`} aria-label={`Baixar arquivo: ${document.displayName}`}>Baixar</a><button className="secondary-button" type="button" onClick={() => void deleteDocument(document)} aria-label={`Remover arquivo: ${document.displayName}`}>Remover</button></div>
