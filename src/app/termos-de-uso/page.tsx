@@ -5,7 +5,7 @@ import LegalDocument, { LegalContact } from "@/components/legal-document";
 export const metadata: Metadata = { title: "Termos de Uso — Acessa Vagas" };
 
 export default function TermsOfUsePage() {
-  return <LegalDocument title="Termos de Uso">
+  return <LegalDocument title="Termos de Uso" current="terms">
     <section aria-labelledby="t-sobre">
       <h2 id="t-sobre">1. Sobre o AcessaVagas</h2>
       <p>O AcessaVagas ajuda pessoas candidatas, com atenção especial às pessoas com deficiência, a encontrar vagas compatíveis com o seu perfil e com as suas necessidades de acessibilidade, e ajuda empresas a recrutar de forma acessível. É um projeto acadêmico, sem fins comerciais. Ao criar uma conta, você declara que leu e concorda com estes Termos e com a <a href="/privacidade">Política de Privacidade</a>.</p>
