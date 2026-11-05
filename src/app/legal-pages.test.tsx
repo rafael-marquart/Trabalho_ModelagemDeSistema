@@ -37,7 +37,7 @@ describe("Terms of Use and Privacy Policy (OPEN-100)", () => {
   it("without a configured contact, points to the school channels instead of inventing an address", () => {
     vi.stubEnv("LEGAL_CONTACT_EMAIL", "");
     render(<TermsOfUsePage />);
-    expect(screen.getByText(/canais da equipe do projeto na instituição de ensino/)).toBeTruthy();
+    expect(screen.getByText(/pelos canais do projeto na instituição de ensino/)).toBeTruthy();
   });
 
   it("the acceptance is never pre-checked and its links say they open in a new tab", () => {
@@ -65,5 +65,15 @@ describe("Terms of Use and Privacy Policy (OPEN-100)", () => {
     fireEvent.submit(screen.getByRole("button", { name: "Criar conta" }).closest("form")!);
     await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
     expect(JSON.parse(String((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].body))).toMatchObject({ acceptTerms: true, email: "ana@example.com" });
+  });
+
+  it("each document links to the other one, never to itself", () => {
+    render(<TermsOfUsePage />);
+    const termsNav = screen.getByRole("navigation", { name: "Documentos" });
+    expect([...termsNav.querySelectorAll("a")].map((a) => a.textContent)).toEqual(["Política de Privacidade", "Voltar ao início"]);
+    cleanup();
+    render(<PrivacyPolicyPage />);
+    const privacyNav = screen.getByRole("navigation", { name: "Documentos" });
+    expect([...privacyNav.querySelectorAll("a")].map((a) => a.textContent)).toEqual(["Termos de Uso", "Voltar ao início"]);
   });
 });

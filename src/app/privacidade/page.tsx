@@ -5,7 +5,7 @@ import LegalDocument, { LegalContact } from "@/components/legal-document";
 export const metadata: Metadata = { title: "Política de Privacidade — Acessa Vagas" };
 
 export default function PrivacyPolicyPage() {
-  return <LegalDocument title="Política de Privacidade">
+  return <LegalDocument title="Política de Privacidade" current="privacy">
     <section aria-labelledby="p-quem">
       <h2 id="p-quem">1. Quem trata os seus dados</h2>
       <p>A equipe do projeto acadêmico AcessaVagas é a responsável pelos dados tratados neste site, conforme a Lei Geral de Proteção de Dados (Lei nº 13.709/2018, LGPD). Contato: <LegalContact />.</p>
