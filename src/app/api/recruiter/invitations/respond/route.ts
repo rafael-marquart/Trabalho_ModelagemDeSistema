@@ -6,11 +6,14 @@ import { hashPassword } from "@/lib/auth/password";
 import { passwordSchema } from "@/lib/auth/password-policy";
 import { rejectCrossOriginRequest } from "@/lib/security/request-origin";
 import { prisma } from "@/lib/prisma";
+import { recordTermsAcceptance } from "@/lib/legal/consent";
 
 const schema = z.object({
   token: z.string().min(20).max(200),
   action: z.enum(["accept", "refuse"]),
-  password: passwordSchema.optional()
+  password: passwordSchema.optional(),
+  // OPEN-100: a recruiter account is created by accepting the invitation, so that is where the terms are accepted.
+  acceptTerms: z.boolean().optional()
 });
 
 export async function POST(request: Request) {
@@ -49,6 +52,9 @@ export async function POST(request: Request) {
   }
   if (pendingSetup && !parsed.data.password) {
     return NextResponse.json({ message: "Crie uma senha para ativar sua conta e aceitar o vínculo." }, { status: 400 });
+  }
+  if (pendingSetup && parsed.data.acceptTerms !== true) {
+    return NextResponse.json({ message: "Para ativar a conta, leia e aceite os Termos de Uso e a Política de Privacidade." }, { status: 400 });
   }
   if (parsed.data.action === "accept" && user && !user.isActive) {
     return NextResponse.json({ message: "Esta conta não está habilitada para aceitar convites." }, { status: 403 });
@@ -90,6 +96,7 @@ export async function POST(request: Request) {
             data: { passwordHash: newPasswordHash!, isActive: true, pendingActivation: false, passwordChangedAt: now }
           });
           if (activated.count !== 1) throw new Error("RECRUITER_ACTIVATION_RACE");
+          await recordTermsAcceptance(tx, recipientUserId);
         }
         await tx.recruiterLink.create({ data: { companyId: invitation.companyId, recruiterId: recipientUserId } });
       }

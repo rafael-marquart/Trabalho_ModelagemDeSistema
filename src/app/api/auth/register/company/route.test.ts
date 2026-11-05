@@ -21,7 +21,8 @@ describe("company registration", () => {
   const tx = {
     user: { create: vi.fn() },
     companyEmailVerificationToken: { create: vi.fn() },
-    auditEvent: { create: vi.fn() }
+    auditEvent: { create: vi.fn() },
+    consentRecord: { create: vi.fn() }
   };
 
   beforeEach(() => {
@@ -47,6 +48,7 @@ describe("company registration", () => {
         officialId: "11.222.333/0001-81",
         contactEmail: " CONTATO@EXEMPLO.COM ",
         password: "StrongPassword123",
+        acceptTerms: true,
         ...overrides
       })
     });
@@ -224,5 +226,14 @@ describe("company registration", () => {
     await expect(response.json()).resolves.toMatchObject({
       message: expect.stringContaining("A conta permanecerá indisponível")
     });
+  });
+
+  it("refuses a company account without the acceptance of the Terms and records it when given", async () => {
+    const refused = await POST(makeRequest({ acceptTerms: false }));
+    expect(refused.status).toBe(400);
+    expect((await refused.json()).message).toContain("Termos de Uso");
+    expect(tx.user.create).not.toHaveBeenCalled();
+    expect((await POST(makeRequest())).status).toBe(201);
+    expect(tx.consentRecord.create).toHaveBeenCalledWith({ data: { userId: "company-user-1", kind: "TERMS_AND_PRIVACY", version: "2026-11-05", granted: true } });
   });
 });

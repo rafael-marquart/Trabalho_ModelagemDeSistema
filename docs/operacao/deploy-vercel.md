@@ -58,6 +58,7 @@ Em **Settings → Environment Variables**, ambiente **Production**:
 | `SMTP_FROM` | Remetente verificado no Brevo, ex.: `AcessaVagas <seu-remetente@...>` |
 | `HERE_API_KEY` | Chave da HERE — use uma **nova** (a antiga apareceu na conversa) |
 | `HERE_QUOTA_PERCENT` | `60` |
+| `LEGAL_CONTACT_EMAIL` | E-mail de contato mostrado nos Termos de Uso e na Política de Privacidade (opcional; vazio, as páginas indicam os canais da equipe na instituição) |
 
 Para gerar o `CRON_SECRET` no seu computador (PowerShell):
 

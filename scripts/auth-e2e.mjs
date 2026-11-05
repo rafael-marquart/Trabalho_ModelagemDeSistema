@@ -383,13 +383,14 @@ async function main() {
 
     // Candidate registration and first login exercise the deployed route handlers,
     // real PostgreSQL transactions, password hashing and actual session cookies.
-    const registration = await postJson("/api/auth/register/candidate", {
-      fullName: "Candidato de Teste E2E",
-      email: EMAIL,
-      cpf: "52998224725",
-      password: OLD_PASSWORD
-    });
+    // OPEN-100: no account without the explicit acceptance of the Terms of Use and Privacy Policy.
+    const candidateSignup = { fullName: "Candidato de Teste E2E", email: EMAIL, cpf: "52998224725", password: OLD_PASSWORD };
+    await expectStatus(await postJson("/api/auth/register/candidate", candidateSignup), 400, "candidate registration without accepting the terms");
+    assert.equal(await prisma.user.count({ where: { email: EMAIL } }), 0, "no account is created without the acceptance");
+    const registration = await postJson("/api/auth/register/candidate", { ...candidateSignup, acceptTerms: true });
     await expectStatus(registration, 201, "candidate registration");
+    const termsRecord = await prisma.consentRecord.findFirst({ where: { user: { email: EMAIL }, kind: "TERMS_AND_PRIVACY" } });
+    assert.ok(termsRecord?.granted && termsRecord.version, "the acceptance is recorded with the text version");
 
     const account = await prisma.user.findUnique({
       where: { email: EMAIL },
@@ -533,6 +534,10 @@ async function main() {
       body: JSON.stringify(payload), redirect: "manual"
     });
     await expectStatus(await putProfile(profilePayload), 401, "anonymous profile save");
+    // OPEN-100: accessibility data is saved only with the specific consent, recorded in the same transaction.
+    const withoutConsent = await putProfile(profilePayload, profileCookie);
+    assert.match(await expectStatus(withoutConsent, 400, "accessibility needs without the specific consent"), /autorização/);
+    profilePayload.accessibilityConsent = true;
     await expectStatus(await putProfile({ ...profilePayload, accessibilityNeedOptionCodes: [], accessibilityNeeds: [] }, profileCookie),
       400, "needs declared without any option is rejected");
     await expectStatus(await putProfile({ ...profilePayload, education: ["Ensino médio — Geral"] }, profileCookie),
@@ -685,6 +690,7 @@ async function main() {
     // Company registration and email verification exercise the inactive-to-active transition.
     const companyEmailCount = SMTP_MESSAGES.length;
     const companyRegistration = await postJson("/api/auth/register/company", {
+      acceptTerms: true,
       legalName: "Empresa de Teste E2E",
       tradeName: "Empresa E2E",
       officialId: "12345678000195",
@@ -826,10 +832,13 @@ async function main() {
     });
     await expectStatus(staleInvitation, 400, "previous recruiter invitation token after resend");
 
+    await expectStatus(await postJson("/api/recruiter/invitations/respond", { token: currentInvitationToken, action: "accept", password: RECRUITER_PASSWORD }),
+      400, "recruiter activation without accepting the terms");
     const acceptInvitation = await postJson("/api/recruiter/invitations/respond", {
       token: currentInvitationToken,
       action: "accept",
-      password: RECRUITER_PASSWORD
+      password: RECRUITER_PASSWORD,
+      acceptTerms: true
     });
     await expectStatus(acceptInvitation, 200, "accept recruiter invitation and activate account");
     const acceptedAuditCount = await prisma.auditEvent.count({
@@ -1128,6 +1137,7 @@ async function main() {
 
     const secondCompanyEmailCount = SMTP_MESSAGES.length;
     const secondCompanyRegistration = await postJson("/api/auth/register/company", {
+      acceptTerms: true,
       legalName: "Segunda Empresa de Teste E2E",
       tradeName: "Empresa E2E Dois",
       officialId: "98765432000198",
@@ -1958,6 +1968,22 @@ async function main() {
     const retention = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/cron/retencao`, { headers: { authorization: `Bearer ${CRON_SECRET}` }, redirect: "manual" }), 200, "scheduled retention"));
     assert.deepEqual(Object.keys(retention.results).sort(), ["audit", "compatibility", "evaluations", "loginSecurity", "notifications"], "every retention routine runs");
     assert.ok(Object.values(retention.results).every(result => result.executed === true), "retention runs for real, not as a simulation");
+
+    // OPEN-100: withdrawing the consent erases the accessibility data; the company stops seeing it.
+    await expectStatus(await saveCompatProfile({ ...compatProfile, accessibilityDeclaration: "NEEDS_DECLARED", accessibilityNeedOptionCodes: ["A01"] }), 200, "candidate keeps the ramp need declared");
+    const beforeRevoke = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/candidaturas/${applicationId}`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company detail before the withdrawal"));
+    assert.equal(beforeRevoke.application?.accessibility?.declaration ?? beforeRevoke.accessibility?.declaration, "NEEDS_DECLARED", "with consent, the company sees the declared need");
+    const revokeUrl = `${BASE_URL}/api/candidato/perfil/consentimento-acessibilidade`;
+    await expectStatus(await fetch(revokeUrl, { method: "DELETE", headers: { origin: PUBLIC_URL, cookie: companyCookie }, redirect: "manual" }), 401, "only the candidate withdraws the consent");
+    await expectStatus(await fetch(revokeUrl, { method: "DELETE", headers: { origin: PUBLIC_URL, cookie: compatCookie }, redirect: "manual" }), 200, "candidate withdraws the consent");
+    const erased = await prisma.candidateProfile.findFirst({ where: { user: { email: EMAIL } } });
+    assert.deepEqual([erased.accessibilityDeclaration, erased.accessibilityNeedOptionCodes, erased.essentialAccessibilityResources], ["NOT_INFORMED", [], []], "the accessibility data is erased");
+    const lastConsent = await prisma.consentRecord.findFirst({ where: { user: { email: EMAIL }, kind: "ACCESSIBILITY_DATA" }, orderBy: { createdAt: "desc" } });
+    assert.equal(lastConsent.granted, false, "the withdrawal is a new record");
+    const afterRevoke = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/candidaturas/${applicationId}`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company detail after the withdrawal"));
+    assert.deepEqual(afterRevoke.application?.accessibility ?? afterRevoke.accessibility, { declaration: "NOT_INFORMED", needs: [], essentialResources: [] }, "the company no longer sees accessibility information");
+    await expectStatus(await saveCompatProfile({ ...compatProfile, accessibilityDeclaration: "NEEDS_DECLARED", accessibilityNeedOptionCodes: ["A01"], accessibilityConsent: undefined }), 400, "declaring again needs a new consent");
+    await assert.rejects(prisma.consentRecord.update({ where: { id: lastConsent.id }, data: { granted: true } }), "the consent history cannot be edited");
 
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });

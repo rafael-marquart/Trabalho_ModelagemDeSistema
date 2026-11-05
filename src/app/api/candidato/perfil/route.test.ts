@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { prismaMock, getCurrentUserMock } = vi.hoisted(() => ({
-  prismaMock: { candidateProfile: { upsert: vi.fn(), findUnique: vi.fn() }, $transaction: vi.fn() },
+  prismaMock: { candidateProfile: { upsert: vi.fn(), findUnique: vi.fn() }, consentRecord: { findFirst: vi.fn().mockResolvedValue({ granted: true, createdAt: new Date("2026-11-05T12:00:00Z") }), create: vi.fn() }, $transaction: vi.fn() },
   getCurrentUserMock: vi.fn()
 }));
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
@@ -15,7 +15,7 @@ const blank = {
 };
 describe("candidate profile API", () => {
   const candidate = { id: "candidate-1", role: "CANDIDATE", fullName: "Pessoa Candidata", email: "pessoa@example.com" };
-  const tx = { candidateProfile: { findUnique: vi.fn(), upsert: vi.fn() }, auditEvent: { create: vi.fn() } };
+  const tx = { candidateProfile: { findUnique: vi.fn(), upsert: vi.fn() }, auditEvent: { create: vi.fn() }, accessibilityNeedOption: { findMany: vi.fn() }, consentRecord: { findFirst: vi.fn().mockResolvedValue({ granted: true, createdAt: new Date("2026-11-05T12:00:00Z") }), create: vi.fn() } };
   beforeEach(() => {
     vi.clearAllMocks(); getCurrentUserMock.mockResolvedValue(candidate);
     prismaMock.candidateProfile.findUnique.mockResolvedValue(null);
