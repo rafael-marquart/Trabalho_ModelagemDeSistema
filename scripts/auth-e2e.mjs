@@ -889,6 +889,12 @@ async function main() {
     const recruiterCookieMatch = (recruiterLogin.headers.get("set-cookie") || "").match(/(?:^|,\s*)acessa_session=([^;]+)/);
     assert.ok(recruiterCookieMatch?.[1], "recruiter login must issue a session cookie");
     const recruiterCookie = `acessa_session=${recruiterCookieMatch[1]}`;
+    // OPEN-101: recruiters can have a profile photo too.
+    const recruiterPhotoBody = new FormData();
+    recruiterPhotoBody.append("photo", new Blob([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0])], { type: "image/png" }), "foto.png");
+    await expectStatus(await fetch(`${BASE_URL}/api/conta/foto`, { method: "POST", headers: { origin: PUBLIC_URL, cookie: recruiterCookie }, body: recruiterPhotoBody, redirect: "manual" }), 200, "recruiter sends a photo");
+    const recruiterPhoto = await fetch(`${BASE_URL}/api/conta/foto`, { headers: { cookie: recruiterCookie }, redirect: "manual" });
+    assert.equal(recruiterPhoto.headers.get("content-type"), "image/png", "the recruiter's photo keeps its detected type");
 
     const recruiterCompanyLinks = await fetch(`${BASE_URL}/api/company/recruiter-links`, {
       headers: { cookie: recruiterCookie },
@@ -1968,6 +1974,30 @@ async function main() {
     const retention = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/cron/retencao`, { headers: { authorization: `Bearer ${CRON_SECRET}` }, redirect: "manual" }), 200, "scheduled retention"));
     assert.deepEqual(Object.keys(retention.results).sort(), ["audit", "compatibility", "evaluations", "loginSecurity", "notifications"], "every retention routine runs");
     assert.ok(Object.values(retention.results).every(result => result.executed === true), "retention runs for real, not as a simulation");
+
+    // OPEN-101: profile photo. The candidate's photo reaches the company only through an application to its job.
+    const jpeg = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 0x01]);
+    const sendPhoto = (bytes, cookie, type = "image/jpeg") => {
+      const body = new FormData();
+      body.append("photo", new Blob([bytes], { type }), "foto.jpg");
+      return fetch(`${BASE_URL}/api/conta/foto`, { method: "POST", headers: { origin: PUBLIC_URL, cookie }, body, redirect: "manual" });
+    };
+    await expectStatus(await sendPhoto(Buffer.from("<svg onload=alert(1)></svg>"), compatCookie, "image/svg+xml"), 400, "a file that is not a photo");
+    await expectStatus(await sendPhoto(jpeg, companyCookie), 401, "a company account has no personal photo");
+    await expectStatus(await sendPhoto(jpeg, compatCookie), 200, "candidate sends a photo");
+    const ownPhoto = await fetch(`${BASE_URL}/api/conta/foto`, { headers: { cookie: compatCookie }, redirect: "manual" });
+    assert.equal(ownPhoto.status, 200, "the candidate sees their own photo");
+    assert.equal(ownPhoto.headers.get("content-type"), "image/jpeg");
+    assert.deepEqual(Buffer.from(await ownPhoto.arrayBuffer()), jpeg, "the stored photo is the one sent");
+    const companyPhoto = await fetch(`${BASE_URL}/api/candidaturas/${applicationId}/foto`, { headers: { cookie: companyCookie }, redirect: "manual" });
+    assert.equal(companyPhoto.status, 200, "the company sees the photo of a candidate who applied to its job");
+    assert.equal((await fetch(`${BASE_URL}/api/candidaturas/${applicationId}/foto`, { headers: { cookie: secondCompanyCookie }, redirect: "manual" })).status, 404, "another company does not");
+    assert.equal((await fetch(`${BASE_URL}/api/candidaturas/${applicationId}/foto`, { redirect: "manual" })).status, 404, "nobody signed out does");
+    const funnelWithPhoto = JSON.parse(await expectStatus(await fetch(funnelUrl, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "funnel with photo flag"));
+    assert.ok(funnelWithPhoto.applications.some(item => item.candidateHasPhoto === true), "the funnel tells which candidates have a photo");
+    await expectStatus(await fetch(`${BASE_URL}/api/conta/foto`, { method: "DELETE", headers: { origin: PUBLIC_URL, cookie: compatCookie }, redirect: "manual" }), 200, "candidate removes the photo");
+    assert.equal((await fetch(`${BASE_URL}/api/conta/foto`, { method: "HEAD", headers: { cookie: compatCookie }, redirect: "manual" })).status, 404, "no photo after removal");
+    assert.equal((await fetch(`${BASE_URL}/api/candidaturas/${applicationId}/foto`, { headers: { cookie: companyCookie }, redirect: "manual" })).status, 404, "the company no longer sees it");
 
     // OPEN-100: withdrawing the consent erases the accessibility data; the company stops seeing it.
     await expectStatus(await saveCompatProfile({ ...compatProfile, accessibilityDeclaration: "NEEDS_DECLARED", accessibilityNeedOptionCodes: ["A01"] }), 200, "candidate keeps the ramp need declared");

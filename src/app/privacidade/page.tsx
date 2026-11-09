@@ -17,6 +17,7 @@ export default function PrivacyPolicyPage() {
         <li><strong>Empresa:</strong> razão social, nome fantasia, CNPJ (opcional), e-mail de contato e infraestrutura de acessibilidade declarada.</li>
         <li><strong>Perfil do candidato:</strong> formação, idiomas, experiência, cursos, certificações, links profissionais e preferências de trabalho, inclusive cidade e, se você quiser, endereço e meio de transporte.</li>
         <li><strong>Informações de acessibilidade (opcionais):</strong> necessidades funcionais e recursos indispensáveis que você declarar. Veja o item 4.</li>
+        <li><strong>Foto de perfil (opcional)</strong> de candidatos e recrutadores.</li>
         <li><strong>Comprovantes</strong> de cursos e certificações que você anexar, visíveis só para você.</li>
         <li><strong>Uso do serviço:</strong> candidaturas e suas etapas, entrevistas, avaliações, denúncias, avisos e preferências (tema, contraste e e-mails).</li>
         <li><strong>Segurança:</strong> registros de acesso e de ações relevantes. O endereço IP usado nos limites de tentativas é guardado apenas como código irreversível.</li>
@@ -43,14 +44,14 @@ export default function PrivacyPolicyPage() {
     <section aria-labelledby="p-compart">
       <h2 id="p-compart">5. Com quem compartilhamos</h2>
       <ul>
-        <li><strong>Empresas e recrutadores</strong> das vagas em que você se candidatar: nome, e-mail, perfil profissional, resumo da compatibilidade e, se você autorizou, as informações de acessibilidade descritas no item 4. As avaliações aparecem apenas como contagem de estrelas, e as denúncias não revelam quem denunciou.</li>
+        <li><strong>Empresas e recrutadores</strong> das vagas em que você se candidatar: nome, e-mail, foto de perfil (se você enviou uma), perfil profissional, resumo da compatibilidade e, se você autorizou, as informações de acessibilidade descritas no item 4. A foto é opcional; lembre-se de que ela pode mostrar características pessoais, e você pode trocá-la ou removê-la quando quiser. As avaliações aparecem apenas como contagem de estrelas, e as denúncias não revelam quem denunciou.</li>
         <li><strong>Serviços que fazem o site funcionar:</strong> Vercel (hospedagem), Neon (banco de dados), Brevo (envio de e-mails) e HERE (mapas: recebe o texto dos endereços e coordenadas para estimar o tempo de deslocamento). Alguns desses serviços podem tratar dados fora do Brasil, com as garantias dos seus próprios termos.</li>
       </ul>
     </section>
     <section aria-labelledby="p-tempo">
       <h2 id="p-tempo">6. Por quanto tempo guardamos</h2>
       <ul>
-        <li>Dados da conta e do perfil: enquanto a conta existir. Comprovantes: até você removê-los.</li>
+        <li>Dados da conta e do perfil: enquanto a conta existir. Foto de perfil e comprovantes: até você removê-los.</li>
         <li>Registros de auditoria, histórico de compatibilidade e registros de envio de avisos: 1 ano.</li>
         <li>Avaliações de processos seletivos: depois de 1 ano, deixam de ter qualquer ligação com quem avaliou. Ficam só a empresa, as estrelas e o ano.</li>
         <li>Tentativas de acesso: 24 horas.</li>
@@ -62,7 +63,7 @@ export default function PrivacyPolicyPage() {
     </section>
     <section aria-labelledby="p-direitos">
       <h2 id="p-direitos">8. Seus direitos</h2>
-      <p>Pela LGPD, você pode pedir a confirmação de que tratamos seus dados, o acesso a eles, a correção, a anonimização, o bloqueio ou a eliminação de dados desnecessários, a portabilidade, a informação sobre com quem compartilhamos e a revogação do consentimento. Muita coisa você faz direto no site: editar o perfil, remover comprovantes, retirar a autorização das informações de acessibilidade e escolher se quer receber avisos por e-mail. Para o resto, inclusive excluir a conta, fale com a equipe <LegalContact />. Você também pode reclamar à Autoridade Nacional de Proteção de Dados (ANPD).</p>
+      <p>Pela LGPD, você pode pedir a confirmação de que tratamos seus dados, o acesso a eles, a correção, a anonimização, o bloqueio ou a eliminação de dados desnecessários, a portabilidade, a informação sobre com quem compartilhamos e a revogação do consentimento. Muita coisa você faz direto no site: editar o perfil, trocar ou remover a foto, remover comprovantes, retirar a autorização das informações de acessibilidade e escolher se quer receber avisos por e-mail. Para o resto, inclusive excluir a conta, fale com a equipe <LegalContact />. Você também pode reclamar à Autoridade Nacional de Proteção de Dados (ANPD).</p>
     </section>
     <section aria-labelledby="p-cookies">
       <h2 id="p-cookies">9. Cookies e armazenamento no navegador</h2>

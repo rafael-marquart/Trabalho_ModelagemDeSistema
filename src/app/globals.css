@@ -1224,3 +1224,40 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .consent-status { margin: 8px 0; }
 .legal-note a { color: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 .legal-brand img, .legal-brand svg { height: 56px; width: auto; }
+
+/* Unsaved changes (OPEN-101): asks before leaving a page with changes not saved yet. */
+.unsaved-dialog { width: min(480px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--line); border-radius: 18px; color: var(--ink); background: var(--surface); }
+.unsaved-dialog-body { display: grid; gap: 12px; padding: 24px; }
+.unsaved-dialog-body h2 { margin: 0; font-size: 20px; }
+.unsaved-dialog-body p { margin: 0; color: var(--muted); }
+.unsaved-dialog-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.unsaved-dialog-actions button { flex: 1 1 auto; }
+
+/* Profile photos (OPEN-101): the photo fills the circle; without one, the initials stay. */
+.company-avatar { overflow: hidden; }
+.company-avatar img, .person-avatar img, .profile-photo-preview img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.person-avatar { display: inline-grid; flex: 0 0 auto; place-items: center; width: 36px; height: 36px; overflow: hidden; border-radius: 50%; color: var(--purple-dark); background: var(--purple-soft); font-size: 13px; font-weight: 800; vertical-align: middle; }
+.person-avatar-large { width: 72px; height: 72px; font-size: 22px; }
+.profile-photo-row { display: flex; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+.profile-photo-preview { display: grid; flex: 0 0 auto; place-items: center; width: 112px; height: 112px; overflow: hidden; border-radius: 50%; color: var(--purple-dark); background: var(--purple-soft); font-size: 34px; font-weight: 800; }
+.profile-photo-controls { display: grid; flex: 1 1 240px; gap: 10px; }
+.profile-photo-controls p { margin: 0; }
+.candidate-name-cell { display: inline-flex; align-items: center; gap: 10px; }
+.application-heading-person { display: flex; align-items: center; gap: 16px; }
+:root[data-theme="dark"] .person-avatar, :root[data-theme="dark"] .profile-photo-preview { color: var(--ink); }
+.account-data { display: grid; gap: 12px; margin: 0; }
+.account-data div { display: grid; gap: 2px; }
+.account-data dt { color: var(--muted); font-size: 14px; }
+.account-data dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+
+/* Show/hide password (eye button inside the field). */
+.password-field { position: relative; display: block; min-width: 0; }
+.auth-form .password-field input:not([type="checkbox"]), .password-field input { width: 100%; padding-right: 54px; }
+.password-toggle {
+  position: absolute; top: 50%; right: 4px; transform: translateY(-50%);
+  display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 40px;
+  padding: 0; border: 0; border-radius: 8px; color: var(--muted); background: transparent; cursor: pointer;
+}
+.password-toggle:hover, .password-toggle[aria-pressed="true"] { color: var(--purple); background: var(--purple-soft); }
+.password-toggle:focus-visible { outline-offset: -2px; }
+.password-field input::-ms-reveal, .password-field input::-ms-clear { display: none; }

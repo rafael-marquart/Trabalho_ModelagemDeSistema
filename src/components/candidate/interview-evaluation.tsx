@@ -2,6 +2,7 @@
 
 import React, { useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useUnsavedChangesGuard } from "@/components/unsaved-changes";
 
 const starWord = (value: number) => `${value} ${value === 1 ? "estrela" : "estrelas"}`;
 const date = (iso: string) => new Date(iso).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
@@ -37,6 +38,8 @@ export default function InterviewEvaluation({ interviewId, deadline }: { intervi
   const [comment, setComment] = useState("");
   const [issues, setIssues] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
+  // OPEN-101: an evaluation is sent once, not saved; leaving with stars or a comment filled in asks first.
+  const { dialog: unsavedDialog } = useUnsavedChangesGuard({ dirty: step !== "done" && Boolean(accessibility || inclusion || comment.trim()) });
   const headingRef = useRef<HTMLHeadingElement>(null);
   const commentId = useId();
   const focusHeading = () => setTimeout(() => headingRef.current?.focus(), 0);
@@ -70,6 +73,7 @@ export default function InterviewEvaluation({ interviewId, deadline }: { intervi
   </div>;
 
   return <div className="evaluation-form">
+    {unsavedDialog}
     <h3 ref={headingRef} tabIndex={-1}>{step === "form" ? "Avalie o processo seletivo" : "Revise a sua avaliação"}</h3>
     {error ? <p className="form-error" role="alert">{error}</p> : null}
     {step === "form" ? <>

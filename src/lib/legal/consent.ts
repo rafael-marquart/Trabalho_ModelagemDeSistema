@@ -5,8 +5,8 @@ import type { Prisma, PrismaClient } from "@prisma/client";
  * Terms of Use, Privacy Policy and the specific consent for accessibility data (OPEN-100, LGPD arts. 7, 8, 9 and 11).
  * The version identifies the text a person accepted; a new version of a text means a new date here.
  */
-export const LEGAL_VERSION = "2026-11-05";
-export const LEGAL_UPDATED_LABEL = "5 de novembro de 2026";
+export const LEGAL_VERSION = "2026-11-09";
+export const LEGAL_UPDATED_LABEL = "9 de novembro de 2026";
 
 type Db = PrismaClient | Prisma.TransactionClient;
 

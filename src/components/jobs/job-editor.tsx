@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ChoiceGroup from "@/components/choice-group";
+import { useUnsavedChangesGuard } from "@/components/unsaved-changes";
 import { brazilianStates, jobModalities, jobModalityLabels, professionalAreas, type ProfessionalArea, jobStatusLabels, TEXT_LIMITS, type JobAction, type JobModalityValue, type JobStatusValue } from "@/lib/jobs/constants";
 import { languageChoices, languageLevels } from "@/lib/candidate-profile/options";
 
@@ -39,6 +40,8 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [issues, setIssues] = useState<Record<string, string>>({});
+  // OPEN-101: the form as last saved (or as it started, for a new job); differences mean unsaved changes.
+  const [savedSnapshot, setSavedSnapshot] = useState<string | null>(jobId ? null : JSON.stringify(empty));
 
   useEffect(() => {
     if (!jobId) return;
@@ -49,11 +52,13 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
       if (!active) return;
       const job = data.job;
       setStatus(job.status);
-      setForm({ ...empty, title: job.title, description: job.description, requirements: job.requirements, modality: job.modality, professionalArea: job.professionalArea ?? "",
+      const loaded: Form = { ...empty, title: job.title, description: job.description, requirements: job.requirements, modality: job.modality, professionalArea: job.professionalArea ?? "",
         locationCity: job.locationCity, locationState: job.locationState, locationAddress: job.locationAddress, deadline: job.deadline,
         salaryMin: moneyText(job.salaryMin), salaryMax: moneyText(job.salaryMax), accessibility: job.accessibility ?? {},
         skillsText: (job.technicalCriteria?.skills ?? []).join("\n"), experienceText: (job.technicalCriteria?.experience ?? []).join("\n"),
-        educationMinLevel: job.technicalCriteria?.educationMinLevel ?? "", languages: job.technicalCriteria?.languages ?? [] });
+        educationMinLevel: job.technicalCriteria?.educationMinLevel ?? "", languages: job.technicalCriteria?.languages ?? [] };
+      setForm(loaded);
+      setSavedSnapshot(JSON.stringify(loaded));
     }).catch(err => { if (active) setError(err.message || "Não foi possível carregar a vaga."); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
@@ -104,6 +109,7 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
     const body = payload(); if (!body) { setError(MISSING_FIELDS); return null; }
     const result = jobId ? await request(`/api/vagas/${jobId}`, "PUT", body) : await request("/api/vagas", "POST", body);
     if (!result.ok) { showFailure(result.data); return null; }
+    setSavedSnapshot(JSON.stringify(form));
     return result.data.job as { id: string; status: JobStatusValue };
   }
 
@@ -119,6 +125,14 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
     } catch { setError("Não foi possível salvar a vaga. Tente novamente."); }
     finally { setBusy(false); }
   }
+
+  const { dialog: unsavedDialog } = useUnsavedChangesGuard({
+    dirty: !readOnly && savedSnapshot !== null && JSON.stringify(form) !== savedSnapshot,
+    onSave: async () => {
+      setBusy(true); setError(""); setNotice(""); setIssues({});
+      try { return Boolean(await save()); } catch { setError("Não foi possível salvar a vaga. Tente novamente."); return false; } finally { setBusy(false); }
+    }
+  });
 
   async function onAction(action: JobAction) {
     if (readOnly || busy) return;
@@ -142,6 +156,7 @@ export default function JobEditor({ basePath, jobId }: { basePath: string; jobId
 
   const needsLocation = form.modality === "PRESENCIAL" || form.modality === "HIBRIDO";
   return <main id="conteudo" className="company-content" aria-labelledby="job-editor-title">
+    {unsavedDialog}
     <header className="company-page-heading">
       <h1 id="job-editor-title">{jobId ? "Vaga" : "Nova vaga"}{status !== "NEW" ? <span className={`status-pill job-status-inline ${status === "OPEN" ? "status-active" : status === "PAUSED" ? "status-pending" : "status-neutral"}`}>{jobStatusLabels[status]}</span> : null}</h1>
       <p className="muted">{readOnly ? "Esta vaga está encerrada e não pode mais ser alterada." : "Rascunhos podem ficar incompletos. Para publicar, preencha todos os campos obrigatórios e declare a acessibilidade da vaga."}</p>
