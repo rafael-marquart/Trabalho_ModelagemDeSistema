@@ -2,6 +2,7 @@
 
 import React, { useId, useRef, useState } from "react";
 import Link from "next/link";
+import { useUnsavedChangesGuard } from "@/components/unsaved-changes";
 
 type Evaluation = { id: string; submittedAt: string; interviewAt: string | null };
 const date = (iso: string) => new Date(iso).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
@@ -27,6 +28,8 @@ export default function ReportForm({ jobId, jobTitle, companyName, evaluations }
   const [sent, setSent] = useState<string | null>(null);
   const resultRef = useRef<HTMLHeadingElement>(null);
   const ids = { description: useId(), evidence: useId(), evaluation: useId(), risk: useId() };
+  // OPEN-101: a report is sent, not saved; leaving with something filled in asks first (no "Salvar e sair").
+  const { dialog: unsavedDialog } = useUnsavedChangesGuard({ dirty: !sent && Boolean(category || description.trim() || evidence.trim() || evaluationId || risk) });
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -57,6 +60,7 @@ export default function ReportForm({ jobId, jobTitle, companyName, evaluations }
   </div>;
 
   return <form className="report-form" onSubmit={submit} noValidate>
+    {unsavedDialog}
     {error ? <p className="form-error" role="alert">{error}</p> : null}
     <fieldset className="star-field" aria-describedby={issues.category ? `${ids.description}-category` : undefined}>
       <legend>Tipo da situação</legend>

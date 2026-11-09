@@ -5,6 +5,18 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import {
   educationLevels, educationStatuses, languageLevels, brazilianStates, emptyWorkPreferences, transportModes, workModalities,
   type EducationEntry, type ExperienceEntry, type LanguageEntry, type WorkPreferences, languageChoices } from "@/lib/candidate-profile/options";
+import { ACCESSIBILITY_CONSENT_TEXT, hasAccessibilityData } from "@/lib/legal/consent";
+import { useUnsavedChangesGuard } from "@/components/unsaved-changes";
+import ProfilePhotoEditor from "@/components/profile-photo";
+
+// The profile fields the save sends; also what "unsaved changes" compares (OPEN-101).
+const savedKeys = ["education", "languages", "professionalExperience", "courses", "certifications",
+  "professionalLinks", "workPreferences", "accessibilityDeclaration", "accessibilityNeeds", "accessibilityNeedOptionCodes",
+  "mandatoryNeedOptionCodes", "essentialAccessibilityResources"] as const;
+const snapshot = (profile: Record<string, unknown>) => JSON.stringify(savedKeys.map(key => profile[key]));
+
+type Consent = { active: boolean; at: string | null };
+const consentDate = (iso: string) => new Date(iso).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
 
 type Declaration = "NOT_INFORMED" | "NO_NEEDS_DECLARED" | "NEEDS_DECLARED";
 type NeedGroup = "ARCHITECTURAL" | "COMMUNICATION" | "TECHNOLOGICAL";
@@ -64,6 +76,11 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   const [notice, setNotice] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [needsText, setNeedsText] = useState("");
+  // OPEN-100: specific consent for accessibility data (LGPD art. 11, I); withdrawing it erases that data.
+  const [consent, setConsent] = useState<Consent>({ active: false, at: null });
+  const [consentChecked, setConsentChecked] = useState(false);
+  const [revoking, setRevoking] = useState(false);
+  const [savedSnapshot, setSavedSnapshot] = useState<string | null>(null);
   const fail = (section: string, message: string) => { setNotice(""); setErrors(current => ({ ...current, [section]: message })); };
   const clearFail = (section: string) => setErrors(current => {
     if (!current[section]) return current;
@@ -79,6 +96,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
       fetch("/api/candidato/perfil").then(async response => {
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || "Falha ao carregar perfil.");
+        if (data.accessibilityConsent) setConsent(data.accessibilityConsent);
         return data.profile;
       }),
       fetch("/api/candidato/catalogo-acessibilidade").then(async response => {
@@ -94,6 +112,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     ]).then(([loadedProfile, loadedOptions, loadedDocuments]) => {
       if (!active) return;
       setProfile({ ...empty, ...loadedProfile });
+      setSavedSnapshot(snapshot({ ...empty, ...loadedProfile }));
       setNeedsText(asText(loadedProfile.accessibilityNeeds));
       setOptions(loadedOptions);
       setDocuments(loadedDocuments);
@@ -207,7 +226,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
       setDocumentName(""); setDocumentFile(null);
       const input = document.getElementById("profileDocumentFile") as HTMLInputElement | null;
       if (input) input.value = "";
-      setNotice("Arquivo enviado com segurança para o armazenamento privado local.");
+      setNotice("Arquivo enviado e guardado com segurança.");
     } catch { fail("documents", "Não foi possível enviar o arquivo. Tente novamente."); }
     finally { setUploading(false); }
   }
@@ -226,26 +245,33 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   const issueSections: Record<string, string> = {
     education: "education", languages: "languages", professionalExperience: "experience", courses: "courses",
     certifications: "certifications", professionalLinks: "links", workPreferences: "work", accessibilityNeeds: "needs",
-    accessibilityNeedOptionCodes: "needs", mandatoryNeedOptionCodes: "needs", accessibilityDeclaration: "needs", essentialAccessibilityResources: "resource"
+    accessibilityNeedOptionCodes: "needs", mandatoryNeedOptionCodes: "needs", accessibilityDeclaration: "needs", essentialAccessibilityResources: "resource",
+    accessibilityConsent: "consent"
   };
   async function handleSubmit(event?: FormEvent<HTMLFormElement>) {
-    event?.preventDefault(); setError(""); setNotice(""); setErrors({});
+    event?.preventDefault();
+    await save();
+  }
+
+  /** Validates and saves the profile; true when it was saved (used by the button and by "Salvar e sair"). */
+  async function save(): Promise<boolean> {
+    setError(""); setNotice(""); setErrors({});
     const localErrors: Record<string, string> = {};
     const needsSomething = profile.accessibilityNeedOptionCodes.length > 0 || profile.accessibilityNeeds.length > 0;
     if (profile.accessibilityDeclaration === "NEEDS_DECLARED" && !needsSomething) {
       localErrors.needs = "Você indicou que precisa de adaptações. Marque ao menos uma opção do catálogo ou descreva a necessidade no campo \"Necessidade não contemplada pelo catálogo\".";
     }
+    if (hasAccessibilityData(profile) && !consent.active && !consentChecked) {
+      localErrors.consent = "Para salvar informações de acessibilidade, marque a autorização de uso dessas informações.";
+    }
     if ((profile.workPreferences.state || profile.workPreferences.address) && !profile.workPreferences.city.trim()) {
       localErrors.work = "Informe a cidade para registrar o estado ou o endereço.";
     }
     if (Object.keys(localErrors).length) {
-      setErrors(localErrors); setError("Corrija os campos indicados antes de salvar."); return;
+      setErrors(localErrors); setError("Corrija os campos indicados antes de salvar."); return false;
     }
     setSaving(true);
-    const keys = ["education", "languages", "professionalExperience", "courses", "certifications",
-      "professionalLinks", "workPreferences", "accessibilityDeclaration", "accessibilityNeeds", "accessibilityNeedOptionCodes",
-      "mandatoryNeedOptionCodes", "essentialAccessibilityResources"] as const;
-    const payload = Object.fromEntries(keys.map(key => [key, profile[key]]));
+    const payload = { ...Object.fromEntries(savedKeys.map(key => [key, profile[key]])), ...(consentChecked && !consent.active ? { accessibilityConsent: true } : {}) };
     try {
       const response = await fetch("/api/candidato/perfil", {
         method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
@@ -259,13 +285,37 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
         }
         if (Object.keys(mapped).length) { setErrors(mapped); setError("Corrija os campos indicados antes de salvar."); }
         else setError(result.message || "Não foi possível salvar o perfil.");
-        return;
+        return false;
       }
       setProfile(current => ({ ...current, ...result.profile, fullName: accountName, email: accountEmail }));
+      setSavedSnapshot(snapshot({ ...profile, ...result.profile }));
+      if (result.accessibilityConsent) setConsent(result.accessibilityConsent);
+      setConsentChecked(false);
       setNotice("Perfil salvo. Você pode voltar e atualizar as informações quando quiser.");
-    } catch { setError("Não foi possível conectar ao serviço. Tente novamente."); }
+      return true;
+    } catch { setError("Não foi possível conectar ao serviço. Tente novamente."); return false; }
     finally { setSaving(false); }
   }
+
+  async function revokeConsent() {
+    if (!window.confirm("Retirar a autorização apaga do seu perfil as necessidades e os recursos de acessibilidade. Eles deixam de ser usados na compatibilidade e de aparecer para as empresas. Deseja continuar?")) return;
+    setRevoking(true); setError(""); setNotice("");
+    try {
+      const response = await fetch("/api/candidato/perfil/consentimento-acessibilidade", { method: "DELETE" });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) { setError(result.message || "Não foi possível retirar a autorização."); return; }
+      const cleared = { accessibilityDeclaration: "NOT_INFORMED" as const, accessibilityNeeds: [], accessibilityNeedOptionCodes: [], mandatoryNeedOptionCodes: [], essentialAccessibilityResources: [] };
+      setProfile(current => ({ ...current, ...cleared }));
+      // The withdrawal already erased these fields on the server; other unsaved edits stay unsaved.
+      setSavedSnapshot(current => current === null ? current : snapshot({ ...Object.fromEntries(savedKeys.map((key, index) => [key, JSON.parse(current)[index]])), ...cleared }));
+      setNeedsText("");
+      setConsent({ active: false, at: null });
+      setNotice(result.message || "Autorização retirada.");
+    } catch { setError("Não foi possível conectar ao serviço. Tente novamente."); }
+    finally { setRevoking(false); }
+  }
+
+  const { dialog: unsavedDialog } = useUnsavedChangesGuard({ dirty: savedSnapshot !== null && snapshot(profile) !== savedSnapshot, onSave: save });
 
   const selectedCodes = new Set(profile.accessibilityNeedOptionCodes);
   const selectedDeclaration = (value: Declaration) => {
@@ -282,10 +332,12 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     clearFail("needs");
   };
   return <div className="candidate-profile-form" aria-busy={loading || saving || uploading}>
+    {unsavedDialog}
     <section className="profile-section">
       <h2>Dados da conta</h2><p className="muted">Nome e e-mail vêm da sua conta e não precisam ser preenchidos novamente.</p>
       <div className="profile-account-grid"><div><span>Nome</span><strong>{profile.fullName || accountName}</strong></div><div><span>E-mail</span><strong>{profile.email || accountEmail}</strong></div></div>
     </section>
+    <ProfilePhotoEditor name={accountName} note="Opcional. A foto aparece para você e para as empresas, e os recrutadores delas, das vagas em que você se candidatar." />
     <section className="profile-section">
       <h2>Formação e escolaridade</h2>
       <p className="muted">Adicione cada formação separadamente. Você pode registrar formações concluídas ou em andamento.</p>
@@ -364,7 +416,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
         <button className="primary-button" type="submit" disabled={uploading || loading}>{uploading ? "Enviando arquivo..." : "Adicionar arquivo"}</button>
       </form>
       {sectionError("documents")}
-      <p className="profile-privacy-note">Os arquivos ficam em armazenamento privado local, fora da pasta pública. Somente a conta proprietária pode baixá-los ou removê-los.</p>
+      <p className="profile-privacy-note">Os arquivos ficam guardados de forma privada. Somente a conta proprietária pode baixá-los ou removê-los.</p>
       <ul className="profile-document-list">{documents.map(document => <li key={document.id}>
         <div><strong>{document.displayName}</strong><span>{document.category === "COURSE" ? "Curso" : "Certificação"} · {document.originalName} · {formatBytes(document.sizeBytes)}</span></div>
         <div className="profile-document-actions"><a className="secondary-button" href={`/api/candidato/documentos/${encodeURIComponent(document.id)}`} aria-label={`Baixar arquivo: ${document.displayName}`}>Baixar</a><button className="secondary-button" type="button" onClick={() => void deleteDocument(document)} aria-label={`Remover arquivo: ${document.displayName}`}>Remover</button></div>
@@ -455,6 +507,22 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
         }))} disabled={loading || saving} aria-label={`Remover recurso: ${item}`}>Remover</button>
       </li>)}</ul>
     </section>
+    {(hasAccessibilityData(profile) || consent.active) && <section className="profile-section" aria-labelledby="consent-title">
+      <h2 id="consent-title">Autorização para usar as informações de acessibilidade</h2>
+      {consent.active ? <>
+        <p className="consent-status">{`Você autorizou em ${consent.at ? consentDate(consent.at) : "data não registrada"}.`} {ACCESSIBILITY_CONSENT_TEXT}</p>
+        <button type="button" className="secondary-button" onClick={() => void revokeConsent()} disabled={loading || saving || revoking}>
+          {revoking ? "Retirando…" : "Retirar autorização e apagar estas informações"}
+        </button>
+      </> : <>
+        <p className="muted">Informações sobre deficiência e acessibilidade são dados pessoais sensíveis. Elas só são usadas com a sua autorização específica. Veja a <a href="/privacidade" target="_blank" rel="noopener noreferrer">Política de Privacidade<span className="visually-hidden"> (abre em nova aba)</span></a>.</p>
+        <label className="consent-check" htmlFor="accessibilityConsent">
+          <input id="accessibilityConsent" type="checkbox" checked={consentChecked} onChange={event => { setConsentChecked(event.target.checked); clearFail("consent"); }} disabled={loading || saving} />
+          <span>{ACCESSIBILITY_CONSENT_TEXT}</span>
+        </label>
+      </>}
+      {sectionError("consent")}
+    </section>}
     {error && <p className="form-error" role="alert">{error}</p>}
     {notice && <p className="form-success" role="status" aria-live="polite">{notice}</p>}
     <div className="profile-actions"><button className="primary-button" type="button" onClick={() => void handleSubmit()} disabled={loading || saving || uploading}>{loading ? "Carregando perfil..." : saving ? "Salvando..." : "Salvar perfil"}</button></div>

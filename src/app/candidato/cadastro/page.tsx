@@ -1,23 +1,28 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import BrandLogo from "@/components/brand-logo";
+import TermsAcceptance from "@/components/terms-acceptance";
+import PasswordInput from "@/components/password-input";
 
 export default function CandidateSignupPage() {
   const router = useRouter();
   const [form, setForm] = useState({ fullName: "", email: "", cpf: "", password: "", confirmPassword: "" });
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setError("");
     if (form.password !== form.confirmPassword) { setError("As senhas não coincidem."); return; }
+    if (!acceptTerms) { setError("Para criar a conta, leia e aceite os Termos de Uso e a Política de Privacidade."); return; }
     setLoading(true);
     try {
-      const response = await fetch("/api/auth/register/candidate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+      const response = await fetch("/api/auth/register/candidate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, acceptTerms }) });
       const result = await response.json();
       if (!response.ok) { setError(result.message || "Não foi possível criar a conta."); return; }
       router.push("/candidato/login?cadastro=sucesso");
@@ -30,8 +35,9 @@ export default function CandidateSignupPage() {
     <label htmlFor="fullName">Nome completo</label><input id="fullName" autoComplete="name" maxLength={160} value={form.fullName} onChange={e=>setForm({...form,fullName:e.target.value})} required />
     <label htmlFor="email">E-mail</label><input id="email" type="email" autoComplete="email" maxLength={254} value={form.email} onChange={e=>setForm({...form,email:e.target.value})} required />
     <label htmlFor="cpf">CPF</label><input id="cpf" inputMode="numeric" autoComplete="off" placeholder="000.000.000-00" value={form.cpf} onChange={e=>setForm({...form,cpf:e.target.value})} required />
-    <label htmlFor="password">Senha</label><input id="password" type="password" autoComplete="new-password" minLength={10} value={form.password} onChange={e=>setForm({...form,password:e.target.value})} required aria-describedby="candidate-password-help" /><p id="candidate-password-help" className="muted">Mínimo de 10 caracteres, com maiúscula, minúscula e número.</p>
-    <label htmlFor="confirmPassword">Confirmar senha</label><input id="confirmPassword" type="password" autoComplete="new-password" value={form.confirmPassword} onChange={e=>setForm({...form,confirmPassword:e.target.value})} required />
+    <label htmlFor="password">Senha</label><PasswordInput id="password" autoComplete="new-password" minLength={10} value={form.password} onChange={e=>setForm({...form,password:e.target.value})} required aria-describedby="candidate-password-help" /><p id="candidate-password-help" className="muted">Mínimo de 10 caracteres, com maiúscula, minúscula e número.</p>
+    <label htmlFor="confirmPassword">Confirmar senha</label><PasswordInput toggleLabel="Mostrar confirmação da senha" id="confirmPassword" autoComplete="new-password" value={form.confirmPassword} onChange={e=>setForm({...form,confirmPassword:e.target.value})} required />
+    <TermsAcceptance checked={acceptTerms} onChange={setAcceptTerms} disabled={loading} />
     {error && <p className="form-error" role="alert">{error}</p>}<button className="primary-button" type="submit" disabled={loading}>{loading?"Criando conta...":"Criar conta"}</button>
   </form><p className="auth-footer">Já tem uma conta? <Link href="/candidato/login">Entrar</Link></p></section></main>;
 }

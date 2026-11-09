@@ -4,6 +4,7 @@ import React, { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AuthSplitLayout from "@/components/auth-split-layout";
+import PasswordInput from "@/components/password-input";
 
 export default function CandidateLoginPage() {
   const router = useRouter();
@@ -56,10 +57,10 @@ export default function CandidateLoginPage() {
         <label htmlFor="identifier">E-mail ou CPF</label>
         <input id="identifier" autoComplete="username" value={identifier} onChange={event => setIdentifier(event.target.value)} required />
         <label htmlFor="password">Senha</label>
-        <input id="password" type="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required />
+        <PasswordInput id="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required />
         <div className="form-options">
           <label className="checkbox-label"><input type="checkbox" checked={rememberMe} onChange={event => setRememberMe(event.target.checked)} /> Manter conectado</label>
-          <Link href="/recuperar-senha">Esqueci minha senha</Link>
+          <Link href="/recuperar-senha?perfil=candidato">Esqueci minha senha</Link>
         </div>
         {notice && <p className="form-success" role="status" aria-live="polite">{notice}</p>}
         {error && <p className="form-error" role="alert">{error}</p>}

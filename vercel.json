@@ -2,9 +2,18 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "buildCommand": "npm run vercel-build",
-  "regions": ["gru1"],
+  "ignoreCommand": "[ \"$VERCEL_GIT_COMMIT_REF\" != \"main\" ] && [ \"$VERCEL_GIT_COMMIT_REF\" != \"desenvolvimento-do-projeto\" ]",
+  "regions": [
+    "gru1"
+  ],
   "crons": [
-    { "path": "/api/cron/retencao", "schedule": "0 6 * * *" },
-    { "path": "/api/cron/notificacoes", "schedule": "0 9 * * *" }
+    {
+      "path": "/api/cron/retencao",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/notificacoes",
+      "schedule": "0 9 * * *"
+    }
   ]
 }

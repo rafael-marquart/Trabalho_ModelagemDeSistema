@@ -32,7 +32,8 @@ describe("recruiter invitation response", () => {
     recruiterLink: { findFirst: vi.fn(), create: vi.fn() },
     recruiterInvitation: { updateMany: vi.fn() },
     user: { updateMany: vi.fn() },
-    auditEvent: { create: vi.fn() }
+    auditEvent: { create: vi.fn() },
+    consentRecord: { create: vi.fn() }
   };
 
   beforeEach(() => {
@@ -96,15 +97,30 @@ describe("recruiter invitation response", () => {
     const response = await POST(new Request("https://acessavagas.example/api/recruiter/invitations/respond", {
       method: "POST",
       headers: { "content-type": "application/json", origin: "https://acessavagas.example" },
-      body: JSON.stringify({ token: "a-valid-invitation-token", action: "accept", password: "StrongPassword123" })
+      body: JSON.stringify({ token: "a-valid-invitation-token", action: "accept", password: "StrongPassword123", acceptTerms: true })
     }));
 
     expect(response.status).toBe(200);
+    expect(tx.consentRecord.create).toHaveBeenCalledWith({ data: { userId: "recruiter-1", kind: "TERMS_AND_PRIVACY", version: "2026-11-09", granted: true } });
     expect(tx.user.updateMany).toHaveBeenCalledWith({
       where: { id: "recruiter-1", role: "RECRUITER", isActive: false, pendingActivation: true },
       data: expect.objectContaining({ passwordHash: expect.any(String), isActive: true, pendingActivation: false, passwordChangedAt: expect.any(Date) })
     });
     expect(tx.recruiterLink.create).toHaveBeenCalledWith({ data: { companyId: "company-1", recruiterId: "recruiter-1" } });
+  });
+
+  it("does not activate a first-time recruiter without the acceptance of the Terms", async () => {
+    getCurrentUserMock.mockResolvedValueOnce(null);
+    prismaMock.user.findUnique.mockResolvedValueOnce({ id: "recruiter-1", role: "RECRUITER", isActive: false, pendingActivation: true });
+    const response = await POST(new Request("https://acessavagas.example/api/recruiter/invitations/respond", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: "https://acessavagas.example" },
+      body: JSON.stringify({ token: "a-valid-invitation-token", action: "accept", password: "StrongPassword123" })
+    }));
+    expect(response.status).toBe(400);
+    expect((await response.json()).message).toContain("Termos de Uso");
+    expect(tx.user.updateMany).not.toHaveBeenCalled();
+    expect(tx.consentRecord.create).not.toHaveBeenCalled();
   });
 
   it("uses serializable isolation when claiming and accepting an invitation", async () => {

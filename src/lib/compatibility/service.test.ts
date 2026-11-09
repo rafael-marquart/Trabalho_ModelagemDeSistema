@@ -2,13 +2,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { prismaMock } = vi.hoisted(() => ({
   prismaMock: {
-    job: { findFirst: vi.fn() }, candidateProfile: { findUnique: vi.fn() },
+    job: { findFirst: vi.fn() }, candidateProfile: { findUnique: vi.fn() }, consentRecord: { findFirst: vi.fn().mockResolvedValue({ granted: true, createdAt: new Date("2026-11-05T12:00:00Z") }), create: vi.fn() },
     accessibilityNeedOption: { findMany: vi.fn() }, compatibilityResult: { create: vi.fn(), findFirst: vi.fn() },
     travelTimeCache: { findUnique: vi.fn(), upsert: vi.fn() }
   }
 }));
 vi.mock("@/lib/prisma", () => ({ prisma: prismaMock }));
-import { analyzeCandidateForJob, reproduce } from "./service";
+import { analyzeCandidateForJob, loadCandidateContext, reproduce } from "./service";
 import { analyze } from "./engine";
 
 const accessibility = { RAMPS: "PRESENT", ELEVATORS: "ABSENT" };
@@ -169,5 +169,15 @@ describe("compatibility service", () => {
     estimator.estimate.mockResolvedValue({ status: "UNAVAILABLE", reason: "Indisponível." });
     await run();
     expect(prismaMock.travelTimeCache.upsert).not.toHaveBeenCalled();
+  });
+
+  it("leaves accessibility data out of the calculation without the candidate's consent (OPEN-100)", async () => {
+    prismaMock.candidateProfile.findUnique.mockResolvedValue({ accessibilityDeclaration: "NEEDS_DECLARED", accessibilityNeedOptionCodes: ["A01"], mandatoryNeedOptionCodes: ["A01"], accessibilityNeeds: ["texto"], essentialAccessibilityResources: [], workPreferences: {} });
+    prismaMock.consentRecord.findFirst.mockResolvedValueOnce(null);
+    const withoutConsent = await loadCandidateContext("cand");
+    expect(withoutConsent.candidate).toMatchObject({ accessibilityDeclaration: "NOT_INFORMED", needs: [], hasFreeTextNeeds: false });
+    prismaMock.accessibilityNeedOption.findMany.mockResolvedValueOnce([{ code: "A01", name: "Rampa", isMandatory: false }]);
+    const withConsent = await loadCandidateContext("cand");
+    expect(withConsent.candidate).toMatchObject({ accessibilityDeclaration: "NEEDS_DECLARED", needs: [{ code: "A01", name: "Rampa", mandatory: true }] });
   });
 });

@@ -4,6 +4,7 @@ import React, { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AuthSplitLayout from "@/components/auth-split-layout";
+import PasswordInput from "@/components/password-input";
 
 export default function CompanyLoginPage() {
   const router = useRouter();
@@ -49,10 +50,10 @@ export default function CompanyLoginPage() {
         <label htmlFor="identifier">E-mail corporativo</label>
         <input id="identifier" type="email" autoComplete="username" value={identifier} onChange={event => setIdentifier(event.target.value)} required />
         <label htmlFor="password">Senha</label>
-        <input id="password" type="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required />
+        <PasswordInput id="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required />
         <div className="form-options">
           <label className="checkbox-label"><input type="checkbox" checked={rememberMe} onChange={event => setRememberMe(event.target.checked)} /> Manter conectado</label>
-          <Link href="/recuperar-senha">Esqueci minha senha</Link>
+          <Link href="/recuperar-senha?perfil=empresa">Esqueci minha senha</Link>
         </div>
         {error && <p className="form-error" role="alert">{error}</p>}
         <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar na plataforma"}</button>

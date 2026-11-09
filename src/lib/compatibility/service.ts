@@ -10,6 +10,7 @@ import { analyze, evaluateCriticalLock, travelRequired } from "./engine";
 import { createDbQuotaGuard } from "./quota";
 import { createHereEstimator, type TravelEstimator } from "./travel";
 import type { AnalysisInput, AnalysisOutcome, CandidateInput, JobInput, TravelInput } from "./types";
+import { accessibilityConsent, accessibilityFieldsWithoutConsent } from "@/lib/legal/consent";
 
 export type CompatibilityView = AnalysisOutcome & { id: string; executedAt: string; rulesVersion: string; jobId: string };
 export type ServiceResult = { error: { status: number; message: string } } | { view: CompatibilityView };
@@ -60,7 +61,9 @@ type AnalyzableJob = Parameters<typeof rowToFields>[0];
 type Deps = { estimator?: TravelEstimator; now?: Date };
 
 export async function loadCandidateContext(userId: string): Promise<CandidateContext> {
-  const profile = await prisma.candidateProfile.findUnique({ where: { userId } });
+  const stored = await prisma.candidateProfile.findUnique({ where: { userId } });
+  // OPEN-100: accessibility data enters the calculation only with the candidate's specific consent.
+  const profile = stored && !(await accessibilityConsent(prisma, userId)).active ? { ...stored, ...accessibilityFieldsWithoutConsent } : stored;
   const codes = toStringList(profile?.accessibilityNeedOptionCodes);
   const options = codes.length ? await prisma.accessibilityNeedOption.findMany({ where: { code: { in: codes } }, select: { code: true, name: true, isMandatory: true } }) : [];
   const preferences = toWorkPreferences(profile?.workPreferences);

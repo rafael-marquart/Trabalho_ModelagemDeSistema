@@ -4,6 +4,7 @@ import { canMove, FUNNEL_ORDER, kindLabels, knownBlockingIssues, moveKind, RECRU
 import { stageLabels } from "./stages";
 import { enqueueStageChanged, kickNotificationDelivery } from "@/lib/notifications/service";
 import { listInterviews } from "@/lib/interviews/service";
+import { accessibilityConsent, accessibilityFieldsWithoutConsent } from "@/lib/legal/consent";
 
 // SPEC-013: the company side of applications. Every read and write is scoped to the company resolved from the session
 // (company account or recruiter with an active link); the client never chooses the company.
@@ -16,14 +17,14 @@ export async function listJobApplications(companyId: string, jobId: string) {
   const rows = await prisma.application.findMany({
     where: { jobId },
     orderBy: [{ appliedAt: "asc" }, { id: "asc" }],
-    select: { id: true, appliedAt: true, stage: true, score: true, candidate: { select: { fullName: true } } }
+    select: { id: true, appliedAt: true, stage: true, score: true, candidate: { select: { fullName: true, photo: { select: { updatedAt: true } } } } }
   });
   const counts = Object.fromEntries(FUNNEL_ORDER.map((stage) => [stage, rows.filter((row) => row.stage === stage).length])) as Record<Stage, number>;
   return {
     job: { id: job.id, title: job.title || "Vaga sem título", status: job.status },
     counts,
     applications: rows.map((row) => ({
-      id: row.id, candidateName: row.candidate.fullName, appliedAt: row.appliedAt.toISOString(),
+      id: row.id, candidateName: row.candidate.fullName, candidateHasPhoto: Boolean(row.candidate.photo), appliedAt: row.appliedAt.toISOString(),
       stage: row.stage, stageLabel: stageLabels[row.stage], score: row.score
     }))
   };
@@ -40,13 +41,15 @@ export async function getApplicationForCompany(companyId: string, applicationId:
     where: { id: applicationId, job: { companyId } },
     include: {
       job: { select: { id: true, title: true } },
-      candidate: { select: { id: true, fullName: true, email: true } },
+      candidate: { select: { id: true, fullName: true, email: true, photo: { select: { updatedAt: true } } } },
       compatibilityResult: { select: { outcome: true } },
       stageEvents: { orderBy: [{ createdAt: "asc" }, { id: "asc" }] }
     }
   });
   if (!row) return null;
-  const profile = await prisma.candidateProfile.findUnique({ where: { userId: row.candidateUserId } });
+  const stored = await prisma.candidateProfile.findUnique({ where: { userId: row.candidateUserId } });
+  // OPEN-100: the company sees accessibility information only while the candidate's consent is active.
+  const profile = stored && !(await accessibilityConsent(prisma, row.candidateUserId)).active ? { ...stored, ...accessibilityFieldsWithoutConsent } : stored;
   const needCodes = toStringList(profile?.accessibilityNeedOptionCodes);
   const needs = needCodes.length ? await prisma.accessibilityNeedOption.findMany({ where: { code: { in: needCodes } }, select: { name: true } }) : [];
   const actorIds = [...new Set(row.stageEvents.map((event) => event.actorUserId).filter((id): id is string => Boolean(id)))];
@@ -61,7 +64,8 @@ export async function getApplicationForCompany(companyId: string, applicationId:
   return {
     id: row.id,
     job: { id: row.job.id, title: row.job.title || "Vaga sem título" },
-    candidate: { fullName: row.candidate.fullName, email: row.candidate.email },
+    // OPEN-101: the candidate's photo, when there is one, is served by /api/candidaturas/{id}/foto.
+    candidate: { fullName: row.candidate.fullName, email: row.candidate.email, hasPhoto: Boolean(row.candidate.photo) },
     appliedAt: row.appliedAt.toISOString(),
     stage, stageLabel: stageLabels[stage],
     score: row.score,

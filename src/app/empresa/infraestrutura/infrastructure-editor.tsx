@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import ChoiceGroup from "@/components/choice-group";
 import { statusLabels, type InfrastructureStatus } from "@/lib/company-infrastructure/items";
+import { useUnsavedChangesGuard } from "@/components/unsaved-changes";
 
 type Category = { code: string; label: string };
 type Item = { code: string; category: string; label: string; description: string; required: boolean };
@@ -18,6 +19,7 @@ export default function InfrastructureEditor() {
   const [notice, setNotice] = useState("");
   const [itemErrors, setItemErrors] = useState<Record<string, string>>({});
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
+  const [savedSnapshot, setSavedSnapshot] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -26,7 +28,7 @@ export default function InfrastructureEditor() {
       if (!response.ok) throw new Error(data.message || "Falha ao carregar.");
       if (!active) return;
       setCategories(data.catalog.categories); setItems(data.catalog.items);
-      setAnswers(data.answers); setUpdatedAt(data.updatedAt);
+      setAnswers(data.answers); setUpdatedAt(data.updatedAt); setSavedSnapshot(JSON.stringify(data.answers));
     }).catch(() => { if (active) setError("Não foi possível carregar a infraestrutura. Atualize a página para tentar novamente."); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
@@ -37,7 +39,7 @@ export default function InfrastructureEditor() {
     if (change.status) setItemErrors(current => { const { [code]: _removed, ...rest } = current; return rest; });
   }
 
-  async function save() {
+  async function save(): Promise<boolean> {
     setError(""); setNotice("");
     const missing: Record<string, string> = {};
     for (const item of items) {
@@ -47,7 +49,7 @@ export default function InfrastructureEditor() {
       }
     }
     if (Object.keys(missing).length) {
-      setItemErrors(missing); setError("Responda os itens indicados antes de salvar."); return;
+      setItemErrors(missing); setError("Responda os itens indicados antes de salvar."); return false;
     }
     setItemErrors({}); setSaving(true);
     try {
@@ -59,16 +61,20 @@ export default function InfrastructureEditor() {
         const issues = (result.issues ?? {}) as Record<string, string>;
         setItemErrors(issues);
         setError(Object.keys(issues).length ? "Responda os itens indicados antes de salvar." : result.message || "Não foi possível salvar.");
-        return;
+        return false;
       }
-      setAnswers(result.answers); setUpdatedAt(result.updatedAt);
+      setAnswers(result.answers); setUpdatedAt(result.updatedAt); setSavedSnapshot(JSON.stringify(result.answers));
       setNotice("Infraestrutura salva. Você pode atualizar as informações quando algo mudar.");
-    } catch { setError("Não foi possível conectar ao serviço. Tente novamente."); }
+      return true;
+    } catch { setError("Não foi possível conectar ao serviço. Tente novamente."); return false; }
     finally { setSaving(false); }
   }
 
+  const { dialog: unsavedDialog } = useUnsavedChangesGuard({ dirty: savedSnapshot !== null && JSON.stringify(answers) !== savedSnapshot, onSave: save });
+
   const disabled = loading || saving;
   return <div className="candidate-profile-form" aria-busy={disabled}>
+    {unsavedDialog}
     {categories.map(category => <section className="profile-section" key={category.code}>
       <h2>{category.label}</h2>
       {items.filter(item => item.category === category.code).map(item => {

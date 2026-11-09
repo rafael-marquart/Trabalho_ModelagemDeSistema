@@ -5,7 +5,7 @@ import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
 import BrandLogo from "@/components/brand-logo";
 
-type AuthProfile = "candidate" | "company";
+type AuthProfile = "candidate" | "company" | "recruiter";
 type AuthSplitLayoutProps = {
   profile: AuthProfile;
   eyebrow: string;

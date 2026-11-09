@@ -4,9 +4,10 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { stagePill } from "./funnel-board";
 import InterviewPanel, { type Interview } from "./interview-panel";
+import { PersonAvatar } from "@/components/profile-photo";
 
 type Detail = {
-  id: string; job: { id: string; title: string }; candidate: { fullName: string; email: string }; appliedAt: string;
+  id: string; job: { id: string; title: string }; candidate: { fullName: string; email: string; hasPhoto?: boolean }; appliedAt: string;
   stage: string; stageLabel: string; score: number | null; dimensions: { code: "A" | "T" | "D"; status: string; score: number | null }[];
   profile: {
     education: { level: string; course: string; institution: string; status: string }[]; experience: { role: string; company: string; period: string }[];
@@ -70,7 +71,10 @@ export default function ApplicationDetail({ basePath, jobId, applicationId }: { 
     {data ? <>
       <header className="company-page-heading">
         <p className="job-card-company">{data.job.title}</p>
-        <h1 id="application-title">{data.candidate.fullName}</h1>
+        <div className="application-heading-person">
+          <PersonAvatar name={data.candidate.fullName} className="person-avatar person-avatar-large" src={data.candidate.hasPhoto ? `/api/candidaturas/${applicationId}/foto` : null} />
+          <h1 id="application-title">{data.candidate.fullName}</h1>
+        </div>
         <p className="job-detail-status"><span className={`status-pill ${stagePill[data.stage]}`}>{`Etapa: ${data.stageLabel}`}</span> <span>{`Inscrição em ${dateTime(data.appliedAt)} · ${data.candidate.email}`}</span></p>
       </header>
 

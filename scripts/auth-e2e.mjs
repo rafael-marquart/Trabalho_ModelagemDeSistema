@@ -18,6 +18,8 @@ const CRON_SECRET = `e2e-cron-${randomUUID()}`;
 const PUBLIC_URL = `https://127.0.0.1:${PORT}`;
 const TEST_IP = "192.0.2.77";
 const LOCKOUT_TEST_IP = "198.51.100.42";
+// Own IP for the recruiter recovery requests, so the per-IP limit (3 in 15 min) of the other recovery tests is untouched.
+const RECOVERY_TEST_IP = "203.0.113.55";
 const EMAIL = `spec001-e2e-${randomUUID()}@example.test`;
 const COMPANY_EMAIL = `spec001-company-${randomUUID()}@example.test`;
 const RECRUITER_EMAIL = `spec001-recruiter-${randomUUID()}@example.test`;
@@ -285,8 +287,9 @@ async function cleanupTestData() {
       where: {
         OR: [
           { ipKey },
+          { ipKey: digest(RECOVERY_TEST_IP) },
           { ipKey: companyVerificationIpKey },
-          { identifierKey: { in: [...recoveryKeys, ...companyVerificationKeys] } }
+          { identifierKey: { in: [...recoveryKeys, ...companyVerificationKeys, digest(`input:company:${RECRUITER_EMAIL}`)] } }
         ]
       }
     });
@@ -296,6 +299,8 @@ async function cleanupTestData() {
           in: [
             ...recoveryKeys.map(key => `identifier:${key}`),
             `ip:${ipKey}`,
+            `ip:${digest(RECOVERY_TEST_IP)}`,
+            `identifier:${digest(`input:company:${RECRUITER_EMAIL}`)}`,
             ...companyVerificationKeys.map(key => `company-verification:identifier:${key}`),
             `company-verification:ip:${companyVerificationIpKey}`
           ]
@@ -378,13 +383,14 @@ async function main() {
 
     // Candidate registration and first login exercise the deployed route handlers,
     // real PostgreSQL transactions, password hashing and actual session cookies.
-    const registration = await postJson("/api/auth/register/candidate", {
-      fullName: "Candidato de Teste E2E",
-      email: EMAIL,
-      cpf: "52998224725",
-      password: OLD_PASSWORD
-    });
+    // OPEN-100: no account without the explicit acceptance of the Terms of Use and Privacy Policy.
+    const candidateSignup = { fullName: "Candidato de Teste E2E", email: EMAIL, cpf: "52998224725", password: OLD_PASSWORD };
+    await expectStatus(await postJson("/api/auth/register/candidate", candidateSignup), 400, "candidate registration without accepting the terms");
+    assert.equal(await prisma.user.count({ where: { email: EMAIL } }), 0, "no account is created without the acceptance");
+    const registration = await postJson("/api/auth/register/candidate", { ...candidateSignup, acceptTerms: true });
     await expectStatus(registration, 201, "candidate registration");
+    const termsRecord = await prisma.consentRecord.findFirst({ where: { user: { email: EMAIL }, kind: "TERMS_AND_PRIVACY" } });
+    assert.ok(termsRecord?.granted && termsRecord.version, "the acceptance is recorded with the text version");
 
     const account = await prisma.user.findUnique({
       where: { email: EMAIL },
@@ -528,6 +534,10 @@ async function main() {
       body: JSON.stringify(payload), redirect: "manual"
     });
     await expectStatus(await putProfile(profilePayload), 401, "anonymous profile save");
+    // OPEN-100: accessibility data is saved only with the specific consent, recorded in the same transaction.
+    const withoutConsent = await putProfile(profilePayload, profileCookie);
+    assert.match(await expectStatus(withoutConsent, 400, "accessibility needs without the specific consent"), /autorização/);
+    profilePayload.accessibilityConsent = true;
     await expectStatus(await putProfile({ ...profilePayload, accessibilityNeedOptionCodes: [], accessibilityNeeds: [] }, profileCookie),
       400, "needs declared without any option is rejected");
     await expectStatus(await putProfile({ ...profilePayload, education: ["Ensino médio — Geral"] }, profileCookie),
@@ -680,6 +690,7 @@ async function main() {
     // Company registration and email verification exercise the inactive-to-active transition.
     const companyEmailCount = SMTP_MESSAGES.length;
     const companyRegistration = await postJson("/api/auth/register/company", {
+      acceptTerms: true,
       legalName: "Empresa de Teste E2E",
       tradeName: "Empresa E2E",
       officialId: "12345678000195",
@@ -821,10 +832,13 @@ async function main() {
     });
     await expectStatus(staleInvitation, 400, "previous recruiter invitation token after resend");
 
+    await expectStatus(await postJson("/api/recruiter/invitations/respond", { token: currentInvitationToken, action: "accept", password: RECRUITER_PASSWORD }),
+      400, "recruiter activation without accepting the terms");
     const acceptInvitation = await postJson("/api/recruiter/invitations/respond", {
       token: currentInvitationToken,
       action: "accept",
-      password: RECRUITER_PASSWORD
+      password: RECRUITER_PASSWORD,
+      acceptTerms: true
     });
     await expectStatus(acceptInvitation, 200, "accept recruiter invitation and activate account");
     const acceptedAuditCount = await prisma.auditEvent.count({
@@ -853,6 +867,17 @@ async function main() {
     const listedLinksBody = await expectStatus(listedLinks, 200, "company recruiter links list");
     assert.ok(JSON.parse(listedLinksBody).links.some(link => link.recruiter.email === RECRUITER_EMAIL), "company must see its active recruiter link");
 
+    // Recruiters recover their password by e-mail too (OPEN-001, 05/11/2026); the account type is part of the lookup.
+    const recoveryHeaders = { "x-forwarded-for": RECOVERY_TEST_IP };
+    emailCount = SMTP_MESSAGES.length;
+    await expectStatus(await postJson("/api/auth/password/forgot", { profile: "company", identifier: RECRUITER_EMAIL }, recoveryHeaders), 200, "recovery with the wrong account type");
+    assert.equal(SMTP_MESSAGES.length, emailCount, "a recruiter e-mail under the Company type sends nothing");
+    const recruiterRecovery = await postJson("/api/auth/password/forgot", { profile: "recruiter", identifier: RECRUITER_EMAIL }, recoveryHeaders);
+    assert.match(await expectStatus(recruiterRecovery, 200, "recruiter password recovery request"), /Se os dados corresponderem a uma conta elegível/);
+    const recruiterRecoveryToken = extractEmailToken(emailCount, "/recuperar-senha");
+    await expectStatus(await postJson("/api/auth/password/reset", { token: recruiterRecoveryToken, password: RECRUITER_PASSWORD, confirmPassword: RECRUITER_PASSWORD }), 200, "recruiter password reset");
+    await expectStatus(await postJson("/api/auth/password/reset", { token: recruiterRecoveryToken, password: RECRUITER_PASSWORD, confirmPassword: RECRUITER_PASSWORD }), 400, "recruiter recovery token reuse");
+
     const recruiterLogin = await postJson("/api/auth/login", {
       profile: "recruiter",
       identifier: RECRUITER_EMAIL,
@@ -864,6 +889,12 @@ async function main() {
     const recruiterCookieMatch = (recruiterLogin.headers.get("set-cookie") || "").match(/(?:^|,\s*)acessa_session=([^;]+)/);
     assert.ok(recruiterCookieMatch?.[1], "recruiter login must issue a session cookie");
     const recruiterCookie = `acessa_session=${recruiterCookieMatch[1]}`;
+    // OPEN-101: recruiters can have a profile photo too.
+    const recruiterPhotoBody = new FormData();
+    recruiterPhotoBody.append("photo", new Blob([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0])], { type: "image/png" }), "foto.png");
+    await expectStatus(await fetch(`${BASE_URL}/api/conta/foto`, { method: "POST", headers: { origin: PUBLIC_URL, cookie: recruiterCookie }, body: recruiterPhotoBody, redirect: "manual" }), 200, "recruiter sends a photo");
+    const recruiterPhoto = await fetch(`${BASE_URL}/api/conta/foto`, { headers: { cookie: recruiterCookie }, redirect: "manual" });
+    assert.equal(recruiterPhoto.headers.get("content-type"), "image/png", "the recruiter's photo keeps its detected type");
 
     const recruiterCompanyLinks = await fetch(`${BASE_URL}/api/company/recruiter-links`, {
       headers: { cookie: recruiterCookie },
@@ -1112,6 +1143,7 @@ async function main() {
 
     const secondCompanyEmailCount = SMTP_MESSAGES.length;
     const secondCompanyRegistration = await postJson("/api/auth/register/company", {
+      acceptTerms: true,
       legalName: "Segunda Empresa de Teste E2E",
       tradeName: "Empresa E2E Dois",
       officialId: "98765432000198",
@@ -1942,6 +1974,46 @@ async function main() {
     const retention = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/cron/retencao`, { headers: { authorization: `Bearer ${CRON_SECRET}` }, redirect: "manual" }), 200, "scheduled retention"));
     assert.deepEqual(Object.keys(retention.results).sort(), ["audit", "compatibility", "evaluations", "loginSecurity", "notifications"], "every retention routine runs");
     assert.ok(Object.values(retention.results).every(result => result.executed === true), "retention runs for real, not as a simulation");
+
+    // OPEN-101: profile photo. The candidate's photo reaches the company only through an application to its job.
+    const jpeg = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 0x01]);
+    const sendPhoto = (bytes, cookie, type = "image/jpeg") => {
+      const body = new FormData();
+      body.append("photo", new Blob([bytes], { type }), "foto.jpg");
+      return fetch(`${BASE_URL}/api/conta/foto`, { method: "POST", headers: { origin: PUBLIC_URL, cookie }, body, redirect: "manual" });
+    };
+    await expectStatus(await sendPhoto(Buffer.from("<svg onload=alert(1)></svg>"), compatCookie, "image/svg+xml"), 400, "a file that is not a photo");
+    await expectStatus(await sendPhoto(jpeg, companyCookie), 401, "a company account has no personal photo");
+    await expectStatus(await sendPhoto(jpeg, compatCookie), 200, "candidate sends a photo");
+    const ownPhoto = await fetch(`${BASE_URL}/api/conta/foto`, { headers: { cookie: compatCookie }, redirect: "manual" });
+    assert.equal(ownPhoto.status, 200, "the candidate sees their own photo");
+    assert.equal(ownPhoto.headers.get("content-type"), "image/jpeg");
+    assert.deepEqual(Buffer.from(await ownPhoto.arrayBuffer()), jpeg, "the stored photo is the one sent");
+    const companyPhoto = await fetch(`${BASE_URL}/api/candidaturas/${applicationId}/foto`, { headers: { cookie: companyCookie }, redirect: "manual" });
+    assert.equal(companyPhoto.status, 200, "the company sees the photo of a candidate who applied to its job");
+    assert.equal((await fetch(`${BASE_URL}/api/candidaturas/${applicationId}/foto`, { headers: { cookie: secondCompanyCookie }, redirect: "manual" })).status, 404, "another company does not");
+    assert.equal((await fetch(`${BASE_URL}/api/candidaturas/${applicationId}/foto`, { redirect: "manual" })).status, 404, "nobody signed out does");
+    const funnelWithPhoto = JSON.parse(await expectStatus(await fetch(funnelUrl, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "funnel with photo flag"));
+    assert.ok(funnelWithPhoto.applications.some(item => item.candidateHasPhoto === true), "the funnel tells which candidates have a photo");
+    await expectStatus(await fetch(`${BASE_URL}/api/conta/foto`, { method: "DELETE", headers: { origin: PUBLIC_URL, cookie: compatCookie }, redirect: "manual" }), 200, "candidate removes the photo");
+    assert.equal((await fetch(`${BASE_URL}/api/conta/foto`, { method: "HEAD", headers: { cookie: compatCookie }, redirect: "manual" })).status, 404, "no photo after removal");
+    assert.equal((await fetch(`${BASE_URL}/api/candidaturas/${applicationId}/foto`, { headers: { cookie: companyCookie }, redirect: "manual" })).status, 404, "the company no longer sees it");
+
+    // OPEN-100: withdrawing the consent erases the accessibility data; the company stops seeing it.
+    await expectStatus(await saveCompatProfile({ ...compatProfile, accessibilityDeclaration: "NEEDS_DECLARED", accessibilityNeedOptionCodes: ["A01"] }), 200, "candidate keeps the ramp need declared");
+    const beforeRevoke = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/candidaturas/${applicationId}`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company detail before the withdrawal"));
+    assert.equal(beforeRevoke.application?.accessibility?.declaration ?? beforeRevoke.accessibility?.declaration, "NEEDS_DECLARED", "with consent, the company sees the declared need");
+    const revokeUrl = `${BASE_URL}/api/candidato/perfil/consentimento-acessibilidade`;
+    await expectStatus(await fetch(revokeUrl, { method: "DELETE", headers: { origin: PUBLIC_URL, cookie: companyCookie }, redirect: "manual" }), 401, "only the candidate withdraws the consent");
+    await expectStatus(await fetch(revokeUrl, { method: "DELETE", headers: { origin: PUBLIC_URL, cookie: compatCookie }, redirect: "manual" }), 200, "candidate withdraws the consent");
+    const erased = await prisma.candidateProfile.findFirst({ where: { user: { email: EMAIL } } });
+    assert.deepEqual([erased.accessibilityDeclaration, erased.accessibilityNeedOptionCodes, erased.essentialAccessibilityResources], ["NOT_INFORMED", [], []], "the accessibility data is erased");
+    const lastConsent = await prisma.consentRecord.findFirst({ where: { user: { email: EMAIL }, kind: "ACCESSIBILITY_DATA" }, orderBy: { createdAt: "desc" } });
+    assert.equal(lastConsent.granted, false, "the withdrawal is a new record");
+    const afterRevoke = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/candidaturas/${applicationId}`, { headers: { cookie: companyCookie }, redirect: "manual" }), 200, "company detail after the withdrawal"));
+    assert.deepEqual(afterRevoke.application?.accessibility ?? afterRevoke.accessibility, { declaration: "NOT_INFORMED", needs: [], essentialResources: [] }, "the company no longer sees accessibility information");
+    await expectStatus(await saveCompatProfile({ ...compatProfile, accessibilityDeclaration: "NEEDS_DECLARED", accessibilityNeedOptionCodes: ["A01"], accessibilityConsent: undefined }), 400, "declaring again needs a new consent");
+    await assert.rejects(prisma.consentRecord.update({ where: { id: lastConsent.id }, data: { granted: true } }), "the consent history cannot be edited");
 
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });

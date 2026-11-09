@@ -61,7 +61,9 @@ export const candidateProfileInputSchema = z.object({
   accessibilityNeedOptionCodes: optionCodeListSchema,
   // Subset of the selected catalog needs that the candidate marks as indispensable (critical lock, SPEC-007).
   mandatoryNeedOptionCodes: optionCodeListSchema,
-  essentialAccessibilityResources: profileListSchema
+  essentialAccessibilityResources: profileListSchema,
+  // OPEN-100: the specific consent for accessibility data, given in the profile (never stored as a profile field).
+  accessibilityConsent: z.boolean().optional()
 }).strict().superRefine((profile, context) => {
   if (profile.mandatoryNeedOptionCodes.some((code) => !profile.accessibilityNeedOptionCodes.includes(code))) {
     context.addIssue({

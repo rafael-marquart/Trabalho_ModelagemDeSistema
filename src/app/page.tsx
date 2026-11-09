@@ -60,7 +60,7 @@ export default function HomePage() {
             <Link href="/empresa/cadastro">Cadastrar empresa</Link>
             <Link href="/recrutador/login">Entrar como recrutador</Link>
           </div>
-          <p className="legal-note">Ao continuar, você concorda com os termos de uso e a política de privacidade da plataforma.</p>
+          <p className="legal-note">Leia os <Link href="/termos-de-uso">Termos de Uso</Link> e a <Link href="/privacidade">Política de Privacidade</Link>. O aceite é pedido ao criar a conta.</p>
         </div>
       </section>
     </main>
