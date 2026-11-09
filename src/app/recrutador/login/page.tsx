@@ -6,6 +6,7 @@ import ThemeToggle from "@/components/theme-toggle";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import BrandLogo from "@/components/brand-logo";
+import PasswordInput from "@/components/password-input";
 
 export default function RecruiterLoginPage() {
   const router = useRouter();
@@ -44,7 +45,7 @@ export default function RecruiterLoginPage() {
       <p className="muted">Entre para responder aos convites de vínculo com empresas.</p>
       <form className="auth-form" onSubmit={submit}>
         <label htmlFor="identifier">E-mail</label><input id="identifier" type="email" autoComplete="username" value={identifier} onChange={e => setIdentifier(e.target.value)} required />
-        <label htmlFor="password">Senha</label><input id="password" type="password" autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} required />
+        <label htmlFor="password">Senha</label><PasswordInput id="password" autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} required />
         <div className="form-options"><Link href="/recuperar-senha?perfil=recrutador">Esqueci minha senha</Link></div>
         {error && <p className="form-error" role="alert">{error}</p>}
         <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando…" : "Entrar"}</button>

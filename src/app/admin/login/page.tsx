@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import ThemeToggle from "@/components/theme-toggle";
 import BrandLogo from "@/components/brand-logo";
+import PasswordInput from "@/components/password-input";
 
 // Intentionally not linked from the public entry screens: the approved prototypes
 // do not offer a public administrator login. Access is by direct URL only.
@@ -52,7 +53,7 @@ export default function AdminLoginPage() {
             <label htmlFor="identifier">E-mail</label>
             <input id="identifier" type="email" autoComplete="username" value={identifier} onChange={event => setIdentifier(event.target.value)} required />
             <label htmlFor="password">Senha</label>
-            <input id="password" type="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required />
+            <PasswordInput id="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required />
             {error && <p className="form-error" role="alert">{error}</p>}
             <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar"}</button>
           </form>

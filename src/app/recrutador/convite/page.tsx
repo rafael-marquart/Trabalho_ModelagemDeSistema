@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import BrandLogo from "@/components/brand-logo";
 import TermsAcceptance from "@/components/terms-acceptance";
+import PasswordInput from "@/components/password-input";
 
 export default function RecruiterInvitationPage() {
   const router = useRouter();
@@ -67,7 +68,7 @@ export default function RecruiterInvitationPage() {
         <p className={error ? "form-error" : "muted"} role={error ? "alert" : "status"} aria-live="polite">{message}</p>
         {token && <div className="auth-form">
           <label htmlFor="new-recruiter-password">Se este for seu primeiro acesso, crie uma senha para ativar a conta</label>
-          <input id="new-recruiter-password" type="password" autoComplete="new-password" value={password} onChange={event => setPassword(event.target.value)} minLength={10} maxLength={128} aria-describedby="recruiter-password-help" />
+          <PasswordInput id="new-recruiter-password" autoComplete="new-password" value={password} onChange={event => setPassword(event.target.value)} minLength={10} maxLength={128} aria-describedby="recruiter-password-help" />
           <p id="recruiter-password-help" className="muted">Mínimo de 10 caracteres, com letra maiúscula, minúscula e número. Contas existentes podem entrar antes de aceitar.</p>
           {password ? <TermsAcceptance checked={acceptTerms} onChange={setAcceptTerms} disabled={loading} /> : null}
           <button className="primary-button" disabled={loading} onClick={() => respond("accept")}>{loading ? "Processando…" : "Aceitar convite"}</button>

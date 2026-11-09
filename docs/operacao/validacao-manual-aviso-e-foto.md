@@ -1,4 +1,4 @@
-# Roteiro de validação manual — aviso de alterações não salvas e foto de perfil (OPEN-101)
+# Roteiro de validação manual — aviso de alterações não salvas, foto de perfil (OPEN-101) e mostrar senha
 
 Antes (local): `git pull`, `npm.cmd ci`, `npm.cmd run db:generate`, `npx.cmd prisma migrate deploy` (migração nova `20261109090000_user_photo`), `npm.cmd run dev`. No ambiente de testes da Vercel, a migração é aplicada no deploy.
 
@@ -34,3 +34,13 @@ Limitação conhecida: o botão Voltar do navegador não mostra o aviso.
 | 19 | Recrutador: menu "Minha conta" | Nome, e-mail e "Foto de perfil"; a foto escolhida aparece no topo da área de recrutador |
 | 20 | Conta de empresa e de administrador | Não há opção de foto; o topo mostra as iniciais |
 | 21 | Política de Privacidade | Versão 2026-11-09, com a foto de perfil na lista de dados e quem a vê |
+
+## Mostrar e esconder a senha
+
+| # | Passo | Resultado esperado |
+|---|---|---|
+| 22 | Login de candidato, empresa, recrutador e administrador: digitar a senha e clicar no olho | A senha aparece; o olho fica riscado e destacado; clicar de novo esconde |
+| 23 | Cadastro de candidato e de empresa, recuperação de senha e convite de recrutador | Cada campo de senha (inclusive "Confirmar senha") tem o seu olho |
+| 24 | Mostrar a senha e enviar o formulário | A senha volta a ficar escondida |
+| 25 | Leitor de tela (NVDA) no olho | Lê "Mostrar senha, botão de alternância, não pressionado/pressionado"; no campo de confirmação, "Mostrar confirmação da senha" |
+| 26 | No Edge | Aparece só o nosso olho (o do Edge fica escondido) |

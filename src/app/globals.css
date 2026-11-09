@@ -1249,3 +1249,15 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .account-data div { display: grid; gap: 2px; }
 .account-data dt { color: var(--muted); font-size: 14px; }
 .account-data dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+
+/* Show/hide password (eye button inside the field). */
+.password-field { position: relative; display: block; min-width: 0; }
+.auth-form .password-field input:not([type="checkbox"]), .password-field input { width: 100%; padding-right: 54px; }
+.password-toggle {
+  position: absolute; top: 50%; right: 4px; transform: translateY(-50%);
+  display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 40px;
+  padding: 0; border: 0; border-radius: 8px; color: var(--muted); background: transparent; cursor: pointer;
+}
+.password-toggle:hover, .password-toggle[aria-pressed="true"] { color: var(--purple); background: var(--purple-soft); }
+.password-toggle:focus-visible { outline-offset: -2px; }
+.password-field input::-ms-reveal, .password-field input::-ms-clear { display: none; }

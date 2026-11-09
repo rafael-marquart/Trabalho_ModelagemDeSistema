@@ -3,6 +3,7 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import AuthSplitLayout from "@/components/auth-split-layout";
+import PasswordInput from "@/components/password-input";
 
 type Profile = "candidate" | "company" | "recruiter";
 // "Esqueci minha senha" on each login page opens this page with the account type already chosen.
@@ -93,10 +94,10 @@ export default function PasswordRecoveryPage() {
       {token ? (
         <form className="auth-form" onSubmit={resetPassword}>
           <label htmlFor="password">Nova senha</label>
-          <input id="password" type="password" autoComplete="new-password" minLength={10} maxLength={128} value={password} onChange={event => setPassword(event.target.value)} required />
+          <PasswordInput id="password" autoComplete="new-password" minLength={10} maxLength={128} value={password} onChange={event => setPassword(event.target.value)} required />
           <p className="muted">Mínimo de 10 caracteres, com maiúscula, minúscula e número.</p>
           <label htmlFor="confirmPassword">Confirmar nova senha</label>
-          <input id="confirmPassword" type="password" autoComplete="new-password" minLength={10} maxLength={128} value={confirmPassword} onChange={event => setConfirmPassword(event.target.value)} required />
+          <PasswordInput toggleLabel="Mostrar confirmação da senha" id="confirmPassword" autoComplete="new-password" minLength={10} maxLength={128} value={confirmPassword} onChange={event => setConfirmPassword(event.target.value)} required />
           <button className="primary-button" type="submit" disabled={loading}>{loading ? "Redefinindo..." : "Redefinir senha"}</button>
         </form>
       ) : (
