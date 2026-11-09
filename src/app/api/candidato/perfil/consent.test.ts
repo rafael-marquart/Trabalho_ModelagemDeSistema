@@ -52,7 +52,7 @@ describe("consent for accessibility data", () => {
     tx.consentRecord.findFirst.mockResolvedValueOnce(null).mockResolvedValue(granted);
     const response = await put({ ...withNeeds, accessibilityConsent: true });
     expect(response.status).toBe(200);
-    expect(tx.consentRecord.create).toHaveBeenCalledWith({ data: { userId: "cand", kind: "ACCESSIBILITY_DATA", version: "2026-11-05", granted: true } });
+    expect(tx.consentRecord.create).toHaveBeenCalledWith({ data: { userId: "cand", kind: "ACCESSIBILITY_DATA", version: "2026-11-09", granted: true } });
     expect(tx.auditEvent.create.mock.calls.map((call) => call[0].data.eventType)).toContain("CANDIDATE_ACCESSIBILITY_CONSENT_GRANTED");
     expect((await response.json()).accessibilityConsent).toEqual({ active: true, at: "2026-11-05T12:00:00.000Z" });
   });
@@ -76,7 +76,7 @@ describe("consent for accessibility data", () => {
     expect(tx.candidateProfile.updateMany).toHaveBeenCalledWith({ where: { userId: "cand" }, data: {
       accessibilityDeclaration: "NOT_INFORMED", accessibilityNeeds: [], accessibilityNeedOptionCodes: [], mandatoryNeedOptionCodes: [], essentialAccessibilityResources: []
     } });
-    expect(tx.consentRecord.create).toHaveBeenCalledWith({ data: { userId: "cand", kind: "ACCESSIBILITY_DATA", version: "2026-11-05", granted: false } });
+    expect(tx.consentRecord.create).toHaveBeenCalledWith({ data: { userId: "cand", kind: "ACCESSIBILITY_DATA", version: "2026-11-09", granted: false } });
     expect(tx.auditEvent.create.mock.calls[0][0].data.eventType).toBe("CANDIDATE_ACCESSIBILITY_CONSENT_REVOKED");
   });
 

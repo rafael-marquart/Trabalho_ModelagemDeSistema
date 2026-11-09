@@ -58,6 +58,7 @@ model User {
   compatibilityResults CompatibilityResult[]
   applications         Application[]
   consents                      ConsentRecord[]
+  photo                         UserPhoto?
 }
 
 model CandidateProfile {
@@ -637,4 +638,14 @@ model ConsentRecord {
   createdAt DateTime    @default(now())
 
   @@index([userId, kind, createdAt])
+}
+
+/// Profile photo of a candidate or recruiter (OPEN-101): stored in the database like candidate documents, at most 1 MB
+/// (the site sends a 512 px square JPEG). A candidate's photo is shown to the companies of the jobs they applied to.
+model UserPhoto {
+  userId    String   @id
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bytes     Bytes
+  mimeType  String
+  updatedAt DateTime @updatedAt
 }

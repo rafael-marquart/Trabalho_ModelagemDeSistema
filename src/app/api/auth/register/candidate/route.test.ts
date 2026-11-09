@@ -139,6 +139,6 @@ describe("candidate registration", () => {
 
   it("records the acceptance with the text version in the same transaction as the account", async () => {
     await POST(makeRequest());
-    expect(tx.consentRecord.create).toHaveBeenCalledWith({ data: { userId: "candidate-1", kind: "TERMS_AND_PRIVACY", version: "2026-11-05", granted: true } });
+    expect(tx.consentRecord.create).toHaveBeenCalledWith({ data: { userId: "candidate-1", kind: "TERMS_AND_PRIVACY", version: "2026-11-09", granted: true } });
   });
 });

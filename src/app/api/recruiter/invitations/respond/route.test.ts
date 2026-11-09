@@ -101,7 +101,7 @@ describe("recruiter invitation response", () => {
     }));
 
     expect(response.status).toBe(200);
-    expect(tx.consentRecord.create).toHaveBeenCalledWith({ data: { userId: "recruiter-1", kind: "TERMS_AND_PRIVACY", version: "2026-11-05", granted: true } });
+    expect(tx.consentRecord.create).toHaveBeenCalledWith({ data: { userId: "recruiter-1", kind: "TERMS_AND_PRIVACY", version: "2026-11-09", granted: true } });
     expect(tx.user.updateMany).toHaveBeenCalledWith({
       where: { id: "recruiter-1", role: "RECRUITER", isActive: false, pendingActivation: true },
       data: expect.objectContaining({ passwordHash: expect.any(String), isActive: true, pendingActivation: false, passwordChangedAt: expect.any(Date) })

@@ -3,6 +3,7 @@ import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
 import BrandLogo from "@/components/brand-logo";
 import NotificationsNavLink from "@/components/notifications/notifications-nav-link";
+import { AccountAvatar } from "@/components/profile-photo";
 
 export type ShellRole = "COMPANY" | "RECRUITER" | "CANDIDATE" | "ADMIN";
 export type ShellSection = "home" | "jobs" | "recruiters" | "settings" | "profile" | "catalog" | "applications" | "notifications" | "reports";
@@ -20,7 +21,8 @@ const menus: Record<ShellRole, { key: ShellSection; label: string; href: string 
     { key: "home", label: "Visão geral", href: "/recrutador" },
     { key: "jobs", label: "Vagas", href: "/recrutador/vagas" },
     { key: "notifications", label: "Notificações", href: "/recrutador/notificacoes" },
-    { key: "reports", label: "Denúncias", href: "/recrutador/denuncias" }
+    { key: "reports", label: "Denúncias", href: "/recrutador/denuncias" },
+    { key: "profile", label: "Minha conta", href: "/recrutador/conta" }
   ],
   // D-02 (29/10/2026): applications (SPEC-012/016) and notifications (SPEC-017) joined the menu when implemented.
   CANDIDATE: [
@@ -43,11 +45,6 @@ const areaText: Record<ShellRole, { home: string; label: string; menu: string; n
   ADMIN: { home: "/admin/catalogo-acessibilidade", label: "Administração da plataforma", menu: "Menu da administração", nav: "Menu da administração" }
 };
 
-function initials(name: string) {
-  const letters = name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase() ?? "");
-  return letters.join("") || "AV";
-}
-
 /** Shared frame of the company, recruiter and candidate areas: top bar, side menu and content region. */
 export default function CompanyShell({ role, active, userName, children }: {
   role: ShellRole; active: ShellSection | null; userName: string; children: ReactNode;
@@ -62,7 +59,7 @@ export default function CompanyShell({ role, active, userName, children }: {
       <span className="company-topbar-label">{text.label}</span>
       <div className="company-topbar-actions">
         <ThemeToggle />
-        <span className="company-avatar" aria-hidden="true">{initials(userName)}</span>
+        <AccountAvatar name={userName} withPhoto={role === "CANDIDATE" || role === "RECRUITER"} />
         <form action="/api/auth/logout" method="post"><button className="secondary-button" type="submit">Sair da conta</button></form>
       </div>
     </header>

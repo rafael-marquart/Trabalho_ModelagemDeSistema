@@ -234,6 +234,6 @@ describe("company registration", () => {
     expect((await refused.json()).message).toContain("Termos de Uso");
     expect(tx.user.create).not.toHaveBeenCalled();
     expect((await POST(makeRequest())).status).toBe(201);
-    expect(tx.consentRecord.create).toHaveBeenCalledWith({ data: { userId: "company-user-1", kind: "TERMS_AND_PRIVACY", version: "2026-11-05", granted: true } });
+    expect(tx.consentRecord.create).toHaveBeenCalledWith({ data: { userId: "company-user-1", kind: "TERMS_AND_PRIVACY", version: "2026-11-09", granted: true } });
   });
 });

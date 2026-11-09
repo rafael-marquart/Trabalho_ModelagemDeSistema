@@ -20,7 +20,7 @@ describe("Terms of Use and Privacy Policy (OPEN-100)", () => {
   it.each([["Termos de Uso", TermsOfUsePage], ["Política de Privacidade", PrivacyPolicyPage]])("%s is a versioned, accessible page", async (title, Page) => {
     const { container } = render(<Page />);
     expect(screen.getByRole("heading", { level: 1, name: title })).toBeTruthy();
-    expect(screen.getByText(/Versão 2026-11-05/)).toBeTruthy();
+    expect(screen.getByText(/Versão 2026-11-09/)).toBeTruthy();
     expect(screen.getByRole("main")).toBeTruthy();
     expect((await axe.run(container)).violations).toEqual([]);
   });

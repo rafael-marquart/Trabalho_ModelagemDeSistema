@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { PersonAvatar } from "@/components/profile-photo";
 
-type Item = { id: string; candidateName: string; appliedAt: string; stage: string; stageLabel: string; score: number | null };
+type Item = { id: string; candidateName: string; candidateHasPhoto?: boolean; appliedAt: string; stage: string; stageLabel: string; score: number | null };
 type Data = { job: { id: string; title: string; status: string }; counts: Record<string, number>; applications: Item[] };
 
 const stages: { key: string; label: string }[] = [
@@ -54,7 +55,7 @@ export default function FunnelBoard({ basePath, jobId }: { basePath: string; job
           <caption className="sr-only">Candidaturas da vaga</caption>
           <thead><tr><th scope="col">Candidato</th><th scope="col">Inscrição</th><th scope="col">Compatibilidade</th><th scope="col">Etapa</th><th scope="col">Ações</th></tr></thead>
           <tbody>{list.map(item => <tr key={item.id}>
-            <td data-label="Candidato"><strong>{item.candidateName}</strong></td>
+            <td data-label="Candidato"><span className="candidate-name-cell"><PersonAvatar name={item.candidateName} src={item.candidateHasPhoto ? `/api/candidaturas/${item.id}/foto` : null} /><strong>{item.candidateName}</strong></span></td>
             <td data-label="Inscrição">{date(item.appliedAt)}</td>
             <td data-label="Compatibilidade">{item.score !== null ? `${item.score}%` : "Sem score (dados insuficientes)"}</td>
             <td data-label="Etapa"><span className={`status-pill ${stagePill[item.stage]}`}>{item.stageLabel}</span></td>
