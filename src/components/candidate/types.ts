@@ -8,6 +8,8 @@ export type Compatibility = {
 };
 export type SearchJob = {
   id: string; title: string; companyName: string; modality: string; professionalArea: string; location: string; publishedAt: string | null;
+  // SPEC-006: name of the source of an external job (e.g. "Adzuna"); absent or null for own jobs.
+  externalSource?: string | null;
   accessibility: { code: string; label: string; status: string; statusLabel: string }[];
   compatibility: Compatibility;
 };

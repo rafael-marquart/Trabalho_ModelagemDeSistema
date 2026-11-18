@@ -42,7 +42,7 @@ describe("compatibility service", () => {
     expect(await run()).toEqual({ error: { status: 404, message: "Vaga não disponível para análise." } });
     prismaMock.job.findFirst.mockResolvedValue(jobRow({ deadline: new Date("2020-01-01T00:00:00Z") }));
     expect("error" in (await run())).toBe(true);
-    expect(prismaMock.job.findFirst).toHaveBeenCalledWith({ where: { id: "job-1", status: "OPEN", origin: "OWN" } });
+    expect(prismaMock.job.findFirst).toHaveBeenCalledWith({ where: { id: "job-1", status: "OPEN", origin: { in: ["OWN", "EXTERNAL"] } } });
     expect(prismaMock.compatibilityResult.create).not.toHaveBeenCalled();
   });
 

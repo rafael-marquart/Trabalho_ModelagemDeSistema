@@ -58,7 +58,7 @@ export default async function CandidateJobDetailPage({ params }: { params: Promi
               {criteria.experience.length ? <li><strong>Experiência:</strong> {criteria.experience.join(", ")}</li> : null}
               {criteria.educationMinLevel ? <li><strong>Escolaridade mínima:</strong> {criteria.educationMinLevel}</li> : null}
               {criteria.languages.length ? <li><strong>Idiomas:</strong> {criteria.languages.map(item => `${item.language} (${item.level} ou mais)`).join(", ")}</li> : null}
-            </ul> : <p className="muted">A empresa não definiu critérios técnicos para esta vaga.</p>}
+            </ul> : <p className="muted">{job.external ? "O anúncio não traz critérios técnicos estruturados; a compatibilidade técnica não é calculada." : "A empresa não definiu critérios técnicos para esta vaga."}</p>}
           </section>
 
           <section className="job-detail-section" aria-labelledby="access-title">
@@ -67,7 +67,7 @@ export default async function CandidateJobDetailPage({ params }: { params: Promi
             <ul className="access-list">
               {job.jobAccessibility.map(item => <li key={item.label} className={accessClass[item.status]}><span>{item.label}</span><strong>{item.statusLabel}</strong></li>)}
             </ul>
-            <details className="company-access">
+            {job.external ? <p className="muted">{`O ${job.external.sourceName} não informa recursos de acessibilidade. Eles aparecem como “Não informado” e nada é presumido; confirme com a empresa antes da entrevista.`}</p> : <details className="company-access">
               <summary><span className="company-access-title">Informações gerais da empresa</span><span className="company-access-hint">Mostrar ou ocultar</span></summary>
               <p className="muted">Descrevem a organização como um todo e não garantem que cada recurso esteja disponível no local desta vaga.</p>
               {job.companyInfrastructure.updatedAt ? companyGroups.map(group => <div key={group} className="access-group">
@@ -78,12 +78,12 @@ export default async function CandidateJobDetailPage({ params }: { params: Promi
                   </li>)}
                 </ul>
               </div>) : <p className="muted">A empresa ainda não informou a infraestrutura de acessibilidade.</p>}
-            </details>
+            </details>}
           </section>
 
-          <section className="job-detail-section" aria-label="Nota pública de acessibilidade da empresa">
+          {job.publicRating ? <section className="job-detail-section" aria-label="Nota pública de acessibilidade da empresa">
             <PublicRating rating={job.publicRating} companyName={job.companyName} headingLevel={2} />
-          </section>
+          </section> : null}
         </div>
 
         <aside className="job-detail-aside" aria-labelledby="compat-title">
@@ -100,12 +100,17 @@ export default async function CandidateJobDetailPage({ params }: { params: Promi
           </section>
         </aside>
       </div>
-      <section className={`job-action ${job.action.applied ? "job-action-applied" : job.action.allowed ? "job-action-allowed" : "job-action-blocked"}`} aria-labelledby="action-title">
+      {job.external ? <section className="job-action job-action-allowed" aria-labelledby="action-title">
+        <h2 id="action-title">Candidatura no anúncio original</h2>
+        <p>{job.action.message}</p>
+        <a className="primary-button" href={job.external.url} target="_blank" rel="noopener noreferrer">{`Ver anúncio no ${job.external.sourceName}`}<span className="visually-hidden"> (abre em nova aba)</span></a>
+        <p className="muted">{`Vaga fornecida pelo ${job.external.sourceName}. O Acessa Vagas não acompanha candidaturas feitas fora da plataforma.`}</p>
+      </section> : <section className={`job-action ${job.action.applied ? "job-action-applied" : job.action.allowed ? "job-action-allowed" : "job-action-blocked"}`} aria-labelledby="action-title">
         <h2 id="action-title">{job.action.applied ? "Você já se candidatou" : job.action.allowed ? "Você pode se candidatar" : "Candidatura não disponível"}</h2>
         <p>{job.action.message}</p>
         {job.applicationId ? <Link className="secondary-button" href={`/candidato/candidaturas/${job.applicationId}`}>Acompanhar minha candidatura</Link> : null}
         {job.action.allowed ? <ApplyPanel jobId={id} jobTitle={job.title} companyName={job.companyName} score={result?.score ?? null} /> : null}
-      </section>
+      </section>}
       {canReport ? <p className="report-link-row"><Link className="link-button" href={`/candidato/vagas/${id}/denunciar`}>Denunciar esta vaga</Link> <span className="muted">— possível incompatibilidade de acessibilidade ou falsa inclusão</span></p> : null}
     </main>
   </CompanyShell>;

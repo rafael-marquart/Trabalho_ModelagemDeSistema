@@ -15,6 +15,7 @@ export default function JobCard({ job }: { job: SearchJob }) {
         <h3 id={titleId}><Link className="job-card-link" href={`/candidato/vagas/${job.id}`}>{job.title || "Vaga sem título"}</Link></h3>
       </div>
       <ul className="job-card-tags" aria-label="Características">
+        {job.externalSource ? <li className="job-tag-external">{`Vaga externa · ${job.externalSource}`}</li> : null}
         {job.modality ? <li>{jobModalityLabels[job.modality as JobModalityValue] ?? job.modality}</li> : null}
         {job.professionalArea ? <li>{job.professionalArea}</li> : null}
       </ul>

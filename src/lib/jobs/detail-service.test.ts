@@ -22,10 +22,21 @@ describe("job detail for a candidate", () => {
     infraMock.mockResolvedValue({ companyId: "company-secret", updatedAt: null, items: [{ code: "RAMPS", category: "PHYSICAL_ACCESS", label: "Rampas de acesso", status: "NOT_INFORMED", note: "" }] });
     analyzeMock.mockResolvedValue({ status: "COMPLETE", score: 80, missing: [] });
   });
-  it("shows only published own jobs, never drafts", async () => {
+  it("shows only published own or external jobs, never drafts", async () => {
     prismaMock.job.findFirst.mockResolvedValue(null);
     expect(await getJobDetailForCandidate("cand", "job-1")).toBeNull();
-    expect(prismaMock.job.findFirst.mock.calls[0][0].where).toEqual({ id: "job-1", origin: "OWN", status: { in: ["OPEN", "PAUSED", "CLOSED"] } });
+    expect(prismaMock.job.findFirst.mock.calls[0][0].where).toEqual({ id: "job-1", origin: { in: ["OWN", "EXTERNAL"] }, status: { in: ["OPEN", "PAUSED", "CLOSED"] } });
+  });
+  it("an external job (SPEC-006) shows the source and the original ad, with no company data nor internal application", async () => {
+    prismaMock.job.findFirst.mockResolvedValue(row({
+      companyId: null, createdByUserId: null, company: null, origin: "EXTERNAL", modality: null, accessibility: {},
+      externalSource: "ADZUNA", externalUrl: "https://www.adzuna.com.br/land/ad/1", externalCompanyName: "Tech Acessível"
+    }));
+    const detail = await getJobDetailForCandidate("cand", "job-1");
+    expect(detail).toMatchObject({ companyName: "Tech Acessível", origin: "Vaga externa, encontrada no Adzuna", external: { sourceName: "Adzuna", url: "https://www.adzuna.com.br/land/ad/1" }, publicRating: null });
+    expect(detail?.action.allowed).toBe(false);
+    expect(detail?.jobAccessibility.every(item => item.statusLabel === "Não informado")).toBe(true);
+    expect(infraMock).not.toHaveBeenCalled();
   });
   it("marks missing data as not informed and exposes no internal identifiers", async () => {
     prismaMock.job.findFirst.mockResolvedValue(row());
