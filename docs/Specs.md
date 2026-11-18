@@ -1223,8 +1223,8 @@ dos em `docs/layout/` e aprovados separadamente.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-006 |
-| Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | não se aplica ao núcleo de ingestão; eventual interface administrativa permanece pendente |
+| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-006.md`; coleta diária desligada até a autorização de uso contínuo (OPEN-086/087) |
+| Estado do layout | página do administrador "Vagas externas" e selo/link da vaga externa na área do candidato: protótipo em código, aprovação pendente |
 | Capacidade | Receber dados externos estruturados, validar, normalizar, deduplicar e registrar o resultado da ingestão |
 
 ## 2. Rastreabilidade

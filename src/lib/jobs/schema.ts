@@ -82,7 +82,7 @@ export function validateForPublication(job: JobFields, today = todayInBrazil()):
 }
 
 type JobRow = {
-  id: string; companyId: string; status: string; origin: string; title: string; description: string; requirements: string;
+  id: string; companyId: string | null; status: string; origin: string; title: string; description: string; requirements: string;
   modality: string | null; professionalArea?: string; locationCity: string; locationState: string; locationAddress: string; deadline: Date | null;
   salaryMin: unknown; salaryMax: unknown; accessibility: unknown; technicalCriteria?: unknown; publishedAt: Date | null; closedAt: Date | null;
   createdAt: Date; updatedAt: Date;

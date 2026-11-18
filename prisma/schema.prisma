@@ -311,12 +311,15 @@ enum JobModality {
 
 enum JobOrigin {
   OWN
+  // SPEC-006: published from an authorized external source after validation and normalization.
+  EXTERNAL
 }
 
 model Job {
   id              String       @id @default(cuid())
-  companyId       String
-  createdByUserId String
+  // Empty only for external jobs (SPEC-006): their hiring company is not an account of the platform.
+  companyId       String?
+  createdByUserId String?
   status          JobStatus    @default(DRAFT)
   origin          JobOrigin    @default(OWN)
   title           String       @default("")
@@ -336,13 +339,27 @@ model Job {
   closedAt        DateTime?
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
-  company         Company      @relation(fields: [companyId], references: [id], onDelete: Restrict)
-  createdBy       User         @relation("JobCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  company         Company?     @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  createdBy       User?        @relation("JobCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  // SPEC-006: origin of an external job (RB-33) and the keys of the conservative deduplication (OPEN-028).
+  externalSource       String?
+  externalId           String?
+  externalUrl          String?
+  externalUrlKey       String?
+  externalCompanyName  String?
+  externalDedupKey     String?
+  // Which minimum fields came from the source and which from a validated LLM extraction (RB-18).
+  externalFieldOrigins Json?
+  externalFetchedAt    DateTime?
 
+  @@unique([externalSource, externalId])
   @@index([companyId, status])
   @@index([status, origin])
+  @@index([externalUrlKey])
+  @@index([externalDedupKey])
   compatibilityResults CompatibilityResult[]
   applications         Application[]
+  importRecords        ExternalImportRecord[]
 }
 
 // Interface preferences saved per account (SPEC-003, OPEN-013). Values are stored by stable code.
@@ -648,4 +665,60 @@ model UserPhoto {
   bytes     Bytes
   mimeType  String
   updatedAt DateTime @updatedAt
+}
+
+// SPEC-006 (OPEN-027): each ingestion run, its queries and aggregate result, and the result of every record received.
+enum ExternalImportStatus {
+  RUNNING
+  SUCCEEDED
+  PARTIAL
+  FAILED
+}
+
+enum ExternalRecordResult {
+  PROCESSED
+  REJECTED
+  DUPLICATE
+  FAILED
+}
+
+model ExternalImportRun {
+  id              String                 @id @default(cuid())
+  source          String
+  // ADMIN (test batch started by an administrator) or SCHEDULE (daily run, off until authorized: OPEN-086/087).
+  trigger         String
+  startedByUserId String?
+  status          ExternalImportStatus   @default(RUNNING)
+  callLimit       Int
+  callsMade       Int                    @default(0)
+  // One entry per call: phrase, page, outcome and number of results; never the credentials.
+  queries         Json                   @default("[]")
+  received        Int                    @default(0)
+  processed       Int                    @default(0)
+  rejected        Int                    @default(0)
+  duplicates      Int                    @default(0)
+  failed          Int                    @default(0)
+  error           String?
+  startedAt       DateTime               @default(now())
+  finishedAt      DateTime?
+  records         ExternalImportRecord[]
+
+  @@index([source, startedAt])
+}
+
+model ExternalImportRecord {
+  id         String               @id @default(cuid())
+  runId      String
+  run        ExternalImportRun    @relation(fields: [runId], references: [id], onDelete: Cascade)
+  phrase     String
+  externalId String?
+  title      String               @default("")
+  result     ExternalRecordResult
+  reason     String?
+  usedLlm    Boolean              @default(false)
+  jobId      String?
+  job        Job?                 @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  createdAt  DateTime             @default(now())
+
+  @@index([runId])
 }

@@ -7,6 +7,7 @@ import { ACTIVE_STAGES } from "@/lib/jobs/applications";
 import { enqueueJobClosed, kickNotificationDelivery } from "@/lib/notifications/service";
 import { jobActions, transitions } from "@/lib/jobs/constants";
 import { rowToFields, toJobResponse, validateForPublication } from "@/lib/jobs/schema";
+import { ownCompanyId } from "@/lib/jobs/company-name";
 
 type Context = { params: Promise<{ id: string }> };
 const bodySchema = z.object({ action: z.enum(jobActions as unknown as [string, ...string[]]) }).strict();
@@ -53,7 +54,7 @@ export async function POST(request: Request, context: Context) {
     if (changed.count !== 1) return null;
     if (action === "close") {
       activeCandidates = await tx.application.findMany({ where: { jobId: job.id, stage: { in: [...ACTIVE_STAGES] } }, select: { id: true, candidateUserId: true } });
-      const company = await tx.company.findUnique({ where: { id: job.companyId }, select: { tradeName: true, legalName: true } });
+      const company = await tx.company.findUnique({ where: { id: ownCompanyId(job) }, select: { tradeName: true, legalName: true } });
       await enqueueJobClosed(tx, { jobId: job.id, jobTitle: job.title || "Vaga sem título", companyName: company?.tradeName || company?.legalName || "", applications: activeCandidates });
     }
     await tx.auditEvent.create({

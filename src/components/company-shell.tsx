@@ -6,7 +6,7 @@ import NotificationsNavLink from "@/components/notifications/notifications-nav-l
 import { AccountAvatar } from "@/components/profile-photo";
 
 export type ShellRole = "COMPANY" | "RECRUITER" | "CANDIDATE" | "ADMIN";
-export type ShellSection = "home" | "jobs" | "recruiters" | "settings" | "profile" | "catalog" | "applications" | "notifications" | "reports";
+export type ShellSection = "home" | "jobs" | "recruiters" | "settings" | "profile" | "catalog" | "applications" | "notifications" | "reports" | "external";
 
 const menus: Record<ShellRole, { key: ShellSection; label: string; href: string }[]> = {
   COMPANY: [
@@ -35,7 +35,8 @@ const menus: Record<ShellRole, { key: ShellSection; label: string; href: string 
   ],
   ADMIN: [
     { key: "catalog", label: "Catálogo de acessibilidade", href: "/admin/catalogo-acessibilidade" },
-    { key: "reports", label: "Denúncias", href: "/admin/denuncias" }
+    { key: "reports", label: "Denúncias", href: "/admin/denuncias" },
+    { key: "external", label: "Vagas externas", href: "/admin/vagas-externas" }
   ]
 };
 const areaText: Record<ShellRole, { home: string; label: string; menu: string; nav: string }> = {

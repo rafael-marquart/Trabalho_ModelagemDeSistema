@@ -5,6 +5,7 @@ import { stageLabels } from "./stages";
 import { enqueueStageChanged, kickNotificationDelivery } from "@/lib/notifications/service";
 import { listInterviews } from "@/lib/interviews/service";
 import { accessibilityConsent, accessibilityFieldsWithoutConsent } from "@/lib/legal/consent";
+import { jobCompanyName } from "@/lib/jobs/company-name";
 
 // SPEC-013: the company side of applications. Every read and write is scoped to the company resolved from the session
 // (company account or recruiter with an active link); the client never chooses the company.
@@ -126,7 +127,7 @@ export async function changeApplicationStage(params: { companyId: string; actorU
     // SPEC-017: the candidate is told about every move (advance, refusal, hiring).
     await enqueueStageChanged(tx, {
       applicationId: application.id, jobId: application.jobId, candidateUserId: application.candidateUserId, toStage: params.toStage,
-      jobTitle: application.job.title || "Vaga sem título", companyName: application.job.company.tradeName || application.job.company.legalName
+      jobTitle: application.job.title || "Vaga sem título", companyName: jobCompanyName(application.job.company)
     });
     return true;
   });

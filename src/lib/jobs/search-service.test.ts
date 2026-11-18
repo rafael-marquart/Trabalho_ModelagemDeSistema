@@ -14,10 +14,10 @@ const view = (status: string, score: number | null) => ({ status, score, id: "r"
 
 describe("candidate job search", () => {
   beforeEach(() => vi.clearAllMocks());
-  it("lists only open own jobs within the deadline", async () => {
+  it("lists open own and external jobs within the deadline", async () => {
     prismaMock.job.findMany.mockResolvedValue([]);
     await searchJobsForCandidate("c1", searchQuerySchema.parse({}), { now: new Date("2026-10-29T12:00:00Z") });
-    expect(prismaMock.job.findMany.mock.calls[0][0].where).toEqual({ status: "OPEN", origin: "OWN", OR: [{ deadline: null }, { deadline: { gte: new Date("2026-10-29T00:00:00.000Z") } }] });
+    expect(prismaMock.job.findMany.mock.calls[0][0].where).toEqual({ status: "OPEN", origin: { in: ["OWN", "EXTERNAL"] }, OR: [{ deadline: null }, { deadline: { gte: new Date("2026-10-29T00:00:00.000Z") } }] });
   });
   it("hides critical-barrier jobs, orders by score and keeps insufficient analyses after scored ones", async () => {
     prismaMock.job.findMany.mockResolvedValue([row("a"), row("b"), row("c"), row("d")]);
@@ -26,6 +26,7 @@ describe("candidate job search", () => {
     expect(result.jobs.map(job => job.id)).toEqual(["d", "a", "c"]);
     expect(result.hiddenIncompatible).toBe(1);
     expect(result.jobs[0].companyName).toBe("Empresa X");
+    expect(result.jobs[0].externalSource).toBeNull();
     expect(result.jobs[0].accessibility.find(item => item.code === "RAMPS")?.statusLabel).toBeTruthy();
     expect(result.jobs[0].accessibility.find(item => item.code === "ELEVATORS")?.status).toBe("NOT_INFORMED");
   });
