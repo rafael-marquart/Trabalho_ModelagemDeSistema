@@ -13,6 +13,9 @@ const SMTP_PORT = Number(process.env.AUTH_E2E_SMTP_PORT || "2527");
 const HERE_PORT = Number(process.env.AUTH_E2E_HERE_PORT || "2529");
 const HERE_KEY = "e2e-here-key";
 const HERE_REQUESTS = [];
+const ADZUNA_PORT = Number(process.env.AUTH_E2E_ADZUNA_PORT || "2531");
+const ADZUNA_KEY = `e2e-adzuna-key-${randomUUID()}`;
+const ADZUNA_REQUESTS = [];
 const BASE_URL = `http://127.0.0.1:${PORT}`;
 const CRON_SECRET = `e2e-cron-${randomUUID()}`;
 const PUBLIC_URL = `https://127.0.0.1:${PORT}`;
@@ -34,6 +37,7 @@ const RECRUITER_PASSWORD = "RecruiterPassword123";
 const SMTP_MESSAGES = [];
 const SMTP_SOCKETS = new Set();
 let app;
+let adzunaServer;
 let appSpawnError;
 let appOutput = "";
 
@@ -164,6 +168,31 @@ function startFakeHere() {
   return new Promise((resolve, reject) => { server.once("error", reject); server.listen(HERE_PORT, "127.0.0.1", () => resolve(server)); });
 }
 
+// Local stand-in for the Adzuna search (SPEC-006): no real call, none of the 25 test calls of the real account is spent.
+function startFakeAdzuna() {
+  const description = "Empresa de tecnologia contrata pessoa com deficiência para atuar com suporte a clientes, com plano de saúde e trabalho em equipe.";
+  const ad = (id, over = {}) => ({ id, title: `Analista de suporte ${id}`, description, redirect_url: `https://www.adzuna.com.br/land/ad/${id}?se=x&utm_medium=api`,
+    created: "2026-11-10T12:00:00Z", company: { display_name: "Empresa Externa E2E" }, location: { display_name: "Campinas, São Paulo", area: ["Brasil", "São Paulo", "Campinas"] }, ...over });
+  const pages = {
+    "e2e alfa": [ad("e2e-1"), ad("e2e-2", { title: "Vaga" }), ad("e2e-3", { company: { display_name: "Adzuna" } }), { title: "sem identificador" }],
+    "e2e beta": [ad("e2e-1"), ad("e2e-4", { redirect_url: "https://adzuna.com.br/land/ad/e2e-1/?outro=1" }), ad("e2e-5", { title: "Analista de suporte e2e-1", redirect_url: "https://www.adzuna.com.br/land/ad/e2e-5" }), ad("e2e-6", { title: "Analista de suporte remoto" })]
+  };
+  const server = createHttpServer((request, response) => {
+    const url = new URL(request.url, `http://127.0.0.1:${ADZUNA_PORT}`);
+    const phrase = url.searchParams.get("what_phrase");
+    ADZUNA_REQUESTS.push({ path: url.pathname, phrase, key: url.searchParams.get("app_key") });
+    const send = (status, body) => { response.writeHead(status, { "content-type": "application/json" }); response.end(typeof body === "string" ? body : JSON.stringify(body)); };
+    if (url.searchParams.get("app_key") !== ADZUNA_KEY || url.searchParams.get("app_id") !== "e2e-app") return send(401, { exception: "AUTH_FAIL" });
+    if (url.pathname !== "/jobs/br/search/1") return send(404, {});
+    // The first call of "e2e alfa" fails temporarily, so the limited retry is exercised.
+    if (phrase === "e2e alfa" && ADZUNA_REQUESTS.filter(item => item.phrase === "e2e alfa").length === 1) return send(503, { exception: "SERVICE_UNAVAILABLE" });
+    if (phrase === "e2e gama") return send(403, { exception: "UNAUTHORISED" });
+    if (phrase === "e2e delta") return send(200, { count: 1 });
+    return send(200, { count: (pages[phrase] ?? []).length, results: pages[phrase] ?? [] });
+  });
+  return new Promise((resolve, reject) => { server.once("error", reject); server.listen(ADZUNA_PORT, "127.0.0.1", () => resolve(server)); });
+}
+
 async function waitForApp(child) {
   const deadline = Date.now() + 90_000;
   while (Date.now() < deadline) {
@@ -242,15 +271,18 @@ async function cleanupTestData() {
       where: { OR: [{ companyId: { in: companyIds } }, { recipientUserId: { in: userIds } }, { sentByUserId: { in: userIds } }] },
       select: { id: true }
     });
+    const externalTestJobs = { externalSource: "ADZUNA", externalId: { startsWith: "e2e-" } };
     const relatedJobs = await tx.job.findMany({
-      where: { OR: [{ companyId: { in: companyIds } }, { createdByUserId: { in: userIds } }] },
+      where: { OR: [{ companyId: { in: companyIds } }, { createdByUserId: { in: userIds } }, externalTestJobs] },
       select: { id: true }
     });
+    const importRuns = await tx.externalImportRun.findMany({ where: { startedByUserId: { in: userIds } }, select: { id: true } });
     const relatedSubjectIds = [
       ...auditSubjectIds,
       ...relatedJobs.map(job => job.id),
       ...relatedLinks.map(link => link.id),
-      ...relatedInvitations.map(invitation => invitation.id)
+      ...relatedInvitations.map(invitation => invitation.id),
+      ...importRuns.map(run => run.id)
     ];
 
     // Stage history is immutable by trigger; the test database drops it with the trigger temporarily disabled.
@@ -269,8 +301,9 @@ async function cleanupTestData() {
     await tx.application.deleteMany({ where: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } });
     await tx.compatibilityResult.deleteMany({ where: { OR: [{ candidateUserId: { in: userIds } }, { jobId: { in: relatedJobs.map(job => job.id) } }] } });
     await tx.userPreference.deleteMany({ where: { userId: { in: userIds } } });
+    await tx.externalImportRun.deleteMany({ where: { id: { in: importRuns.map(run => run.id) } } });
     await tx.job.deleteMany({
-      where: { OR: [{ companyId: { in: companyIds } }, { createdByUserId: { in: userIds } }] }
+      where: { OR: [{ companyId: { in: companyIds } }, { createdByUserId: { in: userIds } }, externalTestJobs] }
     });
     await tx.recruiterLink.deleteMany({
       where: { OR: [{ companyId: { in: companyIds } }, { recruiterId: { in: userIds } }] }
@@ -342,6 +375,7 @@ async function main() {
     await prisma.$connect();
     smtpServer = await startTestSmtp();
     hereServer = await startFakeHere();
+    adzunaServer = await startFakeAdzuna();
 
     const runtimeEnv = {
       ...process.env,
@@ -359,7 +393,15 @@ async function main() {
       HERE_ROUTER_URL: `http://127.0.0.1:${HERE_PORT}/router`,
       HERE_TRANSIT_URL: `http://127.0.0.1:${HERE_PORT}/transit`,
       NEXT_TELEMETRY_DISABLED: "1",
-      CRON_SECRET
+      CRON_SECRET,
+      ADZUNA_APP_ID: "e2e-app",
+      ADZUNA_APP_KEY: ADZUNA_KEY,
+      ADZUNA_API_URL: `http://127.0.0.1:${ADZUNA_PORT}/jobs`,
+      ADZUNA_PHRASES: "e2e alfa;e2e beta;e2e gama;e2e delta",
+      ADZUNA_CALL_BUDGET: "7",
+      ADZUNA_MAX_CALLS_PER_RUN: "5",
+      EXTERNAL_IMPORT_SCHEDULE: "off",
+      EXTERNAL_JOBS_LLM: "off"
     };
 
     app = spawn(process.execPath, [
@@ -2015,6 +2057,57 @@ async function main() {
     await expectStatus(await saveCompatProfile({ ...compatProfile, accessibilityDeclaration: "NEEDS_DECLARED", accessibilityNeedOptionCodes: ["A01"], accessibilityConsent: undefined }), 400, "declaring again needs a new consent");
     await assert.rejects(prisma.consentRecord.update({ where: { id: lastConsent.id }, data: { granted: true } }), "the consent history cannot be edited");
 
+    // SPEC-006: import of external jobs (fake Adzuna). Budget of 7 calls, at most 5 per run.
+    const importUrl = `${BASE_URL}/api/admin/vagas-externas`;
+    const startImport = (cookie = adminCookie, origin = PUBLIC_URL) => fetch(importUrl, { method: "POST", headers: { origin, cookie, "x-forwarded-for": TEST_IP }, redirect: "manual" });
+    await expectStatus(await startImport(compatCookie), 401, "only the administrator imports");
+    await expectStatus(await startImport(adminCookie, "https://evil.example"), 403, "cross-site import refused");
+    await expectStatus(await fetch(importUrl, { headers: { cookie: companyCookie }, redirect: "manual" }), 401, "a company cannot see the imports");
+    const firstRun = JSON.parse(await expectStatus(await startImport(), 200, "first test batch")).run;
+    assert.deepEqual([firstRun.status, firstRun.callsMade, firstRun.callLimit], ["PARTIAL", 5, 5], "the first run spends 5 calls (one retry included) and records failed queries");
+    assert.deepEqual(firstRun.queries.map(query => `${query.phrase}:${query.status}:${query.attempts}`), ["e2e alfa:OK:2", "e2e beta:OK:1", "e2e gama:ERROR:1", "e2e delta:ERROR:1"], "a recoverable failure is retried once; permanent errors are not");
+    assert.deepEqual([firstRun.received, firstRun.processed, firstRun.rejected, firstRun.duplicates, firstRun.failed], [8, 2, 3, 3, 0], "aggregate counts match the records");
+    assert.ok(!JSON.stringify(firstRun).includes(ADZUNA_KEY) && ADZUNA_REQUESTS.every(item => item.key === ADZUNA_KEY), "the credentials reach only the source, never the response");
+    const records = JSON.parse(await expectStatus(await fetch(`${importUrl}/${firstRun.id}`, { headers: { cookie: adminCookie }, redirect: "manual" }), 200, "records of the run")).records;
+    assert.equal(records.length, firstRun.received, "every record received is tied to the run");
+    const byId = Object.fromEntries(records.filter(item => item.externalId).map(item => [`${item.phrase}/${item.externalId}`, item]));
+    assert.equal(byId["e2e alfa/e2e-1"].result, "PROCESSED");
+    assert.match(byId["e2e alfa/e2e-2"].reason, /título sem conteúdo significativo/, "a generic title is rejected");
+    assert.match(byId["e2e alfa/e2e-3"].reason, /empresa contratante não identificável.*extração por LLM desligada/, "the source portal does not replace the hiring company");
+    assert.equal(records.find(item => !item.externalId).reason, "Estrutura do registro não reconhecida.", "a malformed record is rejected");
+    assert.deepEqual(["e2e beta/e2e-1", "e2e beta/e2e-4", "e2e beta/e2e-5"].map(key => byId[key].reason), ["Mesmo identificador do anúncio na fonte.", "Mesmo link do anúncio original.", "Mesma empresa, título e cidade de uma vaga externa já importada."], "three deduplication layers, in order");
+    assert.equal(byId["e2e beta/e2e-6"].result, "PROCESSED", "a similar title alone does not make a duplicate");
+    const externalJob = await prisma.job.findFirst({ where: { externalSource: "ADZUNA", externalId: "e2e-1" } });
+    assert.deepEqual([externalJob.origin, externalJob.status, externalJob.companyId, externalJob.externalCompanyName, externalJob.locationCity, externalJob.locationState, externalJob.externalUrlKey], ["EXTERNAL", "OPEN", null, "Empresa Externa E2E", "Campinas", "SP", "adzuna.com.br/land/ad/e2e-1"], "normalized to the common job model, origin kept");
+    assert.deepEqual([externalJob.accessibility, externalJob.externalFieldOrigins.companyName], [{}, "SOURCE"], "no accessibility is presumed; the source of each field is kept");
+    assert.equal(await prisma.job.count({ where: { externalSource: "ADZUNA", externalId: { startsWith: "e2e-" } } }), 2, "duplicates create no extra jobs");
+    await assert.rejects(prisma.job.create({ data: { origin: "OWN", status: "DRAFT", title: "sem empresa" } }), "an own job needs a company (database check)");
+
+    const secondRun = JSON.parse(await expectStatus(await startImport(), 200, "second test batch")).run;
+    assert.deepEqual([secondRun.status, secondRun.callsMade, secondRun.processed, secondRun.remainingCalls], ["SUCCEEDED", 2, 0, 0], "a rerun spends only what is left of the budget and creates no equivalent jobs");
+    const exhausted = await startImport();
+    assert.equal(exhausted.status, 409, "the call budget cannot be exceeded");
+    assert.match((await exhausted.json()).message, /limite de 7 chamadas/);
+    const overview = JSON.parse(await expectStatus(await fetch(importUrl, { headers: { cookie: adminCookie }, redirect: "manual" }), 200, "imports overview"));
+    assert.deepEqual([overview.usedCalls, overview.remainingCalls, overview.runs.length >= 2], [7, 0, true], "previous runs stay traceable");
+    assert.ok(await prisma.auditEvent.findFirst({ where: { eventType: "EXTERNAL_IMPORT_FINISHED", subjectId: firstRun.id } }), "each run is audited");
+    await expectStatus(await fetch(`${BASE_URL}/api/cron/vagas-externas`, { redirect: "manual" }), 401, "daily import without the secret");
+    const scheduled = JSON.parse(await expectStatus(await fetch(`${BASE_URL}/api/cron/vagas-externas`, { headers: { authorization: `Bearer ${CRON_SECRET}` }, redirect: "manual" }), 200, "daily import while off"));
+    assert.equal(scheduled.ok, false, "the daily collection stays off until authorized");
+    await expectStatus(await fetch(`${BASE_URL}/admin/vagas-externas`, { headers: { cookie: adminCookie }, redirect: "manual" }), 200, "imports page");
+
+    // The candidate finds the external job, sees where it comes from and applies on the original ad.
+    const externalSearch = JSON.parse(await expectStatus(await search("q=Analista%20de%20suporte%20e2e"), 200, "search with external jobs"));
+    const externalHit = externalSearch.jobs.find(job => job.id === externalJob.id);
+    assert.ok(externalHit && externalHit.externalSource === "Adzuna" && externalHit.companyName === "Empresa Externa E2E", "external jobs appear in the search with their source");
+    assert.ok(externalHit.accessibility.every(item => item.status === "NOT_INFORMED"), "accessibility is shown as not informed");
+    const externalPage = await expectStatus(await fetch(`${BASE_URL}/candidato/vagas/${externalJob.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "external job page");
+    assert.ok(externalPage.includes("Ver anúncio no Adzuna") && externalPage.includes("https://www.adzuna.com.br/land/ad/e2e-1"), "the page links to the original ad");
+    assert.ok(!externalPage.includes("Denunciar esta vaga"), "external jobs have no report inside the platform");
+    const externalApply = await fetch(applyUrl, { method: "POST", headers: { "content-type": "application/json", origin: PUBLIC_URL, cookie: compatCookie }, body: JSON.stringify({ jobId: externalJob.id }), redirect: "manual" });
+    assert.ok(externalApply.status >= 400 && externalApply.status < 500, "no application inside the platform for an external job");
+    assert.equal(await prisma.application.count({ where: { jobId: externalJob.id } }), 0);
+
     // Logout must revoke the server-side session, not merely clear the browser cookie.
     const companySessionsBeforeLogout = await prisma.session.count({ where: { userId: companyAccount.id } });
     assert.equal(companySessionsBeforeLogout, 1, "company login must have one active session before logout");
@@ -2053,7 +2146,7 @@ async function main() {
     assert.ok(lockedCandidate?.lockedUntil && lockedCandidate.lockedUntil > new Date(), "ten consecutive failures must persist an active account lock");
     assert.equal(lockedCandidate.failedLoginCount, 0, "the locked account counter is reset after the threshold is reached");
 
-    process.stdout.write("Auth E2E passed: candidate email/CPF login and recovery; own jobs lifecycle and isolation; account accessibility preferences; compatibility calculation; company verification and password recovery; recruiter invitation/resend/accept/refuse/cancel; multi-company isolation and concurrency; logout; account lockout.\n");
+    process.stdout.write("Auth E2E passed: candidate email/CPF login and recovery; own jobs lifecycle and isolation; account accessibility preferences; compatibility calculation; company verification and password recovery; recruiter invitation/resend/accept/refuse/cancel; multi-company isolation and concurrency; external job import; logout; account lockout.\n");
   } finally {
     try {
       await cleanupTestData();
@@ -2072,6 +2165,7 @@ async function main() {
     for (const socket of SMTP_SOCKETS) socket.destroy();
     if (smtpServer) await new Promise(resolve => smtpServer.close(() => resolve()));
     if (hereServer) await new Promise(resolve => hereServer.close(() => resolve()));
+    if (adzunaServer) await new Promise(resolve => adzunaServer.close(() => resolve()));
     await prisma.$disconnect();
     if (appSpawnError) throw appSpawnError;
     if (appExit && appExit.code !== 0 && appExit.signal !== "SIGTERM") {
