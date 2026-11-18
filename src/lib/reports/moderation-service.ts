@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { enqueueReportNotice, kickNotificationDelivery } from "@/lib/notifications/service";
 import { categoryLabels, decisionLabels, reportStatusLabels, type DecisionCode, type ReportCategoryCode, type ReportStatusCode } from "./labels";
+import { jobCompanyName } from "@/lib/jobs/company-name";
 
 // SPEC-020: moderation by the platform administrator only (RB-25). Recruiters and company accounts never moderate.
 // A report changes no job and no rating; the decision records measures for the company, applied by the rules that own
@@ -15,7 +16,7 @@ const longText = (max: number, min = 1, message = "Preencha este campo.") => z.s
   .pipe(z.string().min(min, message).max(max, `Use até ${max} caracteres.`));
 
 const jobInfo = { select: { id: true, title: true, company: { select: { id: true, tradeName: true, legalName: true, accountUserId: true } } } } as const;
-const companyName = (company: { tradeName: string | null; legalName: string }) => company.tradeName || company.legalName;
+const companyName = (company: { tradeName: string | null; legalName: string } | null) => jobCompanyName(company);
 
 /** Queue order (OPEN-080): high priority first, then the oldest. Open reports by default; concluded ones form the history. */
 export async function listQueue(filter: "open" | "concluded" = "open", now: Date = new Date()) {
@@ -145,7 +146,7 @@ export async function requestCompanyInfo(adminId: string, reportId: string, inpu
     });
     if (!ok) return false;
     const jobTitle = job.title || "Vaga sem título";
-    await enqueueReportNotice(tx, "REPORT_INFO_REQUESTED", job.company.accountUserId, { reportId, area: "empresa", jobTitle });
+    if (job.company) await enqueueReportNotice(tx, "REPORT_INFO_REQUESTED", job.company.accountUserId, { reportId, area: "empresa", jobTitle });
     await enqueueReportNotice(tx, "REPORT_STATUS_CHANGED", report.reporterUserId, { reportId, area: "candidato", jobTitle, statusLabel: reportStatusLabels.AGUARDANDO_INFORMACOES, delayed: true });
     return true;
   });
@@ -198,7 +199,7 @@ export async function concludeReport(adminId: string, reportId: string, input: z
     if (!ok) return false;
     const jobTitle = job?.title || "Vaga sem título";
     await enqueueReportNotice(tx, "REPORT_CONCLUDED", report.reporterUserId, { reportId, area: "candidato", jobTitle, decisionLabel: decisionLabels[input.decision], summary: input.reporterSummary });
-    if (job) await enqueueReportNotice(tx, "REPORT_CONCLUDED", job.company.accountUserId, { reportId, area: "empresa", jobTitle, decisionLabel: decisionLabels[input.decision] });
+    if (job?.company) await enqueueReportNotice(tx, "REPORT_CONCLUDED", job.company.accountUserId, { reportId, area: "empresa", jobTitle, decisionLabel: decisionLabels[input.decision] });
     return true;
   });
   if (!done) return fail(409, "A denúncia mudou enquanto você operava. Atualize a página.");

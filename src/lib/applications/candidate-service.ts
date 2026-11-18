@@ -4,6 +4,7 @@ import { candidateStageLabels, stageLabels } from "./stages";
 import { enqueueApplicationCancelled, kickNotificationDelivery } from "@/lib/notifications/service";
 import { toInterviewView } from "@/lib/interviews/service";
 import { evaluationState } from "@/lib/evaluations/service";
+import { jobCompanyName } from "@/lib/jobs/company-name";
 
 // SPEC-012 and SPEC-016: the candidate's side of their own applications. Every read and write is scoped to the user of
 // the session; another person's application is reported exactly like one that does not exist.
@@ -73,7 +74,7 @@ export function cancellationBlock(stage: string, jobStatus: string): string | nu
 }
 
 const jobSelect = { id: true, title: true, status: true, closedAt: true, company: { select: { tradeName: true, legalName: true } } } as const;
-const companyName = (company: { tradeName: string | null; legalName: string }) => company.tradeName || company.legalName;
+const companyName = (company: { tradeName: string | null; legalName: string } | null) => jobCompanyName(company);
 
 export async function listCandidateApplications(userId: string, now: Date = new Date()) {
   const rows = await prisma.application.findMany({
