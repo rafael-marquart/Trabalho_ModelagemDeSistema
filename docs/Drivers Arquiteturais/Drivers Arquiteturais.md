@@ -86,7 +86,7 @@ Fluxo arquitetural:
 1. receber candidato e vaga;
 2. verificar necessidades obrigatórias;
 3. identificar barreiras incompatíveis;
-4. bloquear a vaga quando houver incompatibilidade crítica;
+4. marcar a vaga como incompatível quando houver barreira crítica (ela sai da busca e não aceita candidatura);
 5. somente então calcular a compatibilidade ponderada.
 
 **Origem:** RF-07, RF-08, RF-09, RB-02, RB-06, RB-15.
@@ -201,7 +201,7 @@ O uso de processamento assíncrono, filas ou mecanismos de cache permanece como 
 | Artefato | Interface web |
 | Ambiente | Desktop, tablet ou smartphone |
 | Resposta | Sistema permite utilização por tecnologias assistivas e diferentes formas de interação |
-| Medida | Conformidade com WCAG 2.1 nível AA |
+| Medida | Conformidade com WCAG 2.2 nível AA, sem violações no axe-core e conferida com teclado e leitor de tela (RNF-01) |
 
 ---
 
@@ -252,7 +252,7 @@ O uso de processamento assíncrono, filas ou mecanismos de cache permanece como 
 2. Sistema obtém os dados do candidato e da vaga.
 3. Sistema verifica as necessidades obrigatórias.
 4. Sistema identifica possíveis barreiras críticas.
-5. Caso exista incompatibilidade crítica, a vaga é bloqueada.
+5. Caso exista incompatibilidade crítica, a vaga é marcada como incompatível: não aparece na busca e não aceita candidatura.
 6. Caso contrário, o sistema calcula a compatibilidade pelos pesos definidos.
 7. Resultado é apresentado ao candidato.
 
@@ -326,7 +326,7 @@ Os DAs não determinam, neste momento:
 - arquitetura de microserviços;
 - infraestrutura específica de hospedagem.
 
-Essas escolhas podem ser realizadas posteriormente, desde que respeitem os drivers arquiteturais definidos.
+Essas escolhas foram feitas depois, respeitando os drivers, e estão registradas na ADR-005 e na tabela "O que não tem ADR" de `docs/ADRs/ADRs.md`: PostgreSQL com Prisma; Next.js (App Router) com rotas de API; componentes próprios, sem biblioteca de UI; sessão guardada no servidor com cookie `HttpOnly`; nenhum provedor LLM na versão atual; sem filas (os avisos por e-mail usam uma tabela de envio com novas tentativas); cache apenas do tempo de trajeto; aplicação única, sem microsserviços; hospedagem na Vercel com banco Neon.
 
 ---
 
@@ -378,3 +378,19 @@ A arquitetura do AcessaVagas precisa, no mínimo:
 8. Separar operações locais das **integrações externas potencialmente lentas**.
 
 Esse conjunto representa as principais restrições que o desenho arquitetural posterior deve satisfazer.
+
+---
+
+## 10. Como os drivers foram atendidos na implementação
+
+| Driver | Situação na `main` | Onde está |
+|---|---|---|
+| DA-01 Acessibilidade nativa | Atendido: WCAG 2.2 AA, verificação axe-core nos testes, temas claro, escuro e alto contraste, roteiros de teste com leitor de tela | `src/components`, `src/app/globals.css`, `docs/operacao/` |
+| DA-02 Autenticação e autorização | Atendido: sessão no servidor, Argon2id, bloqueio por tentativas, verificação de perfil em toda rota de API | `src/lib/auth`, `src/lib/security`, `src/app/api` |
+| DA-03 Trava de barreira crítica | Atendido: a trava roda antes do cálculo ponderado e prevalece sobre o score | `src/lib/compatibility/engine.ts` |
+| DA-04 Cálculo determinístico | Atendido: função pura, pesos 50/30/20, resultado registrado com versão das regras | `src/lib/compatibility` |
+| DA-05 LLM opcional e substituível | Não aplicado na `main`: não há uso de LLM. A implementação da SPEC-006 (PR #68, em revisão) usa LLM opcional atrás de um adaptador, desligada por padrão | PR #68 |
+| DA-06 Padronização de vagas de várias fontes | Parcial: o modelo de vaga tem o campo `origem`, mas só existe a origem própria. A normalização de vagas externas depende da SPEC-006 | `prisma/schema.prisma` (`Job.origin`), PR #68 |
+| DA-07 Rastreabilidade e anonimato das avaliações | Atendido: avaliações individuais restritas, nota pública só agregada, anonimização após 1 ano, histórico imutável no banco | `src/lib/evaluations`, `src/lib/public-rating`, `scripts/evaluation-retention.mjs` |
+| DA-08 Desempenho | Atendido: chamadas externas com tempo limite (trajeto 8 s), cache do trajeto, e-mails enviados fora da requisição principal | `src/lib/compatibility/travel.ts`, `src/lib/notifications` |
+
