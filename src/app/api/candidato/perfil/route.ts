@@ -14,14 +14,14 @@ export async function GET() {
   const profile = await prisma.candidateProfile.findUnique({
     where: { userId: user.id },
     select: {
-      education: true, languages: true, professionalExperience: true,
+      education: true, skills: true, languages: true, professionalExperience: true,
       courses: true, certifications: true, professionalLinks: true, workPreferences: true,
       accessibilityDeclaration: true, accessibilityNeeds: true, accessibilityNeedOptionCodes: true, mandatoryNeedOptionCodes: true,
       essentialAccessibilityResources: true, updatedAt: true
     }
   });
   const emptyProfile = {
-    education: [], languages: [], professionalExperience: [], courses: [],
+    education: [], skills: [], languages: [], professionalExperience: [], courses: [],
     certifications: [], professionalLinks: [], workPreferences: {}, accessibilityDeclaration: "NOT_INFORMED" as const,
     accessibilityNeeds: [], accessibilityNeedOptionCodes: [], mandatoryNeedOptionCodes: [], essentialAccessibilityResources: [], updatedAt: new Date(0)
   };
@@ -45,7 +45,7 @@ export async function PUT(request: Request) {
 
   const input = parsed.data;
   const fields = {
-    education: input.education, languages: input.languages,
+    education: input.education, skills: input.skills, languages: input.languages,
     professionalExperience: input.professionalExperience, courses: input.courses,
     certifications: input.certifications, professionalLinks: input.professionalLinks,
     workPreferences: input.workPreferences,
@@ -61,7 +61,7 @@ export async function PUT(request: Request) {
       const previous = await tx.candidateProfile.findUnique({
         where: { userId: user.id },
         select: {
-          education: true, languages: true, professionalExperience: true,
+          education: true, skills: true, languages: true, professionalExperience: true,
           courses: true, certifications: true, professionalLinks: true, workPreferences: true,
           accessibilityDeclaration: true, accessibilityNeeds: true,
           accessibilityNeedOptionCodes: true, mandatoryNeedOptionCodes: true, essentialAccessibilityResources: true
@@ -90,7 +90,7 @@ export async function PUT(request: Request) {
       const profile = await tx.candidateProfile.upsert({
         where: { userId: user.id }, create: { userId: user.id, ...fields }, update: fields,
         select: {
-          education: true, languages: true, professionalExperience: true,
+          education: true, skills: true, languages: true, professionalExperience: true,
           courses: true, certifications: true, professionalLinks: true, workPreferences: true,
           accessibilityDeclaration: true, accessibilityNeeds: true,
           accessibilityNeedOptionCodes: true, mandatoryNeedOptionCodes: true, essentialAccessibilityResources: true, updatedAt: true

@@ -11,7 +11,7 @@ type Detail = {
   stage: string; stageLabel: string; score: number | null; dimensions: { code: "A" | "T" | "D"; status: string; score: number | null }[];
   profile: {
     education: { level: string; course: string; institution: string; status: string }[]; experience: { role: string; company: string; period: string }[];
-    languages: { language: string; level: string }[]; courses: string[]; certifications: string[]; links: string[];
+    skills: string[]; languages: { language: string; level: string }[]; courses: string[]; certifications: string[]; links: string[];
   };
   accessibility: { declaration: string; needs: string[]; essentialResources: string[] };
   history: { at: string; from: string | null; to: string; kind: string; actor: string; note: string | null }[];
@@ -110,6 +110,7 @@ export default function ApplicationDetail({ basePath, jobId, applicationId }: { 
             {data.profile.experience.length ? <ul className="job-criteria">{data.profile.experience.map((item, index) => <li key={index}>{[item.role, item.company, item.period].filter(Boolean).join(" · ")}</li>)}</ul> : <p className="muted">Não informada</p>}
             <h3>Idiomas</h3>
             {data.profile.languages.length ? <ul className="job-criteria">{data.profile.languages.map((item, index) => <li key={index}>{item.level ? `${item.language} (${item.level})` : item.language}</li>)}</ul> : <p className="muted">Não informados</p>}
+            {data.profile.skills?.length ? <><h3>Competências</h3><ul className="job-criteria">{data.profile.skills.map((item, index) => <li key={index}>{item}</li>)}</ul></> : null}
             {data.profile.courses.length ? <><h3>Cursos</h3><ul className="job-criteria">{data.profile.courses.map((item, index) => <li key={index}>{item}</li>)}</ul></> : null}
             {data.profile.certifications.length ? <><h3>Certificações</h3><ul className="job-criteria">{data.profile.certifications.map((item, index) => <li key={index}>{item}</li>)}</ul></> : null}
             {data.profile.links.length ? <><h3>Links profissionais</h3><ul className="job-criteria">{data.profile.links.map((item, index) => <li key={index}><a href={item} target="_blank" rel="noopener noreferrer">{item}</a></li>)}</ul></> : null}

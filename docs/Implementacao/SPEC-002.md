@@ -3,7 +3,7 @@
 ## Escopo implementado na branch
 
 - Perfil persistido associado 1:1 à conta de usuário com papel CANDIDATE.
-- Categorias profissionais: formação/escolaridade, idiomas, experiências (cargo, empresa, período), cursos, certificações e links profissionais. Competências foram retiradas por decisão de 27/10/2026.
+- Categorias profissionais: formação/escolaridade, competências, idiomas, experiências (cargo, empresa, período), cursos, certificações e links profissionais. As competências foram retiradas em 27/10/2026 e voltaram em 24/11/2026, por decisão do responsável.
 - Nome e e-mail são reutilizados da conta, sem duplicação no perfil.
 - Salvamento progressivo: categorias profissionais podem permanecer vazias.
 - Declaração distingue `NOT_INFORMED`, `NO_NEEDS_DECLARED` e `NEEDS_DECLARED`.
@@ -82,4 +82,4 @@
 - **Consentimento para dados de acessibilidade (OPEN-100, 05/11/2026):** sem consentimento específico, necessidades e recursos indispensáveis não são salvos; a retirada apaga esses dados e fica registrada em `ConsentRecord` (RF-43, RB-47).
 - **Foto de perfil (OPEN-101, 09/11/2026):** opcional, JPG, PNG ou WebP até 1 MB, guardada na tabela `UserPhoto` (RF-41, RB-48).
 - **Catálogo de necessidades:** mantido pelo Administrador em `/admin/catalogo-acessibilidade`.
-
+- **Competências (24/11/2026):** o campo voltou à tela, ao contrato da API (`skills`, até 30 itens de até 80 caracteres, sem repetição) e à compatibilidade (SPEC-007), que passa a comparar as competências pedidas na vaga também com as competências do perfil. A empresa vê as competências no detalhe da candidatura. Não houve migração: a coluna `skills` nunca saiu do banco.

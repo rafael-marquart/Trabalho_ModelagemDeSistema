@@ -46,6 +46,15 @@ describe("compatibility service", () => {
     expect(prismaMock.compatibilityResult.create).not.toHaveBeenCalled();
   });
 
+  it("matches the job's skills against the competências of the profile", async () => {
+    prismaMock.job.findFirst.mockResolvedValue(jobRow({ technicalCriteria: { skills: ["python", "atendimento ao cliente"] } }));
+    prismaMock.candidateProfile.findUnique.mockResolvedValue(profile({ courses: [], skills: ["Python", "Atendimento ao cliente"] }));
+    const result = await run();
+    const data = prismaMock.compatibilityResult.create.mock.calls[0][0].data;
+    expect(JSON.stringify(data.outcome)).toContain("2 de 2 exigidas encontradas no perfil");
+    expect("view" in result).toBe(true);
+  });
+
   it("rejects an unknown transport mode", async () => {
     expect(await run({ transportMode: "Foguete" })).toEqual({ error: { status: 400, message: "Meio de transporte inválido." } });
   });
