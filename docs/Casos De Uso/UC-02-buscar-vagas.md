@@ -66,3 +66,9 @@ Vagas externas (SPEC-006, UC-14) não aparecem na busca desta versão: a impleme
 - Os resultados respeitam o limite de 100 vagas e 20 por página, com as três ordenações.
 - Sem resultados, o sistema informa e permite revisar a busca e os filtros.
 - Alertas por e-mail e buscas salvas não fazem parte desta versão (OPEN-039).
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-02-buscar-vagas.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-02-buscar-vagas.puml` (PlantUML).

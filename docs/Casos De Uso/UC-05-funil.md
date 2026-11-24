@@ -75,3 +75,9 @@ O candidato consulta, acompanha, cancela e oculta as próprias candidaturas. Edi
 - Cancelamento recusado não altera a candidatura.
 - Cancelamento aceito preserva o histórico e avisa o responsável pela vaga.
 - Candidaturas canceladas ou de vagas encerradas somem da lista após 60 dias.
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-05-funil.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-05-funil.puml` (PlantUML).

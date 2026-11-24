@@ -1,0 +1,48 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+left to right direction
+title AcessaVagas — Visão geral dos casos de uso
+actor "Candidato PcD" as C
+actor "Empresa" as E
+actor "Recrutador" as R
+actor "Administrador" as A
+actor "HERE" as H
+rectangle "AcessaVagas" {
+  usecase "UC-00 Login" as U0
+  usecase "UC-01 Gerenciar perfil" as U1
+  usecase "UC-02 Buscar vagas" as U2
+  usecase "UC-03 Candidatar-se" as U3
+  usecase "UC-05 Acompanhar candidaturas" as U5
+  usecase "UC-06 Avaliar pós-entrevista" as U6
+  usecase "UC-07 Infraestrutura e recrutadores" as U7
+  usecase "UC-08 Publicar vaga" as U8
+  usecase "UC-09 Gerenciar funil" as U9
+  usecase "UC-11 Denunciar vaga" as U11
+  usecase "UC-12 Status da vaga" as U12
+  usecase "UC-13 Calcular compatibilidade" as U13
+}
+C -- U0
+C -- U1
+C -- U2
+C -- U3
+C -- U5
+C -- U6
+C -- U11
+E -- U0
+E -- U7
+E -- U8
+E -- U9
+E -- U11
+R -- U0
+R -- U8
+R -- U9
+R -- U11
+A -- U0
+A -- U1
+A -- U11
+U2 ..> U13 : <<include>>
+U3 ..> U13 : <<include>>
+U5 ..> U12 : <<include>>
+U13 -- H
+@enduml

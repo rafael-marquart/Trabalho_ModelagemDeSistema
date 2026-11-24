@@ -48,3 +48,9 @@ Permitir que a Empresa ou o Recrutador confira, antes de avançar uma candidatur
 
 - RF-30 — Gestão de candidatos no processo seletivo.
 - RF-35 — Gestão do funil de seleção.
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-10-validacao.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-10-validacao.puml` (PlantUML).

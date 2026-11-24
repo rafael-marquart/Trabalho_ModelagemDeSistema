@@ -57,3 +57,9 @@ Registrar a candidatura do candidato em uma vaga aberta que não tenha barreira 
 - Falta de dados no perfil não impede a candidatura; o score fica vazio.
 - Toda recusa explica o motivo e não grava nada.
 - Vagas externas não aceitam candidatura pela plataforma.
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-03-candidatar.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-03-candidatar.puml` (PlantUML).

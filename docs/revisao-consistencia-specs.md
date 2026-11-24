@@ -225,6 +225,8 @@ Esta é uma auditoria de consistência documental. Ela identifica cobertura e pr
 - `Specs.md`: SPEC-011 sem score obrigatório; WCAG 2.2; estados de SPEC-006, 008 e 009 atualizados; checklists marcados só onde há implementação e evidência, com o motivo dos itens que continuam desmarcados; complementos posteriores registrados nas SPEC-001 a 003; registro consolidado com a situação de cada Spec.
 - `mapa-specs.md` com os novos requisitos e os nomes atuais das entidades; `OPEN.md` com o resumo das questões abertas.
 - Desvios entre a arquitetura planejada e o código registrados em `docs/Implementacao/desvios.md`; catálogo de eventos de auditoria em `docs/logging.md`.
+- Diagramas de casos de uso refeitos em PlantUML (fontes em `docs/Diagramas Caso De Uso/fonte/`), diagrama ER do modelo conceitual e diagrama de estados do funil.
+- README transformado em índice da documentação, com o estado atual.
 
-**Pendências que dependem do grupo:** decisão sobre a SPEC-006 (PR #68); teste manual e aprovação de layout das SPEC-019 e SPEC-020; decisões das OPENs abertas; protótipos de layout em `docs/layout/`; imagens dos diagramas de casos de uso em `docs/Diagramas Caso De Uso/`.
+**Pendências que dependem do grupo:** decisão sobre a SPEC-006 (PR #68); teste manual e aprovação de layout das SPEC-019 e SPEC-020; decisões das OPENs abertas; protótipos de layout em `docs/layout/`.
 

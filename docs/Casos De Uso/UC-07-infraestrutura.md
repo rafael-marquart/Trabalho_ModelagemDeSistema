@@ -65,3 +65,9 @@ Permitir à empresa manter suas informações de acessibilidade e administrar os
 - O recrutador cadastrado fica vinculado à empresa responsável.
 - Os seis itens obrigatórios bloqueiam o salvamento enquanto não forem respondidos como Presente ou Ausente.
 - Convites expiram em 7 dias e podem ser reenviados ou cancelados enquanto pendentes.
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-07-infraestrutura.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-07-infraestrutura.puml` (PlantUML).

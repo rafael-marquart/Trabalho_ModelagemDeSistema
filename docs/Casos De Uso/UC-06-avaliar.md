@@ -67,3 +67,9 @@ Permitir que o candidato avalie, depois de uma entrevista concluída, o cumprime
 - Avaliar não depende de o candidato ter sido aprovado ou recusado.
 - A nota pública mostra apenas a distribuição por estrelas, sem comentários nem identidade.
 - Tentativas repetidas recusadas geram registro para análise, sem bloqueio automático.
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-06-avaliar.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-06-avaliar.puml` (PlantUML).

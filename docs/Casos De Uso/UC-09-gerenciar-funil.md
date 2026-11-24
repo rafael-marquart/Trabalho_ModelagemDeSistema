@@ -89,3 +89,9 @@ Não há volta de etapa. O cancelamento é feito só pelo candidato (UC-05).
 - O candidato é avisado de cada mudança de etapa e de cada agendamento, alteração ou cancelamento de entrevista.
 - A Empresa não vê comprovantes, CPF nem informação médica do candidato.
 - Entrevista só é marcada como concluída depois do horário marcado.
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-09-gerenciar-funil.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-09-gerenciar-funil.puml` (PlantUML).

@@ -69,3 +69,9 @@ Calcular, de forma determinística e explicável, a compatibilidade entre o perf
 - Com dados faltando, o resultado é "Dados insuficientes", com as dimensões calculadas e o que falta, sem score final.
 - O mesmo perfil e a mesma vaga produzem sempre o mesmo resultado.
 - O candidato vê os fatores que pesaram e o que pode completar.
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-13-match.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-13-match.puml` (PlantUML).

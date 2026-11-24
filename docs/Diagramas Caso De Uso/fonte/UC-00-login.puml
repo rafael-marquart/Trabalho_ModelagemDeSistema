@@ -1,0 +1,36 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+left to right direction
+title UC-00 — Login
+actor "Candidato PcD" as C
+actor "Empresa" as E
+actor "Recrutador" as R
+actor "Administrador" as A
+rectangle "AcessaVagas" {
+  usecase "Entrar\n(e-mail ou CPF para candidato)" as L
+  usecase "Criar conta de candidato" as CC
+  usecase "Cadastrar empresa\n(CNPJ e e-mail corporativo)" as CE
+  usecase "Aceitar Termos de Uso\ne Política de Privacidade" as T
+  usecase "Confirmar e-mail corporativo" as CF
+  usecase "Recuperar senha" as RS
+  usecase "Enviar link por e-mail\n(30 min, uso único)" as EL
+  usecase "Ativar conta pelo convite" as AT
+}
+actor "Serviço de e-mail\n(SMTP)" as S
+C -- L
+C -- CC
+E -- L
+E -- CE
+R -- L
+R -- AT
+A -- L
+CC ..> T : <<include>>
+CE ..> T : <<include>>
+AT ..> T : <<include>>
+CE ..> CF : <<include>>
+RS .> L : <<extend>>
+RS ..> EL : <<include>>
+EL -- S
+CF -- S
+@enduml

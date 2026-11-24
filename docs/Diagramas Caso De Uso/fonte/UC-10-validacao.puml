@@ -1,0 +1,14 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+left to right direction
+title UC-10 — Validar requisitos da seleção (fora do escopo)
+actor "Empresa / Recrutador" as E
+rectangle "AcessaVagas" {
+  usecase "Validar requisitos da etapa\n(não implementado — OPEN-092)" as V
+  usecase "Gerenciar funil (UC-09)" as F
+}
+E -- F
+F ..> V : <<include>>
+note right of V : Fora do escopo desta versão.\nNenhuma pendência impeditiva\nfoi definida.
+@enduml

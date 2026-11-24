@@ -105,3 +105,9 @@ Ao encerrar, o sistema grava a data de encerramento, recusa novas candidaturas e
 - Vaga encerrada não pode ser editada.
 - Empresa e Recrutador só veem e alteram vagas da própria Empresa.
 - Publicação e alterações ficam registradas com o autor.
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-08-publicar-vaga.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-08-publicar-vaga.puml` (PlantUML).

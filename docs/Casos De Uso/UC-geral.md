@@ -46,7 +46,7 @@ Os avisos (na plataforma e por e-mail, SPEC-017) acompanham UC-03, UC-05, UC-08,
 7. Depois de uma entrevista concluída, o candidato pode avaliar a Empresa e, se for o caso, denunciar a vaga (UC-06, UC-11).
 8. O Administrador analisa e decide as denúncias (UC-11) e mantém o catálogo de necessidades de acessibilidade (UC-01).
 
-## Diagrama
+## Diagrama (Mermaid, renderizado pelo GitHub)
 
 ```mermaid
 flowchart LR
@@ -80,3 +80,9 @@ flowchart LR
 ```
 
 UC-10 e UC-14 ficam fora do diagrama porque não estão implementados nesta versão.
+
+## Diagrama (UML, PlantUML)
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-geral.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-geral.puml` (PlantUML).

@@ -74,3 +74,9 @@ Permitir que o candidato cadastre e atualize o perfil profissional, as preferên
 - "Não informado" é diferente de "não tenho necessidades".
 - Comprovantes acima de 4 MB e fotos acima de 1 MB são recusados.
 - Alterações relevantes ficam registradas para auditoria.
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-01-gerenciar-perfil.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-01-gerenciar-perfil.puml` (PlantUML).

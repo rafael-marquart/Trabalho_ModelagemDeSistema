@@ -58,3 +58,9 @@ Permitir que o candidato veja, de forma clara e acessível, se uma vaga está ab
 - Vaga pausada ou com prazo vencido aparece como "Indisponível", com o motivo, e não aceita candidatura.
 - Vaga encerrada não aceita novas candidaturas.
 - Falha ao ler o estado não libera a candidatura.
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-12-status-vaga.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-12-status-vaga.puml` (PlantUML).

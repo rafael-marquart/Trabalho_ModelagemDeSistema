@@ -1,0 +1,24 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+left to right direction
+title UC-08 — Publicar vaga
+actor "Empresa" as E
+actor "Recrutador" as R
+rectangle "AcessaVagas" {
+  usecase "Cadastrar vaga\n(rascunho)" as CR
+  usecase "Publicar vaga" as P
+  usecase "Validar campos e\nacessibilidade da vaga" as V
+  usecase "Editar vaga\n(travada após candidaturas)" as ED
+  usecase "Pausar, reabrir\nou encerrar vaga" as ST
+  usecase "Avisar candidatos ativos" as AV
+}
+E -- CR
+R -- CR
+E -- ST
+R -- ST
+P .> CR : <<extend>>
+P ..> V : <<include>>
+ED .> CR : <<extend>>
+AV .> ST : <<extend>>
+@enduml

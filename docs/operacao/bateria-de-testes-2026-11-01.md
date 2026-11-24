@@ -35,3 +35,15 @@ Executada sobre `desenvolvimento-do-projeto` + SPEC-021 (PR #58), em ambiente li
 - **Sem `package-lock.json`:** cada instalação pode trazer versões diferentes. Recomendado versionar o lockfile.
 - **Telas anônimas** consultam `/api/conta/preferencias` e recebem 401 (esperado, mas aparece no console do navegador).
 - **Cobertura mais baixa:** `src/lib/notifications/access.ts`, `src/lib/reports/http.ts` e `src/lib/auth/password.ts` têm pouca ou nenhuma cobertura direta (são exercitados pelo E2E).
+
+## Situação das pendências em 23/11/2026
+
+| Pendência | Situação |
+|---|---|
+| `nodemailer` com alerta só corrigível em versão maior | **Resolvida:** atualizado para a versão 10 |
+| Sem `package-lock.json` | **Resolvida:** o lockfile passou a ser versionado na preparação para a Vercel |
+| `next` 15 e CLI do Prisma 6 com alertas que exigem versão maior | Continua pendente (Next 16 e Prisma 7 exigem migração própria) |
+| Telas anônimas chamam `/api/conta/preferencias` e recebem 401 | Continua: o comportamento é esperado e não afeta o uso |
+| Cobertura baixa em `notifications/access.ts`, `reports/http.ts` e `auth/password.ts` | Continua: esses módulos são exercitados pelo E2E |
+
+Esta bateria foi feita antes da SPEC-006; a implementação dela (PR #68) tem testes próprios no PR e não está na `main`.

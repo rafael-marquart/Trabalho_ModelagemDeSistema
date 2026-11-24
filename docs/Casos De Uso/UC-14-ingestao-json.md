@@ -91,3 +91,9 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 - Registros normalizados são compatíveis com o modelo comum e preservam o significado dos dados de origem; o sistema não inventa informações.
 - Estruturas ou valores que não possam ser interpretados com segurança são rejeitados ou tratados como falha, com motivo rastreável, sem conversão silenciosa em fatos incorretos.
 - Cada fonte autorizada possui testes de mapeamento dos campos utilizados, conversões aplicáveis e dados ausentes ou inválidos.
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-14-ingestao-json.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-14-ingestao-json.puml` (PlantUML).

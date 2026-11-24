@@ -62,3 +62,9 @@ Permitir que cada perfil acesse a plataforma de forma segura, com credenciais va
 - A conta é bloqueada por 15 minutos após 10 falhas consecutivas.
 - Sessão expirada leva de volta à entrada.
 - Não é possível criar conta sem aceitar os Termos de Uso e a Política de Privacidade.
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-00-login.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-00-login.puml` (PlantUML).

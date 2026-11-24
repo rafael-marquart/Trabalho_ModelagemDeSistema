@@ -1,0 +1,25 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+left to right direction
+title UC-05 — Acompanhar candidaturas
+actor "Candidato PcD" as C
+actor "Empresa / Recrutador" as E
+rectangle "AcessaVagas" {
+  usecase "Consultar minhas candidaturas" as L
+  usecase "Ver linha do tempo\ne entrevistas" as T
+  usecase "Ver status da vaga\n(UC-12)" as S
+  usecase "Cancelar candidatura" as X
+  usecase "Ocultar candidatura\nrecusada ou cancelada" as O
+  usecase "Avaliar pós-entrevista\n(UC-06)" as AV
+  usecase "Denunciar vaga\n(UC-11)" as D
+}
+C -- L
+T .> L : <<extend>>
+L ..> S : <<include>>
+X .> L : <<extend>>
+O .> L : <<extend>>
+AV .> T : <<extend>>
+D .> T : <<extend>>
+X -- E : aviso
+@enduml

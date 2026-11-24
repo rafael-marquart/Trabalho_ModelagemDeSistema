@@ -70,3 +70,9 @@ Permitir que o candidato que participou do processo seletivo de uma vaga denunci
 - O candidato acompanha o status: Recebida, Em análise, Aguardando informações e Concluída.
 - A Empresa nunca vê nome, e-mail ou identificação de quem denunciou.
 - A decisão fica registrada com autor, data, justificativa e medidas.
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-11-denuncia.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-11-denuncia.puml` (PlantUML).
