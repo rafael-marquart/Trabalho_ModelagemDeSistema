@@ -8,46 +8,32 @@ Este documento registra somente decisões técnicas sustentadas pelos Drivers Ar
 | DT-02 | DA-02 | Autenticação centralizada e autorização por perfis com validação no backend. |
 | DT-03 | DA-03 | Trava de barreira crítica executada antes do cálculo ponderado. |
 | DT-04 | DA-04 | Serviço específico para cálculo determinístico de compatibilidade. |
-| DT-05 | DA-05 | Camada de integração para extração, validação e normalização de dados de LLM, sem dependência direta do domínio de provedor específico. |
-| DT-06 | DA-06 | Modelo comum para vagas internas e externas. |
+| DT-05 | DA-05 | Camada de integração para extração, validação e normalização de dados de LLM, sem dependência direta do domínio de provedor específico. **Não aplicada nesta versão:** a `main` não usa LLM (ver ADR-003 e SPEC-006). |
+| DT-06 | DA-06 | Modelo comum para vagas internas e externas. Nesta versão a tabela `Job` já registra a origem da vaga (`OWN`); vagas externas dependem da SPEC-006. |
 | DT-07 | DA-07 | Separação entre dados de auditoria e informações apresentadas publicamente, preservando anonimato. |
 | DT-08 | ADR-004 | Arquitetura em camadas: apresentação, aplicação, domínio e infraestrutura. |
 
-## Diretriz técnica para a primeira implementação (SPEC-001)
+## Como as diretrizes foram aplicadas
 
-A inspeção realizada em 25/10/2026 não localizou código executável, manifesto de dependências ou configuração de build/teste neste repositório de modelagem, nem identificou com evidência um repositório separado da aplicação. Portanto, esta diretriz define a arquitetura e os controles da primeira implementação, mas **não declara uma linguagem, framework, SGBD ou provedor já existente**.
+Esta seção substitui a diretriz escrita em 25/10/2026, antes de existir código. A stack escolhida está na ADR-005; as escolhas trocáveis estão na seção 2 das ADRs.
 
-| Tema | Diretriz recomendada | Justificativa / limite |
-|---|---|---|
-| Estilo de implantação | Monólito modular em camadas, sem microserviços nesta fase | Menor complexidade operacional; atende ADR-004 e permite separar módulos sem distribuição prematura. |
-| Camadas | Apresentação → aplicação/casos de uso → domínio → infraestrutura; dependências apontam para dentro e o domínio não importa frameworks nem SDKs externos | Preserva testabilidade e independência das regras de negócio. |
-| Persistência | Banco relacional com transações e restrições de integridade; selecionar o SGBD somente após localizar o ambiente real | Vínculos únicos, integridade de contas/empresas e auditoria exigem consistência transacional; não há evidência para escolher um produto específico. |
-| Sessões | Sessão gerenciada no servidor, identificador opaco em cookie `HttpOnly`, `Secure` e `SameSite` adequado; proteção CSRF quando aplicável; suporte à invalidação de todas as sessões | Facilita logout, bloqueio, redefinição de senha e revogação imediata. Preferir este padrão a tokens autossuficientes de longa duração, pois RB-22 exige invalidação. A duração funcional segue OPEN-002: 60 minutos de inatividade e opção de recuperação por até 30 dias. |
-| Senhas | Armazenar somente hash com algoritmo adaptativo apropriado (preferência inicial: Argon2id, se suportado pela stack); nunca registrar senha ou token em logs | Reduz impacto de exposição do banco e respeita RNF-07/08. A biblioteca e seus parâmetros devem ser verificados na stack escolhida. |
-| Recuperação e convites | Tokens aleatórios criptograficamente seguros, armazenados no banco apenas em forma protegida/hash quando possível, uso único, validade e invalidação verificadas no backend | Atende às regras de recuperação e convite; não colocar credenciais/tokens em logs. |
-| E-mail | Porta/adaptador de envio de e-mail, com provedor configurável fora do domínio | Permite trocar o provedor e testar fluxos sem envio real. A escolha do provedor e credenciais de ambiente continuam pendentes. |
-| Autorização | Validar no backend perfil, vínculo ativo e escopo da Empresa em cada operação protegida; não confiar em perfil/empresa enviados pelo cliente | Impede acesso cruzado entre empresas e revoga acesso após encerramento do vínculo. |
-| Auditoria | Serviço central de auditoria para eventos de negócio/segurança, com acesso restrito, minimização de dados e retenção funcional de 1 ano conforme OPEN-006 | Evita auditoria espalhada e preserva rastreabilidade sem registrar segredos. |
-| Testes | Testes unitários para domínio, testes de integração para persistência/autorização/sessões e testes de ponta a ponta para login, recuperação e convite; incluir testes negativos de acesso cruzado | Verifica regras de segurança e invariantes no backend, não apenas o comportamento visual. |
-| Segredos e ambientes | Segredos em variáveis/secret manager do ambiente; nunca no repositório ou frontend; separar configuração de desenvolvimento e produção | Reduz risco de vazamento e permite deploy controlado. |
-
-### Portão obrigatório antes de codificar
-
-1. Localizar o repositório executável e identificar linguagem, frameworks, banco, comandos de execução, migrações e testes existentes.
-2. Adaptar as diretrizes acima à stack encontrada, sem substituir tecnologias existentes apenas por preferência.
-3. Confirmar que a stack permite sessões revogáveis, transações, hash seguro de senhas, envio de e-mail via adaptador e testes automatizados.
-4. Implementar em branch de trabalho, com testes; nunca fazer commits diretamente na `main`.
-5. Não publicar em produção nem mesclar PR sem aprovação explícita.
+| Tema | Como está no código |
+|---|---|
+| Estilo de implantação | Monólito modular: uma aplicação Next.js (páginas e API no mesmo projeto), sem microsserviços. |
+| Camadas | Páginas e componentes React → rotas da API (`src/app/api`) → serviços e regras em `src/lib` → Prisma/PostgreSQL e adaptadores externos. Desvios em `docs/Implementacao/desvios.md`. |
+| Persistência | PostgreSQL com Prisma. Migrações versionadas em `prisma/migrations`. Restrições no banco: índice único parcial para uma candidatura ativa por vaga e um vínculo ativo por recrutador; gatilhos que impedem alterar o histórico do funil, da moderação, dos consentimentos e as notas das avaliações. |
+| Sessões | Sessão no banco (tabela `Session`) com token opaco em cookie `HttpOnly`, `SameSite=Lax` e `Secure` em produção; só o hash do token é guardado. Expira após 60 minutos sem uso; com "lembrar de mim", o cookie sobrevive ao fechamento do navegador por no máximo 30 dias (a regra dos 60 minutos continua valendo). Logout e troca de senha revogam as sessões. |
+| Senhas | Hash Argon2id; política de 10 caracteres com maiúscula, minúscula e número; bloqueio de 15 minutos após 10 falhas consecutivas. |
+| Recuperação e convites | Tokens aleatórios guardados só como hash, de uso único: recuperação válida por 30 minutos, convite de recrutador por 7 dias. |
+| E-mail | Adaptador SMTP (Nodemailer) configurado por variáveis de ambiente: Mailpit no local, Ethereal no ambiente de testes, Brevo em produção. |
+| Avisos | Tabela de notificações no banco, exibida no site e enviada por e-mail; até 5 tentativas de envio, reprocessadas por rotas agendadas. |
+| Autorização | Cada rota confere sessão, perfil, vínculo ativo do recrutador e empresa da vaga no servidor; requisições que alteram dados vindas de outra origem são recusadas. |
+| Auditoria | Tabela `AuditEvent` com tipo, autor, objeto e metadados sem segredos; retenção de 1 ano por rotina agendada. Lista de eventos em `docs/logging.md`. |
+| Testes | Vitest (unitários e de componentes, com axe-core), teste de ponta a ponta em `scripts/auth-e2e.mjs` com banco real e serviços simulados; tudo roda no GitHub Actions a cada pull request. |
+| Segredos e ambientes | Variáveis de ambiente (`.env` local, painel da Vercel em produção e testes); `.env.example` sem segredos reais, só com valores de exemplo para o ambiente local. Produção e testes usam bancos separados. |
+| Laudos médicos | Não são armazenados (RB-28). Comprovantes opcionais ficam no banco, com até 4 MB e tipo conferido pelo conteúdo. |
 
 ## Decisões ainda não definidas
 
-A baseline não fixa, neste momento:
-
-- SGBD ou banco específico;
-- provedor/modelo específico de LLM;
-- mecanismo específico de processamento assíncrono;
-- framework ou biblioteca de interface;
-- mecanismo específico de sessão;
-- armazenamento de laudos médicos.
-
-Essas escolhas somente devem ser registradas quando houver Driver, ADR ou decisão explícita que as sustente.
+- Se a importação de vagas externas (SPEC-006) entra nesta versão e, com ela, o uso de LLM e o provedor (ADR-003).
+- Mecanismo assíncrono dedicado (fila): não usado; as rotinas periódicas rodam por agendamento.

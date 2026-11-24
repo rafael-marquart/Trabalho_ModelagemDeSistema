@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Avaliar a experiência da entrevista quanto ao cumprimento dos recursos de acessibilidade e postura inclusiva da equipe, gerando nota de reputação.
+Permitir que o candidato avalie, depois de uma entrevista concluída, o cumprimento dos recursos de acessibilidade e a postura inclusiva da equipe. As avaliações compõem a nota pública de acessibilidade da Empresa (RF-13), mostrada como distribuição de estrelas.
 
 ## Ator principal
 
@@ -10,68 +10,66 @@ Avaliar a experiência da entrevista quanto ao cumprimento dos recursos de acess
 
 ## Pré-condições
 
-- Entrevista cadastrada no sistema e concluída.
-- Candidato autenticado com candidatura vinculada à entrevista.
-- Submissão dentro do prazo de até 60 dias corridos após a conclusão da entrevista.
+- Candidato autenticado, dono da candidatura.
+- A Empresa marcou a entrevista como concluída (UC-09).
+- Ainda não passaram 60 dias corridos desde a conclusão e não existe avaliação do candidato para essa entrevista.
 
 ## Pontos de Inclusão e Extensão
 
-- Extensão (<<extend>>): UC11 (Moderar Denúncias e Falsa Inclusão), FA01 (Avaliação Anônima).
+- Estende UC-05 (Acompanhar candidaturas): a avaliação é feita no detalhe da candidatura.
+- Relação com UC-11: o candidato pode, à parte, registrar uma denúncia sobre a vaga e apontar a própria avaliação a que ela se refere.
 
 ## Fluxo Principal
 
-1. O sistema apresenta campos separados para avaliar acessibilidade e postura inclusiva, cada um em escala de 1 a 5 estrelas.
-2. O candidato informa obrigatoriamente as duas notas e, se desejar, um comentário opcional; antes de enviar, pode revisar os dados.
-3. O sistema valida que o candidato autenticado está vinculado à candidatura e à entrevista concluída, que a submissão ocorre em até 60 dias corridos após a conclusão e que ainda não existe avaliação desse candidato para a entrevista.
-4. O sistema valida que ambas as notas estão preenchidas e dentro da escala de 1 a 5 estrelas e valida o comentário quando informado.
-5. Se o prazo tiver expirado, o vínculo não for válido, já existir avaliação para a entrevista ou os campos obrigatórios forem inválidos, o sistema recusa a submissão.
-6. Se a validação for bem-sucedida, o sistema registra a avaliação e preserva os dados necessários à moderação. Cada candidato pode registrar uma única avaliação por entrevista; após o envio, não pode editar nem substituir a avaliação.
-7. Eventos relevantes são registrados. Quando houver denúncia ou indício relevante de abuso, o caso segue para análise administrativa, sem bloqueio automático.
-8. O Administrador analisa a ocorrência e registra a decisão conforme o fluxo de moderação existente.
-9. A administração não altera diretamente a avaliação nem a distribuição pública de estrelas; qualquer efeito depende das regras aplicáveis e da decisão administrativa registrada.
-10. A apresentação pública exibe somente a distribuição agregada das avaliações válidas por quantidade de estrelas, sem identidade, identificadores ou comentários individuais. Os registros individuais e comentários opcionais ficam acessíveis somente a pessoas autorizadas para finalidades legítimas da plataforma e são retidos por 1 ano após o envio; ao fim do prazo, são excluídos ou irreversivelmente anonimizados, respeitando obrigações aplicáveis de preservação. A distribuição agregada pode ser mantida por prazo indeterminado apenas se não permitir reconstruir avaliações individuais nem identificar candidatos.
+1. No detalhe da candidatura, o sistema mostra a entrevista concluída com a opção "Avaliar" e o prazo final.
+2. O candidato escolhe de 1 a 5 estrelas para **acessibilidade** e de 1 a 5 estrelas para **postura inclusiva** (as duas obrigatórias) e, se quiser, escreve um comentário de até 1000 caracteres.
+3. O candidato revisa e envia.
+4. O sistema confere no servidor que a entrevista é de uma candidatura do próprio candidato, que foi concluída, que o prazo de 60 dias não passou e que ainda não há avaliação; valida as notas e o comentário.
+5. O sistema grava a avaliação, que não pode ser editada nem substituída, e a mostra ao candidato como enviada.
+6. A nota pública da Empresa passa a contar essa avaliação.
 
 ## Exceções e Fluxos Alternativos
 
-- FA01 (Optar por Anonymity): O candidato marca a opção de enviar a avaliação de forma 100% anônima.
-- UC11 (Denúncia de Falsa Inclusão): Em caso de conduta preconceituosa ou ausência grave de acessibilidade combinada, o candidato marca a opção de denúncia formal, estendendo para a moderação administrativa.
+- EX01 (Recusa): entrevista de outra pessoa, não concluída, fora do prazo, já avaliada, ou notas fora de 1 a 5, é recusada com o motivo; nada é gravado além do registro da tentativa.
+- EX02 (Tentativas repetidas): a partir de 3 tentativas recusadas da mesma pessoa em 24 horas, o sistema registra um indício de abuso para análise administrativa, sem bloquear a conta.
+- EX03 (Prazo expirado): depois de 60 dias, a opção de avaliar deixa de aparecer.
+- EX04 (Sair sem enviar): se o candidato tentar sair do formulário preenchido, o sistema pergunta se deseja sair sem enviar (RF-44).
+
+## Nota pública e privacidade
+
+- A nota pública mostra, para cada critério, quantas avaliações deram 1, 2, 3, 4 e 5 estrelas, sem média nem pesos. Uma avaliação já basta para exibi-la; sem avaliações, o sistema informa que ainda não há dados suficientes. Ela aparece no detalhe da vaga e no painel da Empresa.
+- A nota pública nunca mostra comentários, nomes nem identificadores. O comentário só aparece ao próprio candidato.
+- O Administrador não edita nem remove avaliações; uma denúncia pendente não altera a nota.
+- Após 1 ano do envio, a avaliação é anonimizada: mantém só as notas, a Empresa e o ano (RNF-08).
+
 ## Pós-condições
 
-- Avaliação persistida para composição da nota pública conforme as regras aplicáveis.
-- Denúncias encaminhadas ao fluxo de moderação quando aplicável.
+- Avaliação gravada, ligada à entrevista e à Empresa, e contada na nota pública.
 
 ## Regras de negócio relacionadas
 
-- RB-19
-- RB-20
-- RB-24
-- RB-25
-- RB-37
-- RB-44
-- RB-45
+- RB-19 — Anonimato das avaliações públicas.
+- RB-20 — Nota de acessibilidade baseada em dados registrados.
+- RB-24 — Proteção contra abuso.
+- RB-37 — Registro das decisões.
 
 ## Requisitos relacionados
 
-- RF-21
-- RF-13
-- RF-14
-- RF-22
-- RF-38
+- RF-21 — Avaliação do processo seletivo.
+- RF-13 — Nota de acessibilidade.
+- RF-38 — Auditoria de operações.
 
 ## Critérios de aceitação
 
-- Apenas candidato autenticado vinculado à candidatura e à entrevista concluída pode avaliar; a elegibilidade independe de contratação ou rejeição.
-- A avaliação contém duas notas obrigatórias e separadas: acessibilidade e postura inclusiva, cada uma de 1 a 5 estrelas.
-- O comentário é opcional; quando informado, é validado.
-- O candidato pode revisar a avaliação antes de enviá-la, mas não pode editar, substituir ou registrar uma segunda avaliação para a mesma entrevista após o registro inicial.
-- Novas submissões são aceitas somente até 60 dias corridos após a conclusão da entrevista; após o prazo, são recusadas.
-- Indícios relevantes de abuso são registrados e encaminhados para análise administrativa, sem bloqueio automático.
-- Avaliações submetidas são gravadas para composição da nota pública conforme as regras aplicáveis; publicamente, somente a distribuição agregada por quantidade de estrelas é exibida, sem comentários individuais.
-- O acesso aos registros individuais e comentários opcionais é restrito a pessoas autorizadas para finalidades legítimas da plataforma; os registros são retidos por 1 ano após o envio e, ao fim do prazo, excluídos ou irreversivelmente anonimizados, respeitando obrigações aplicáveis de preservação.
-- Avaliação anônima preserva anonimato enquanto permite a triagem de conteúdo pela equipe de moderação.
-- A apresentação pública exibe somente a distribuição agregada por quantidade de estrelas; comentários individuais, identidade e identificadores dos candidatos não são publicados.
-- Registros individuais e comentários opcionais têm acesso restrito a pessoas autorizadas para finalidades legítimas da plataforma e são excluídos ou irreversivelmente anonimizados após 1 ano do envio, respeitando obrigações aplicáveis de preservação.
-- A distribuição agregada só pode ser mantida por prazo indeterminado se não permitir reconstruir avaliações individuais nem identificar candidatos.
-- Denúncias acionam o fluxo de moderação e ficam sujeitas à análise administrativa.
+- Só o dono da candidatura avalia, e só entrevista concluída, até 60 dias após a conclusão.
+- As duas notas são obrigatórias, de 1 a 5; o comentário é opcional, com até 1000 caracteres.
+- Há no máximo uma avaliação por entrevista, sem edição depois do envio.
+- Avaliar não depende de o candidato ter sido aprovado ou recusado.
+- A nota pública mostra apenas a distribuição por estrelas, sem comentários nem identidade.
+- Tentativas repetidas recusadas geram registro para análise, sem bloqueio automático.
 
----
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-06-avaliar.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-06-avaliar.puml` (PlantUML).

@@ -1,0 +1,23 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+left to right direction
+title UC-13 — Calcular compatibilidade
+actor "Candidato PcD" as C
+actor "HERE\n(tempo de trajeto)" as H
+rectangle "AcessaVagas" {
+  usecase "Calcular compatibilidade" as M
+  usecase "Aplicar trava crítica" as T
+  usecase "Calcular acessibilidade (50%)" as A
+  usecase "Calcular perfil técnico (30%)" as P
+  usecase "Calcular modalidade e\ndeslocamento (20%)" as D
+  usecase "Reaproveitar resultado\nse nada mudou" as R
+}
+C -- M
+M ..> T : <<include>>
+M ..> A : <<include>>
+M ..> P : <<include>>
+M ..> D : <<include>>
+R .> M : <<extend>>
+D -- H
+@enduml

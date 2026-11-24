@@ -1,8 +1,8 @@
-# UC-05 — Acompanhar Funil de Candidaturas
+# UC-05 — Acompanhar Candidaturas
 
 ## Objetivo
 
-Permitir ao candidato consultar suas próprias candidaturas, acompanhar etapas, status e histórico disponível do processo seletivo e cancelar a própria candidatura conforme as regras aplicáveis.
+Permitir que o candidato consulte as próprias candidaturas, acompanhe a etapa e o histórico de cada uma, veja as entrevistas marcadas e cancele uma candidatura dentro das regras.
 
 ## Ator principal
 
@@ -11,29 +11,39 @@ Permitir ao candidato consultar suas próprias candidaturas, acompanhar etapas, 
 ## Pré-condições
 
 - Candidato autenticado.
-- Existe candidatura registrada.
+- Existe ao menos uma candidatura do próprio candidato.
+
+## Pontos de Inclusão e Extensão
+
+- Inclusão (<<include>>): UC-12 (Status da vaga).
+- Extensão (<<extend>>): UC-06 (Avaliar pós-entrevista), quando houver entrevista concluída.
+- Extensão (<<extend>>): UC-11 (Denunciar incompatibilidade), quando houver entrevista concluída.
 
 ## Fluxo Principal
 
-1. O candidato acessa “Minhas Candidaturas”.
-2. O sistema apresenta as candidaturas e o estado atual de cada processo.
-3. O candidato seleciona uma candidatura para consultar sua linha do tempo.
-4. O sistema apresenta a linha do tempo com os tipos de evento “Candidatura realizada”, “Status” e “Candidatura cancelada”, quando aplicáveis. O tipo “Status” pode representar estados gerais como “Em andamento”, “Entrevista” e “Aprovado”. Cada evento apresenta a data, sem exigir horário, uma descrição breve e compreensível e o status ou etapa resultante, quando aplicável. Os eventos são exibidos do mais recente para o mais antigo. O histórico exibido limita-se à própria candidatura do candidato e não expõe dados de terceiros nem informações internas não destinadas ao acompanhamento.
-5. O sistema permite ao candidato cancelar a própria candidatura após confirmação, somente nos estados `Inscrita`, `Triagem`, `Entrevista` ou `Finalista`, desde que a vaga não esteja encerrada nem bloqueada de forma que impeça o cancelamento.
-6. Após confirmação e validação, o sistema registra o cancelamento, preserva o histórico e notifica o recrutador responsável. Se a candidatura estiver em `Contratado`, `Recusada` ou já cancelada, ou se a vaga estiver encerrada/bloqueada de forma impeditiva, o sistema recusa a operação sem alterar o estado.
+1. O candidato acessa "Minhas candidaturas".
+2. O sistema lista as candidaturas com a vaga, a empresa, a data e a etapa atual, com os rótulos do candidato: Inscrita, Em triagem, Em entrevista, Finalista, Aprovada, Recusada ou Cancelada.
+3. O candidato abre uma candidatura.
+4. O sistema mostra o status da vaga (UC-12), o resultado de compatibilidade registrado na candidatura, as entrevistas marcadas (data, modalidade, local ou link e recursos de acessibilidade) e a linha do tempo.
+5. A linha do tempo mostra, do mais recente para o mais antigo, os eventos "Candidatura realizada", "Status: <etapa>" e "Candidatura cancelada", com data, descrição curta e etapa resultante. Não mostra quem moveu a candidatura nem observações internas da Empresa.
 
-## Exceções
+## Fluxo Alternativo — Cancelar candidatura
 
-- EX01: vaga encerrada é apresentada com o novo status e impede novas ações incompatíveis.
-- EX02: candidatura cancelada permanece disponível no histórico por 60 dias após o cancelamento; depois desse prazo, deixa de ser exibida no acompanhamento do candidato.
-- EX03: após o encerramento da vaga, o histórico permanece disponível ao candidato por 60 dias a partir do encerramento; depois desse prazo, deixa de ser exibido no acompanhamento. A retenção dos registros técnicos de auditoria é independente.
-- EX04: tentativa de cancelar candidatura em estado final (`Contratado`, `Recusada` ou já cancelada), ou associada a vaga encerrada/bloqueada de forma impeditiva, é recusada sem alteração.
+1. O candidato aciona "Cancelar candidatura" e confirma.
+2. O sistema verifica se a candidatura está ativa (Inscrita, Em triagem, Em entrevista ou Finalista). Se a vaga estiver encerrada, o cancelamento só é aceito até Em entrevista.
+3. O sistema grava o cancelamento e o evento no histórico na mesma operação, cancela a entrevista agendada, se houver, e avisa o responsável pela vaga (quem a criou, se ainda vinculado, ou a conta da Empresa; OPEN-093).
+
+## Exceções e Fluxos Alternativos
+
+- EX01 (Cancelamento recusado): candidatura Aprovada, Recusada ou já cancelada, ou Finalista em vaga encerrada, não pode ser cancelada; o sistema explica o motivo e nada muda.
+- EX02 (Prazo de exibição): candidatura cancelada ou de vaga encerrada continua visível por 60 dias a partir do cancelamento ou do encerramento (o que vier primeiro); depois sai da lista. Os registros de auditoria seguem a retenção própria (RNF-08).
+- EX03 (Ocultar da lista): o candidato pode tirar da lista uma candidatura Recusada ou Cancelada. Nada é apagado.
+- EX04 (Candidatura de outra pessoa): pedir uma candidatura que não é do candidato tem a mesma resposta de uma que não existe.
 
 ## Pós-condições
 
-- O candidato visualiza o estado atualizado de suas candidaturas.
-- Alterações relevantes permanecem registradas.
-- O histórico funcional apresentado ao candidato não substitui a auditoria técnica, cuja retenção é independente.
+- O candidato vê a etapa atual e o histórico das suas candidaturas.
+- Um cancelamento aceito fica registrado no histórico, que é preservado.
 
 ## Regras de negócio relacionadas
 
@@ -45,10 +55,6 @@ Permitir ao candidato consultar suas próprias candidaturas, acompanhar etapas, 
 - RB-41 — Auditoria das alterações.
 - RB-42 — Vaga encerrada.
 
-## Escopo de gestão da candidatura (RF-28)
-
-As operações disponíveis ao candidato são consultar suas próprias candidaturas, acompanhar status/etapas e histórico disponível e cancelar a própria candidatura nas condições definidas neste caso de uso. Editar uma candidatura já enviada, excluir seu registro ou alterar etapas do processo seletivo não fazem parte deste escopo.
-
 ## Requisitos relacionados
 
 - RF-11 — Minhas candidaturas.
@@ -57,12 +63,21 @@ As operações disponíveis ao candidato são consultar suas próprias candidatu
 - RF-31 — Acompanhamento do processo seletivo.
 - RF-34 — Cancelamento de candidatura.
 
+## Escopo
+
+O candidato consulta, acompanha, cancela e oculta as próprias candidaturas. Editar uma candidatura enviada, apagá-la ou mudar a etapa não faz parte deste caso de uso (a etapa é mudada pela Empresa no UC-09).
+
 ## Critérios de aceitação
 
-- O candidato visualiza candidaturas e estados atualizados.
-- Alterações relevantes são comunicadas conforme as regras.
-- O candidato pode cancelar a própria candidatura nos estados `Inscrita`, `Triagem`, `Entrevista` ou `Finalista`, após confirmação e se a vaga não estiver encerrada nem bloqueada de forma impeditiva.
-- Candidaturas `Contratado`, `Recusada` ou já canceladas não podem ser canceladas novamente; a recusa não altera o estado.
-- Cancelamento confirmado preserva o histórico e notifica o recrutador responsável.
-- A linha do tempo apresenta eventos aplicáveis com data, descrição breve e status/etapa resultante quando aplicável, em ordem do mais recente para o mais antigo.
-- O histórico apresentado contém somente informações destinadas ao acompanhamento da própria candidatura; a auditoria técnica mantém retenção independente.
+- O candidato vê apenas as próprias candidaturas, com a etapa atual.
+- A linha do tempo segue a ordem do mais recente para o mais antigo e não expõe dados internos.
+- Candidatura ativa pode ser cancelada após confirmação; em vaga encerrada, só até Em entrevista.
+- Cancelamento recusado não altera a candidatura.
+- Cancelamento aceito preserva o histórico e avisa o responsável pela vaga.
+- Candidaturas canceladas ou de vagas encerradas somem da lista após 60 dias.
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-05-funil.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-05-funil.puml` (PlantUML).
