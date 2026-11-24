@@ -42,7 +42,7 @@ A interface **SHALL** usar linguagem simples, navegação consistente dentro de 
 
 **WHEN** um dado informado for recusado, o sistema **SHALL** indicar o campo e o que fazer para corrigir.
 
-**WHEN** a pessoa tentar sair de uma página com alterações não salvas, o sistema **SHALL** perguntar antes se deseja salvar, sair sem salvar ou continuar na página (OPEN-101).
+**WHEN** a pessoa tentar sair de uma página com alterações não salvas por um link do site ou por "Sair da conta", o sistema **SHALL** perguntar antes se deseja salvar, sair sem salvar ou continuar na página; ao recarregar, fechar a aba ou ir para outro site, **SHALL** acionar o aviso padrão do navegador (OPEN-101). O botão Voltar do navegador não mostra o aviso nesta versão (limitação registrada na OPEN-101).
 
 ## RNF-05 Desempenho
 
@@ -86,7 +86,7 @@ O sistema **SHALL** tratar dados pessoais conforme a LGPD e coletar apenas o nec
 
 O sistema **SHALL NOT** armazenar laudo médico (RB-28). Comprovantes enviados pelo candidato **SHALL** ter até **4 MB**, em PDF, JPG, PNG, DOC ou DOCX conferidos pelo conteúdo do arquivo; a foto de perfil **SHALL** ter até **1 MB**, em JPG, PNG ou WebP.
 
-Registros de auditoria, resultados de compatibilidade e notificações **SHALL** ser apagados após **1 ano**; tentativas de login **SHALL** ser apagadas após **24 horas** e bloqueios, depois de expirarem; avaliações pós-entrevista **SHALL** ser anonimizadas após **1 ano**, mantendo só as notas, a empresa e o ano.
+Registros de auditoria (exceto os marcados para guarda obrigatória, `retentionHold`), resultados de compatibilidade e notificações já enviadas ou com falha definitiva **SHALL** ser apagados após **1 ano**; tentativas de login **SHALL** ser apagadas após **24 horas** e bloqueios, depois de expirarem; avaliações pós-entrevista **SHALL** ser anonimizadas após **1 ano**, mantendo só as notas, a empresa e o ano.
 
 ## RNF-09 Integridade dos dados
 
@@ -100,7 +100,7 @@ O histórico do funil e o histórico da moderação **SHALL NOT** ser alterados 
 
 **Tipo EARS:** Event-driven
 
-**WHEN** a compatibilidade for calculada duas vezes com os mesmos dados do candidato e da vaga, o sistema **SHALL** produzir o mesmo resultado.
+**WHEN** a compatibilidade for calculada duas vezes com os mesmos dados do candidato e da vaga e o mesmo tempo de trajeto, o sistema **SHALL** produzir o mesmo resultado. Se o serviço de trajeto falhar num cálculo e responder no seguinte, o primeiro resultado será "dados insuficientes" e o segundo poderá ter score: a falha não é guardada, e o cálculo é refeito na próxima consulta.
 
 O cálculo **SHALL** usar os pesos 50% (acessibilidade), 30% (perfil técnico) e 20% (modalidade e deslocamento) (RB-03 a RB-05) e **SHALL NOT** usar LLM nem presumir dado não informado (RB-16).
 
@@ -126,7 +126,7 @@ O sistema **SHALL** funcionar nas duas versões mais recentes do Chrome, Edge, F
 
 **Tipo EARS:** Event-driven
 
-**WHEN** ocorrer uma operação relevante (login, recuperação de senha, cadastro e alteração de vaga, mudança de etapa, decisão sobre denúncia, consentimento, envio ou remoção de foto e de comprovante, importação de vagas), o sistema **SHALL** registrar o evento com data e hora, autor, tipo de operação e objeto afetado (RB-27, RB-37, RB-41).
+**WHEN** ocorrer uma operação relevante (login, recuperação de senha, cadastro e alteração de vaga, envio de candidatura, de avaliação e de denúncia, mudança de etapa, decisão sobre denúncia, consentimento, envio ou remoção de foto e de comprovante, importação de vagas), o sistema **SHALL** registrar o evento com data e hora, autor, tipo de operação e objeto afetado (RB-27, RB-37, RB-41).
 
 O registro **SHALL NOT** conter senha, hash de senha, token de sessão, link de recuperação nem chave de serviço externo.
 
