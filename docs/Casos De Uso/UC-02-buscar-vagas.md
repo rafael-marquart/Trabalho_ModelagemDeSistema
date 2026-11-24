@@ -57,7 +57,7 @@ Permitir que o candidato encontre vagas abertas, com busca por texto e filtros, 
 
 ## Vagas externas
 
-Vagas externas (SPEC-006, UC-14) entram na busca só depois de validadas e normalizadas. A acessibilidade delas aparece como "Não informado", modalidade e critérios técnicos ficam vazios e a área profissional é inferida pelo título, então a compatibilidade é "dados insuficientes" (RB-16). Não há candidatura nem denúncia pela plataforma: o detalhe mostra o link para o anúncio original.
+Vagas externas (SPEC-006, UC-14) entram na busca só depois de validadas e normalizadas. A acessibilidade delas aparece como "Não informado", modalidade e critérios técnicos ficam vazios e a área profissional é inferida pelo título. Como não há dados para comparar, a compatibilidade **não é calculada**: o cartão mostra "Sem cálculo de compatibilidade" no lugar do círculo, e essas vagas ficam depois das que têm score na ordenação por compatibilidade (Decisão de 24/11/2026). Não há candidatura nem denúncia pela plataforma: o detalhe mostra o link para o anúncio original.
 
 ## Critérios de aceitação
 

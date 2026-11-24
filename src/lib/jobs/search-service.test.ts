@@ -30,6 +30,17 @@ describe("candidate job search", () => {
     expect(result.jobs[0].accessibility.find(item => item.code === "RAMPS")?.statusLabel).toBeTruthy();
     expect(result.jobs[0].accessibility.find(item => item.code === "ELEVATORS")?.status).toBe("NOT_INFORMED");
   });
+  it("does not analyze external jobs: no score, listed after the scored ones", async () => {
+    prismaMock.job.findMany.mockResolvedValue([
+      row("ext", { origin: "EXTERNAL", externalSource: "ADZUNA", externalCompanyName: "Empresa Externa", company: null, accessibility: {} }),
+      row("own", { origin: "OWN" })
+    ]);
+    analyzeMock.mockResolvedValue(view("COMPLETE", 50));
+    const result = await searchJobsForCandidate("c1", searchQuerySchema.parse({}));
+    expect(analyzeMock).toHaveBeenCalledTimes(1);
+    expect(result.jobs.map(job => [job.id, job.compatibility === null])).toEqual([["own", false], ["ext", true]]);
+    expect(result.jobs[1].externalSource).toBe("Adzuna");
+  });
   it("analyzes only the jobs that match the search and filters", async () => {
     prismaMock.job.findMany.mockResolvedValue([row("a", { title: "Analista" }), row("b", { title: "Recepcionista", modality: "PRESENCIAL" })]);
     analyzeMock.mockResolvedValue(view("COMPLETE", 70));

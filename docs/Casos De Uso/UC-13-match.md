@@ -12,7 +12,7 @@ Calcular, de forma determinística e explicável, a compatibilidade entre o perf
 ## Pré-condições
 
 - Candidato autenticado.
-- Vaga aberta, publicada por empresa na plataforma ou importada de fonte externa já validada (UC-14). Na vaga externa, acessibilidade, modalidade e critérios técnicos ficam sem dados e o endereço de trabalho não é confirmado, então o resultado é "dados insuficientes". Vagas encerradas não são recalculadas; a candidatura guarda o resultado do momento em que foi feita.
+- Vaga aberta, publicada por empresa na plataforma. Vagas externas (UC-14) não passam por este cálculo: acessibilidade, modalidade e critérios técnicos vêm vazios e o endereço de trabalho não é confirmado, então o resultado seria sempre "dados insuficientes" (Decisão de 24/11/2026). Vagas encerradas não são recalculadas; a candidatura guarda o resultado do momento em que foi feita.
 
 ## Pontos de Inclusão e Extensão
 

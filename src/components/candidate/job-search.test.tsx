@@ -65,6 +65,19 @@ describe("candidate job search", () => {
     expect(group().getAllByRole("checkbox")).toHaveLength(7);
   });
 
+  it("shows external jobs without the compatibility circle", async () => {
+    const external = { id: "x1", title: "Estoquista", companyName: "Empresa Externa", modality: "", professionalArea: "Logística e operações", location: "Campinas/SP",
+      publishedAt: null, externalSource: "Adzuna", accessibility: [], compatibility: null };
+    fetchMock.mockImplementation(async () => new Response(JSON.stringify(result({ jobs: [external], total: 1, pages: 1 })), { status: 200 }));
+    const { container } = render(<JobSearch initialQuery={searchQuerySchema.parse({})} />);
+    const card = await screen.findByRole("article", { name: "Estoquista" });
+    expect(within(card).getByText("Vaga externa · Adzuna")).toBeTruthy();
+    expect(within(card).getByText("Sem cálculo de compatibilidade")).toBeTruthy();
+    expect(within(card).queryByRole("button", { name: /compatibilidade/ })).toBeNull();
+    const audit = await axe.run(container, { rules: { region: { enabled: false } } });
+    expect(audit.violations).toEqual([]);
+  });
+
   it("applies filters and search, going back to page 1 and keeping the state in the address", async () => {
     render(<JobSearch initialQuery={searchQuerySchema.parse({ pagina: 2 })} />);
     await screen.findByRole("heading", { name: "22 vagas encontradas" });

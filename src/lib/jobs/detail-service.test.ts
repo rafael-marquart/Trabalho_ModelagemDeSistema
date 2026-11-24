@@ -37,6 +37,8 @@ describe("job detail for a candidate", () => {
     expect(detail?.action.allowed).toBe(false);
     expect(detail?.jobAccessibility.every(item => item.statusLabel === "Não informado")).toBe(true);
     expect(infraMock).not.toHaveBeenCalled();
+    expect(detail?.compatibility).toBeNull();
+    expect(analyzeMock).not.toHaveBeenCalled();
   });
   it("marks missing data as not informed and exposes no internal identifiers", async () => {
     prismaMock.job.findFirst.mockResolvedValue(row());

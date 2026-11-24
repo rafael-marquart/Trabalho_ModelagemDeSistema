@@ -49,7 +49,9 @@ export async function getJobDetailForCandidate(userId: string, jobId: string, de
   const availability = availabilityOf(row.status, fields.deadline, todayInBrazil(deps.now));
   let compatibility: CompatibilityView | null = null;
   let compatibilityFromApplication: string | null = null;
-  if (availability.code === "OPEN") {
+  if (row.origin === "EXTERNAL") {
+    // No compatibility for external jobs: the ad has no data to compare (decision of 24/11/2026).
+  } else if (availability.code === "OPEN") {
     compatibility = await analyzeWithContext(userId, await loadCandidateContext(userId), row, undefined, deps);
   } else {
     // A candidate who applied keeps seeing the result registered with the application (decision of 31/10/2026).

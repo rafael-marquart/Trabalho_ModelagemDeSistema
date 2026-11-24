@@ -22,7 +22,7 @@ Descrever o fluxo de processamento e apresentação das vagas compatíveis, comp
 ## Fluxos alternativos
 
 ### A1 — Vaga externa
-A vaga externa só entra na busca depois de validada, normalizada e deduplicada na importação (UC-14). Dados de LLM só são usados se estiverem escritos no anúncio. A compatibilidade fica "dados insuficientes" e a candidatura é feita no site de origem.
+A vaga externa só entra na busca depois de validada, normalizada e deduplicada na importação (UC-14). Dados de LLM só são usados se estiverem escritos no anúncio. A compatibilidade não é calculada para ela (sem dados para comparar) e a candidatura é feita no site de origem.
 
 ### A2 — Barreira incompatível
 A vaga é considerada incompatível: não aparece na busca e não aceita candidatura. O sistema informa quantas vagas foram ocultadas por esse motivo.

@@ -10,7 +10,7 @@
 - **Execução e rastreabilidade (OPEN-027, OPEN-029):** `ExternalImportRun` guarda a origem, quem iniciou, as consultas (frase, tentativas, resultado, sem as credenciais), os totais e a situação (concluída, concluída com falhas, malsucedida). `ExternalImportRecord` guarda o resultado de cada registro (publicada, rejeitada, duplicada, falha) com o motivo. Cada registro é gravado numa transação própria; falha de um não afeta os outros. Só uma execução por vez (índice único parcial); uma execução presa por mais de 15 minutos é encerrada como malsucedida. Auditoria `EXTERNAL_IMPORT_FINISHED` com os totais.
 - **Administração:** página **Vagas externas** (`/admin/vagas-externas`), com chamadas usadas e restantes, frases, situação das credenciais, da LLM e da coleta diária, botão "Executar lote de teste" e o histórico das execuções com os registros.
 - **Coleta diária (T-006-01):** rota `/api/cron/vagas-externas`, protegida pelo `CRON_SECRET`, que fica **desligada** (`EXTERNAL_IMPORT_SCHEDULE=off`) até a autorização de uso contínuo da fonte. Não foi incluída no `vercel.json`.
-- **Para o candidato:** vagas externas entram na busca (selo "Vaga externa · Adzuna"), na compatibilidade (SPEC-007) e no detalhe (SPEC-010). Acessibilidade aparece como "Não informado" (RB-16). Não há candidatura nem denúncia dentro da plataforma; o detalhe leva ao anúncio original, com atribuição ao Adzuna.
+- **Para o candidato:** vagas externas entram na busca (selo "Vaga externa · Adzuna") e no detalhe (SPEC-010), **sem cálculo de compatibilidade** (Decisão de 24/11/2026: sem dados de acessibilidade, modalidade e critérios técnicos, o resultado seria sempre "dados insuficientes"). O cartão mostra "Sem cálculo de compatibilidade" e o detalhe explica o motivo. Acessibilidade aparece como "Não informado" (RB-16). Não há candidatura nem denúncia dentro da plataforma; o detalhe leva ao anúncio original, com atribuição ao Adzuna.
 
 ## Mapeamento do Adzuna para o modelo comum de vaga
 
@@ -36,7 +36,7 @@ Implementado em `src/lib/external-jobs/record.ts` (`fromAdzuna`). Os textos pass
 - O texto da SPEC-006 não fixa a forma física da execução; foram criadas as tabelas `ExternalImportRun` e `ExternalImportRecord`.
 - `companyId` e `createdByUserId` da vaga passaram a aceitar vazio, só para vagas externas (restrição `Job_own_has_company`).
 - A busca do endereço de trabalho por LLM/internet (OPEN-089) não foi implementada: vagas externas não têm endereço confirmado, então o deslocamento fica como "não informado".
-- Modalidade, área profissional e critérios técnicos não vêm estruturados do Adzuna e ficam vazios; a compatibilidade os trata como dados insuficientes.
+- Modalidade e critérios técnicos não vêm estruturados do Adzuna e ficam vazios; por isso a compatibilidade não é calculada para vagas externas. A área profissional é inferida pelo título.
 - Vagas externas não são encerradas automaticamente quando somem da fonte.
 
 ## Arquivos principais

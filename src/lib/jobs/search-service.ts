@@ -13,7 +13,7 @@ export type SearchResultJob = {
   // SPEC-006: "Adzuna" for an external job, null for one published by a company in the platform.
   externalSource: string | null;
   accessibility: { code: string; label: string; status: string; statusLabel: string }[];
-  compatibility: CompatibilityView;
+  compatibility: CompatibilityView | null;
 };
 export type SearchResponse = { jobs: SearchResultJob[]; page: number; pages: number; total: number; hiddenIncompatible: number; facets: Facets };
 
@@ -44,8 +44,10 @@ export async function searchJobsForCandidate(userId: string, query: SearchQuery,
   const analyzed: (SearchResultJob & { status: CompatibilityView["status"]; score: number | null; publishedAtDate: Date | null })[] = [];
   let hiddenIncompatible = 0;
   for (const { row, job } of candidates) {
-    const compatibility = await analyzeWithContext(userId, context, row, undefined, deps);
-    if (compatibility.status === "INCOMPATIBLE") { hiddenIncompatible += 1; continue; }
+    // External jobs (SPEC-006) carry no accessibility, modality or technical criteria: the analysis would always end in
+    // "insufficient data", so it is not run and no score is shown (decision of 24/11/2026).
+    const compatibility = row.origin === "EXTERNAL" ? null : await analyzeWithContext(userId, context, row, undefined, deps);
+    if (compatibility?.status === "INCOMPATIBLE") { hiddenIncompatible += 1; continue; }
     analyzed.push({
       id: job.id, title: job.title, companyName: job.companyName, modality: job.modality, professionalArea: job.professionalArea,
       externalSource: row.origin === "EXTERNAL" ? sourceLabel(row.externalSource) : null,
@@ -54,7 +56,7 @@ export async function searchJobsForCandidate(userId: string, query: SearchQuery,
         const status = job.accessibility[item.code] ?? "NOT_INFORMED";
         return { code: item.code, label: item.label, status, statusLabel: statusLabels[status as keyof typeof statusLabels] ?? statusLabels.NOT_INFORMED };
       }),
-      compatibility, status: compatibility.status, score: compatibility.score
+      compatibility, status: compatibility?.status ?? "INSUFFICIENT_DATA", score: compatibility?.score ?? null
     });
   }
   const ordered = sortResults(analyzed.map((item) => ({ ...item, publishedAt: item.publishedAtDate })), query.ordem);
