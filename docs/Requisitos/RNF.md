@@ -71,7 +71,7 @@ O sistema **SHALL**:
 - guardar senhas apenas como hash **Argon2id**;
 - exigir senha com pelo menos **10 caracteres**, com letra maiúscula, letra minúscula e número;
 - bloquear a conta por **15 minutos** após **10 tentativas incorretas consecutivas** de login;
-- encerrar a sessão após **60 minutos sem uso** ou, com "lembrar de mim", em até **30 dias**;
+- encerrar a sessão após **60 minutos sem uso**, sempre; com "lembrar de mim", a sessão continua válida depois de fechar o navegador, por no máximo **30 dias**, desde que não fique 60 minutos sem uso;
 - usar cookie de sessão `HttpOnly`, `SameSite=Lax` e `Secure` em produção;
 - recusar requisições que alteram dados quando vierem de outra origem;
 - usar links de recuperação de senha válidos por **30 minutos** e de uso único, com no máximo **3 pedidos** por conta e por IP a cada 15 minutos.

@@ -2,6 +2,24 @@
 
 Este arquivo centraliza lacunas e decisões pendentes da baseline. Cada questão possui um ID estável e aponta para as Specs afetadas. A presença de uma questão aqui **não significa que a decisão já foi tomada**.
 
+## Situação em 23/11/2026
+
+- **94 questões** registradas (OPEN-001 a OPEN-101; a OPEN-102 existe só no PR #68, junto com a SPEC-006).
+- **84 resolvidas**, **1 parcialmente resolvida** (OPEN-008) e **9 abertas** (OPEN-092, 093, 095 a 101).
+- Todas as abertas já têm **implementação provisória** em funcionamento na `main`, descrita na própria linha; o que falta é a decisão definitiva do responsável. Nenhuma delas bloqueia o uso do sistema.
+
+| OPEN | Spec | O que está em vigor | O que falta decidir |
+|---|---|---|---|
+| OPEN-092 | SPEC-013 | Nenhuma pendência impeditiva aplicada | Quais pendências existem e como pedir complementação (UC-10) |
+| OPEN-093 | SPEC-017 | Aviso de cancelamento vai para quem criou a vaga ou para a conta da Empresa | Se deve haver um "responsável" na vaga |
+| OPEN-095 | SPEC-018 | 3 recusas em 24 h geram indício para análise | Outros indícios e tela de análise |
+| OPEN-096 | SPEC-020 | Medidas registradas em texto, sem efeito automático | Se alguma medida deve ser executável pela moderação |
+| OPEN-097 | SPEC-019 | Evidência só em texto | Envio de arquivos |
+| OPEN-098 | SPEC-021 | Distribuição por empresa, sem datas nem identificadores | Mínimo de avaliações ou faixas |
+| OPEN-099 | SPEC-002 | Comprovantes até 4 MB, guardados no banco | Voltar a 10 MB com armazenamento de arquivos |
+| OPEN-100 | SPEC-001/002 | Termos, Privacidade e consentimento implementados | Revisão jurídica, novo aceite de contas antigas, exclusão de conta |
+| OPEN-101 | SPEC-002/003 | Aviso de alterações não salvas e foto de perfil | Ocultar a foto das empresas até alguma etapa |
+
 ## Antes de revisar as questões em aberto
 
 Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguintes pontos documentais. Eles são correções/checagens da consistência das Specs, não decisões de produto; não marcar OPEN como resolvida por causa deles.
@@ -15,12 +33,12 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 7. **Compatibilidade e nota pública — manter separação de responsabilidades:** a trava crítica precede o score; dados ausentes não significam compatibilidade; a administração da plataforma atua sobre denúncias e não altera diretamente avaliações nem a distribuição pública de estrelas. Não inventar fórmula da compatibilidade.
 8. **Mapa e detalhamento — fazer conferência final:** verificar IDs, títulos, dependências, requisitos, regras, RNFs, entidades e casos de uso em `mapa-specs.md` e `Specs.md`.
 
-### Ordem de trabalho sugerida
-- [ ] Validar as correções documentais acima com a baseline e com o grupo.
-- [ ] Registrar eventuais correções adicionais em `Specs.md` e no relatório `revisao-consistencia-specs.md`.
-- [ ] Só então iniciar a discussão das questões OPEN, mantendo-as abertas até decisão explícita.
-- [ ] Após as decisões, atualizar a OPEN correspondente e refletir a decisão nos artefatos afetados.
-- [ ] Aprovar os textos das Specs e, separadamente, os layouts aplicáveis antes de qualquer implementação.
+### Ordem de trabalho sugerida (concluída)
+- [x] Validar as correções documentais acima com a baseline e com o grupo (REV-001 a REV-018 em `revisao-consistencia-specs.md`).
+- [x] Registrar eventuais correções adicionais em `Specs.md` e no relatório `revisao-consistencia-specs.md`.
+- [x] Só então iniciar a discussão das questões OPEN, mantendo-as abertas até decisão explícita.
+- [x] Após as decisões, atualizar a OPEN correspondente e refletir a decisão nos artefatos afetados.
+- [x] Aprovar os textos das Specs (registro consolidado e REV-018) e, separadamente, os layouts aplicáveis (aprovados sobre as telas implementadas, conforme o estado de layout de cada Spec).
 
 ## Estados
 

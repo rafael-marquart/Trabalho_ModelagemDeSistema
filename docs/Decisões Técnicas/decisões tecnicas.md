@@ -22,7 +22,7 @@ Esta seção substitui a diretriz escrita em 25/10/2026, antes de existir códig
 | Estilo de implantação | Monólito modular: uma aplicação Next.js (páginas e API no mesmo projeto), sem microsserviços. |
 | Camadas | Páginas e componentes React → rotas da API (`src/app/api`) → serviços e regras em `src/lib` → Prisma/PostgreSQL e adaptadores externos. Desvios em `docs/Implementacao/desvios.md`. |
 | Persistência | PostgreSQL com Prisma. Migrações versionadas em `prisma/migrations`. Restrições no banco: índice único parcial para uma candidatura ativa por vaga e um vínculo ativo por recrutador; gatilhos que impedem alterar o histórico do funil, da moderação, dos consentimentos e as notas das avaliações. |
-| Sessões | Sessão no banco (tabela `Session`) com token opaco em cookie `HttpOnly`, `SameSite=Lax` e `Secure` em produção; só o hash do token é guardado. 60 minutos sem uso, ou até 30 dias com "lembrar de mim". Logout e troca de senha revogam as sessões. |
+| Sessões | Sessão no banco (tabela `Session`) com token opaco em cookie `HttpOnly`, `SameSite=Lax` e `Secure` em produção; só o hash do token é guardado. Expira após 60 minutos sem uso; com "lembrar de mim", o cookie sobrevive ao fechamento do navegador por no máximo 30 dias (a regra dos 60 minutos continua valendo). Logout e troca de senha revogam as sessões. |
 | Senhas | Hash Argon2id; política de 10 caracteres com maiúscula, minúscula e número; bloqueio de 15 minutos após 10 falhas consecutivas. |
 | Recuperação e convites | Tokens aleatórios guardados só como hash, de uso único: recuperação válida por 30 minutos, convite de recrutador por 7 dias. |
 | E-mail | Adaptador SMTP (Nodemailer) configurado por variáveis de ambiente: Mailpit no local, Ethereal no ambiente de testes, Brevo em produção. |

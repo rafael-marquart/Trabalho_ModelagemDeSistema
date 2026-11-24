@@ -24,7 +24,7 @@ Permitir que cada perfil acesse a plataforma de forma segura, com credenciais va
 4. A pessoa informa as credenciais e confirma.
 5. O sistema valida as credenciais no servidor.
 6. Se forem válidas, o sistema cria a sessão e leva a pessoa à área do seu perfil.
-7. A sessão termina após 60 minutos sem uso ou, com "Lembrar de mim", em até 30 dias (RNF-07).
+7. A sessão termina após 60 minutos sem uso. Com "Lembrar de mim", ela continua válida ao reabrir o navegador, por no máximo 30 dias, desde que não fique 60 minutos sem uso (RNF-07).
 
 ## Exceções e Fluxos Alternativos
 

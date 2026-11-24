@@ -15,6 +15,8 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 
 **Escopo atualizado:** SPEC-014 (Solicitar acomodação) e SPEC-015 (Processar solicitação de acomodação) foram removidas do escopo. Os IDs posteriores foram preservados para evitar quebrar rastreabilidade.
 
+**Situação (23/11/2026):** todas as Specs estão implementadas na `main`, exceto a SPEC-006 (vagas externas), cuja implementação está em revisão no PR #68 com decisão de escopo pendente. A situação detalhada de cada Spec está no "Registro consolidado" ao final de `docs/Specs.md`. Os nomes de entidades seguem o modelo conceitual atual (`docs/Modelo Conceitual/ModeloConceitual.md`).
+
 ### SPEC-001 — Acessar a plataforma e identificar perfil organizacional
 
 | Campo | Conteúdo |
@@ -22,11 +24,11 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **ID** | SPEC-001 |
 | **Objetivo** | Permitir cadastro e autenticação de usuários e empresas, recuperação de senha, aplicação das permissões correspondentes aos perfis de acesso e, para o perfil de Recrutador, permitir que uma Empresa o cadastre e mantenha seu vínculo organizacional. |
 | **Valor** | Estabelece a identidade, a autorização e o vínculo organizacional necessários para que candidatos, recrutadores e administradores acessem as capacidades correspondentes. |
-| **RF** | RF-01, RF-02, RF-03, RF-17, RF-40 |
+| **RF** | RF-01, RF-02, RF-03, RF-17, RF-40, RF-42, RF-45 |
 | **RB** | RB-12, RB-21, RB-22, RB-27, RB-46 |
 | **RNF** | RNF-07, RNF-08, RNF-09, RNF-14 |
 | **UC / fluxo** | UC-00 — Login; UC-07 — Infraestrutura / gestão da empresa |
-| **Entidades** | USUARIO, CANDIDATO, ADMINISTRADOR, EMPRESA e RECRUTADOR como perfil de USUARIO vinculado à EMPRESA; a Empresa cadastra e vincula o Recrutador conforme RB-46. |
+| **Entidades** | USUARIO (perfis CANDIDATE, COMPANY, RECRUITER e ADMIN), EMPRESA, VINCULO_RECRUTADOR, CONVITE_RECRUTADOR, CONSENTIMENTO; a Empresa convida e vincula o Recrutador conforme RB-46. |
 | **Drivers** | DA-02 |
 | **ADRs** | ADR-002, ADR-004 |
 | **Dependências** | Nenhuma. |
@@ -39,11 +41,11 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **ID** | SPEC-002 |
 | **Objetivo** | Permitir ao candidato cadastrar, consultar e atualizar dados profissionais e necessidades funcionais de acessibilidade. |
 | **Valor** | Disponibiliza os dados necessários para busca, compatibilidade e candidatura, preservando a possibilidade de autodeclaração. |
-| **RF** | RF-04, RF-19 |
-| **RB** | RB-06, RB-26, RB-27, RB-28, RB-29 |
-| **RNF** | RNF-08, RNF-09, RNF-14 |
+| **RF** | RF-04, RF-19, RF-41, RF-43 |
+| **RB** | RB-06, RB-26, RB-27, RB-28, RB-29, RB-47, RB-48 |
+| **RNF** | RNF-08, RNF-09, RNF-14, RNF-18 |
 | **UC / fluxo** | UC-01 — Gerenciar Perfil |
-| **Entidades** | CANDIDATO, VETOR_ACESSIBILIDADE_CANDIDATO |
+| **Entidades** | USUARIO, PERFIL_CANDIDATO, CATALOGO_NECESSIDADE, COMPROVANTE, FOTO, CONSENTIMENTO |
 | **Drivers** | DA-01, DA-02 |
 | **ADRs** | ADR-001, ADR-002, ADR-004 |
 | **Dependências** | SPEC-001. |
@@ -54,13 +56,13 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | Campo | Conteúdo |
 |---|---|
 | **ID** | SPEC-003 |
-| **Objetivo** | Disponibilizar os recursos funcionais de acessibilidade previstos para uso da plataforma, incluindo leitores de tela, navegação por teclado, alto contraste e comandos de voz. |
+| **Objetivo** | Disponibilizar os recursos funcionais de acessibilidade da interface: leitores de tela, navegação por teclado, alto contraste, tema escuro, mostrar senha e aviso de alterações não salvas. Comandos de voz próprios ficaram fora desta versão (roteiro no PR #67). |
 | **Valor** | Permite que usuários PcD utilizem as capacidades do sistema com autonomia. |
-| **RF** | RF-16 |
+| **RF** | RF-16, RF-44, RF-45 |
 | **RB** | — |
-| **RNF** | RNF-01, RNF-02, RNF-03, RNF-04, RNF-13 |
+| **RNF** | RNF-01, RNF-02, RNF-03, RNF-04, RNF-13, RNF-19 |
 | **UC / fluxo** | UC-00, UC-01, UC-02 e UC-03, como capacidade transversal da interação. |
-| **Entidades** | — |
+| **Entidades** | PREFERENCIA |
 | **Drivers** | DA-01 |
 | **ADRs** | ADR-001 |
 | **Dependências** | SPEC-001. |
@@ -94,7 +96,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **RB** | RB-01, RB-13, RB-16, RB-27 |
 | **RNF** | RNF-07, RNF-09, RNF-14 |
 | **UC / fluxo** | UC-08 — Publicar Vaga |
-| **Entidades** | EMPRESA, VAGA, TRAVA_CRITICA_VAGA, INFRAESTRUTURA_EMPRESA |
+| **Entidades** | EMPRESA, VAGA (com a acessibilidade declarada, que é a trava crítica da vaga), INFRAESTRUTURA_EMPRESA |
 | **Drivers** | DA-02, DA-03, DA-04 |
 | **ADRs** | ADR-002, ADR-004 |
 | **Dependências** | SPEC-001, SPEC-004. |
@@ -105,7 +107,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | Campo | Conteúdo |
 |---|---|
 | **ID** | SPEC-006 |
-| **Objetivo** | Ingerir dados estruturados de fontes externas, especialmente vagas, validar o JSON recebido, tratar registros inválidos ou incompletos, validar dados extraídos por LLM, normalizar e deduplicar registros e registrar a origem e o resultado da importação antes de disponibilizar vagas válidas ao domínio, preservando os registros válidos existentes. |
+| **Objetivo** | Ingerir dados estruturados de fontes externas, especialmente vagas, validar o JSON recebido, tratar registros inválidos ou incompletos, validar dados extraídos por LLM, normalizar e deduplicar registros e registrar a origem e o resultado da importação antes de disponibilizar vagas válidas ao domínio, preservando os registros válidos existentes. **Situação:** não implementada na `main`; implementação em revisão no PR #68. |
 | **Valor** | Integra fontes externas ao AcessaVagas de forma controlada, ampliando o catálogo sem perder integridade, rastreabilidade ou padronização. |
 | **RF** | RF-05, RF-36, RF-37, RF-38, RF-39 |
 | **RB** | RB-10, RB-11, RB-17, RB-18, RB-31, RB-32, RB-33, RB-37, RB-41 |
@@ -128,7 +130,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **RB** | RB-02, RB-03, RB-04, RB-05, RB-06, RB-07, RB-15, RB-16, RB-30 |
 | **RNF** | RNF-10, RNF-15 |
 | **UC / fluxo** | UC-13 — Match; acionado também por UC-02 e UC-03. |
-| **Entidades** | CANDIDATO, VETOR_ACESSIBILIDADE_CANDIDATO, VAGA, TRAVA_CRITICA_VAGA |
+| **Entidades** | PERFIL_CANDIDATO, CATALOGO_NECESSIDADE, VAGA, RESULTADO_COMPATIBILIDADE |
 | **Drivers** | DA-03, DA-04 |
 | **ADRs** | ADR-004 |
 | **Dependências** | SPEC-002, SPEC-005, SPEC-006. |
@@ -145,7 +147,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **RB** | RB-02, RB-03, RB-04, RB-05, RB-10, RB-13, RB-16, RB-17, RB-30 |
 | **RNF** | RNF-01, RNF-03, RNF-04, RNF-05, RNF-13 |
 | **UC / fluxo** | UC-02 — Buscar Vagas |
-| **Entidades** | VAGA, EMPRESA, INFRAESTRUTURA_EMPRESA, TRAVA_CRITICA_VAGA |
+| **Entidades** | VAGA, EMPRESA, INFRAESTRUTURA_EMPRESA |
 | **Drivers** | DA-01, DA-03, DA-04, DA-06, DA-08 |
 | **ADRs** | ADR-001, ADR-004 |
 | **Dependências** | SPEC-002, SPEC-005, SPEC-006, SPEC-007. |
@@ -180,7 +182,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **RB** | RB-13, RB-16, RB-30 |
 | **RNF** | RNF-01, RNF-03, RNF-04, RNF-08 |
 | **UC / fluxo** | UC-02 — Buscar Vagas |
-| **Entidades** | VAGA, EMPRESA, INFRAESTRUTURA_EMPRESA, TRAVA_CRITICA_VAGA |
+| **Entidades** | VAGA, EMPRESA, INFRAESTRUTURA_EMPRESA |
 | **Drivers** | DA-01, DA-03, DA-04, DA-06 |
 | **ADRs** | ADR-001, ADR-004 |
 | **Dependências** | SPEC-007, SPEC-008. |
@@ -197,7 +199,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **RB** | RB-01, RB-14, RB-15, RB-34, RB-42 |
 | **RNF** | RNF-07, RNF-09, RNF-10, RNF-15 |
 | **UC / fluxo** | UC-03 — Candidatar |
-| **Entidades** | CANDIDATO, VAGA, CANDIDATURA |
+| **Entidades** | USUARIO (candidato), VAGA, CANDIDATURA, RESULTADO_COMPATIBILIDADE, EVENTO_ETAPA |
 | **Drivers** | DA-02, DA-03, DA-04 |
 | **ADRs** | ADR-002, ADR-004 |
 | **Dependências** | SPEC-001, SPEC-002, SPEC-007, SPEC-010. |
@@ -214,7 +216,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **RB** | RB-23, RB-36, RB-41, RB-42 |
 | **RNF** | RNF-08, RNF-09, RNF-14 |
 | **UC / fluxo** | UC-05 — Funil / UC-12 — Status da Vaga |
-| **Entidades** | CANDIDATO, CANDIDATURA, VAGA |
+| **Entidades** | USUARIO (candidato), CANDIDATURA, EVENTO_ETAPA, VAGA |
 | **Drivers** | DA-02, DA-07 |
 | **ADRs** | ADR-002, ADR-004 |
 | **Dependências** | SPEC-011. |
@@ -231,7 +233,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **RB** | RB-23, RB-26, RB-27, RB-38, RB-39, RB-41, RB-42, RB-43 |
 | **RNF** | RNF-07, RNF-09, RNF-14, RNF-15 |
 | **UC / fluxo** | UC-09 — Gerenciar Funil de Seleção (referência para gestão pelo Recrutador); estados, transições e condições formais de avanço definidos em docs/Fluxos e Estados/estados-trilha.md. Validar autorização, transição prevista na RB-39 e ausência de pendências impeditivas, conforme OPEN-054 resolvida. OPEN-055/056 resolvidas: acesso limitado à finalidade/necessidade em todas as etapas; histórico com etapa anterior/resultante, data/hora, ator, tipo de movimentação/decisão e justificativa quando exigida; preservação dos eventos e vedação de reversões fora da RB-39. UC-05 é o acompanhamento pelo candidato e permanece separado. |
-| **Entidades** | CANDIDATURA, VAGA, ENTREVISTA, USUARIO/RECRUTADOR vinculado à EMPRESA. |
+| **Entidades** | CANDIDATURA, EVENTO_ETAPA, VAGA, ENTREVISTA, USUARIO (Empresa ou Recrutador vinculado à EMPRESA) |
 | **Drivers** | DA-02, DA-07 |
 | **ADRs** | ADR-002, ADR-004 |
 | **Dependências** | SPEC-001, SPEC-004, SPEC-011. |
@@ -265,7 +267,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **RB** | RB-23, RB-42 |
 | **RNF** | RNF-03, RNF-04, RNF-05, RNF-08 |
 | **UC / fluxo** | UC-12 — Status da Vaga; UC-05 — Funil |
-| **Entidades** | VAGA, CANDIDATURA |
+| **Entidades** | NOTIFICACAO, PREFERENCIA, VAGA, CANDIDATURA |
 | **Drivers** | DA-02, DA-08 |
 | **ADRs** | ADR-002, ADR-004 |
 | **Dependências** | SPEC-012, SPEC-013, SPEC-016. |
@@ -299,7 +301,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **RB** | RB-24, RB-25, RB-27, RB-37, RB-44 |
 | **RNF** | RNF-08, RNF-14 |
 | **UC / fluxo** | UC-11 — Denúncia |
-| **Entidades** | DENUNCIA_FALSA_INCLUSAO, AVALIACAO_POS_ENTREVISTA, EMPRESA |
+| **Entidades** | DENUNCIA, EVENTO_DENUNCIA, VAGA, EMPRESA, AVALIACAO_POS_ENTREVISTA |
 | **Drivers** | DA-07 |
 | **ADRs** | ADR-004 |
 | **Dependências** | SPEC-018. |
@@ -316,7 +318,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **RB** | RB-20, RB-24, RB-25, RB-27, RB-37, RB-44, RB-45 |
 | **RNF** | RNF-07, RNF-08, RNF-09, RNF-14 |
 | **UC / fluxo** | UC-11 — Denúncia |
-| **Entidades** | ADMINISTRADOR, DENUNCIA_FALSA_INCLUSAO, AVALIACAO_POS_ENTREVISTA, EMPRESA |
+| **Entidades** | USUARIO (administrador), DENUNCIA, EVENTO_DENUNCIA, EMPRESA |
 | **Drivers** | DA-02, DA-07 |
 | **ADRs** | ADR-002, ADR-004 |
 | **Dependências** | SPEC-001, SPEC-019. |
@@ -333,7 +335,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | **RB** | RB-19, RB-20, RB-27, RB-37, RB-44, RB-45 |
 | **RNF** | RNF-08, RNF-09, RNF-14 |
 | **UC / fluxo** | UC-06 — Avaliar; UC-11 — Denúncia |
-| **Entidades** | EMPRESA, AVALIACAO_POS_ENTREVISTA, DENUNCIA_FALSA_INCLUSAO |
+| **Entidades** | EMPRESA, AVALIACAO_POS_ENTREVISTA |
 | **Drivers** | DA-07 |
 | **ADRs** | ADR-004 |
 | **Dependências** | SPEC-018, SPEC-020. |
