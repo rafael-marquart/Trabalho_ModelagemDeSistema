@@ -211,7 +211,7 @@ Comandos de voz próprios do sistema não fazem parte desta versão (seção 5.4
 
 **Tipo EARS:** Event-driven · **Specs:** SPEC-002, SPEC-013
 
-**WHEN** a Empresa ou um Recrutador vinculado abrir uma candidatura, o sistema **SHALL** mostrar o perfil do candidato necessário à vaga, os comprovantes enviados por ele e a foto, se houver.
+**WHEN** a Empresa ou um Recrutador vinculado abrir uma candidatura, o sistema **SHALL** mostrar o nome e o e-mail de contato, o perfil profissional, o resumo da compatibilidade, as necessidades e os recursos indispensáveis de acessibilidade (com consentimento, RB-26) e a foto, se houver. Comprovantes, CPF, descrições livres de acessibilidade e informações médicas **SHALL NOT** ser mostrados (OPEN-055).
 
 ### RF-35 Gestão do funil de seleção
 
@@ -251,7 +251,7 @@ Comandos de voz próprios do sistema não fazem parte desta versão (seção 5.4
 
 **Tipo EARS:** Event-driven · **Specs:** SPEC-019
 
-**WHEN** um candidato encontrar divergência de acessibilidade ou falsa inclusão, o sistema **SHALL** permitir registrar uma denúncia vinculada à vaga, com motivo e descrição, respeitando o limite da RB-24, e acompanhar o andamento.
+**WHEN** um candidato que teve entrevista concluída numa candidatura à vaga encontrar divergência de acessibilidade ou falsa inclusão, o sistema **SHALL** permitir registrar uma denúncia vinculada à vaga, com categoria, descrição e evidência opcional (sem laudo ou documento pessoal), respeitando o limite da RB-24, e acompanhar o andamento. **IF** o candidato não teve entrevista concluída naquela vaga, o sistema **SHALL** recusar a denúncia (revisão da OPEN-074 em 01/11/2026).
 
 ### RF-22 Moderação e gestão de denúncias
 
