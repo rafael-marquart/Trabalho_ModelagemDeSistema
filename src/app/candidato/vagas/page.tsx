@@ -13,7 +13,7 @@ export default async function CandidateJobsPage({ searchParams }: { searchParams
   const raw = await searchParams;
   const asList = (value: string | string[] | undefined) => (value === undefined ? [] : Array.isArray(value) ? value : [value]);
   const parsed = searchQuerySchema.safeParse({
-    q: typeof raw.q === "string" ? raw.q : undefined, cargo: asList(raw.cargo), area: asList(raw.area), modalidade: asList(raw.modalidade),
+    q: typeof raw.q === "string" ? raw.q : undefined, area: asList(raw.area), modalidade: asList(raw.modalidade),
     local: asList(raw.local), acessibilidade: asList(raw.acessibilidade), ordem: typeof raw.ordem === "string" ? raw.ordem : undefined,
     pagina: typeof raw.pagina === "string" ? raw.pagina : undefined
   });
