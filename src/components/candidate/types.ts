@@ -11,5 +11,5 @@ export type SearchJob = {
   accessibility: { code: string; label: string; status: string; statusLabel: string }[];
   compatibility: Compatibility;
 };
-export type Facets = { cargo: string[]; area: string[]; modalidade: string[]; local: string[] };
+export type Facets = { area: string[]; modalidade: string[]; local: string[] };
 export type SearchResult = { jobs: SearchJob[]; page: number; pages: number; total: number; hiddenIncompatible: number; facets: Facets };

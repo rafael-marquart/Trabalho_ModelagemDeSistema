@@ -24,7 +24,7 @@ const result = (over: Partial<SearchResult> = {}): SearchResult => ({
       accessibility: [{ code: "RAMPS", label: "Rampas de acesso", status: "PRESENT", statusLabel: "Presente" }], compatibility: complete },
     { id: "j2", title: "Assistente", companyName: "Horizonte", modality: "PRESENCIAL", professionalArea: "", location: "Campinas/SP", publishedAt: null, accessibility: [], compatibility: insufficient }
   ],
-  page: 1, pages: 2, total: 22, hiddenIncompatible: 1, facets: { cargo: ["Analista de Dados", "Assistente"], area: ["Tecnologia da informação"], modalidade: ["HIBRIDO", "PRESENCIAL"], local: ["Campinas/SP", "São Paulo/SP"] }, ...over
+  page: 1, pages: 2, total: 22, hiddenIncompatible: 1, facets: { area: ["Tecnologia da informação"], modalidade: ["HIBRIDO", "PRESENCIAL"], local: ["Campinas/SP", "São Paulo/SP"] }, ...over
 });
 const fetchMock = vi.fn();
 
@@ -39,7 +39,30 @@ describe("candidate job search", () => {
     expect(screen.getByRole("button", { name: /Faltam dados: compatibilidade dados insuficientes/ })).toBeTruthy();
     expect(screen.getByText(/1 vaga não aparece/)).toBeTruthy();
     expect(screen.getByRole("group", { name: "Modalidade" })).toBeTruthy();
+    expect(screen.getByRole("group", { name: "Área profissional" })).toBeTruthy();
+    expect(screen.queryByRole("group", { name: "Cargo" })).toBeNull();
     expect(within(screen.getByRole("group", { name: "Localização" })).getAllByRole("checkbox")).toHaveLength(2);
+  });
+
+  it("collapses long location lists, keeps the selected one visible and expands on request", async () => {
+    const local = ["Barueri/SP", "Campinas/SP", "Curitiba/PR", "Fortaleza/CE", "Natal/RN", "Porto Alegre/RS", "Recife/PE", "Salvador/BA", "São Paulo/SP"];
+    fetchMock.mockImplementation(async () => new Response(JSON.stringify(result({ facets: { area: ["Tecnologia da informação"], modalidade: ["HIBRIDO"], local } })), { status: 200 }));
+    const { container } = render(<JobSearch initialQuery={searchQuerySchema.parse({ local: ["Salvador/BA"] })} />);
+    await screen.findByRole("heading", { name: "22 vagas encontradas" });
+    const group = () => within(screen.getByRole("group", { name: "Localização" }));
+    expect(group().getAllByRole("checkbox")).toHaveLength(7);
+    expect(group().getByRole("checkbox", { name: "Salvador/BA" })).toHaveProperty("checked", true);
+    expect(group().queryByRole("checkbox", { name: "São Paulo/SP" })).toBeNull();
+    const toggleButton = group().getByRole("button", { name: "Mostrar todas as localizações (9)" });
+    expect(toggleButton.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(toggleButton);
+    expect(group().getAllByRole("checkbox")).toHaveLength(9);
+    expect(group().getByRole("button", { name: "Mostrar menos" }).getAttribute("aria-expanded")).toBe("true");
+    expect(within(screen.getByRole("group", { name: "Modalidade" })).queryByRole("button")).toBeNull();
+    const audit = await axe.run(container, { rules: { region: { enabled: false } } });
+    expect(audit.violations).toEqual([]);
+    fireEvent.click(group().getByRole("button", { name: "Mostrar menos" }));
+    expect(group().getAllByRole("checkbox")).toHaveLength(7);
   });
 
   it("applies filters and search, going back to page 1 and keeping the state in the address", async () => {

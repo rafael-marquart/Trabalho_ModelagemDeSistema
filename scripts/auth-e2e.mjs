@@ -1584,6 +1584,8 @@ async function main() {
     assert.ok(foundJob.compatibility && ["COMPLETE", "INSUFFICIENT_DATA"].includes(foundJob.compatibility.status), "each result carries the SPEC-007 result");
     assert.equal(foundJob.accessibility.length, infraCodes.length, "declared accessibility is shown before applying (RB-13)");
     assert.ok(found.facets.area.includes("Tecnologia da informação") && found.facets.modalidade.includes("PRESENCIAL"), "filter options come from open jobs");
+    assert.ok(!("cargo" in found.facets), "the job-title filter was replaced by the area filter");
+    await expectStatus(await search("q=analista%20E2E&cargo=qualquer"), 200, "old links with the retired job-title filter still work");
     assert.ok(!JSON.stringify(found).includes("Avenida Paulista") && !JSON.stringify(found).includes("Reservada"), "results do not expose addresses");
     const remoteOnly = JSON.parse(await expectStatus(await search("q=analista%20E2E&modalidade=REMOTO"), 200, "modality filter"));
     assert.ok(!remoteOnly.jobs.some(job => job.id === compatJob.id), "a modality filter must exclude other modalities");

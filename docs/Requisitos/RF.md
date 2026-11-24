@@ -131,7 +131,7 @@ Comandos de voz próprios do sistema não fazem parte desta versão (seção 5.4
 
 **Tipo EARS:** Event-driven · **Specs:** SPEC-008
 
-**WHEN** o candidato buscar vagas, o sistema **SHALL** permitir pesquisar por texto e filtrar por cargo, área profissional, modalidade, localidade e recursos de acessibilidade, ordenando por compatibilidade, mais recentes ou mais antigas.
+**WHEN** o candidato buscar vagas, o sistema **SHALL** permitir pesquisar por texto (no título, na descrição e no nome da empresa) e filtrar por área profissional, modalidade, localidade e recursos de acessibilidade, ordenando por compatibilidade, mais recentes ou mais antigas.
 
 ### RF-07 Análise de compatibilidade
 

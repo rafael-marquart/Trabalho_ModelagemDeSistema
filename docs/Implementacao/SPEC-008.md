@@ -6,7 +6,7 @@
 - **Início** (`/candidato`): saudação e "Vagas em destaque" (as três primeiras da busca padrão).
 - **Vagas** (`/candidato/vagas`): busca textual, filtros, ordenação e paginação; o estado fica no endereço (`?q=…&modalidade=…&ordem=…&pagina=…`).
 - **Busca textual (OPEN-037):** título/cargo, descrição e nome da Empresa; ignora maiúsculas e acentos; aceita trechos; todos os termos devem aparecer, podendo estar em campos diferentes; sem sinônimos nem correção. Também reconhece palavras com a mesma raiz ("engenharia" encontra "engenheiro"), por remoção determinística de terminações (complemento da OPEN-037, 29/10/2026).
-- **Filtros (OPEN-036):** cargo, área profissional, modalidade, localização (cidade/UF) e acessibilidade declarada pela vaga (itens da OPEN-023 marcados como presentes). Categorias diferentes por AND; valores da mesma categoria por OR. As opções vêm das vagas abertas.
+- **Filtros (OPEN-036):** área profissional (o filtro por cargo foi retirado em 24/11/2026; ver o fim deste arquivo), modalidade, localização (cidade/UF) e acessibilidade declarada pela vaga (itens da OPEN-023 marcados como presentes). Categorias diferentes por AND; valores da mesma categoria por OR. As opções vêm das vagas abertas.
 - **Elegibilidade:** apenas vagas próprias publicadas e dentro do prazo (vagas externas dependem da SPEC-006). Cada vaga é analisada pela SPEC-007; vagas com trava crítica não aparecem e a lista informa quantas foram ocultadas, sem detalhes.
 - **Ordenação (OPEN-038):** maior compatibilidade (padrão), mais recentes, mais antigas (data de publicação); empates pelo identificador interno, não exibido. Análises com dados insuficientes vêm depois das que têm score.
 - **Paginação:** 20 por página, até 100 vagas; numerada com anterior/próxima; mudar busca ou filtro volta à página 1.
@@ -23,7 +23,7 @@
 
 1. Lista de áreas profissionais: Administração, Atendimento ao cliente, Comercial e vendas, Comunicação e marketing, Educação, Engenharia, Finanças e contabilidade, Jurídico, Logística e operações, Recursos humanos, Saúde, Tecnologia da informação, Outra.
 2. Vagas com dados insuficientes aparecem na lista, depois das que têm score, sem número no círculo.
-3. O filtro "Cargo" usa os títulos das vagas abertas.
+3. O filtro "Cargo" usava os títulos das vagas abertas; foi retirado em 24/11/2026.
 
 ## Arquivos principais
 
@@ -39,3 +39,9 @@
 - E2E: busca autenticada, filtros, OR/AND, termo inexistente, reutilização sem chamar a HERE, ocultação por trava crítica, página da área do candidato, vaga encerrada sai da busca.
 - Teste manual: `docs/operacao/validacao-manual-spec-008.md`.
 - Teste manual executado pelo responsável em 29/10/2026; layout aprovado na mesma data. SPEC-008 encerrada, exceto vagas externas (SPEC-006) e integração com a SPEC-009.
+
+## Revisão de 24/11/2026 — filtro por área no lugar do cargo
+
+- Decisão do responsável em 24/11/2026: o filtro "Cargo" foi retirado e substituído pelo filtro "Área profissional", porque listava o título exato de cada vaga e a lista crescia com cada título diferente. A busca por texto continua procurando no título. (Na branch `desenvolvimento-do-projeto`, onde existem as vagas externas da SPEC-006, a área delas é inferida pelo título; isso não faz parte desta versão.)
+- Links antigos com `cargo=` continuam abrindo a busca, sem esse filtro.
+- Listas longas de filtros começam recolhidas: Localização e Área profissional mostram as 6 primeiras opções, além das já marcadas, e um botão "Mostrar todas as … (N)" / "Mostrar menos", com `aria-expanded` e `aria-controls`. Modalidade e Acessibilidade continuam abertas.

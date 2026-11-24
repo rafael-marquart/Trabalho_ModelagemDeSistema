@@ -18,7 +18,7 @@ Permitir que o candidato encontre vagas abertas, com busca por texto e filtros, 
 
 ## Fluxo Principal
 
-1. O candidato acessa "Vagas" e, se quiser, digita termos de busca e escolhe filtros por cargo, área profissional, modalidade, localização e recursos de acessibilidade da vaga (os seis itens da infraestrutura, UC-07).
+1. O candidato acessa "Vagas" e, se quiser, digita termos de busca e escolhe filtros por área profissional, modalidade, localização e recursos de acessibilidade da vaga (os seis itens da infraestrutura, UC-07). Para procurar um cargo, a pessoa digita o nome na busca por texto. Listas longas de localização e de área começam recolhidas, com o botão "Mostrar todas".
 2. A busca por texto procura no título, na descrição e no nome da empresa; ignora maiúsculas, minúsculas e acentos, compara pela raiz das palavras ("engenharia" encontra "engenheiro") e exige que todos os termos apareçam em algum desses campos. Não há sinônimos, correção de digitação nem interpretação por IA. Busca vazia não restringe.
 3. Filtros de categorias diferentes se combinam por "e"; valores da mesma categoria, por "ou". Remover um filtro mantém os demais.
 4. O sistema considera somente vagas publicadas por empresas na plataforma, abertas e dentro do prazo de inscrição.
