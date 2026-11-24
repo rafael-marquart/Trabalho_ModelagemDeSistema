@@ -145,7 +145,7 @@ Toda vaga externa **SHALL** manter a fonte, o identificador e o link do anúncio
 
 **Tipo EARS:** Event-driven
 
-**WHEN** a etapa de uma candidatura mudar, uma entrevista for agendada, alterada ou cancelada, ou a vaga for encerrada, o sistema **SHALL** informar o candidato na plataforma e por e-mail.
+**WHEN** a etapa de uma candidatura mudar, uma entrevista for agendada, alterada ou cancelada, ou a vaga for encerrada, o sistema **SHALL** informar o candidato na plataforma e, se ele não tiver desligado essa opção, por e-mail.
 
 ## Denúncias e avaliações
 
