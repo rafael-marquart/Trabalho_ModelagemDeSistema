@@ -521,7 +521,7 @@ async function main() {
 
     const profilePayload = {
       education: [{ level: "Ensino superior (graduação)", course: "Sistemas — Noturno", institution: "Instituto Federal", status: "Concluído" }],
-      languages: [{ language: "Inglês", level: "Avançado" }],
+      skills: ["Comunicação"], languages: [{ language: "Inglês", level: "Avançado" }],
       professionalExperience: [{ role: "Atendente", company: "Loja Exemplo", period: "2022 a 2024" }], courses: ["Excel avançado"], certifications: [],
       professionalLinks: ["https://example.test/perfil"],
       workPreferences: { modalities: ["Híbrido", "Remoto"], city: "Recife", state: "PE", address: "", transportMode: "Ônibus" },
@@ -554,6 +554,7 @@ async function main() {
     ));
     assert.deepEqual(savedProfile.profile.education, profilePayload.education, "education must round-trip as structured objects");
     assert.deepEqual(savedProfile.profile.professionalExperience, profilePayload.professionalExperience, "experiences must round-trip as structured objects");
+    assert.deepEqual(savedProfile.profile.skills, ["Comunicação"], "competências must round-trip");
     assert.deepEqual(savedProfile.profile.workPreferences, profilePayload.workPreferences, "work preferences must round-trip");
     await expectStatus(await putProfile({ ...profilePayload, workPreferences: { ...profilePayload.workPreferences, state: "XX" } }, profileCookie),
       400, "unknown state is rejected");

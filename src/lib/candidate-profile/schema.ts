@@ -52,6 +52,9 @@ export const candidateProfileInputSchema = z.object({
   education: z.array(educationEntrySchema).default([]),
   languages: z.array(languageEntrySchema).default([]),
   professionalExperience: z.array(experienceEntrySchema).default([]),
+  // Competências (decisão de 24/11/2026, revendo a retirada de 27/10/2026): usadas no perfil técnico da SPEC-007.
+  skills: z.array(z.string().trim().min(1).max(80, "Cada competência pode ter até 80 caracteres.")).max(30, "Informe até 30 competências.").default([])
+    .refine((values) => new Set(values.map((value) => value.toLocaleLowerCase("pt-BR"))).size === values.length, "Não repita competências."),
   courses: profileListSchema,
   certifications: profileListSchema,
   professionalLinks: professionalLinksSchema,
@@ -169,7 +172,7 @@ export function canonicalJson(value: unknown): string {
 }
 
 export function toProfileResponse(profile: {
-  education: unknown; languages: unknown; professionalExperience: unknown;
+  education: unknown; skills?: unknown; languages: unknown; professionalExperience: unknown;
   courses: unknown; certifications: unknown; professionalLinks: unknown; workPreferences: unknown;
   accessibilityDeclaration: "NOT_INFORMED" | "NO_NEEDS_DECLARED" | "NEEDS_DECLARED";
   accessibilityNeeds: unknown; accessibilityNeedOptionCodes: unknown; mandatoryNeedOptionCodes?: unknown;
@@ -177,6 +180,7 @@ export function toProfileResponse(profile: {
 }) {
   return {
     education: toEducationList(profile.education), languages: toLanguageList(profile.languages), professionalExperience: toExperienceList(profile.professionalExperience),
+    skills: toStringList(profile.skills),
     courses: toStringList(profile.courses), certifications: toStringList(profile.certifications),
     professionalLinks: toStringList(profile.professionalLinks),
     workPreferences: toWorkPreferences(profile.workPreferences),

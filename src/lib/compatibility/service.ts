@@ -76,7 +76,7 @@ export async function loadCandidateContext(userId: string): Promise<CandidateCon
       hasFreeTextNeeds: toStringList(profile?.accessibilityNeeds).length > 0,
       education: toEducationList(profile?.education), languages: toLanguageList(profile?.languages),
       experience: toExperienceList(profile?.professionalExperience),
-      courses: toStringList(profile?.courses), certifications: toStringList(profile?.certifications), skills: [],
+      courses: toStringList(profile?.courses), certifications: toStringList(profile?.certifications), skills: toStringList(profile?.skills),
       workPreferences: preferences
     },
     home: { city: preferences.city, state: preferences.state, address: preferences.address }

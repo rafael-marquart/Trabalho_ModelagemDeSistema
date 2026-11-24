@@ -87,7 +87,7 @@ function dimensionTechnical(candidate: CandidateInput, job: JobInput, missing: M
   if (criteria.skills.length) {
     const corpus = candidateCorpus(candidate);
     if (!corpus.length) {
-      lack("Competências e conhecimentos (cursos, certificações, formação ou experiências)", "Informe formação, cursos, certificações ou experiências no seu perfil.");
+      lack("Competências e conhecimentos (competências, cursos, certificações, formação ou experiências)", "Informe competências, formação, cursos, certificações ou experiências no seu perfil.");
     } else {
       const matched = criteria.skills.filter((skill) => corpus.some((entry) => matchesCriterion(entry, skill)));
       parts.push({ weight: TECHNICAL_WEIGHTS.skills, component: {
