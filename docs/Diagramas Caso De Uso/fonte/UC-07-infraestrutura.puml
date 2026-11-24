@@ -1,0 +1,22 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+left to right direction
+title UC-07 — Infraestrutura e recrutadores
+actor "Empresa" as E
+actor "Recrutador" as R
+rectangle "AcessaVagas" {
+  usecase "Preencher infraestrutura\n(seis itens obrigatórios)" as I
+  usecase "Convidar recrutador\n(convite de 7 dias)" as CV
+  usecase "Reenviar ou cancelar convite" as RC
+  usecase "Aceitar ou recusar convite" as AC
+  usecase "Encerrar vínculo" as EV
+}
+actor "Serviço de e-mail\n(SMTP)" as S
+E -- I
+E -- CV
+E -- EV
+R -- AC
+RC .> CV : <<extend>>
+CV -- S
+@enduml

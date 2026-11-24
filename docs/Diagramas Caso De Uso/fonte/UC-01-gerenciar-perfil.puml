@@ -1,0 +1,24 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+left to right direction
+title UC-01 — Gerenciar perfil
+actor "Candidato PcD" as C
+actor "Administrador" as A
+rectangle "AcessaVagas" {
+  usecase "Editar perfil profissional\ne preferências de trabalho" as P
+  usecase "Declarar necessidades\nde acessibilidade" as N
+  usecase "Dar ou retirar consentimento\npara dados de acessibilidade" as CO
+  usecase "Enviar comprovantes\n(até 4 MB)" as D
+  usecase "Escolher foto de perfil\n(até 1 MB)" as F
+  usecase "Manter catálogo\nde necessidades" as CAT
+}
+C -- P
+C -- N
+C -- CO
+C -- D
+C -- F
+A -- CAT
+N ..> CO : <<include>>
+D .> P : <<extend>>
+@enduml

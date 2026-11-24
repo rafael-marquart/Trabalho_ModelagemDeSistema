@@ -1,0 +1,24 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+left to right direction
+title UC-09 — Gerenciar funil de seleção
+actor "Empresa" as E
+actor "Recrutador" as R
+actor "Candidato PcD" as C
+rectangle "AcessaVagas" {
+  usecase "Ver candidaturas da vaga\n(dados mínimos necessários)" as L
+  usecase "Mudar etapa\n(transições da RB-39)" as M
+  usecase "Agendar, alterar ou\ncancelar entrevista" as EN
+  usecase "Concluir entrevista" as CO
+  usecase "Avisar o candidato" as AV
+}
+E -- L
+R -- L
+M .> L : <<extend>>
+EN .> M : <<extend>>
+CO .> EN : <<extend>>
+M ..> AV : <<include>>
+EN ..> AV : <<include>>
+AV -- C
+@enduml

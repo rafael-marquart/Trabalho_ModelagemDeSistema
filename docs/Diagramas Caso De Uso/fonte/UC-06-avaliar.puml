@@ -1,0 +1,19 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+left to right direction
+title UC-06 — Avaliar pós-entrevista
+actor "Candidato PcD" as C
+actor "Empresa" as E
+rectangle "AcessaVagas" {
+  usecase "Avaliar entrevista concluída\n(acessibilidade e postura inclusiva)" as AV
+  usecase "Verificar dono, conclusão\ne prazo de 60 dias" as VE
+  usecase "Atualizar nota pública\n(distribuição de estrelas)" as NP
+  usecase "Registrar indício de abuso\n(3 recusas em 24 h)" as AB
+}
+C -- AV
+AV ..> VE : <<include>>
+AV ..> NP : <<include>>
+AB .> AV : <<extend>>
+NP -- E
+@enduml

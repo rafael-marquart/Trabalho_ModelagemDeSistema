@@ -11,8 +11,8 @@
 
 ## Fora desta entrega
 
-- **Navegação por voz (seção 5.4, OPEN-014):** em aberto para implementar depois. Vocabulário, tratamento de falhas e tecnologia dependem de decisão do responsável.
-- Matriz de ambientes de referência (OPEN-015) e plano formal de avaliação WCAG 2.1 AA (OPEN-016): permanecem pendentes de nomes/versões, cobertura mínima e formato das evidências. O roteiro manual propõe uma combinação inicial de ambientes, sem fixá-la como decisão. Testes automatizados não comprovam conformidade integral.
+- **Navegação por voz (seção 5.4, OPEN-014):** não implementada nesta versão; há um roteiro de implementação proposto no PR #67. Vocabulário, tratamento de falhas e tecnologia dependem de decisão do responsável.
+- Matriz de ambientes de referência (OPEN-015) e plano formal de avaliação WCAG 2.2 AA (OPEN-016; o projeto passou da 2.1 para a 2.2 na REV-019): permanecem pendentes de nomes/versões, cobertura mínima e formato das evidências. O roteiro manual propõe uma combinação inicial de ambientes, sem fixá-la como decisão. Testes automatizados não comprovam conformidade integral.
 - Persistência do tema claro/escuro na conta e outras preferências: não fazem parte do catálogo atual.
 
 ## Arquivos principais
@@ -30,3 +30,10 @@
 - Teste manual e aprovação de layout: `docs/operacao/validacao-manual-spec-003.md` (pendentes do responsável).
 - Teste manual executado pelo responsável em 28/10/2026; ajuste aplicado no passo 6 (a preferência da conta passou a ser reaplicada logo após o login, sem precisar recarregar). Layout aprovado na mesma data.
 - SPEC-003 encerrada em 28/10/2026, exceto: navegação por voz (em aberto para implementar depois), matriz de ambientes e plano formal de avaliação WCAG (OPEN-015/OPEN-016, pendentes de decisão) e a evidência de conformidade integral, que os testes realizados não comprovam.
+
+## Complementos posteriores
+
+- **Tema escuro** (além do claro e do alto contraste), com a escolha guardada na conta (RF-16, RNF-19).
+- **Aviso de alterações não salvas** no perfil, no editor de vaga e na infraestrutura, e "Sair sem enviar?" nos formulários de denúncia e de avaliação (OPEN-101, RF-44).
+- **Mostrar e ocultar a senha** nos formulários de entrada, cadastro e redefinição (RF-45).
+
