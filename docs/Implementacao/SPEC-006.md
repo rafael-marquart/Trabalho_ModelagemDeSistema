@@ -27,7 +27,8 @@ Implementado em `src/lib/external-jobs/record.ts` (`fromAdzuna`). Os textos pass
 | `created` | `publishedAt` | Data; ignorada se inválida |
 | `salary_min` / `salary_max` | `salaryMin` / `salaryMax` | Só quando o salário não é estimado pelo Adzuna (`salary_is_predicted` diferente de 1) |
 | — | `origin`, `status` | `EXTERNAL` e `OPEN` |
-| — | acessibilidade, modalidade, área, critérios técnicos | Vazios ("não informado"): o Adzuna não traz esses dados |
+| `title` | `professionalArea` | Inferida pelo título com regras de palavras-chave (`src/lib/jobs/area.ts`); sem correspondência, "Outra" |
+| — | acessibilidade, modalidade, critérios técnicos | Vazios ("não informado"): o Adzuna não traz esses dados |
 | — | `externalFieldOrigins` | Registra se empresa, cidade e UF vieram da fonte (`SOURCE`) ou da LLM |
 
 ## Desvios e limites

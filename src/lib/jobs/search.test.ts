@@ -6,7 +6,7 @@ const job = (over: Partial<SearchableJob> = {}): SearchableJob => ({
   modality: "HIBRIDO", professionalArea: "Tecnologia da informação", locationCity: "São Paulo", locationState: "SP",
   accessibility: { RAMPS: "PRESENT", ELEVATORS: "ABSENT" }, publishedAt: new Date("2026-10-20T00:00:00Z"), ...over
 });
-const query = (over: Partial<SearchQuery> = {}): SearchQuery => ({ q: "", cargo: [], area: [], modalidade: [], local: [], acessibilidade: [], ordem: "compatibilidade", pagina: 1, ...over });
+const query = (over: Partial<SearchQuery> = {}): SearchQuery => ({ q: "", area: [], modalidade: [], local: [], acessibilidade: [], ordem: "compatibilidade", pagina: 1, ...over });
 
 describe("job search text (OPEN-037)", () => {
   it("ignores case and accents and accepts fragments", () => {
@@ -38,8 +38,8 @@ describe("job search filters (OPEN-036)", () => {
     expect(matchesFilters(job(), query({ modalidade: ["HIBRIDO"], local: ["Campinas/SP"] }))).toBe(false);
     expect(matchesFilters(job(), query({ modalidade: ["HIBRIDO"], local: ["sao paulo/sp"] }))).toBe(true);
   });
-  it("filters by job title, area and declared accessibility resources", () => {
-    expect(matchesFilters(job(), query({ cargo: ["analista de dados"] }))).toBe(true);
+  it("filters by area and declared accessibility resources", () => {
+    expect(matchesFilters(job(), query({ area: ["Tecnologia da informação"] }))).toBe(true);
     expect(matchesFilters(job(), query({ area: ["Saúde"] }))).toBe(false);
     expect(matchesFilters(job(), query({ acessibilidade: ["RAMPS"] }))).toBe(true);
     expect(matchesFilters(job(), query({ acessibilidade: ["ELEVATORS"] }))).toBe(false);
@@ -47,7 +47,7 @@ describe("job search filters (OPEN-036)", () => {
   });
   it("offers only values that exist among open jobs", () => {
     const facets = buildFacets([job(), job({ id: "j2", title: "analista de dados", modality: "REMOTO", locationCity: "", locationState: "", professionalArea: "" })]);
-    expect(facets.cargo).toEqual(["Analista de Dados"]);
+    expect("cargo" in facets).toBe(false);
     expect(facets.modalidade).toEqual(["HIBRIDO", "REMOTO"]);
     expect(facets.local).toEqual(["São Paulo/SP"]);
     expect(facets.area).toEqual(["Tecnologia da informação"]);
@@ -85,6 +85,9 @@ describe("query string", () => {
   });
   it("rejects unknown filters and values", () => {
     expect(parseSearchParams(new URLSearchParams("modalidade=TELETRABALHO")).success).toBe(false);
+    // Old links with the retired "Cargo" filter still open the search, without that filter.
+    const legacy = parseSearchParams(new URLSearchParams("cargo=Estoquista&area=Sa%C3%BAde"));
+    expect(legacy.success && legacy.data.area).toEqual(["Saúde"]);
     expect(parseSearchParams(new URLSearchParams("salario=10")).success).toBe(false);
     expect(parseSearchParams(new URLSearchParams("pagina=6")).success).toBe(false);
   });

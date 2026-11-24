@@ -8,9 +8,9 @@ import { sortLabels, sortOptions, toSearchParams, type SearchQuery, type SortOpt
 import JobCard from "./job-card";
 import type { SearchResult } from "./types";
 
-type FilterKey = "cargo" | "area" | "modalidade" | "local" | "acessibilidade";
-const filterTitles: Record<FilterKey, string> = { cargo: "Cargo", area: "Área profissional", modalidade: "Modalidade", local: "Localização", acessibilidade: "Acessibilidade declarada pela vaga" };
-const emptyQuery: SearchQuery = { q: "", cargo: [], area: [], modalidade: [], local: [], acessibilidade: [], ordem: "compatibilidade", pagina: 1 };
+type FilterKey = "area" | "modalidade" | "local" | "acessibilidade";
+const filterTitles: Record<FilterKey, string> = { area: "Área profissional", modalidade: "Modalidade", local: "Localização", acessibilidade: "Acessibilidade declarada pela vaga" };
+const emptyQuery: SearchQuery = { q: "", area: [], modalidade: [], local: [], acessibilidade: [], ordem: "compatibilidade", pagina: 1 };
 
 /** SPEC-008 search: text, filters (AND between categories, OR inside one), order and numbered pages kept in the address. */
 export default function JobSearch({ initialQuery }: { initialQuery: SearchQuery }) {
@@ -47,10 +47,9 @@ export default function JobSearch({ initialQuery }: { initialQuery: SearchQuery 
     update({ [key]: checked ? [...values, value] : values.filter(item => item !== value) } as Partial<SearchQuery>);
   };
   const submit = (event: FormEvent) => { event.preventDefault(); update({ q: text.trim() }); };
-  const activeFilters = (["cargo", "area", "modalidade", "local", "acessibilidade"] as FilterKey[]).reduce((sum, key) => sum + (query[key] as string[]).length, 0);
+  const activeFilters = (["area", "modalidade", "local", "acessibilidade"] as FilterKey[]).reduce((sum, key) => sum + (query[key] as string[]).length, 0);
 
   const options: Record<FilterKey, { value: string; label: string }[]> = {
-    cargo: (data?.facets.cargo ?? []).map(value => ({ value, label: value })),
     area: (data?.facets.area ?? []).map(value => ({ value, label: value })),
     modalidade: (data?.facets.modalidade ?? []).map(value => ({ value, label: jobModalityLabels[value as JobModalityValue] ?? value })),
     local: (data?.facets.local ?? []).map(value => ({ value, label: value })),

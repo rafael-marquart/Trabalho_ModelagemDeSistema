@@ -24,7 +24,7 @@ const result = (over: Partial<SearchResult> = {}): SearchResult => ({
       accessibility: [{ code: "RAMPS", label: "Rampas de acesso", status: "PRESENT", statusLabel: "Presente" }], compatibility: complete },
     { id: "j2", title: "Assistente", companyName: "Horizonte", modality: "PRESENCIAL", professionalArea: "", location: "Campinas/SP", publishedAt: null, accessibility: [], compatibility: insufficient }
   ],
-  page: 1, pages: 2, total: 22, hiddenIncompatible: 1, facets: { cargo: ["Analista de Dados", "Assistente"], area: ["Tecnologia da informação"], modalidade: ["HIBRIDO", "PRESENCIAL"], local: ["Campinas/SP", "São Paulo/SP"] }, ...over
+  page: 1, pages: 2, total: 22, hiddenIncompatible: 1, facets: { area: ["Tecnologia da informação"], modalidade: ["HIBRIDO", "PRESENCIAL"], local: ["Campinas/SP", "São Paulo/SP"] }, ...over
 });
 const fetchMock = vi.fn();
 
@@ -39,6 +39,8 @@ describe("candidate job search", () => {
     expect(screen.getByRole("button", { name: /Faltam dados: compatibilidade dados insuficientes/ })).toBeTruthy();
     expect(screen.getByText(/1 vaga não aparece/)).toBeTruthy();
     expect(screen.getByRole("group", { name: "Modalidade" })).toBeTruthy();
+    expect(screen.getByRole("group", { name: "Área profissional" })).toBeTruthy();
+    expect(screen.queryByRole("group", { name: "Cargo" })).toBeNull();
     expect(within(screen.getByRole("group", { name: "Localização" })).getAllByRole("checkbox")).toHaveLength(2);
   });
 

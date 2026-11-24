@@ -4,6 +4,7 @@ import { categoryLabel, getCompanyInfrastructure } from "@/lib/company-infrastru
 import { analyzeWithContext, loadCandidateContext, type CompatibilityView } from "@/lib/compatibility/service";
 import type { TravelEstimator } from "@/lib/compatibility/travel";
 import { jobModalityLabels, type JobModalityValue } from "./constants";
+import { jobProfessionalArea } from "./area";
 import { availabilityOf, decideAction, formatDate, locationText, salaryText, type ActionDecision, type Availability } from "./detail";
 import { rowToFields, todayInBrazil } from "./schema";
 import { findApplicationResult, findBlockingApplication } from "@/lib/applications/service";
@@ -74,7 +75,7 @@ export async function getJobDetailForCandidate(userId: string, jobId: string, de
     requirements: fields.requirements || "Não informados",
     criteria: fields.technicalCriteria,
     modality: fields.modality ? jobModalityLabels[fields.modality as JobModalityValue] : "Não informada",
-    professionalArea: fields.professionalArea || "Não informada",
+    professionalArea: jobProfessionalArea(row) || "Não informada",
     location: locationText(fields.locationCity, fields.locationState, fields.locationAddress),
     salary: salaryText(fields.salaryMin, fields.salaryMax),
     deadline: fields.deadline ? formatDate(fields.deadline) : "Não informado",

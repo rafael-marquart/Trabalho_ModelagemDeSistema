@@ -14,7 +14,6 @@ const accessibilityCodes = infrastructureItems.map((item) => item.code) as [stri
 const list = <T extends z.ZodTypeAny>(item: T, max: number) => z.array(item).max(max).default([]);
 export const searchQuerySchema = z.object({
   q: z.string().trim().max(200, "Use até 200 caracteres na busca.").default(""),
-  cargo: list(z.string().trim().min(1).max(160), 30),
   area: list(z.enum(professionalAreas), professionalAreas.length),
   modalidade: list(z.enum(jobModalities), jobModalities.length),
   local: list(z.string().trim().min(1).max(130), 50),
@@ -24,11 +23,14 @@ export const searchQuerySchema = z.object({
 }).strict();
 export type SearchQuery = z.infer<typeof searchQuerySchema>;
 
-const arrayKeys = ["cargo", "area", "modalidade", "local", "acessibilidade"] as const;
+const arrayKeys = ["area", "modalidade", "local", "acessibilidade"] as const;
+// The "Cargo" filter was replaced by "Área profissional" (24/11/2026); old links that still carry it are read without it.
+const retiredKeys = ["cargo"];
 
 export function parseSearchParams(params: URLSearchParams) {
   const raw: Record<string, unknown> = {};
   for (const key of new Set(params.keys())) {
+    if (retiredKeys.includes(key)) continue;
     raw[key] = (arrayKeys as readonly string[]).includes(key) ? params.getAll(key).filter((value) => value.trim()) : params.get(key) ?? undefined;
   }
   if (raw.q === "") delete raw.q;
@@ -89,14 +91,13 @@ export function matchesText(job: SearchableJob, q: string): boolean {
 /** Different categories combine with AND; values inside one category combine with OR; empty categories do not restrict. */
 export function matchesFilters(job: SearchableJob, query: SearchQuery): boolean {
   const anyOf = (selected: readonly string[], test: (value: string) => boolean) => selected.length === 0 || selected.some(test);
-  return anyOf(query.cargo, (value) => normalizeText(value) === normalizeText(job.title))
-    && anyOf(query.area, (value) => value === job.professionalArea)
+  return anyOf(query.area, (value) => value === job.professionalArea)
     && anyOf(query.modalidade, (value) => value === job.modality)
     && anyOf(query.local, (value) => normalizeText(value) === normalizeText(locationLabel(job)))
     && anyOf(query.acessibilidade, (code) => job.accessibility[code] === "PRESENT");
 }
 
-export type Facets = { cargo: string[]; area: string[]; modalidade: string[]; local: string[] };
+export type Facets = { area: string[]; modalidade: string[]; local: string[] };
 
 /** Filter options come from the open jobs themselves, so a filter never offers a value with no job behind it. */
 export function buildFacets(jobs: SearchableJob[]): Facets {
@@ -106,7 +107,6 @@ export function buildFacets(jobs: SearchableJob[]): Facets {
     return [...seen.values()].sort((a, b) => a.localeCompare(b, "pt-BR"));
   };
   return {
-    cargo: distinct(jobs.map((job) => job.title)),
     area: professionalAreas.filter((area) => jobs.some((job) => job.professionalArea === area)),
     modalidade: jobModalities.filter((modality) => jobs.some((job) => job.modality === modality)),
     local: distinct(jobs.map(locationLabel))

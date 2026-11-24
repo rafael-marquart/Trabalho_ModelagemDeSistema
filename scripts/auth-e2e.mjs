@@ -2102,6 +2102,10 @@ async function main() {
     const externalHit = externalSearch.jobs.find(job => job.id === externalJob.id);
     assert.ok(externalHit && externalHit.externalSource === "Adzuna" && externalHit.companyName === "Empresa Externa E2E", "external jobs appear in the search with their source");
     assert.ok(externalHit.accessibility.every(item => item.status === "NOT_INFORMED"), "accessibility is shown as not informed");
+    assert.equal(externalHit.professionalArea, "Tecnologia da informação", "the area of an external job is inferred from its title");
+    assert.ok(externalSearch.facets.area.includes("Tecnologia da informação") && !("cargo" in externalSearch.facets), "the area filter replaces the job-title filter");
+    const byArea = JSON.parse(await expectStatus(await search("q=Analista%20de%20suporte%20e2e&area=Tecnologia%20da%20informa%C3%A7%C3%A3o&cargo=qualquer"), 200, "search by area, ignoring the retired filter"));
+    assert.ok(byArea.jobs.some(job => job.id === externalJob.id), "external jobs are found by their inferred area");
     const externalPage = await expectStatus(await fetch(`${BASE_URL}/candidato/vagas/${externalJob.id}`, { headers: { cookie: compatCookie }, redirect: "manual" }), 200, "external job page");
     assert.ok(externalPage.includes("Ver anúncio no Adzuna") && externalPage.includes("https://www.adzuna.com.br/land/ad/e2e-1"), "the page links to the original ad");
     assert.ok(!externalPage.includes("Denunciar esta vaga"), "external jobs have no report inside the platform");
