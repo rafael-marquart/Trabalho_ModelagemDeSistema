@@ -95,7 +95,7 @@ Incorporada à RB-10: uma vaga externa só participa da busca e da compatibilida
 
 **Tipo EARS:** Event-driven
 
-**WHEN** um registro externo tiver o mesmo identificador na mesma fonte, o mesmo link original ou a mesma empresa, título, cidade e estado de uma vaga externa já importada, o sistema **SHALL** registrá-lo como duplicado e **SHALL NOT** criar outra vaga. Na dúvida, os registros **SHALL** ficar separados.
+**WHEN** um registro externo tiver o mesmo identificador na mesma fonte ou o mesmo link original (sem parâmetros, `www.` e barra final) de uma vaga externa já importada, o sistema **SHALL** registrá-lo como duplicado e **SHALL NOT** criar outra vaga. A comparação por atributos **SHALL** considerar duplicado só quando empresa, título, cidade e estado estiverem todos presentes e forem iguais após normalização; **IF** algum deles faltar, os registros **SHALL** ficar separados.
 
 ### RB-32 Integridade da importação
 

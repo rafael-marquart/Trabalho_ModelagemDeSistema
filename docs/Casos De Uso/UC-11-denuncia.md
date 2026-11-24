@@ -36,7 +36,7 @@ Permitir que o candidato que participou do processo seletivo de uma vaga denunci
 
 - EX01 (Sem entrevista concluída): a opção não é oferecida e o pedido direto é recusado.
 - EX02 (Dados inválidos): descrição curta demais, texto longo demais ou categoria ausente é recusado com o motivo.
-- EX03 (Limite): a partir da 3ª denúncia em 24 horas, novas são recusadas até o fim do período.
+- EX03 (Limite): depois de 3 denúncias em 24 horas, a próxima é recusada até que a mais antiga saia desse período.
 - EX04 (Denúncia em aberto): se já houver denúncia em aberto do candidato para a vaga, o sistema recusa e mostra o status da existente.
 - EX05 (Prorrogação): o Administrador pode prorrogar o prazo de 5 dias úteis registrando o motivo.
 - EX06 (Prioridade): o Administrador pode subir ou baixar a prioridade; a mudança fica no histórico.

@@ -22,7 +22,6 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 | Campo | Valor |
 |---|---|
 | ID | SPEC-001 |
-|
 | Estado do texto | implementada; encerramento baseado em CI e testes automatizados aprovados, com dispensa explícita de novos testes manuais pelo responsável em 26/10/2026; limitações operacionais registradas no relatório de validação |
 | Estado do layout | protótipos de entrada/login, login de Candidato, login de Empresa, cadastro de Candidato, cadastro de Empresa, recuperação de senha, gestão de recrutadores e mensagens de autenticação aprovados visualmente em 25/10/2026; SVGs estáticos de referência |
 | Pendência registrada (27/10/2026) | **SMTP real: em aberto para implementar depois.** O envio de e-mails (verificação, recuperação, convites) funciona com o servidor de captura local; falta configurar um provedor SMTP real (`SMTP_HOST`, `SMTP_FROM`, credenciais) e verificar entrega e falhas, conforme `docs/operacao/implantacao-spec-001.md`. Não bloqueia o encerramento da implementação nem as Specs seguintes |
@@ -1589,7 +1588,6 @@ Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN
 | Campo | Valor |
 |---|---|
 | ID | SPEC-007 |
-|
 | Estado do texto | aprovada; implementada e encerrada em 29/10/2026, exceto os critérios que dependem de vagas externas (SPEC-006); ver `docs/Implementacao/SPEC-007.md` |
 | Estado do layout | não se aplica ao cálculo; tela provisória de validação (`/candidato/compatibilidade`) e a opção "Indispensável para mim" no perfil aprovadas pelo responsável em 29/10/2026 nas telas implementadas (sem protótipo em docs/layout/); a apresentação definitiva pertence à SPEC-010 |
 | Capacidade | Aplicar trava crítica e calcular score determinístico de compatibilidade |
@@ -2223,7 +2221,6 @@ RNF-01 (WCAG 2.2 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 | Campo | Valor |
 |---|---|
 | ID | SPEC-011 |
-|
 | Estado do texto | aprovada; implementada e encerrada em 31/10/2026 (notificação do registro pertence à SPEC-017); ver `docs/Implementacao/SPEC-011.md` |
 | Estado do layout | aprovado pelo responsável em 31/10/2026 sobre as telas implementadas (confirmação, resultado do registro, estado não elegível e "já se candidatou" no detalhe da vaga) |
 | Capacidade | Registrar candidatura |
@@ -2562,7 +2559,6 @@ OPEN-055 e OPEN-056 foram resolvidas e estão registradas em `docs/OPEN.md`. O a
 | Campo | Valor |
 |---|---|
 | ID | SPEC-016 |
-|
 | Estado do texto | aprovada; implementada e encerrada em 01/11/2026; ver `docs/Implementacao/SPEC-016.md` |
 | Estado do layout | aprovado pelo responsável em 01/11/2026 sobre as telas implementadas (painel Minhas candidaturas, linha do tempo no detalhe, situação atual e estados encerrado/cancelado) |
 | Capacidade | Acompanhar candidatura e processo seletivo |
@@ -2780,7 +2776,6 @@ OPEN-066 a OPEN-069 estão resolvidas conforme `docs/OPEN.md`. As notificações
 | Campo | Valor |
 |---|---|
 | ID | SPEC-018 |
-|
 | Estado do texto | aprovada; implementada e encerrada em 01/11/2026, com o cadastro de entrevistas no funil (OPEN-094) e o critério de indício de abuso provisório (OPEN-095); a apresentação pública da distribuição fica para a SPEC-021; ver `docs/Implementacao/SPEC-018.md` |
 | Estado do layout | aprovado pelo responsável em 01/11/2026 sobre as telas implementadas (entrevista no funil da empresa: agendar, alterar, cancelar e concluir; entrevista e formulário de avaliação com revisão, confirmação e consulta da própria avaliação no detalhe da candidatura) |
 | Capacidade | Avaliar processo seletivo |
