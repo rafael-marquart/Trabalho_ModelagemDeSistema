@@ -44,6 +44,27 @@ describe("candidate job search", () => {
     expect(within(screen.getByRole("group", { name: "Localização" })).getAllByRole("checkbox")).toHaveLength(2);
   });
 
+  it("collapses long location lists, keeps the selected one visible and expands on request", async () => {
+    const local = ["Barueri/SP", "Campinas/SP", "Curitiba/PR", "Fortaleza/CE", "Natal/RN", "Porto Alegre/RS", "Recife/PE", "Salvador/BA", "São Paulo/SP"];
+    fetchMock.mockImplementation(async () => new Response(JSON.stringify(result({ facets: { area: ["Tecnologia da informação"], modalidade: ["HIBRIDO"], local } })), { status: 200 }));
+    const { container } = render(<JobSearch initialQuery={searchQuerySchema.parse({ local: ["Salvador/BA"] })} />);
+    await screen.findByRole("heading", { name: "22 vagas encontradas" });
+    const group = () => within(screen.getByRole("group", { name: "Localização" }));
+    expect(group().getAllByRole("checkbox")).toHaveLength(7);
+    expect(group().getByRole("checkbox", { name: "Salvador/BA" })).toHaveProperty("checked", true);
+    expect(group().queryByRole("checkbox", { name: "São Paulo/SP" })).toBeNull();
+    const toggleButton = group().getByRole("button", { name: "Mostrar todas as localizações (9)" });
+    expect(toggleButton.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(toggleButton);
+    expect(group().getAllByRole("checkbox")).toHaveLength(9);
+    expect(group().getByRole("button", { name: "Mostrar menos" }).getAttribute("aria-expanded")).toBe("true");
+    expect(within(screen.getByRole("group", { name: "Modalidade" })).queryByRole("button")).toBeNull();
+    const audit = await axe.run(container, { rules: { region: { enabled: false } } });
+    expect(audit.violations).toEqual([]);
+    fireEvent.click(group().getByRole("button", { name: "Mostrar menos" }));
+    expect(group().getAllByRole("checkbox")).toHaveLength(7);
+  });
+
   it("applies filters and search, going back to page 1 and keeping the state in the address", async () => {
     render(<JobSearch initialQuery={searchQuerySchema.parse({ pagina: 2 })} />);
     await screen.findByRole("heading", { name: "22 vagas encontradas" });

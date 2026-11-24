@@ -45,3 +45,4 @@
 - Decisão do responsável em 24/11/2026: o filtro "Cargo" foi retirado e substituído pelo filtro "Área profissional", porque listava o título exato de cada vaga e, com as vagas externas, ficou com dezenas de opções quase iguais. Nas vagas externas, que não trazem área, a área é inferida pelo título com regras fixas de palavras-chave (`src/lib/jobs/area.ts`); sem correspondência, a vaga fica em "Outra". A busca por texto continua procurando no título.
 - A área inferida é gravada na importação das vagas externas e, para as já importadas sem área, calculada na leitura (busca e detalhe), sem migração.
 - Links antigos com `cargo=` continuam abrindo a busca, sem esse filtro.
+- Listas longas de filtros começam recolhidas: Localização e Área profissional mostram as 6 primeiras opções, além das já marcadas, e um botão "Mostrar todas as … (N)" / "Mostrar menos", com `aria-expanded` e `aria-controls`. Modalidade e Acessibilidade continuam abertas.
