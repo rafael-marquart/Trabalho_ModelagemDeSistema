@@ -121,16 +121,27 @@ describe("candidate profile API", () => {
     expect(events.join()).not.toContain('"education"');
     expect(events.join()).not.toContain('"languages"');
   });
-  it("validates structured experiences, reads legacy text and rejects the removed skills field", async () => {
+  it("validates structured experiences and reads legacy text", async () => {
     const experience = { role: "Analista", company: "Empresa", period: "2022" };
     expect((await put({ ...blank, professionalExperience: [experience] })).status).toBe(200);
     expect((await put({ ...blank, professionalExperience: [{ ...experience, company: "" }] })).status).toBe(400);
     expect((await put({ ...blank, professionalExperience: ["Analista na Empresa"] })).status).toBe(400);
-    expect((await put({ ...blank, skills: ["Comunicação"] })).status).toBe(400);
     prismaMock.candidateProfile.findUnique.mockResolvedValueOnce({ ...blank, professionalExperience: ["Analista na Empresa"], accessibilityNeedOptionCodes: [] });
     const read = await (await GET()).json();
     expect(read.profile.professionalExperience).toEqual([{ role: "Analista na Empresa", company: "", period: "" }]);
-    expect("skills" in read.profile).toBe(false);
+    expect(read.profile.skills).toEqual([]);
+  });
+  it("saves competências, audits only the category and rejects duplicates, long items and more than 30", async () => {
+    tx.candidateProfile.upsert.mockResolvedValueOnce({ ...blank, skills: ["Atendimento ao cliente", "Excel"] });
+    expect((await put({ ...blank, skills: ["Atendimento ao cliente", "Excel"] })).status).toBe(200);
+    expect(JSON.stringify(tx.candidateProfile.upsert.mock.calls.at(-1))).toContain("Atendimento ao cliente");
+    expect(JSON.stringify(tx.auditEvent.create.mock.calls)).toContain("skills");
+    expect(JSON.stringify(tx.auditEvent.create.mock.calls)).not.toContain("Atendimento ao cliente");
+    expect((await put({ ...blank, skills: ["Excel", "excel"] })).status).toBe(400);
+    expect((await put({ ...blank, skills: ["x".repeat(81)] })).status).toBe(400);
+    expect((await put({ ...blank, skills: Array.from({ length: 31 }, (_, index) => `Competência ${index}`) })).status).toBe(400);
+    prismaMock.candidateProfile.findUnique.mockResolvedValueOnce({ ...blank, skills: ["Python"], accessibilityNeedOptionCodes: [] });
+    expect((await (await GET()).json()).profile.skills).toEqual(["Python"]);
   });
   it("accepts optional work preferences, rejects invalid values and audits only the category", async () => {
     const prefs = { modalities: ["Híbrido", "Remoto"], city: "Recife", state: "PE", address: "Boa Viagem", transportMode: "Ônibus" };

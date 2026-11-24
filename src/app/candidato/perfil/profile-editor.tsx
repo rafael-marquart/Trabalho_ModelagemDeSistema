@@ -10,7 +10,7 @@ import { useUnsavedChangesGuard } from "@/components/unsaved-changes";
 import ProfilePhotoEditor from "@/components/profile-photo";
 
 // The profile fields the save sends; also what "unsaved changes" compares (OPEN-101).
-const savedKeys = ["education", "languages", "professionalExperience", "courses", "certifications",
+const savedKeys = ["education", "skills", "languages", "professionalExperience", "courses", "certifications",
   "professionalLinks", "workPreferences", "accessibilityDeclaration", "accessibilityNeeds", "accessibilityNeedOptionCodes",
   "mandatoryNeedOptionCodes", "essentialAccessibilityResources"] as const;
 const snapshot = (profile: Record<string, unknown>) => JSON.stringify(savedKeys.map(key => profile[key]));
@@ -22,7 +22,7 @@ type Declaration = "NOT_INFORMED" | "NO_NEEDS_DECLARED" | "NEEDS_DECLARED";
 type NeedGroup = "ARCHITECTURAL" | "COMMUNICATION" | "TECHNOLOGICAL";
 type NeedOption = { code: string; name: string; description: string; group: NeedGroup; isMandatory: boolean; isActive: boolean };
 type Profile = {
-  fullName: string; email: string; education: EducationEntry[]; languages: LanguageEntry[];
+  fullName: string; email: string; education: EducationEntry[]; skills: string[]; languages: LanguageEntry[];
   professionalExperience: ExperienceEntry[]; courses: string[]; certifications: string[]; professionalLinks: string[];
   workPreferences: WorkPreferences;
   accessibilityDeclaration: Declaration; accessibilityNeeds: string[]; accessibilityNeedOptionCodes: string[]; mandatoryNeedOptionCodes: string[];
@@ -30,7 +30,7 @@ type Profile = {
 };
 type ProfileDocument = { id: string; category: "COURSE" | "CERTIFICATION"; displayName: string; originalName: string; mimeType: string; sizeBytes: number; createdAt: string };
 const empty: Profile = {
-  fullName: "", email: "", education: [], languages: [], professionalExperience: [],
+  fullName: "", email: "", education: [], skills: [], languages: [], professionalExperience: [],
   courses: [], certifications: [], professionalLinks: [], workPreferences: emptyWorkPreferences, accessibilityDeclaration: "NOT_INFORMED",
   accessibilityNeeds: [], accessibilityNeedOptionCodes: [], mandatoryNeedOptionCodes: [], essentialAccessibilityResources: []
 };
@@ -65,6 +65,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
   const [linkUrl, setLinkUrl] = useState("");
   const [accessibilityResource, setAccessibilityResource] = useState("");
   const [courseName, setCourseName] = useState("");
+  const [skillName, setSkillName] = useState("");
   const [certificationName, setCertificationName] = useState("");
   const [documentCategory, setDocumentCategory] = useState<"COURSE" | "CERTIFICATION">("COURSE");
   const [documentName, setDocumentName] = useState("");
@@ -182,16 +183,17 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     setProfile(current => ({ ...current, education: [...current.education, entry] }));
     setEducationCourse(""); setEducationInstitution(""); clearFail("education");
   }
-  function addNamedEntry(key: "courses" | "certifications", rawValue: string, reset: () => void, label: string) {
+  function addNamedEntry(key: "skills" | "courses" | "certifications", rawValue: string, reset: () => void, label: string) {
     const value = rawValue.trim();
     if (!value) { fail(key, `Informe o nome ${label} antes de adicionar.`); return; }
     if (profile[key].some(item => item.toLocaleLowerCase() === value.toLocaleLowerCase())) {
-      fail(key, `Esse item já foi adicionado em ${key === "courses" ? "cursos" : "certificações"}.`); return;
+      fail(key, `Esse item já foi adicionado em ${key === "skills" ? "competências" : key === "courses" ? "cursos" : "certificações"}.`); return;
     }
+    if (key === "skills" && profile.skills.length >= 30) { fail(key, "Informe até 30 competências."); return; }
     setProfile(current => ({ ...current, [key]: [...current[key], value] }));
     reset(); clearFail(key);
   }
-  function removeNamedEntry(key: "courses" | "certifications", value: string) {
+  function removeNamedEntry(key: "skills" | "courses" | "certifications", value: string) {
     setProfile(current => ({ ...current, [key]: current[key].filter(item => item !== value) }));
   }
   function addAccessibilityResource() {
@@ -243,7 +245,7 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
     }
   }
   const issueSections: Record<string, string> = {
-    education: "education", languages: "languages", professionalExperience: "experience", courses: "courses",
+    education: "education", skills: "skills", languages: "languages", professionalExperience: "experience", courses: "courses",
     certifications: "certifications", professionalLinks: "links", workPreferences: "work", accessibilityNeeds: "needs",
     accessibilityNeedOptionCodes: "needs", mandatoryNeedOptionCodes: "needs", accessibilityDeclaration: "needs", essentialAccessibilityResources: "resource",
     accessibilityConsent: "consent"
@@ -362,6 +364,16 @@ export default function ProfileEditor({ accountName, accountEmail }: { accountNa
       </div>
       {sectionError("experience")}
       <ul className="profile-chip-list">{profile.professionalExperience.map((entry, index) => <li key={`${index}-${describeExperience(entry)}`}><span>{describeExperience(entry)}</span><button type="button" className="secondary-button" onClick={() => setProfile(current => ({ ...current, professionalExperience: current.professionalExperience.filter((_, position) => position !== index) }))} aria-label={`Remover experiência: ${describeExperience(entry)}`}>Remover</button></li>)}</ul>
+    </section>
+    <section className="profile-section">
+      <h2>Competências</h2>
+      <p className="muted">Informe conhecimentos e habilidades profissionais, uma de cada vez. Elas são comparadas com as competências pedidas nas vagas, na análise de compatibilidade.</p>
+      <div className="profile-link-controls">
+        <label className="profile-link-url-label">Competência<input value={skillName} onChange={event => setSkillName(event.target.value)} onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); addNamedEntry("skills", skillName, () => setSkillName(""), "da competência"); } }} maxLength={80} placeholder="Ex.: Atendimento ao cliente, Excel, Python" disabled={loading || saving} /></label>
+        <button type="button" className="secondary-button" onClick={() => addNamedEntry("skills", skillName, () => setSkillName(""), "da competência")} disabled={loading || saving}>Adicionar competência</button>
+      </div>
+      {sectionError("skills")}
+      <ul className="profile-chip-list">{profile.skills.map(item => <li key={item}><span>{item}</span><button type="button" className="secondary-button" onClick={() => removeNamedEntry("skills", item)} aria-label={`Remover competência: ${item}`}>Remover</button></li>)}</ul>
     </section>
     <section className="profile-section">
       <h2>Idiomas</h2>

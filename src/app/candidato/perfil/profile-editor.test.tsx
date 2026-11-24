@@ -91,7 +91,26 @@ describe("candidate profile editor", () => {
     const put = fetchMock.mock.calls.map((call) => call as unknown as [string, RequestInit?]).find((call) => call[1]?.method === "PUT")!;
     const body = JSON.parse(String(put[1]!.body));
     expect(body.professionalExperience).toEqual([{ role: "Auxiliar administrativo", company: "Empresa Exemplo", period: "03/2022 a 08/2024" }]);
-    expect("skills" in body).toBe(false);
+    expect(body.skills).toEqual([]);
+  });
+
+  it("adds and removes competências and saves them in the profile", async () => {
+    const fetchMock = await renderEditor();
+    expect(screen.getByRole("heading", { name: "Competências" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Adicionar competência" }));
+    expect(screen.getByText("Informe o nome da competência antes de adicionar.")).toBeTruthy();
+    fireEvent.change(screen.getByLabelText("Competência"), { target: { value: "Atendimento ao cliente" } });
+    fireEvent.click(screen.getByRole("button", { name: "Adicionar competência" }));
+    fireEvent.change(screen.getByLabelText("Competência"), { target: { value: "atendimento ao cliente" } });
+    fireEvent.click(screen.getByRole("button", { name: "Adicionar competência" }));
+    expect(screen.getByText("Esse item já foi adicionado em competências.")).toBeTruthy();
+    fireEvent.change(screen.getByLabelText("Competência"), { target: { value: "Excel" } });
+    fireEvent.keyDown(screen.getByLabelText("Competência"), { key: "Enter" });
+    fireEvent.click(screen.getByRole("button", { name: "Remover competência: Excel" }));
+    fireEvent.click(screen.getByRole("button", { name: "Salvar perfil" }));
+    await waitFor(() => expect(fetchMock.mock.calls.some((call) => (call as unknown as [string, RequestInit?])[1]?.method === "PUT")).toBe(true));
+    const put = fetchMock.mock.calls.map((call) => call as unknown as [string, RequestInit?]).find((call) => call[1]?.method === "PUT")!;
+    expect(JSON.parse(String(put[1]!.body)).skills).toEqual(["Atendimento ao cliente"]);
   });
 
   it("saves optional work preferences from modality, city, state and transport", async () => {

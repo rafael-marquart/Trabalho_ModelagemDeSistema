@@ -71,7 +71,7 @@ export async function getApplicationForCompany(companyId: string, applicationId:
     score: row.score,
     dimensions: (["A", "T", "D"] as const).map((code) => ({ code, status: outcome.dimensions?.[code]?.status ?? "INSUFFICIENT", score: outcome.dimensions?.[code]?.score ?? null })),
     profile: {
-      education: toEducationList(profile?.education), experience: toExperienceList(profile?.professionalExperience),
+      education: toEducationList(profile?.education), skills: toStringList(profile?.skills), experience: toExperienceList(profile?.professionalExperience),
       languages: toLanguageList(profile?.languages), courses: toStringList(profile?.courses), certifications: toStringList(profile?.certifications),
       links: toStringList(profile?.professionalLinks)
     },
