@@ -9,6 +9,9 @@ import JobCard from "./job-card";
 import type { SearchResult } from "./types";
 
 type FilterKey = "area" | "modalidade" | "local" | "acessibilidade";
+// Long option lists start collapsed: only the first few (plus any selected one) are shown, with a button to see all.
+const COLLAPSED_OPTIONS = 6;
+const collapsible: Partial<Record<FilterKey, string>> = { local: "localizações", area: "áreas" };
 const filterTitles: Record<FilterKey, string> = { area: "Área profissional", modalidade: "Modalidade", local: "Localização", acessibilidade: "Acessibilidade declarada pela vaga" };
 const emptyQuery: SearchQuery = { q: "", area: [], modalidade: [], local: [], acessibilidade: [], ordem: "compatibilidade", pagina: 1 };
 
@@ -16,6 +19,7 @@ const emptyQuery: SearchQuery = { q: "", area: [], modalidade: [], local: [], ac
 export default function JobSearch({ initialQuery }: { initialQuery: SearchQuery }) {
   const router = useRouter();
   const [query, setQuery] = useState<SearchQuery>(initialQuery);
+  const [expanded, setExpanded] = useState<Partial<Record<FilterKey, boolean>>>({});
   const [text, setText] = useState(initialQuery.q);
   const [data, setData] = useState<SearchResult | null>(null);
   const [error, setError] = useState("");
@@ -73,13 +77,27 @@ export default function JobSearch({ initialQuery }: { initialQuery: SearchQuery 
           <h2>Filtros{activeFilters ? ` (${activeFilters})` : ""}</h2>
           {activeFilters || query.q ? <button type="button" className="link-button" onClick={() => { setText(""); setQuery({ ...emptyQuery, ordem: query.ordem }); }}>Limpar busca e filtros</button> : null}
         </div>
-        {(Object.keys(filterTitles) as FilterKey[]).map(key => options[key].length ? <fieldset key={key} className="job-filter-group">
-          <legend>{filterTitles[key]}</legend>
-          {options[key].map(option => <label key={option.value} className="job-filter-option">
-            <input type="checkbox" checked={(query[key] as string[]).includes(option.value)} onChange={event => toggle(key, option.value, event.target.checked)} />
-            <span>{option.label}</span>
-          </label>)}
-        </fieldset> : null)}
+        {(Object.keys(filterTitles) as FilterKey[]).map(key => {
+          if (!options[key].length) return null;
+          const selected = query[key] as string[];
+          const canCollapse = Boolean(collapsible[key]) && options[key].length > COLLAPSED_OPTIONS;
+          const open = !canCollapse || Boolean(expanded[key]);
+          const visible = open ? options[key] : options[key].filter((option, index) => index < COLLAPSED_OPTIONS || selected.includes(option.value));
+          const listId = `job-filter-${key}`;
+          return <fieldset key={key} className="job-filter-group">
+            <legend>{filterTitles[key]}</legend>
+            <div id={listId} className="job-filter-options">
+              {visible.map(option => <label key={option.value} className="job-filter-option">
+                <input type="checkbox" checked={selected.includes(option.value)} onChange={event => toggle(key, option.value, event.target.checked)} />
+                <span>{option.label}</span>
+              </label>)}
+            </div>
+            {canCollapse ? <button type="button" className="link-button job-filter-more" aria-expanded={open} aria-controls={listId}
+              onClick={() => setExpanded(current => ({ ...current, [key]: !open }))}>
+              {open ? "Mostrar menos" : `Mostrar todas as ${collapsible[key]} (${options[key].length})`}
+            </button> : null}
+          </fieldset>;
+        })}
       </aside>
 
       <section className="job-results" aria-labelledby="job-results-title">
