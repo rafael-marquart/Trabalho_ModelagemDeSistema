@@ -53,7 +53,7 @@ As necessidades funcionais que o candidato marcar como obrigatórias **SHALL** p
 
 **Tipo EARS:** Ubíquo
 
-A dimensão de perfil técnico **SHALL** comparar escolaridade, formação, competências e idiomas do candidato com os critérios definidos pela empresa na vaga. **IF** a vaga não tiver critérios técnicos, a dimensão **SHALL** ficar fora do cálculo e os pesos restantes **SHALL** ser redistribuídos proporcionalmente.
+A dimensão de perfil técnico **SHALL** comparar competências, experiência, escolaridade e idiomas do candidato com os critérios definidos pela empresa na vaga. **IF** a vaga não tiver critérios técnicos, a dimensão **SHALL** ficar fora do cálculo e os pesos restantes **SHALL** ser redistribuídos proporcionalmente.
 
 ### RB-08 Divergências recorrentes
 
@@ -165,7 +165,7 @@ A nota pública de uma empresa **SHALL** ser calculada apenas com avaliações p
 
 **Tipo EARS:** Unwanted behavior
 
-**IF** um candidato já tiver registrado **3 denúncias nas últimas 24 horas**, o sistema **SHALL** recusar uma nova até o fim desse período. **IF** já houver candidatura ativa na mesma vaga, o sistema **SHALL** recusar outra (RB-14).
+**IF** um candidato já tiver registrado **3 denúncias nas últimas 24 horas**, o sistema **SHALL** recusar uma nova até o fim desse período. **IF** o candidato já tiver uma denúncia em andamento sobre a mesma vaga, o sistema **SHALL** recusar outra até a conclusão da primeira.
 
 ### RB-25 Apuração de denúncias
 
@@ -243,7 +243,7 @@ Incorporada à RB-02: a trava de acessibilidade vale qualquer que seja o score e
 
 **WHEN** a etapa de uma candidatura mudar, o sistema **SHALL** registrar a etapa anterior e a nova, a data e hora, quem fez a mudança, o tipo de movimentação e a justificativa quando o fluxo a exigir.
 
-Eventos anteriores **SHALL NOT** ser apagados ou alterados. Uma reversão **SHALL** ser aceita apenas quando corresponder a uma transição prevista na RB-39.
+Eventos anteriores **SHALL NOT** ser apagados ou alterados. Não há volta de etapa: só as transições previstas na RB-39 são aceitas.
 
 ### RB-34 Candidatura somente em vaga elegível
 
@@ -295,7 +295,7 @@ Número não usado na baseline aprovada.
 
 **Tipo EARS:** Unwanted behavior
 
-**IF** quem pede a mudança de etapa não estiver autenticado e autorizado a gerenciar a vaga, a transição não estiver prevista na RB-39 ou houver pendência impeditiva conhecida, o sistema **SHALL** recusar a mudança sem alterar a etapa. Nesse caso o Recrutador **SHALL** poder pedir a complementação das informações necessárias (UC-09).
+**IF** quem pede a mudança de etapa não estiver autenticado e autorizado a gerenciar a vaga, a transição não estiver prevista na RB-39 ou houver pendência impeditiva conhecida, o sistema **SHALL** recusar a mudança sem alterar a etapa. Nenhum tipo de pendência impeditiva foi definido até agora (OPEN-092), e o pedido de complementação ao candidato não existe nesta versão (UC-10, fora do escopo).
 
 Uma transição válida **SHALL** atualizar a etapa e ser registrada conforme RB-27 e RB-41. O sistema **SHALL NOT** presumir critérios adicionais por etapa, notas mínimas ou documentos obrigatórios sem decisão explícita do projeto.
 

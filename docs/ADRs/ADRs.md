@@ -34,7 +34,7 @@ As ADRs registram **o que foi escolhido** quando a escolha é estrutural e difí
 | ADR-004 | Arquitetura em camadas | Alterar posteriormente a organização estrutural exigiria redistribuir responsabilidades e dependências do sistema |
 | ADR-005 | Aplicação web única em Next.js (TypeScript) com PostgreSQL via Prisma | Trocar framework, linguagem ou banco exigiria reescrever telas, rotas, modelo persistido e migrações |
 
-Status de todas: **aceita**. As ADR-001, 002, 004 e 005 estão aplicadas no código desde a primeira implementação (SPEC-001, outubro de 2026). A ADR-003 é a diretriz para quando houver LLM: nesta versão a aplicação não usa LLM (a SPEC-006, única que a usaria, não está implementada na `main`; ver PR #68).
+Status de todas: **aceita**. As ADR-001, 002, 004 e 005 estão aplicadas no código desde a primeira implementação (SPEC-001, outubro de 2026); a ADR-004 com desvios registrados. A ADR-003 é a diretriz para quando houver LLM: nesta versão a aplicação não usa LLM (a SPEC-006, única que a usaria, não está implementada na `main`; ver PR #68).
 
 Cada ADR tem **Status**, **Contexto (por que foi tomada)**, **Decisão**, **Alternativas consideradas** e **Consequências**.
 
@@ -52,7 +52,7 @@ Estas escolhas foram tomadas, mas podem ser trocadas sem reescrever a arquitetur
 | Validação de dados | Zod nas rotas e serviços | Trocável sem alterar o modelo persistido |
 | Hospedagem | Vercel (aplicação) e Neon (PostgreSQL), região São Paulo; ambiente de testes separado | O código não depende de recurso exclusivo do provedor além das rotas agendadas |
 | Envio de e-mail | SMTP via Nodemailer (Brevo em produção, Ethereal no ambiente de testes, Mailpit no local) | Trocar de provedor é configuração |
-| Cálculo de trajeto | API da HERE, com cache de 24 h e limite de uso configurável | Isolado num adaptador da compatibilidade; sem a chave, o deslocamento fica "não informado" |
+| Cálculo de trajeto | API da HERE, com o tempo de trajeto guardado no banco (`TravelTimeCache`), coordenadas em cache de memória por 24 h e limite de uso configurável (60% da cota gratuita) | Isolado num adaptador da compatibilidade; sem a chave, o deslocamento fica sem valor e o resultado vira "dados insuficientes" |
 | Avisos e reenvios | Fila de notificações em tabela do banco, processada por rotas agendadas (Vercel Cron diário e GitHub Actions a cada 15 min) | Pode virar uma fila dedicada sem mudar as regras de aviso |
 | Arquivos enviados | Comprovantes e fotos guardados no próprio banco | Pode migrar para armazenamento de objetos sem mudar as telas |
 | Provedor de LLM | Nenhum nesta versão | A ADR-003 define a porta; o provedor é escolha de configuração |
@@ -65,7 +65,7 @@ Estas escolhas foram tomadas, mas podem ser trocadas sem reescrever a arquitetur
 
 ## Status
 
-Aceita. Aplicada: todas as telas são verificadas com axe-core (WCAG 2.2 AA) e conferidas com teclado e leitor de tela antes da aprovação do layout.
+Aceita. Aplicada: componentes e telas têm testes automatizados com axe-core; a bateria de 01/11/2026 verificou 51 telas com axe-core (WCAG 2.2 AA) nos três temas; as telas são conferidas com teclado e leitor de tela antes da aprovação do layout.
 
 ## Decisão
 

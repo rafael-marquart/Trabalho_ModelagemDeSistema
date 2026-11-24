@@ -106,10 +106,10 @@ Publicar vagas com informações de acessibilidade claras, receber candidatos qu
 
 ---
 
-## 4. Rafael Costa (Recrutador)
+## 4. Bruno Costa (Recrutador)
 
 ### Nome
-Rafael Costa
+Bruno Costa
 
 ### Contexto
 Analista de recrutamento convidado pela empresa de Carla para conduzir os processos seletivos de vagas de tecnologia.
@@ -174,7 +174,7 @@ Analisar as denúncias de incompatibilidade e de falsa inclusão com imparcialid
 | Maria Silva (candidata, mobilidade) | UC-01, UC-02, UC-03, UC-05, UC-06, UC-13 |
 | João Pinheiro (candidato, deficiência visual) | UC-01, UC-02, UC-03, UC-05, UC-11, UC-13 |
 | Carla Mendes (Empresa) | UC-00, UC-07, UC-08, UC-09 |
-| Rafael Costa (Recrutador) | UC-08, UC-09 |
+| Bruno Costa (Recrutador) | UC-08, UC-09 |
 | Ana Ribeiro (Administradora) | UC-01 (catálogo), UC-11 |
 
 Observação sobre o João: das necessidades dele, "sinalização tátil" (código A06) e "compatibilidade com leitor de tela" (T01) estão no catálogo e têm item correspondente na vaga (sinalização acessível e leitores de tela), então entram na trava de acessibilidade. Braille e avisos sonoros não estão no catálogo: ele pode descrevê-los em texto livre no perfil, mas esse texto não entra no cálculo de compatibilidade (UC-13). Para a Maria, rampa (A01), elevador (A02) e banheiro acessível (A04) têm item correspondente na vaga.

@@ -18,7 +18,7 @@ Os valores numéricos abaixo são os mesmos usados no código e nas Specs; quand
 
 O sistema **SHALL** atender às diretrizes da **WCAG 2.2, nível AA**, em todas as páginas de todos os perfis.
 
-Toda tela nova ou alterada **SHALL** passar sem violações na verificação automática do axe-core (regras `wcag2a`, `wcag2aa`, `wcag21aa` e `wcag22aa`) e **SHALL** ser conferida manualmente com teclado e leitor de tela antes da aprovação do layout.
+Toda tela nova ou alterada **SHALL** passar sem violações na verificação automática do axe-core (conjunto padrão de regras, que inclui WCAG 2.0, 2.1 e 2.2 níveis A e AA) e **SHALL** ser conferida manualmente com teclado e leitor de tela antes da aprovação do layout.
 
 ## RNF-02 Compatibilidade com leitores de tela
 
@@ -86,7 +86,7 @@ O sistema **SHALL** tratar dados pessoais conforme a LGPD e coletar apenas o nec
 
 O sistema **SHALL NOT** armazenar laudo médico (RB-28). Comprovantes enviados pelo candidato **SHALL** ter até **4 MB**, em PDF, JPG, PNG, DOC ou DOCX conferidos pelo conteúdo do arquivo; a foto de perfil **SHALL** ter até **1 MB**, em JPG, PNG ou WebP.
 
-Registros de auditoria, de segurança de login, de compatibilidade e notificações **SHALL** ser apagados após **1 ano**; avaliações pós-entrevista **SHALL** ser anonimizadas após **1 ano**, mantendo só as notas, a empresa e o ano.
+Registros de auditoria, resultados de compatibilidade e notificações **SHALL** ser apagados após **1 ano**; tentativas de login **SHALL** ser apagadas após **24 horas** e bloqueios, depois de expirarem; avaliações pós-entrevista **SHALL** ser anonimizadas após **1 ano**, mantendo só as notas, a empresa e o ano.
 
 ## RNF-09 Integridade dos dados
 
@@ -94,7 +94,7 @@ Registros de auditoria, de segurança de login, de compatibilidade e notificaç�
 
 Operações que alteram mais de um registro (candidatura, mudança de etapa, decisão de denúncia, consentimento) **SHALL** ser gravadas numa única transação: ou tudo é gravado, ou nada é.
 
-O histórico do funil, o histórico da moderação, os registros de consentimento e as notas de avaliação **SHALL NOT** ser alterados nem apagados fora das rotinas de retenção; o próprio banco recusa essas alterações. O banco **SHALL** impedir mais de uma candidatura ativa do mesmo candidato na mesma vaga (RB-14).
+O histórico do funil e o histórico da moderação **SHALL NOT** ser alterados nem apagados; os registros de consentimento, os resultados de compatibilidade e as notas de avaliação **SHALL NOT** ser alterados (a avaliação só pode ser anonimizada pela rotina de retenção). O próprio banco recusa essas operações. O banco **SHALL** impedir mais de uma candidatura ativa do mesmo candidato na mesma vaga (RB-14).
 
 ## RNF-10 Confiabilidade do cálculo de compatibilidade
 

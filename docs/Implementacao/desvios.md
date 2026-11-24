@@ -64,3 +64,9 @@ Situação em 23/11/2026.
 | Comandos de voz próprios | SPEC-003 seção 5.4, RF-16 | Não implementado; roteiro no PR #67 |
 | Divergências recorrentes de acessibilidade | SPEC-004 seção 5.5, RB-08 | Adiado |
 | Validar requisitos da seleção | UC-10 | Fora do escopo; depende da OPEN-092 |
+
+## D-11 — Pedidos de recuperação de senha sem limpeza
+
+- **Previsto (RNF-08):** coletar e guardar apenas o necessário, pelo tempo necessário.
+- **Implementado:** as tentativas de login são apagadas após 24 horas, mas os registros de pedidos de recuperação de senha (`RecoveryAttempt` e `RecoveryBlock`) não têm rotina de limpeza e ficam no banco indefinidamente. Eles guardam só chaves derivadas (sem e-mail, CPF ou IP em texto).
+- **Para eliminar:** incluir essas tabelas na rotina `scripts/login-security-retention.mjs`.

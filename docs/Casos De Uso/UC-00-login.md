@@ -37,7 +37,7 @@ Permitir que cada perfil acesse a plataforma de forma segura, com credenciais va
 ## Pós-condições
 
 - A pessoa fica autenticada, com sessão guardada no servidor e permissões do seu perfil.
-- O login e as falhas ficam registrados para auditoria (RNF-14).
+- O login fica registrado na auditoria (RNF-14); as tentativas com falha ficam 24 horas no registro de segurança usado pelo bloqueio.
 
 ## Regras de negócio relacionadas
 

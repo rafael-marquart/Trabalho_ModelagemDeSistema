@@ -5,7 +5,7 @@ O AcessaVagas mantém dois tipos de registro:
 1. **Auditoria** (tabela `AuditEvent`): fica no banco, registra quem fez o quê e quando, e atende ao RNF-14 e às RB-27, RB-37 e RB-41.
 2. **Log de operação** (saída do servidor, visível no painel da Vercel): registra falhas de serviços externos e de rotinas agendadas (RNF-17).
 
-Além deles, há históricos próprios, que o banco não deixa alterar nem apagar: `ApplicationStageEvent` (funil), `ReportEvent` (moderação) e `ConsentRecord` (aceites e consentimentos). As tentativas de login e de recuperação de senha ficam em `LoginAttempt` e `RecoveryAttempt`.
+Além deles, há históricos próprios: `ApplicationStageEvent` (funil) e `ReportEvent` (moderação), que o banco não deixa alterar nem apagar, e `ConsentRecord` (aceites e consentimentos), que o banco não deixa alterar. As tentativas de login ficam 24 horas em `LoginAttempt`; os pedidos de recuperação de senha ficam em `RecoveryAttempt`.
 
 ## Formato do registro de auditoria
 
@@ -123,7 +123,8 @@ Nunca entram no registro: senha, hash de senha, token de sessão, link de recupe
 | Registro | Prazo | Rotina |
 |---|---|---|
 | Auditoria (`AuditEvent`) | 1 ano (exceto com `retentionHold`) | `scripts/audit-retention.mjs` |
-| Tentativas de login e recuperação | 1 ano | `scripts/login-security-retention.mjs` |
+| Tentativas de login (`LoginAttempt`) | 24 horas; bloqueios (`LoginBlock`) apagados depois de expirarem | `scripts/login-security-retention.mjs` |
+| Pedidos de recuperação de senha (`RecoveryAttempt`, `RecoveryBlock`) | sem rotina de limpeza (ver D-11 em `docs/Implementacao/desvios.md`) | — |
 | Resultados de compatibilidade | 1 ano | `scripts/compatibility-retention.mjs` |
 | Notificações | 1 ano | `scripts/notification-retention.mjs` |
 | Avaliações | anonimizadas após 1 ano | `scripts/evaluation-retention.mjs` |

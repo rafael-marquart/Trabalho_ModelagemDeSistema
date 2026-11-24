@@ -181,7 +181,7 @@ Comandos de voz próprios do sistema não fazem parte desta versão (seção 5.4
 
 **Tipo EARS:** Event-driven · **Specs:** SPEC-012, SPEC-016
 
-**WHEN** o candidato abrir "Minhas candidaturas", o sistema **SHALL** listar suas candidaturas com a vaga, a empresa, a etapa atual e a data da última mudança.
+**WHEN** o candidato abrir "Minhas candidaturas", o sistema **SHALL** listar suas candidaturas com a vaga, a empresa, a etapa atual e a data da candidatura.
 
 ### RF-28 Gestão da candidatura pelo candidato
 
@@ -231,7 +231,7 @@ Comandos de voz próprios do sistema não fazem parte desta versão (seção 5.4
 
 **Tipo EARS:** Event-driven · **Specs:** SPEC-009, SPEC-016, SPEC-017
 
-**WHEN** a candidatura for registrada, cancelada ou mudar de etapa, o sistema **SHALL** avisar o candidato conforme o RF-12, e a Empresa quando a ação vier do candidato.
+**WHEN** a candidatura for registrada ou mudar de etapa, o sistema **SHALL** avisar o candidato conforme o RF-12. **WHEN** o candidato cancelar a candidatura, o sistema **SHALL** avisar o responsável pela vaga (quem a criou, se ainda vinculado, ou a conta da Empresa; OPEN-093).
 
 ## Avaliações, denúncias e moderação
 

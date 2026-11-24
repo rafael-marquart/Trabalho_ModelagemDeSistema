@@ -31,7 +31,7 @@ Permitir que o candidato consulte as próprias candidaturas, acompanhe a etapa e
 
 1. O candidato aciona "Cancelar candidatura" e confirma.
 2. O sistema verifica se a candidatura está ativa (Inscrita, Em triagem, Em entrevista ou Finalista). Se a vaga estiver encerrada, o cancelamento só é aceito até Em entrevista.
-3. O sistema grava o cancelamento e o evento no histórico na mesma operação e avisa o responsável pela vaga (o Recrutador que a criou, se ainda vinculado, ou a conta da Empresa).
+3. O sistema grava o cancelamento e o evento no histórico na mesma operação, cancela a entrevista agendada, se houver, e avisa o responsável pela vaga (quem a criou, se ainda vinculado, ou a conta da Empresa; OPEN-093).
 
 ## Exceções e Fluxos Alternativos
 

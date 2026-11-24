@@ -30,7 +30,7 @@ Esta seção substitui a diretriz escrita em 25/10/2026, antes de existir códig
 | Autorização | Cada rota confere sessão, perfil, vínculo ativo do recrutador e empresa da vaga no servidor; requisições que alteram dados vindas de outra origem são recusadas. |
 | Auditoria | Tabela `AuditEvent` com tipo, autor, objeto e metadados sem segredos; retenção de 1 ano por rotina agendada. Lista de eventos em `docs/logging.md`. |
 | Testes | Vitest (unitários e de componentes, com axe-core), teste de ponta a ponta em `scripts/auth-e2e.mjs` com banco real e serviços simulados; tudo roda no GitHub Actions a cada pull request. |
-| Segredos e ambientes | Variáveis de ambiente (`.env` local, painel da Vercel em produção e testes); `.env.example` só com nomes. Produção e testes usam bancos separados. |
+| Segredos e ambientes | Variáveis de ambiente (`.env` local, painel da Vercel em produção e testes); `.env.example` sem segredos reais, só com valores de exemplo para o ambiente local. Produção e testes usam bancos separados. |
 | Laudos médicos | Não são armazenados (RB-28). Comprovantes opcionais ficam no banco, com até 4 MB e tipo conferido pelo conteúdo. |
 
 ## Decisões ainda não definidas

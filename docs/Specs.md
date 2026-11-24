@@ -2966,19 +2966,19 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
-- [x] O registro exige vaga válida, categoria da situação e descrição/justificativa; evidências adicionais são opcionais e laudos médicos/documentos pessoais sensíveis não são exigidos como condição de registro. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] A denúncia fica vinculada à vaga e à Empresa responsável; quando questiona avaliação específica, pode ser vinculada à avaliação correspondente após validação. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] Denúncia e evidências não comprovam irregularidade nem provocam bloqueio da vaga ou alteração de nota sem decisão administrativa. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] Denúncia é acessível apenas a atores autorizados e o registro não publica identidade ou conteúdo privado indevidamente (RNF-07/RNF-08). *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] Registrar denúncia não bloqueia automaticamente vaga nem altera a nota antes da análise administrativa. *(verificado por testes automatizados na CI; teste manual pendente)*
+- [x] O registro exige vaga válida, categoria da situação e descrição/justificativa; evidências adicionais são opcionais e laudos médicos/documentos pessoais sensíveis não são exigidos como condição de registro. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] A denúncia fica vinculada à vaga e à Empresa responsável; quando questiona avaliação específica, pode ser vinculada à avaliação correspondente após validação. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Denúncia e evidências não comprovam irregularidade nem provocam bloqueio da vaga ou alteração de nota sem decisão administrativa. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Denúncia é acessível apenas a atores autorizados e o registro não publica identidade ou conteúdo privado indevidamente (RNF-07/RNF-08). *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Registrar denúncia não bloqueia automaticamente vaga nem altera a nota antes da análise administrativa. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
 
-- [x] Acesso limitado ao ator autorizado. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] Pré-condições e regras são validadas no backend. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] Operações inválidas são recusadas sem alteração indevida. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] Operação válida produz o estado esperado. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] Dados pessoais e de acessibilidade respeitam autorização. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] Alterações relevantes ficam rastreáveis. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] A capacidade não executa responsabilidades atribuídas a outras Specs. *(verificado por testes automatizados na CI; teste manual pendente)*
+- [x] Acesso limitado ao ator autorizado. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Pré-condições e regras são validadas no backend. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Operações inválidas são recusadas sem alteração indevida. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Operação válida produz o estado esperado. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Dados pessoais e de acessibilidade respeitam autorização. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Alterações relevantes ficam rastreáveis. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] A capacidade não executa responsabilidades atribuídas a outras Specs. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
 - [x] Lacunas permanecem explicitadas em OPEN.md.
 
 ## 12. Casos de teste derivados
@@ -3074,16 +3074,16 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
-- [x] Operações de moderação são recusadas para Recrutador ou Empresa sem papel de Administrador da plataforma. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] Decisão e alterações decorrentes são rastreáveis; denúncia não analisada não provoca bloqueio nem alteração automática da nota (RNF-07/RNF-09/RNF-14). *(verificado por testes automatizados na CI; teste manual pendente)*
+- [x] Operações de moderação são recusadas para Recrutador ou Empresa sem papel de Administrador da plataforma. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Decisão e alterações decorrentes são rastreáveis; denúncia não analisada não provoca bloqueio nem alteração automática da nota (RNF-07/RNF-09/RNF-14). *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
 
-- [x] Acesso limitado ao ator autorizado. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] Pré-condições e regras são validadas no backend. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] Operações inválidas são recusadas sem alteração indevida. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] Operação válida produz o estado esperado. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] Dados pessoais e de acessibilidade respeitam autorização. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] Alterações relevantes ficam rastreáveis. *(verificado por testes automatizados na CI; teste manual pendente)*
-- [x] A capacidade não executa responsabilidades atribuídas a outras Specs. *(verificado por testes automatizados na CI; teste manual pendente)*
+- [x] Acesso limitado ao ator autorizado. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Pré-condições e regras são validadas no backend. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Operações inválidas são recusadas sem alteração indevida. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Operação válida produz o estado esperado. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Dados pessoais e de acessibilidade respeitam autorização. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Alterações relevantes ficam rastreáveis. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] A capacidade não executa responsabilidades atribuídas a outras Specs. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
 - [x] Lacunas permanecem explicitadas em OPEN.md.
 
 ## 12. Casos de teste derivados
