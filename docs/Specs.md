@@ -1731,7 +1731,7 @@ Contratos conceituais, sem endpoints HTTP.
 - [x] Perfil incompleto gera indicação de complementação, conforme UC-13.
 - [x] Resultado expõe fatores considerados.
 - [x] Mesmas entradas e regras produzem resultado consistente.
-- [x] Vaga externa só é analisada depois de validada e normalizada. *(só vagas externas validadas são publicadas, SPEC-006)*
+- [x] Vaga externa só é analisada depois de validada e normalizada. *(só vagas externas validadas são publicadas, SPEC-006; desde 24/11/2026 elas nem são analisadas, porque não trazem dados para comparar e o resultado seria sempre "dados insuficientes")*
 - [x] Cálculo pode ser testado isoladamente.
 - [x] Subpontuações e score final seguem a fórmula aprovada na OPEN-031, com arredondamento apenas no resultado final.
 - [x] Quando faltar informação necessária em qualquer dimensão, análise sinaliza “dados insuficientes”, sem score final completo; informa dimensões avaliadas e dados faltantes, sem converter ausência em zero ou compatibilidade presumida.

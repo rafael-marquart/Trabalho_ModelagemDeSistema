@@ -11,7 +11,8 @@ export type SearchJob = {
   // SPEC-006: name of the source of an external job (e.g. "Adzuna"); absent or null for own jobs.
   externalSource?: string | null;
   accessibility: { code: string; label: string; status: string; statusLabel: string }[];
-  compatibility: Compatibility;
+  // Null for external jobs (SPEC-006), which have no compatibility analysis.
+  compatibility: Compatibility | null;
 };
 export type Facets = { area: string[]; modalidade: string[]; local: string[] };
 export type SearchResult = { jobs: SearchJob[]; page: number; pages: number; total: number; hiddenIncompatible: number; facets: Facets };

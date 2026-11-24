@@ -4,7 +4,7 @@ import { jobModalityLabels, type JobModalityValue } from "@/lib/jobs/constants";
 import ScoreDialog from "./score-dialog";
 import type { SearchJob } from "./types";
 
-/** One search result: company, title, modality and location, the declared accessibility (RB-13) and the score circle. */
+/** One search result: company, title, modality and location, the declared accessibility (RB-13) and the score circle (own jobs only). */
 export default function JobCard({ job }: { job: SearchJob }) {
   const present = job.accessibility.filter(item => item.status === "PRESENT").map(item => item.label);
   const titleId = `job-title-${job.id}`;
@@ -25,6 +25,7 @@ export default function JobCard({ job }: { job: SearchJob }) {
         <ul>{job.accessibility.map(item => <li key={item.code}>{item.label}: {item.statusLabel}</li>)}</ul>
       </details>
     </div>
-    <ScoreDialog jobTitle={job.title || "Vaga sem título"} result={job.compatibility} jobId={job.id} />
+    {job.compatibility ? <ScoreDialog jobTitle={job.title || "Vaga sem título"} result={job.compatibility} jobId={job.id} />
+      : <p className="job-card-no-score muted">Sem cálculo de compatibilidade</p>}
   </article>;
 }

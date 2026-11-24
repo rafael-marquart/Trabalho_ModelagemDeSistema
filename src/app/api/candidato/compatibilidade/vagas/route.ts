@@ -10,7 +10,8 @@ export async function GET() {
   if (!user || user.role !== "CANDIDATE" || !user.isActive) return NextResponse.json({ message: "Acesso não autorizado." }, { status: 401 });
   const today = new Date(`${todayInBrazil()}T00:00:00.000Z`);
   const jobs = await prisma.job.findMany({
-    where: { status: "OPEN", origin: { in: ["OWN", "EXTERNAL"] }, OR: [{ deadline: null }, { deadline: { gte: today } }] },
+    // External jobs have no compatibility analysis (decision of 24/11/2026).
+    where: { status: "OPEN", origin: "OWN", OR: [{ deadline: null }, { deadline: { gte: today } }] },
     orderBy: { publishedAt: "desc" }, take: 50,
     select: { id: true, title: true, modality: true, locationCity: true, locationState: true, deadline: true, externalCompanyName: true, company: { select: { tradeName: true, legalName: true } } }
   });
