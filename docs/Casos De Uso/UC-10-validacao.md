@@ -1,62 +1,50 @@
 # UC-10 — Validar Requisitos da Seleção
 
+> **Situação nesta versão:** fora do escopo. Nenhuma Spec detalha este caso de uso e ele não está implementado. A parte que existe no código está no UC-09: a mudança de etapa passa por uma verificação de "pendências impeditivas conhecidas" (RB-43), mas nenhum tipo de pendência foi definido até agora (OPEN-092), então hoje nenhuma mudança é barrada por esse motivo. O texto abaixo registra a intenção original, para uma versão futura.
+
 ## Objetivo
 
-Validar os requisitos exigidos para a etapa de seleção, garantindo que o recrutador possa decidir sobre o avanço do candidato com base em informações consistentes.
+Permitir que a Empresa ou o Recrutador confira, antes de avançar uma candidatura, se os requisitos exigidos para a etapa foram atendidos, e peça complementação ao candidato quando faltar algo.
 
-## Ator principal
+## Atores principais
 
-- Recrutador.
+- Empresa e Recrutador vinculado.
 
 ## Pré-condições
 
-- O recrutador deve estar autenticado no sistema.
-- O processo seletivo ou a etapa de avaliação deve estar ativa.
-- A candidatura deve estar associada a uma vaga ou etapa em andamento.
+- Ator autenticado, gerenciando uma vaga da própria Empresa.
+- A candidatura está em andamento.
 
 ## Pontos de Inclusão e Extensão
 
-- Inclusão (<<include>>): UC-09 (Gerenciar Funil de Seleção).
+- Seria incluído por UC-09 (Gerenciar funil de seleção) no momento de mudar a etapa.
 
-## Fluxo Principal
+## Fluxo Principal (previsto)
 
-1. O recrutador acessa a avaliação da candidatura ou da etapa de seleção.
-2. O sistema exibe os requisitos exigidos para a etapa, como formulários, critérios de elegibilidade ou itens solicitados no processo.
-3. O recrutador valida se os requisitos esperados foram atendidos e se os dados estão completos e consistentes.
-4. O sistema verifica se há pendências ou inconsistências nos requisitos.
-5. O recrutador aprova, solicita complementação ou rejeita a candidatura conforme a validação.
-6. O sistema registra a decisão, atualiza o status e notifica o candidato.
+1. O ator abre a candidatura e vê os requisitos definidos para a etapa.
+2. O sistema indica pendências ou inconsistências conhecidas.
+3. O ator avança, pede complementação ou recusa a candidatura.
+4. O sistema registra a decisão e avisa o candidato.
 
-## Exceções e Fluxos Alternativos
+## Exceções e Fluxos Alternativos (previstos)
 
-- EX01 (Requisitos incompletos): Se o candidato não atender aos requisitos necessários, o sistema solicita a complementação e mantém a etapa em pendência.
-- EX02 (Informação inválida): Se um item ou informação não atender ao padrão esperado, o sistema identifica o problema e informa a correção necessária.
+- EX01 (Requisitos incompletos): o sistema pede a complementação e mantém a etapa.
+- EX02 (Informação inválida): o sistema identifica o problema e informa o que corrigir.
 
-## Pós-condições
+## O que falta para implementar
 
-- A etapa de seleção é atualizada de acordo com a validação.
-- O candidato recebe resposta sobre os requisitos e o status da etapa.
-- O histórico da validação fica disponível para rastreio e auditoria.
-- O funil de seleção permanece consistente com o processo realizado.
+- Definir os tipos de pendência por etapa (OPEN-092).
+- Definir como o candidato recebe e responde um pedido de complementação.
+- Escrever a Spec correspondente.
 
 ## Regras de negócio relacionadas
 
-- RB-23
-- RB-27
-- RB-39
-- RB-41
-- RB-43
+- RB-27 — Histórico de alterações.
+- RB-39 — Transições válidas do funil.
+- RB-41 — Auditoria das alterações.
+- RB-43 — Validação para avanço no processo.
 
 ## Requisitos relacionados
 
-- RF-30
-- RF-31
-- RF-35
-- RF-38
-
-## Critérios de aceitação
-
-- O recrutador consegue validar os requisitos da etapa de seleção.
-- O sistema sinaliza pendências e impedimentos de avanço quando necessário.
-- O candidato recebe o retorno da validação com status claro.
-- O histórico da decisão é mantido para rastreio e auditoria.
+- RF-30 — Gestão de candidatos no processo seletivo.
+- RF-35 — Gestão do funil de seleção.

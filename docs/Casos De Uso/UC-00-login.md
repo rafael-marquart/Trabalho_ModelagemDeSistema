@@ -2,61 +2,63 @@
 
 ## Objetivo
 
-Permitir que o usuário acesse o sistema de forma segura e autenticada, validando suas credenciais e garantindo o acesso às funcionalidades compatíveis com seu perfil e papel dentro da plataforma. A tela inicial de acesso oferece apenas as opções de criação de conta como usuário ou como empresa.
+Permitir que cada perfil acesse a plataforma de forma segura, com credenciais validadas no servidor, e chegue à área correspondente ao seu papel. A página inicial pergunta como a pessoa quer continuar (candidato ou empresa) e oferece a criação de conta de candidato, o cadastro de empresa e a entrada do recrutador.
 
-## Ator principal
+## Atores principais
 
 - Candidato PcD.
-- Usuário.
-- Administrador.
+- Empresa (conta organizacional).
+- Recrutador (convidado pela Empresa).
+- Administrador (entrada própria, em `/admin/login`).
 
 ## Pré-condições
 
-- O usuário deve possuir cadastro no sistema, ou escolher uma das opções de criação de conta disponíveis.
-- O usuário deve ter acesso à plataforma por meio de credenciais válidas.
-- O sistema deve estar disponível e operacional.
+- A pessoa possui conta ativa ou escolhe criar uma conta de candidato ou de empresa. Contas de recrutador são criadas apenas por convite da Empresa (UC-07).
+- A conta de Empresa só entra depois de confirmar o e-mail corporativo.
 
 ## Fluxo Principal
 
-1. O usuário acessa a página inicial da plataforma.
-2. O sistema apresenta o formulário de login com campos para e-mail e senha e as opções de criação de conta como usuário ou empresa.
-3. Se o usuário escolher criar uma conta, o sistema direciona para o fluxo correspondente.
-4. Se o usuário já possuir uma conta, informa suas credenciais e confirma a autenticação.
-5. O sistema valida os dados informados.
-6. Se as credenciais forem válidas, o sistema autentica o usuário e redireciona para a área correspondente ao seu perfil.
-7. O sistema mantém a sessão ativa conforme a política de segurança definida.
+1. A pessoa acessa a página inicial e escolhe "Sou candidato", "Sou empresa" ou "Entrar como recrutador".
+2. O sistema apresenta o formulário do perfil escolhido: candidato entra com **e-mail ou CPF** e senha; Empresa e Recrutador, com e-mail e senha. Há a opção "Lembrar de mim".
+3. Se a pessoa escolher criar conta, o sistema leva ao cadastro correspondente, que exige o aceite dos Termos de Uso e da Política de Privacidade vigentes (RF-42).
+4. A pessoa informa as credenciais e confirma.
+5. O sistema valida as credenciais no servidor.
+6. Se forem válidas, o sistema cria a sessão e leva a pessoa à área do seu perfil.
+7. A sessão termina após 60 minutos sem uso ou, com "Lembrar de mim", em até 30 dias (RNF-07).
 
 ## Exceções e Fluxos Alternativos
 
-- EX01 (Credenciais inválidas): Se o e-mail ou a senha estiverem incorretos, o sistema informa o erro e impede o acesso.
-- EX02 (Usuário bloqueado): Se o perfil estiver bloqueado por segurança, o sistema informa a impossibilidade de acesso e orienta a recuperação.
-- EX03 (Recuperação de senha): Se o usuário não lembrar a senha, ele pode usar a opção de recuperação para redefinir as credenciais.
-- EX04 (Empresa aguardando validação): A conta empresarial permanece indisponível até a confirmação do e-mail corporativo. O cadastro inicial aceita apenas empresas brasileiras que informem exatamente 14 dígitos de CNPJ, sem verificar dígitos verificadores ou existência em fonte oficial; empresas estrangeiras ou sem CNPJ estão fora do escopo inicial.
+- EX01 (Credenciais inválidas): o sistema informa que não foi possível entrar, sem revelar qual dado está errado, e não inicia a sessão.
+- EX02 (Conta bloqueada): após 10 tentativas incorretas consecutivas, a conta fica bloqueada por 15 minutos; o sistema informa e orienta a recuperação de senha.
+- EX03 (Recuperação de senha): candidato (por e-mail ou CPF), Empresa e Recrutador (por e-mail) podem pedir um link de redefinição, válido por 30 minutos e de uso único; o sistema não revela se a conta existe (RF-02).
+- EX04 (Empresa aguardando validação): a conta empresarial fica indisponível até a confirmação do e-mail corporativo. O cadastro aceita apenas empresas brasileiras com CNPJ de 14 dígitos, sem verificar dígitos verificadores nem fonte oficial.
+- EX05 (Perfil diferente): uma conta que tentar entrar pelo formulário de outro perfil não é aceita naquele formulário.
 
 ## Pós-condições
 
-- O usuário fica autenticado no sistema.
-- Contas de recrutador não são criadas diretamente na tela inicial; o recrutador deve ser cadastrado pela empresa em suas configurações.
-- A sessão é iniciada com permissões compatíveis com o papel do usuário.
-- O usuário pode acessar as funcionalidades disponíveis conforme seu perfil.
+- A pessoa fica autenticada, com sessão guardada no servidor e permissões do seu perfil.
+- O login e as falhas ficam registrados para auditoria (RNF-14).
 
 ## Regras de negócio relacionadas
 
-- RB-21: Segurança de autenticação — credenciais devem ser validadas antes de autorizar acesso.
-- RB-22: Controle de sessão — a sessão deve expirar ou invalidar conforme as condições definidas pelo sistema.
-- RB-12: Controle de acesso — operações protegidas devem respeitar o perfil autorizado.
+- RB-12: Controle de acesso.
+- RB-21: Segurança de autenticação.
+- RB-22: Controle de sessão.
+- RB-46: Cadastro de recrutador pela empresa.
 
 ## Requisitos relacionados
 
 - RF-01 — Autenticação.
 - RF-02 — Recuperação de senha.
 - RF-03 — Perfis de acesso.
+- RF-17 — Cadastro de empresa e de recrutadores.
+- RF-42 — Aceite dos Termos de Uso e da Política de Privacidade.
+- RF-45 — Mostrar e ocultar a senha.
 
 ## Critérios de aceitação
 
-- O usuário consegue acessar a plataforma com credenciais válidas.
-- O sistema bloqueia acesso quando credenciais são inválidas.
-- Usuários bloqueados ou com sessão expirada são redirecionados para a autenticação correta.
-- O acesso considera o perfil e o papel do usuário dentro da plataforma.
-
----
+- Cada perfil entra pelo seu formulário com credenciais válidas; o candidato também pode usar o CPF.
+- Credenciais inválidas não iniciam sessão nem revelam qual dado está errado.
+- A conta é bloqueada por 15 minutos após 10 falhas consecutivas.
+- Sessão expirada leva de volta à entrada.
+- Não é possível criar conta sem aceitar os Termos de Uso e a Política de Privacidade.

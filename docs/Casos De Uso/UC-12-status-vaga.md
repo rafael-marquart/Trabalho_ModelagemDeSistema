@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Permitir que o candidato visualize o estado atual de uma vaga, identificando se ela está aberta, indisponível ou encerrada, de forma clara e acessível.
+Permitir que o candidato veja, de forma clara e acessível, se uma vaga está aberta, indisponível ou encerrada, e o que isso significa para a candidatura.
 
 ## Ator principal
 
@@ -10,55 +10,51 @@ Permitir que o candidato visualize o estado atual de uma vaga, identificando se 
 
 ## Pré-condições
 
-- O candidato deve estar autenticado no sistema.
-- A vaga deve estar registrada no catálogo ou no histórico de ofertas.
-- O sistema deve disponibilizar a informação do status atual da vaga ao usuário.
+- Candidato autenticado.
+- A vaga foi publicada por uma empresa na plataforma (rascunhos nunca aparecem ao candidato).
 
 ## Pontos de Inclusão e Extensão
 
-- Inclusão (<<include>>): UC-02 (Buscar Vagas).
-- Extensão (<<extend>>): UC-05 (Acompanhar Funil de Candidaturas).
+- Incluído por UC-02 (Buscar Vagas), no detalhe da vaga, e por UC-05 (Acompanhar candidaturas).
 
 ## Fluxo Principal
 
-1. O candidato acessa a lista de vagas ou o detalhe de uma oportunidade.
-2. O sistema consulta o status atual da vaga no catálogo e nas regras de negócio aplicáveis.
-3. O sistema exibe o estado atual da vaga: “Aberta”, “Indisponível” ou “Encerrada”.
-4. Se a vaga estiver aberta, o candidato pode consultar o detalhamento e, caso seja elegível, seguir para a candidatura.
-5. Se a vaga estiver indisponível, o sistema informa a condição e bloqueia candidaturas enquanto durar esse estado; uma operação autorizada pode restabelecê-la como aberta, conforme OPEN-041.
-6. Se a vaga estiver encerrada, o sistema informa a condição e bloqueia permanentemente novas candidaturas naquela publicação. Uma nova oportunidade exige nova publicação conforme regras aplicáveis.
-7. Se não for possível confirmar disponibilidade por ausência ou falha de informação, o sistema não presume disponibilidade e bloqueia a candidatura.
+1. O candidato abre o detalhe de uma vaga ou uma candidatura.
+2. O sistema lê o estado registrado da vaga no momento da consulta e mostra um dos três rótulos:
+   - **Aberta**: a vaga está aberta e no prazo; mostra a data final de inscrição, se houver.
+   - **Indisponível**: a Empresa pausou a vaga ou o prazo de inscrição terminou; o motivo é informado.
+   - **Encerrada**: a Empresa encerrou a vaga.
+3. Se a vaga estiver aberta e sem barreira crítica, o candidato pode seguir para a candidatura (UC-03).
+4. Se estiver indisponível, a candidatura fica bloqueada enquanto durar a condição; uma vaga pausada pode voltar a Aberta pela Empresa (UC-08).
+5. Se estiver encerrada, novas candidaturas ficam bloqueadas de vez; uma nova oportunidade exige nova publicação.
 
 ## Exceções e Fluxos Alternativos
 
-- EX01 (Vaga encerrada): Se a vaga foi encerrada após a busca, o sistema mostra mensagem informativa e não permite candidatura.
-- EX03 (Atualização do status): Se houver alteração recente no status da vaga, o sistema comunica o estado atualmente registrado e aplica as regras correspondentes.
+- EX01 (Estado mudou depois da busca): o sistema mostra o estado atual e aplica a regra correspondente; a candidatura confere o estado de novo no momento do registro (UC-03).
+- EX02 (Estado não confirmado): se não for possível ler o estado da vaga, o sistema mostra "Não confirmada", não presume disponibilidade e bloqueia a candidatura até nova tentativa.
+- EX03 (Já candidatado): se o candidato já tem candidatura na vaga, o sistema mostra a data e a etapa atual em vez do botão de candidatura.
 
 ## Pós-condições
 
-- O status da vaga fica visível para o candidato.
-- Ações futuras (candidatura, busca ou acompanhamento) respeitam o estado informado.
-- O registro do status é mantido para auditoria e rastreio de oportunidades.
+- O candidato vê o estado atual da vaga e o motivo de qualquer bloqueio.
+- As mudanças de estado ficam registradas para auditoria (UC-08).
 
 ## Regras de negócio relacionadas
 
-- RB-01
-- RB-13
-- RB-23
-- RB-42
+- RB-01 — Elegibilidade para candidatura.
+- RB-13 — Transparência antes da candidatura.
+- RB-23 — Transparência de status.
+- RB-42 — Vaga encerrada.
 
 ## Requisitos relacionados
 
-- RF-10
-- RF-12
-- RF-27
+- RF-10 — Visualização da vaga.
+- RF-12 — Notificações.
+- RF-27 — Notificações do processo seletivo.
 
 ## Critérios de aceitação
 
-- O sistema informa corretamente o estado atual da vaga.
-- Vagas indisponíveis bloqueiam candidaturas enquanto permanecerem nesse estado; podem voltar a aberta por operação autorizada.
-- Vagas encerradas bloqueiam permanentemente novas candidaturas naquela publicação.
-- Ausência ou falha de informação não presume disponibilidade e bloqueia candidatura quando não for possível confirmá-la
-- O status é atualizado de forma consistente com o estado real da vaga.
-
----
+- O rótulo mostrado corresponde ao estado registrado no momento da consulta.
+- Vaga pausada ou com prazo vencido aparece como "Indisponível", com o motivo, e não aceita candidatura.
+- Vaga encerrada não aceita novas candidaturas.
+- Falha ao ler o estado não libera a candidatura.
