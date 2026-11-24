@@ -46,4 +46,4 @@ Executada sobre `desenvolvimento-do-projeto` + SPEC-021 (PR #58), em ambiente li
 | Telas anônimas chamam `/api/conta/preferencias` e recebem 401 | Continua: o comportamento é esperado e não afeta o uso |
 | Cobertura baixa em `notifications/access.ts`, `reports/http.ts` e `auth/password.ts` | Continua: esses módulos são exercitados pelo E2E |
 
-Esta bateria foi feita antes da SPEC-006; a implementação dela (PR #68) tem testes próprios no PR e não está na `main`.
+Esta bateria foi feita antes da SPEC-006; os testes dela estão em `docs/Implementacao/SPEC-006.md` (seção "Verificações") e o roteiro manual em `docs/operacao/validacao-manual-spec-006.md`.

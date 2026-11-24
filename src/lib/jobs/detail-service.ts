@@ -8,6 +8,8 @@ import { availabilityOf, decideAction, formatDate, locationText, salaryText, typ
 import { rowToFields, todayInBrazil } from "./schema";
 import { findApplicationResult, findBlockingApplication } from "@/lib/applications/service";
 import { getPublicRating, type PublicRating } from "@/lib/public-rating/service";
+import { jobCompanyName } from "./company-name";
+import { sourceLabel } from "@/lib/external-jobs/labels";
 
 const label = (status: string) => statusLabels[status as keyof typeof statusLabels] ?? statusLabels.NOT_INFORMED;
 
@@ -25,18 +27,20 @@ export type JobDetail = {
   // The candidate's application that still counts for this job (in progress or approved), to link to its detail (SPEC-012).
   applicationId: string | null;
   // SPEC-021: the company's public note (distribution of valid evaluations by number of stars).
-  publicRating: PublicRating;
+  publicRating: PublicRating | null;
+  // SPEC-006: link to the original ad and the source's name; null for jobs published by a company in the platform.
+  external: { sourceName: string; url: string } | null;
   jobId: string;
 };
 
 /**
- * SPEC-010: what a candidate may see about a published own job (external ones depend on SPEC-006). Drafts are not visible;
+ * SPEC-010: what a candidate may see about a published job, own or external (SPEC-006). Drafts are not visible;
  * paused and closed jobs are shown with their status and blocked actions. No internal identifiers, contacts or other
  * candidates' data are returned. Compatibility comes from SPEC-007 (reused when nothing changed) only while the job is open.
  */
 export async function getJobDetailForCandidate(userId: string, jobId: string, deps: { estimator?: TravelEstimator; now?: Date } = {}): Promise<JobDetail | null> {
   const row = await prisma.job.findFirst({
-    where: { id: jobId, origin: "OWN", status: { in: ["OPEN", "PAUSED", "CLOSED"] } },
+    where: { id: jobId, origin: { in: ["OWN", "EXTERNAL"] }, status: { in: ["OPEN", "PAUSED", "CLOSED"] } },
     include: { company: { select: { tradeName: true, legalName: true } } }
   });
   if (!row) return null;
@@ -51,13 +55,21 @@ export async function getJobDetailForCandidate(userId: string, jobId: string, de
     const registered = await findApplicationResult(userId, jobId);
     if (registered) { compatibility = registered.result; compatibilityFromApplication = registered.appliedAt; }
   }
-  const [infrastructure, publicRating] = await Promise.all([getCompanyInfrastructure(row.companyId), getPublicRating(row.companyId)]);
-  const existing = await findBlockingApplication(userId, jobId);
+  // External jobs have no company account: no infrastructure, public note or application inside the platform.
+  const external = row.origin === "EXTERNAL" && row.externalUrl ? { sourceName: sourceLabel(row.externalSource), url: row.externalUrl } : null;
+  const [infrastructure, publicRating] = row.companyId
+    ? await Promise.all([getCompanyInfrastructure(row.companyId), getPublicRating(row.companyId)])
+    : [{ updatedAt: null, items: [] }, null];
+  const existing = external ? null : await findBlockingApplication(userId, jobId);
+  const action = external
+    ? { allowed: false, message: `Esta vaga foi publicada fora do Acessa Vagas. A candidatura é feita no anúncio original, no ${external.sourceName}.` }
+    : decideAction(availability, compatibility, existing);
   return {
     jobId: row.id,
     publicRating,
+    external,
     title: fields.title || "Vaga sem título",
-    companyName: row.company.tradeName || row.company.legalName,
+    companyName: jobCompanyName(row.company, row.externalCompanyName),
     description: fields.description || "Não informada",
     requirements: fields.requirements || "Não informados",
     criteria: fields.technicalCriteria,
@@ -66,7 +78,7 @@ export async function getJobDetailForCandidate(userId: string, jobId: string, de
     location: locationText(fields.locationCity, fields.locationState, fields.locationAddress),
     salary: salaryText(fields.salaryMin, fields.salaryMax),
     deadline: fields.deadline ? formatDate(fields.deadline) : "Não informado",
-    origin: "Publicada pela empresa no Acessa Vagas",
+    origin: external ? `Vaga externa, encontrada no ${external.sourceName}` : "Publicada pela empresa no Acessa Vagas",
     availability,
     jobAccessibility: infrastructureItems.map((item) => {
       const status = fields.accessibility[item.code] ?? "NOT_INFORMED";
@@ -78,7 +90,7 @@ export async function getJobDetailForCandidate(userId: string, jobId: string, de
     },
     compatibility,
     compatibilityFromApplication,
-    action: decideAction(availability, compatibility, existing),
+    action,
     applicationId: existing?.id ?? null
   };
 }

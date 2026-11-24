@@ -18,7 +18,7 @@ Repositório para o trabalho de modelagem de sistemas - GRUPO: Gabriella Mansur 
   * Com dados faltando, o resultado é "dados insuficientes", sem presumir compatibilidade.
 * **Avaliação pós-entrevista:** depois de uma entrevista concluída, o candidato avalia acessibilidade e postura inclusiva (1 a 5 estrelas). A nota pública da empresa mostra só a distribuição de estrelas, sem identificar ninguém.
 * **Denúncia moderada:** quem participou do processo pode denunciar incompatibilidade ou falsa inclusão; a administração analisa em até 5 dias úteis, pode ouvir a empresa (sem revelar o denunciante) e registra a decisão.
-* **Publicação nativa de vagas:** a empresa e seus recrutadores cadastram vagas declarando a acessibilidade item a item. Vagas externas (SPEC-006) estão em revisão no PR #68 e não fazem parte da versão atual.
+* **Publicação nativa de vagas:** a empresa e seus recrutadores cadastram vagas declarando a acessibilidade item a item. Vagas externas do Adzuna (SPEC-006) entram na busca depois de validadas, com link para o anúncio original.
 * **Acessibilidade por design (WCAG 2.2 AA):** em conformidade com a Lei Brasileira de Inclusão (LBI nº 13.146/2015): leitores de tela, navegação por teclado, alto contraste e tema escuro. Comandos de voz próprios não fazem parte desta versão.
 * **Funil seletivo transparente:** etapas, histórico e entrevistas visíveis ao candidato, com avisos na plataforma e por e-mail a cada mudança.
 
@@ -47,10 +47,10 @@ O projeto segue o processo SDD (Spec-Driven Development). A documentação fica 
 | Operação, publicação e roteiros de teste manual | [`docs/operacao/`](docs/operacao/) |
 | Identidade visual e layout | [`docs/Identidade Visual/`](docs/Identidade%20Visual/), [`docs/layout/`](docs/layout/) |
 
-# Estado atual (23/11/2026)
+# Estado atual (24/11/2026)
 
-- **Implementado na `main`:** SPEC-001 a SPEC-005 e SPEC-007 a SPEC-021: cadastro e entrada dos quatro perfis, perfil do candidato com consentimento para dados de acessibilidade, infraestrutura da empresa e recrutadores, vagas, compatibilidade, busca, candidatura, funil com entrevistas, avisos, avaliação, nota pública, denúncias e moderação.
-- **Em revisão:** SPEC-006 (vagas externas, PR #68) e roteiro de comandos de voz (PR #67).
+- **Implementado:** SPEC-001 a SPEC-021: cadastro e entrada dos quatro perfis, perfil do candidato com consentimento para dados de acessibilidade, infraestrutura da empresa e recrutadores, vagas, compatibilidade, busca, vagas externas do Adzuna (SPEC-006, aguardando teste manual), candidatura, funil com entrevistas, avisos, avaliação, nota pública, denúncias e moderação.
+- **Em revisão:** roteiro de comandos de voz (PR #67).
 - **Situação das SPEC-019 e SPEC-020:** implementadas; o estado de teste manual e de layout está no registro consolidado de `docs/Specs.md`. As questões abertas estão resumidas em `docs/OPEN.md`.
 - **Qualidade:** a CI roda checagem de tipos, lint, testes (Vitest, com verificação axe-core das telas), build e o teste de ponta a ponta `scripts/auth-e2e.mjs` em todo pull request.
 

@@ -21,7 +21,7 @@ Permitir que o candidato encontre vagas abertas, com busca por texto e filtros, 
 1. O candidato acessa "Vagas" e, se quiser, digita termos de busca e escolhe filtros por cargo, área profissional, modalidade, localização e recursos de acessibilidade da vaga (os seis itens da infraestrutura, UC-07).
 2. A busca por texto procura no título, na descrição e no nome da empresa; ignora maiúsculas, minúsculas e acentos, compara pela raiz das palavras ("engenharia" encontra "engenheiro") e exige que todos os termos apareçam em algum desses campos. Não há sinônimos, correção de digitação nem interpretação por IA. Busca vazia não restringe.
 3. Filtros de categorias diferentes se combinam por "e"; valores da mesma categoria, por "ou". Remover um filtro mantém os demais.
-4. O sistema considera somente vagas publicadas por empresas na plataforma, abertas e dentro do prazo de inscrição.
+4. O sistema considera vagas abertas e dentro do prazo de inscrição, publicadas por empresas na plataforma ou importadas de fonte externa já validada (UC-14). Vagas externas aparecem com o selo "Vaga externa · Adzuna".
 5. Para cada vaga encontrada, o sistema calcula a compatibilidade (UC-13). Vagas com barreira crítica para o candidato não aparecem; o sistema informa quantas foram ocultadas por esse motivo.
 6. O sistema mostra até 100 vagas, 20 por página, ordenadas por maior compatibilidade (padrão), mais recentes ou mais antigas. Vagas sem score completo ficam depois das que têm score. A paginação mantém busca, filtros e ordenação; mudar a busca ou um filtro volta para a primeira página.
 7. O candidato pode abrir uma vaga para ver o detalhe e a explicação da compatibilidade (RF-10, RF-24).
@@ -57,7 +57,7 @@ Permitir que o candidato encontre vagas abertas, com busca por texto e filtros, 
 
 ## Vagas externas
 
-Vagas externas (SPEC-006, UC-14) não aparecem na busca desta versão: a implementação está em revisão (PR #68) e a decisão de escopo ainda não foi tomada.
+Vagas externas (SPEC-006, UC-14) entram na busca só depois de validadas e normalizadas. A acessibilidade delas aparece como "Não informado" e modalidade, área e critérios técnicos ficam vazios, então a compatibilidade é "dados insuficientes" (RB-16). Não há candidatura nem denúncia pela plataforma: o detalhe mostra o link para o anúncio original.
 
 ## Critérios de aceitação
 

@@ -112,6 +112,14 @@ Nunca entram no registro: senha, hash de senha, token de sessão, link de recupe
 | `REPORT_CONCLUDED` | Decisão registrada |
 | `REPORT_PRIORITY_CHANGED` | Prioridade alterada |
 
+### SPEC-006 — Vagas externas
+
+| Evento | Quando |
+|---|---|
+| `EXTERNAL_IMPORT_FINISHED` | Uma execução da importação terminou (situação e totais no `metadata`) |
+
+O detalhe de cada execução (consultas feitas, sem as credenciais, e o resultado de cada anúncio com o motivo de rejeição) fica nas tabelas `ExternalImportRun` e `ExternalImportRecord`, visíveis na página "Vagas externas" do administrador.
+
 ### Rotinas de retenção
 
 | Evento | Quando |

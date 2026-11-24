@@ -9,7 +9,7 @@
 | Recrutador | Pessoa convidada pela Empresa, com vínculo ativo | Aceita o convite da Empresa; entra com e-mail |
 | Administrador | Equipe da plataforma | Conta criada pela equipe; entra por `/admin/login` |
 | Serviço de trajeto (HERE) | Sistema externo | Ator secundário do UC-13 |
-| Fonte de vagas externas (Adzuna) | Sistema externo | Ator secundário do UC-14 (não implementado) |
+| Fonte de vagas externas (Adzuna) | Sistema externo | Ator secundário do UC-14 |
 
 Empresa e Recrutador fazem as mesmas operações de vagas e funil, sempre sobre as vagas da própria Empresa. Só a Empresa convida recrutadores e mantém a infraestrutura. Não existe ator separado de "Gestor de Seleção".
 
@@ -31,7 +31,7 @@ Empresa e Recrutador fazem as mesmas operações de vagas e funil, sempre sobre 
 | UC-11 | Denunciar vaga incompatível | Candidato, Administrador, Empresa | Implementado (SPEC-019, SPEC-020) |
 | UC-12 | Status da vaga | Candidato | Implementado (SPEC-009, SPEC-010) |
 | UC-13 | Calcular compatibilidade | Candidato, HERE | Implementado (SPEC-007) |
-| UC-14 | Coletar e ingerir vagas externas | Sistema, Adzuna, Administrador | Não implementado na `main` (SPEC-006 em revisão no PR #68) |
+| UC-14 | Coletar e ingerir vagas externas | Sistema, Adzuna, Administrador | Implementado (SPEC-006), aguardando teste manual |
 
 Os avisos (na plataforma e por e-mail, SPEC-017) acompanham UC-03, UC-05, UC-08, UC-09 e UC-11 e não têm caso de uso próprio.
 
@@ -68,18 +68,21 @@ flowchart LR
     UC11[UC-11 Denunciar vaga]
     UC12[UC-12 Status da vaga]
     UC13[UC-13 Calcular compatibilidade]
+    UC14[UC-14 Ingerir vagas externas]
   end
+  Z([Adzuna])
   C --- UC00 & UC01 & UC02 & UC03 & UC05 & UC06 & UC11
   E --- UC00 & UC07 & UC08 & UC09 & UC11
   R --- UC00 & UC08 & UC09 & UC11
-  A --- UC00 & UC01 & UC11
+  A --- UC00 & UC01 & UC11 & UC14
   UC02 -. include .-> UC13
   UC03 -. include .-> UC13
   UC05 -. include .-> UC12
   UC13 --- H
+  UC14 --- Z
 ```
 
-UC-10 e UC-14 ficam fora do diagrama porque não estão implementados nesta versão.
+O UC-10 fica fora do diagrama porque não está implementado nesta versão.
 
 ## Diagrama (UML, PlantUML)
 

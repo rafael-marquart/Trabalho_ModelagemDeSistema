@@ -38,7 +38,9 @@ export async function enqueueStageChanged(tx: Tx, input: { applicationId: string
  * The "recrutador responsável" for a job (OPEN-093, provisional): whoever created it, while still able to act for the
  * company (the company account, or a recruiter with an active link); otherwise the company account.
  */
-export async function responsibleRecipient(tx: Tx, job: { companyId: string; createdByUserId: string }) {
+export async function responsibleRecipient(tx: Tx, job: { companyId: string | null; createdByUserId: string | null }) {
+  // External jobs (SPEC-006) have no company account to notify.
+  if (!job.companyId || !job.createdByUserId) return null;
   const company = await tx.company.findUnique({ where: { id: job.companyId }, select: { accountUserId: true } });
   if (!company) return null;
   if (job.createdByUserId === company.accountUserId) return { userId: company.accountUserId, area: "empresa" as const };

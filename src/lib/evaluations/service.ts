@@ -68,15 +68,17 @@ export async function submitEvaluation(userId: string, interviewId: string, inpu
   if (interview.status !== "COMPLETED" || !interview.completedAt) return refuse(userId, interviewId, "NOT_COMPLETED", 409, "Só é possível avaliar depois que a entrevista for concluída.", now);
   if (interview.evaluation) return refuse(userId, interviewId, "DUPLICATE", 409, "Você já avaliou este processo. A avaliação enviada não pode ser alterada.", now);
   if (now >= evaluationDeadline(interview.completedAt)) return refuse(userId, interviewId, "EXPIRED", 409, `O prazo de ${EVALUATION_WINDOW_DAYS} dias para avaliar esta entrevista terminou.`, now);
+  // Interviews exist only in the funnel of own jobs, which always have a company (external jobs have no funnel).
+  const companyId = interview.application.job.companyId;
+  if (!companyId) return refuse(userId, interviewId, "NOT_ELIGIBLE", 404, "Entrevista não encontrada.", now);
   try {
     await prisma.$transaction(async (tx) => {
       const created = await tx.interviewEvaluation.create({ data: {
-        interviewId: interview.id, applicationId: interview.applicationId, candidateUserId: userId, companyId: interview.application.job.companyId,
+        interviewId: interview.id, applicationId: interview.applicationId, candidateUserId: userId, companyId,
         accessibilityRating: input.accessibilityRating, inclusionRating: input.inclusionRating, comment: input.comment ?? null, submittedAt: now
       } });
-      await tx.auditEvent.create({ data: { actorUserId: userId, eventType: "EVALUATION_SUBMITTED", subjectType: "InterviewEvaluation", subjectId: created.id, metadata: { interviewId: interview.id, companyId: interview.application.job.companyId } } });
+      await tx.auditEvent.create({ data: { actorUserId: userId, eventType: "EVALUATION_SUBMITTED", subjectType: "InterviewEvaluation", subjectId: created.id, metadata: { interviewId: interview.id, companyId } } });
       // SPEC-021: the public note changed; the new distribution (counts only) is recorded for traceability.
-      const companyId = interview.application.job.companyId;
       const [accessibility, inclusion] = await Promise.all([
         tx.interviewEvaluation.groupBy({ by: ["accessibilityRating"], where: { companyId }, _count: { _all: true } }),
         tx.interviewEvaluation.groupBy({ by: ["inclusionRating"], where: { companyId }, _count: { _all: true } })

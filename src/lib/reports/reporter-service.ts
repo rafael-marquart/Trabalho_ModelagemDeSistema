@@ -2,6 +2,8 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { addBusinessDays, REVIEW_TARGET_BUSINESS_DAYS } from "./business-days";
 import { categoryLabels, decisionLabels, reportStatusLabels, type DecisionCode, type ReportCategoryCode, type ReportStatusCode } from "./labels";
+import { jobCompanyName } from "@/lib/jobs/company-name";
+import { ownCompanyId } from "@/lib/jobs/company-name";
 
 // SPEC-019: a signed-in candidate reports a job after taking part in its selection process: they must have had a
 // completed interview for that job (decision of 01/11/2026, revising OPEN-074). Category and description are required; evidence
@@ -52,7 +54,7 @@ export async function reportFormContext(userId: string, jobId: string) {
     prisma.report.findFirst({ where: { reporterUserId: userId, jobId, status: { not: "CONCLUIDA" } }, select: { id: true } })
   ]);
   return {
-    job: { id: job.id, title: job.title || "Vaga sem título", companyName: job.company.tradeName || job.company.legalName },
+    job: { id: job.id, title: job.title || "Vaga sem título", companyName: jobCompanyName(job.company) },
     evaluations: evaluations.map((item) => ({ id: item.id, submittedAt: item.submittedAt.toISOString(), interviewAt: item.interview?.scheduledAt.toISOString() ?? null })),
     openReportId: open?.id ?? null,
     eligible
@@ -83,7 +85,7 @@ export async function createReport(userId: string, input: ReportInput, now: Date
   try {
     const report = await prisma.$transaction(async (tx) => {
       const created = await tx.report.create({ data: {
-        reporterUserId: userId, jobId: job.id, companyId: job.companyId, evaluationId: input.evaluationId ?? null,
+        reporterUserId: userId, jobId: job.id, companyId: ownCompanyId(job), evaluationId: input.evaluationId ?? null,
         category: input.category, description: input.description, evidence: input.evidence ?? null,
         reporterFlaggedRisk: input.reporterFlaggedRisk, highPriority: input.reporterFlaggedRisk,
         dueAt: addBusinessDays(now, REVIEW_TARGET_BUSINESS_DAYS), createdAt: now
@@ -103,7 +105,7 @@ export async function createReport(userId: string, input: ReportInput, now: Date
 
 const reporterView = (row: {
   id: string; category: string; status: string; createdAt: Date; dueAt: Date; extensionReason: string | null; decision: string | null;
-  reporterSummary: string | null; concludedAt: Date | null; job: { id: string; title: string; company: { tradeName: string | null; legalName: string } } | null;
+  reporterSummary: string | null; concludedAt: Date | null; job: { id: string; title: string; company: { tradeName: string | null; legalName: string } | null } | null;
 }) => ({
   id: row.id, createdAt: row.createdAt.toISOString(), dueAt: row.dueAt.toISOString(),
   category: row.category as ReportCategoryCode, categoryLabel: categoryLabels[row.category as ReportCategoryCode],
@@ -112,7 +114,7 @@ const reporterView = (row: {
   delayed: Boolean(row.extensionReason) && row.status !== "CONCLUIDA",
   decision: row.decision as DecisionCode | null, decisionLabel: row.decision ? decisionLabels[row.decision as DecisionCode] : null,
   summary: row.reporterSummary, concludedAt: row.concludedAt?.toISOString() ?? null,
-  job: row.job ? { id: row.job.id, title: row.job.title || "Vaga sem título", companyName: row.job.company.tradeName || row.job.company.legalName } : null
+  job: row.job ? { id: row.job.id, title: row.job.title || "Vaga sem título", companyName: jobCompanyName(row.job.company) } : null
 });
 
 const jobRelation = { select: { id: true, title: true, company: { select: { tradeName: true, legalName: true } } } } as const;

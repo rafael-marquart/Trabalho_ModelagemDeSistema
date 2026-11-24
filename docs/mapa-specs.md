@@ -15,7 +15,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 
 **Escopo atualizado:** SPEC-014 (Solicitar acomodação) e SPEC-015 (Processar solicitação de acomodação) foram removidas do escopo. Os IDs posteriores foram preservados para evitar quebrar rastreabilidade.
 
-**Situação (23/11/2026):** todas as Specs estão implementadas na `main`, exceto a SPEC-006 (vagas externas), cuja implementação está em revisão no PR #68 com decisão de escopo pendente. A situação detalhada de cada Spec está no "Registro consolidado" ao final de `docs/Specs.md`. Os nomes de entidades seguem o modelo conceitual atual (`docs/Modelo Conceitual/ModeloConceitual.md`).
+**Situação (24/11/2026):** todas as Specs estão implementadas; a SPEC-006 (vagas externas) aguarda teste manual. A situação detalhada de cada Spec está no "Registro consolidado" ao final de `docs/Specs.md`. Os nomes de entidades seguem o modelo conceitual atual (`docs/Modelo Conceitual/ModeloConceitual.md`).
 
 ### SPEC-001 — Acessar a plataforma e identificar perfil organizacional
 
@@ -107,7 +107,7 @@ A decomposição segue o critério do processo SDD: **capacidades verticais obse
 | Campo | Conteúdo |
 |---|---|
 | **ID** | SPEC-006 |
-| **Objetivo** | Ingerir dados estruturados de fontes externas, especialmente vagas, validar o JSON recebido, tratar registros inválidos ou incompletos, validar dados extraídos por LLM, normalizar e deduplicar registros e registrar a origem e o resultado da importação antes de disponibilizar vagas válidas ao domínio, preservando os registros válidos existentes. **Situação:** não implementada na `main`; implementação em revisão no PR #68. |
+| **Objetivo** | Ingerir dados estruturados de fontes externas, especialmente vagas, validar o JSON recebido, tratar registros inválidos ou incompletos, validar dados extraídos por LLM, normalizar e deduplicar registros e registrar a origem e o resultado da importação antes de disponibilizar vagas válidas ao domínio, preservando os registros válidos existentes. **Situação:** implementada (Adzuna), aguardando teste manual; coleta diária desligada até autorização (OPEN-086/087). |
 | **Valor** | Integra fontes externas ao AcessaVagas de forma controlada, ampliando o catálogo sem perder integridade, rastreabilidade ou padronização. |
 | **RF** | RF-05, RF-36, RF-37, RF-38, RF-39 |
 | **RB** | RB-10, RB-11, RB-17, RB-18, RB-31, RB-32, RB-33, RB-37, RB-41 |

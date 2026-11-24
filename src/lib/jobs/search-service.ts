@@ -4,29 +4,33 @@ import { analyzeWithContext, loadCandidateContext, type CompatibilityView } from
 import type { TravelEstimator } from "@/lib/compatibility/travel";
 import { todayInBrazil } from "./schema";
 import { buildFacets, locationLabel, matchesFilters, matchesText, paginate, sortResults, type Facets, type SearchQuery, type SearchableJob } from "./search";
+import { jobCompanyName } from "./company-name";
+import { sourceLabel } from "@/lib/external-jobs/labels";
 
 export type SearchResultJob = {
   id: string; title: string; companyName: string; modality: string; professionalArea: string; location: string; publishedAt: string | null;
+  // SPEC-006: "Adzuna" for an external job, null for one published by a company in the platform.
+  externalSource: string | null;
   accessibility: { code: string; label: string; status: string; statusLabel: string }[];
   compatibility: CompatibilityView;
 };
 export type SearchResponse = { jobs: SearchResultJob[]; page: number; pages: number; total: number; hiddenIncompatible: number; facets: Facets };
 
 /**
- * SPEC-008: open own jobs (external ones only after validation, SPEC-006) within the deadline, filtered and searched,
+ * SPEC-008: open own jobs and validated external jobs (SPEC-006) within the deadline, filtered and searched,
  * analyzed by SPEC-007 for the signed-in candidate. Jobs blocked by a critical barrier are not listed as eligible.
  */
 export async function searchJobsForCandidate(userId: string, query: SearchQuery, deps: { estimator?: TravelEstimator; now?: Date } = {}): Promise<SearchResponse> {
   const today = new Date(`${todayInBrazil(deps.now)}T00:00:00.000Z`);
   const rows = await prisma.job.findMany({
-    where: { status: "OPEN", origin: "OWN", OR: [{ deadline: null }, { deadline: { gte: today } }] },
+    where: { status: "OPEN", origin: { in: ["OWN", "EXTERNAL"] }, OR: [{ deadline: null }, { deadline: { gte: today } }] },
     include: { company: { select: { tradeName: true, legalName: true } } },
     orderBy: { id: "asc" }
   });
   const searchable = rows.map((row) => ({
     row,
     job: {
-      id: row.id, title: row.title, description: row.description, companyName: row.company.tradeName || row.company.legalName,
+      id: row.id, title: row.title, description: row.description, companyName: jobCompanyName(row.company, row.externalCompanyName),
       modality: (row.modality ?? "") as SearchableJob["modality"], professionalArea: row.professionalArea,
       locationCity: row.locationCity, locationState: row.locationState, publishedAt: row.publishedAt,
       accessibility: (row.accessibility && typeof row.accessibility === "object" && !Array.isArray(row.accessibility) ? row.accessibility : {}) as Record<string, string>
@@ -43,6 +47,7 @@ export async function searchJobsForCandidate(userId: string, query: SearchQuery,
     if (compatibility.status === "INCOMPATIBLE") { hiddenIncompatible += 1; continue; }
     analyzed.push({
       id: job.id, title: job.title, companyName: job.companyName, modality: job.modality, professionalArea: job.professionalArea,
+      externalSource: row.origin === "EXTERNAL" ? sourceLabel(row.externalSource) : null,
       location: locationLabel(job), publishedAt: job.publishedAt ? job.publishedAt.toISOString() : null, publishedAtDate: job.publishedAt,
       accessibility: infrastructureItems.map((item) => {
         const status = job.accessibility[item.code] ?? "NOT_INFORMED";

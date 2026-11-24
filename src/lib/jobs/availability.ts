@@ -12,7 +12,7 @@ export { availabilityOf, type Availability };
 export async function checkJobAvailability(jobId: string, now: Date = new Date()): Promise<Availability | null> {
   try {
     const job = await prisma.job.findFirst({
-      where: { id: jobId, origin: "OWN", status: { in: ["OPEN", "PAUSED", "CLOSED"] } },
+      where: { id: jobId, origin: { in: ["OWN", "EXTERNAL"] }, status: { in: ["OPEN", "PAUSED", "CLOSED"] } },
       select: { status: true, deadline: true }
     });
     if (!job) return null;

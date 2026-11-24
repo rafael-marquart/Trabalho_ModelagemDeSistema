@@ -127,8 +127,8 @@ export async function analyzeCandidateForJob(
     return { error: { status: 400, message: "Meio de transporte inválido." } };
   }
   const today = todayInBrazil(deps.now);
-  const jobRow = await prisma.job.findFirst({ where: { id: params.jobId, status: "OPEN", origin: "OWN" } });
-  // Only published, own jobs still open for applications are analyzed; external jobs must first be validated (SPEC-006).
+  const jobRow = await prisma.job.findFirst({ where: { id: params.jobId, status: "OPEN", origin: { in: ["OWN", "EXTERNAL"] } } });
+  // Only published jobs still open are analyzed; external ones exist only after validation and normalization (SPEC-006).
   if (!jobRow || (jobRow.deadline && jobRow.deadline.toISOString().slice(0, 10) < today)) {
     return { error: { status: 404, message: "Vaga não disponível para análise." } };
   }

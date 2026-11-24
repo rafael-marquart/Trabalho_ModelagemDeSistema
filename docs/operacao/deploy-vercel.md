@@ -58,6 +58,7 @@ Em **Settings → Environment Variables**, ambiente **Production**:
 | `SMTP_FROM` | Remetente verificado no Brevo, ex.: `AcessaVagas <seu-remetente@...>` |
 | `HERE_API_KEY` | Chave da HERE — use uma **nova** (a antiga apareceu na conversa) |
 | `HERE_QUOTA_PERCENT` | `60` |
+| `ADZUNA_APP_ID` / `ADZUNA_APP_KEY` | Credenciais do Adzuna (SPEC-006), como *Sensitive*. Opcionais: sem elas, a página Vagas externas só avisa que faltam |
 | `LEGAL_CONTACT_EMAIL` | E-mail de contato mostrado nos Termos de Uso e na Política de Privacidade (opcional; vazio, as páginas indicam os canais da equipe na instituição) |
 
 Para gerar o `CRON_SECRET` no seu computador (PowerShell):
@@ -149,6 +150,7 @@ Um segundo site, com **banco próprio** e **e-mails presos numa caixa de teste**
 | Secret | `SMTP_USER` | Username do Ethereal |
 | Secret | `SMTP_PASSWORD` | Password do Ethereal |
 | Secret | `HERE_API_KEY` | A mesma chave da produção |
+| Secret | `ADZUNA_APP_ID` / `ADZUNA_APP_KEY` | Credenciais do Adzuna. O orçamento de 25 chamadas é contado em cada banco; use em um ambiente só |
 | Secret | `CRON_SECRET` | Outro valor aleatório (mesmo comando `node -e ...` da produção) |
 
 ### T5. Quem pode abrir o site de testes

@@ -58,9 +58,10 @@ Situação em 23/11/2026.
 
 ## D-10 — Funcionalidades previstas não implementadas
 
+A SPEC-006 (vagas externas e LLM opcional) foi implementada; seus limites estão em `docs/Implementacao/SPEC-006.md`, seção "Desvios e limites".
+
 | Item | Onde estava previsto | Situação |
 |---|---|---|
-| Vagas externas e uso de LLM | SPEC-006, ADR-003, UC-14 | Em revisão no PR #68 |
 | Comandos de voz próprios | SPEC-003 seção 5.4, RF-16 | Não implementado; roteiro no PR #67 |
 | Divergências recorrentes de acessibilidade | SPEC-004 seção 5.5, RB-08 | Adiado |
 | Validar requisitos da seleção | UC-10 | Fora do escopo; depende da OPEN-092 |

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { enqueueInterviewNotice, kickNotificationDelivery } from "@/lib/notifications/service";
+import { jobCompanyName } from "@/lib/jobs/company-name";
 
 // SPEC-018 (decision of 01/11/2026): interviews registered in the funnel by the company account or a linked recruiter.
 // The company always comes from the session (resolveJobActor); the client never chooses it.
@@ -37,7 +38,7 @@ const applicationOf = (companyId: string, applicationId: string) => prisma.appli
 type App = NonNullable<Awaited<ReturnType<typeof applicationOf>>>;
 const notice = (app: App, interview: { scheduledAt: Date; modality: string; locationOrLink: string; accessibilityResources: string }) => ({
   applicationId: app.id, jobId: app.jobId, candidateUserId: app.candidateUserId,
-  jobTitle: app.job.title || "Vaga sem título", companyName: app.job.company.tradeName || app.job.company.legalName,
+  jobTitle: app.job.title || "Vaga sem título", companyName: jobCompanyName(app.job.company),
   scheduledAt: interview.scheduledAt.toISOString(), modality: interview.modality, locationOrLink: interview.locationOrLink,
   accessibilityResources: interview.accessibilityResources
 });

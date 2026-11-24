@@ -1261,3 +1261,15 @@ textarea:focus-visible, [role="radio"]:focus-visible, summary:focus-visible { ou
 .password-toggle:hover, .password-toggle[aria-pressed="true"] { color: var(--purple); background: var(--purple-soft); }
 .password-toggle:focus-visible { outline-offset: -2px; }
 .password-field input::-ms-reveal, .password-field input::-ms-clear { display: none; }
+
+/* SPEC-006: administrator's view of the external job imports. */
+.import-facts { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 12px; }
+.import-runs, .import-records, .import-queries { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.import-run { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 8px; background: var(--surface); }
+.import-run p { margin: 0; }
+.import-run-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.import-queries { gap: 4px; font-size: 14px; color: var(--muted); }
+.import-records li { display: grid; gap: 4px; padding: 10px 0; border-top: 1px solid var(--line); }
+.import-records .status-pill { justify-self: start; }
+.external-source-note { display: grid; gap: 8px; }
+.job-card-tags li.job-tag-external { color: var(--status-pending-text); background: var(--status-pending-bg); }

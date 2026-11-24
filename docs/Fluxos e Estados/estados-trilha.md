@@ -7,7 +7,7 @@ Descrever o fluxo de processamento e apresentação das vagas compatíveis, comp
 ## Pré-condições
 
 - Candidato autenticado. O perfil pode estar incompleto: o que faltar aparece como "não informado".
-- Existem vagas publicadas por empresas na plataforma. Vagas externas não entram nesta versão (SPEC-006 em revisão no PR #68).
+- Existem vagas publicadas por empresas na plataforma ou vagas externas já validadas (SPEC-006).
 
 ## Fluxo principal
 
@@ -21,8 +21,8 @@ Descrever o fluxo de processamento e apresentação das vagas compatíveis, comp
 
 ## Fluxos alternativos
 
-### A1 — Vaga externa (não implementado)
-Previsto na SPEC-006: a vaga seria identificada, estruturada e validada antes da análise, e dados de LLM só seriam usados após validação. Nesta versão a busca considera apenas vagas próprias.
+### A1 — Vaga externa
+A vaga externa só entra na busca depois de validada, normalizada e deduplicada na importação (UC-14). Dados de LLM só são usados se estiverem escritos no anúncio. A compatibilidade fica "dados insuficientes" e a candidatura é feita no site de origem.
 
 ### A2 — Barreira incompatível
 A vaga é considerada incompatível: não aparece na busca e não aceita candidatura. O sistema informa quantas vagas foram ocultadas por esse motivo.

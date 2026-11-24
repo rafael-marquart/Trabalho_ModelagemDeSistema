@@ -5,6 +5,7 @@ import { checkJobAvailability } from "@/lib/jobs/availability";
 import { BLOCKING_STAGES } from "@/lib/jobs/applications";
 import { stageLabels } from "./stages";
 import { enqueueApplicationSubmitted, kickNotificationDelivery } from "@/lib/notifications/service";
+import { jobCompanyName } from "@/lib/jobs/company-name";
 
 export type RefusalCode = "JOB_NOT_FOUND" | "JOB_UNAVAILABLE" | "INCOMPATIBLE" | "DUPLICATE";
 export type ApplicationView = { id: string; appliedAt: string; stage: string; stageLabel: string; score: number | null };
@@ -80,7 +81,7 @@ export async function applyToJob(userId: string, jobId: string, deps: { estimato
       // SPEC-017: confirmation e-mail to the candidate, recorded with the application.
       await enqueueApplicationSubmitted(tx, {
         applicationId: application.id, jobId, candidateUserId: userId,
-        jobTitle: job.title || "Vaga sem título", companyName: job.company.tradeName || job.company.legalName
+        jobTitle: job.title || "Vaga sem título", companyName: jobCompanyName(job.company)
       });
       return application;
     });
