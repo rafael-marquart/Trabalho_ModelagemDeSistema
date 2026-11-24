@@ -1,0 +1,19 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+left to right direction
+title UC-02 — Buscar vagas
+actor "Candidato PcD" as C
+rectangle "AcessaVagas" {
+  usecase "Buscar vagas\n(texto e filtros)" as B
+  usecase "Calcular compatibilidade\n(UC-13)" as M
+  usecase "Ocultar vagas com\nbarreira crítica" as O
+  usecase "Ver detalhe da vaga\ne explicação do resultado" as V
+}
+actor "HERE\n(tempo de trajeto)" as H
+C -- B
+B ..> M : <<include>>
+M ..> O : <<include>>
+V .> B : <<extend>>
+M -- H
+@enduml

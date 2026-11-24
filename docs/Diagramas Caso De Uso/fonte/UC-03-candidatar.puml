@@ -1,0 +1,19 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+left to right direction
+title UC-03 — Candidatar-se a vaga
+actor "Candidato PcD" as C
+rectangle "AcessaVagas" {
+  usecase "Candidatar-se a vaga" as CA
+  usecase "Verificar vaga aberta e no prazo" as VA
+  usecase "Verificar candidatura ativa" as VD
+  usecase "Calcular compatibilidade\n(trava crítica)" as M
+  usecase "Avisar o candidato" as AV
+}
+C -- CA
+CA ..> VA : <<include>>
+CA ..> VD : <<include>>
+CA ..> M : <<include>>
+CA ..> AV : <<include>>
+@enduml

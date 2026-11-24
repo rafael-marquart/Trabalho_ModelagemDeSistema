@@ -1,0 +1,18 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+left to right direction
+title UC-12 — Status da vaga
+actor "Candidato PcD" as C
+rectangle "AcessaVagas" {
+  usecase "Ver status da vaga\n(Aberta, Indisponível, Encerrada)" as S
+  usecase "Buscar vagas / detalhe\n(UC-02)" as B
+  usecase "Acompanhar candidaturas\n(UC-05)" as A
+  usecase "Candidatar-se (UC-03)" as CA
+}
+C -- B
+C -- A
+B ..> S : <<include>>
+A ..> S : <<include>>
+CA .> S : <<extend>>
+@enduml

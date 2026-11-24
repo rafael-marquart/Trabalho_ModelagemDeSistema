@@ -1,0 +1,24 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+left to right direction
+title UC-11 — Denunciar vaga incompatível
+actor "Candidato PcD" as C
+actor "Administrador" as A
+actor "Empresa / Recrutador" as E
+rectangle "AcessaVagas" {
+  usecase "Denunciar vaga\n(após entrevista concluída)" as D
+  usecase "Verificar limite\n(3 em 24 h, 1 aberta por vaga)" as LI
+  usecase "Analisar denúncia" as AN
+  usecase "Pedir informações à empresa" as PI
+  usecase "Responder pedido" as RP
+  usecase "Registrar decisão" as DE
+}
+C -- D
+D ..> LI : <<include>>
+A -- AN
+A -- DE
+PI .> AN : <<extend>>
+E -- RP
+RP .> PI : <<extend>>
+@enduml

@@ -2,6 +2,24 @@
 
 Este arquivo centraliza lacunas e decisões pendentes da baseline. Cada questão possui um ID estável e aponta para as Specs afetadas. A presença de uma questão aqui **não significa que a decisão já foi tomada**.
 
+## Situação em 23/11/2026
+
+- **94 questões** registradas (OPEN-001 a OPEN-101; a OPEN-102 existe só no PR #68, junto com a SPEC-006).
+- **84 resolvidas**, **1 parcialmente resolvida** (OPEN-008) e **9 abertas** (OPEN-092, 093, 095 a 101).
+- Todas as abertas já têm **implementação provisória** em funcionamento na `main`, descrita na própria linha; o que falta é a decisão definitiva do responsável. Nenhuma delas bloqueia o uso do sistema.
+
+| OPEN | Spec | O que está em vigor | O que falta decidir |
+|---|---|---|---|
+| OPEN-092 | SPEC-013 | Nenhuma pendência impeditiva aplicada | Quais pendências existem e como pedir complementação (UC-10) |
+| OPEN-093 | SPEC-017 | Aviso de cancelamento vai para quem criou a vaga ou para a conta da Empresa | Se deve haver um "responsável" na vaga |
+| OPEN-095 | SPEC-018 | 3 recusas em 24 h geram indício para análise | Outros indícios e tela de análise |
+| OPEN-096 | SPEC-020 | Medidas registradas em texto, sem efeito automático | Se alguma medida deve ser executável pela moderação |
+| OPEN-097 | SPEC-019 | Evidência só em texto | Envio de arquivos |
+| OPEN-098 | SPEC-021 | Distribuição por empresa, sem datas nem identificadores | Mínimo de avaliações ou faixas |
+| OPEN-099 | SPEC-002 | Comprovantes até 4 MB, guardados no banco | Voltar a 10 MB com armazenamento de arquivos |
+| OPEN-100 | SPEC-001/002 | Termos, Privacidade e consentimento implementados | Revisão jurídica, novo aceite de contas antigas, exclusão de conta |
+| OPEN-101 | SPEC-002/003 | Aviso de alterações não salvas e foto de perfil | Ocultar a foto das empresas até alguma etapa |
+
 ## Antes de revisar as questões em aberto
 
 Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguintes pontos documentais. Eles são correções/checagens da consistência das Specs, não decisões de produto; não marcar OPEN como resolvida por causa deles.
@@ -15,12 +33,12 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 7. **Compatibilidade e nota pública — manter separação de responsabilidades:** a trava crítica precede o score; dados ausentes não significam compatibilidade; a administração da plataforma atua sobre denúncias e não altera diretamente avaliações nem a distribuição pública de estrelas. Não inventar fórmula da compatibilidade.
 8. **Mapa e detalhamento — fazer conferência final:** verificar IDs, títulos, dependências, requisitos, regras, RNFs, entidades e casos de uso em `mapa-specs.md` e `Specs.md`.
 
-### Ordem de trabalho sugerida
-- [ ] Validar as correções documentais acima com a baseline e com o grupo.
-- [ ] Registrar eventuais correções adicionais em `Specs.md` e no relatório `revisao-consistencia-specs.md`.
-- [ ] Só então iniciar a discussão das questões OPEN, mantendo-as abertas até decisão explícita.
-- [ ] Após as decisões, atualizar a OPEN correspondente e refletir a decisão nos artefatos afetados.
-- [ ] Aprovar os textos das Specs e, separadamente, os layouts aplicáveis antes de qualquer implementação.
+### Ordem de trabalho sugerida (concluída)
+- [x] Validar as correções documentais acima com a baseline e com o grupo (REV-001 a REV-018 em `revisao-consistencia-specs.md`).
+- [x] Registrar eventuais correções adicionais em `Specs.md` e no relatório `revisao-consistencia-specs.md`.
+- [x] Só então iniciar a discussão das questões OPEN, mantendo-as abertas até decisão explícita.
+- [x] Após as decisões, atualizar a OPEN correspondente e refletir a decisão nos artefatos afetados.
+- [x] Aprovar os textos das Specs (registro consolidado e REV-018) e, separadamente, os layouts aplicáveis (aprovados sobre as telas implementadas, conforme o estado de layout de cada Spec).
 
 ## Estados
 
@@ -63,7 +81,7 @@ Antes de discutir OPEN-001 em diante, o grupo deve revisar e validar os seguinte
 | OPEN-013 | resolvida | Preferências de acessibilidade persistirão entre sessões ou somente durante a sessão atual? | Decisão aprovada: salvar as preferências de acessibilidade definidas pela plataforma na conta do usuário e reaplicá-las em sessões futuras, inclusive em outro dispositivo. O alto contraste mantém o controle próprio previsto na OPEN-012 e considera as preferências externas suportadas. A decisão não define o catálogo completo de preferências persistidas, a resolução de divergências entre preferências internas e externas, o comportamento para usuários não autenticados nem a estratégia técnica de armazenamento e recuperação, que será detalhada na SPEC-003 sem impor tecnologia antecipadamente. |
 | OPEN-014 | resolvida | Quais comandos, fluxos, idiomas e tecnologia serão suportados pela interação por voz? | Decisão aprovada: interação por voz em português brasileiro (pt-BR), cobrindo navegação e operações comuns em formulários nos fluxos suportados. Inclui navegar entre áreas, acionar controles, preencher campos e confirmar ações, sempre respeitando permissões, validações e confirmações exigidas. Deve comunicar resultados e falhas de forma acessível quando aplicável, sem substituir alternativas acessíveis. Catálogo e frases exatas, cobertura de fluxos/controles, tratamento detalhado de ambiguidades/falhas/confirmações, tecnologia e compatibilidade dos ambientes, e outros idiomas permanecem em aberto para detalhamento na SPEC-003. |
 | OPEN-015 | resolvida | Quais combinações de navegador, leitor de tela e dispositivo serão usadas como ambientes de referência para validação? | Decisão aprovada: estabelecer uma matriz de ambientes de referência para validar navegação por teclado, leitores de tela, contraste, responsividade e fluxos essenciais da SPEC-003, cobrindo entrada/autenticação, perfil do candidato e necessidades de acessibilidade. A matriz combina navegadores, tecnologias assistivas e dispositivos e serve como referência de teste, sem implicar suporte exclusivo a esses ambientes. Nomes/versões, cobertura mínima por combinação, frequência de revalidação e evidências por ambiente permanecem pendentes; o processo de avaliação e as evidências de conformidade WCAG 2.1 AA ficam na OPEN-016. |
-| OPEN-016 | resolvida | Qual processo de verificação e quais evidências demonstrarão conformidade com WCAG 2.1 AA? | Decisão aprovada: adotar validação combinada por verificações automatizadas e avaliações manuais, com evidências registradas nos ambientes de referência definidos na OPEN-015. Avaliar teclado/foco, identificação de controles, mensagens/estados, contraste, redimensionamento, recursos de acessibilidade e leitores de tela conforme ambientes aplicáveis. Registrar ambiente, fluxo, procedimento, resultado, problemas encontrados e situação após correção/reverificação. Ferramentas específicas, cobertura mínima, frequência, formato/local das evidências, severidade/priorização/aceite de problemas e condições formais para declarar conformidade permanecem pendentes. Testes automatizados ou parciais, isoladamente, não bastam para declarar conformidade integral com WCAG 2.1 AA. |
+| OPEN-016 | resolvida | Qual processo de verificação e quais evidências demonstrarão conformidade com WCAG 2.1 AA? *(o projeto passou a adotar a WCAG 2.2 AA na REV-019; a decisão vale para a 2.2)* | Decisão aprovada: adotar validação combinada por verificações automatizadas e avaliações manuais, com evidências registradas nos ambientes de referência definidos na OPEN-015. Avaliar teclado/foco, identificação de controles, mensagens/estados, contraste, redimensionamento, recursos de acessibilidade e leitores de tela conforme ambientes aplicáveis. Registrar ambiente, fluxo, procedimento, resultado, problemas encontrados e situação após correção/reverificação. Ferramentas específicas, cobertura mínima, frequência, formato/local das evidências, severidade/priorização/aceite de problemas e condições formais para declarar conformidade permanecem pendentes. Testes automatizados ou parciais, isoladamente, não bastam para declarar conformidade integral com WCAG 2.1 AA. |
 
 
 ## Empresa, vagas próprias e ingestão externa

@@ -1,5 +1,7 @@
 # UC-14 — Coletar e Ingerir Vagas Externas
 
+> **Situação nesta versão (main):** não implementado. A implementação (SPEC-006) está em revisão no PR #68 e a decisão de incluí-la no escopo ainda não foi tomada. No PR #68, a complementação por LLM (ADR-003) é opcional e vem desligada por padrão; desligada, os registros sem os dados mínimos são rejeitados. Enquanto isso, RF-05, RF-36 e RF-37 ficam como requisitos opcionais (*Optional feature*) e a busca e a candidatura consideram somente vagas publicadas por empresas na plataforma. O fluxo abaixo descreve o comportamento previsto na SPEC-006.
+
 ## Objetivo
 Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela API do Adzuna, e processá-las com validação, eventual enriquecimento por LLM, normalização, deduplicação e rastreabilidade.
 
@@ -89,3 +91,9 @@ Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela 
 - Registros normalizados são compatíveis com o modelo comum e preservam o significado dos dados de origem; o sistema não inventa informações.
 - Estruturas ou valores que não possam ser interpretados com segurança são rejeitados ou tratados como falha, com motivo rastreável, sem conversão silenciosa em fatos incorretos.
 - Cada fonte autorizada possui testes de mapeamento dos campos utilizados, conversões aplicáveis e dados ausentes ou inválidos.
+
+## Diagrama
+
+![Diagrama de caso de uso](../Diagramas%20Caso%20De%20Uso/UC-14-ingestao-json.png)
+
+Fonte editável: `docs/Diagramas Caso De Uso/fonte/UC-14-ingestao-json.puml` (PlantUML).

@@ -22,7 +22,6 @@ Estados possíveis do texto: especificada, aprovada, em implementação, impleme
 | Campo | Valor |
 |---|---|
 | ID | SPEC-001 |
-|
 | Estado do texto | implementada; encerramento baseado em CI e testes automatizados aprovados, com dispensa explícita de novos testes manuais pelo responsável em 26/10/2026; limitações operacionais registradas no relatório de validação |
 | Estado do layout | protótipos de entrada/login, login de Candidato, login de Empresa, cadastro de Candidato, cadastro de Empresa, recuperação de senha, gestão de recrutadores e mensagens de autenticação aprovados visualmente em 25/10/2026; SVGs estáticos de referência |
 | Pendência registrada (27/10/2026) | **SMTP real: em aberto para implementar depois.** O envio de e-mails (verificação, recuperação, convites) funciona com o servidor de captura local; falta configurar um provedor SMTP real (`SMTP_HOST`, `SMTP_FROM`, credenciais) e verificar entrega e falhas, conforme `docs/operacao/implantacao-spec-001.md`. Não bloqueia o encerramento da implementação nem as Specs seguintes |
@@ -200,8 +199,8 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 ## 11. Critérios de aceitação
 
-- [ ] Entrada apresenta login por e-mail e senha.
-- [ ] Cadastro oferece Usuário ou Empresa, sem cadastro independente de Recrutador.
+- [x] Entrada apresenta login por e-mail e senha. *(o candidato também pode entrar com CPF)*
+- [x] Cadastro oferece Usuário ou Empresa, sem cadastro independente de Recrutador.
 - [x] Credenciais válidas autenticam e encaminham conforme o perfil.
 - [x] Credenciais inválidas não autenticam.
 - [x] Recuperação permite redefinição quando a solicitação é válida.
@@ -213,7 +212,7 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [x] Recrutador permanece vinculado à Empresa responsável enquanto o vínculo estiver ativo.
 - [x] Empresa não consegue administrar vínculo de outra Empresa.
 - [x] Alterações relevantes são rastreáveis.
-- [ ] Mensagens não expõem credenciais ou dados pessoais desnecessários.
+- [x] Mensagens não expõem credenciais ou dados pessoais desnecessários.
 
 
 **Nota de verificação (26/10/2026):** os itens marcados foram cobertos por testes automatizados e pelo CI verde do HEAD `2c9fce50275c5531df0587e14f5f58da050f6271` ([execução 40261466174](https://github.com/rafael-marquart/Trabalho_ModelagemDeSistema/actions/runs/40261466174)). O E2E agora verifica explicitamente login de candidato com CPF formatado, recuperação de senha de candidato e empresa, redefinição, rejeição de reutilização do link e login com a nova senha. Os itens desmarcados continuam sem confirmação integral; as telas não foram testadas manualmente no navegador.
@@ -250,12 +249,12 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 ## 14. Definition of Done
 
 - [x] Texto revisado e aprovado pelo responsável humano.
-- [ ] Rastreabilidade de RF, RB, RNF, casos de uso, modelo, driver e ADR conferida.
+- [x] Rastreabilidade de RF, RB, RNF, casos de uso, modelo, driver e ADR conferida. *(conferida na revisão da documentação de 23/11/2026: RF, RNF e RB em EARS, casos de uso, modelo conceitual e mapa de Specs)*
 - [x] Questões em aberto decididas ou mantidas explicitamente como pendências.
-- [ ] Layouts aplicáveis anexados em docs/layout/ e aprovados separadamente.
+- [ ] Layouts aplicáveis anexados em docs/layout/ e aprovados separadamente. *(pendente: protótipos aprovados em 25/10/2026, mas não anexados em docs/layout/)*
 - [x] Critérios de aceitação e testes revisados.
 - [x] Invariantes de autenticação, autorização e vínculo organizacional verificáveis.
-- [ ] Nenhuma implementação iniciada antes da aprovação do texto e do layout.
+- [x] Nenhuma implementação iniciada antes da aprovação do texto e do layout. *(textos aprovados e protótipos aprovados em 25/10/2026, antes da implementação, encerrada em 26/10/2026)*
 
 **Nota de verificação:** Definition of Done permanece parcial. A rastreabilidade completa e a localização formal dos layouts em `docs/layout/` não foram confirmadas nesta execução; os protótipos de referência existentes estão em `docs/Identidade Visual/`. O aceite manual de telas também permanece pendente.
 
@@ -271,6 +270,19 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 **Limites aceitos para encerramento da implementação, sem declarar validação operacional:** não foram executados novos testes manuais; SMTP real, URL HTTPS canônica, proxy confiável e agendamento/monitoramento de retenção continuam dependentes da configuração do ambiente de implantação. A CI usa infraestrutura de teste e não comprova esses itens em produção. A revisão estática e os testes disponíveis não equivalem a pentest nem a uma prova exaustiva de autorização de todas as APIs.
 
 **Resultado:** a SPEC-001 fica marcada como implementada/encerrada no escopo desta entrega com base na evidência automatizada e na decisão explícita de dispensar testes manuais. As limitações operacionais acima permanecem registradas como condições a tratar antes de disponibilizar o sistema em produção; não devem ser descritas como testes aprovados. Este registro não autoriza merge nem deploy.
+
+## Complementos posteriores ao encerramento (registrados em 23/11/2026)
+
+Funcionalidades entregues depois do encerramento desta Spec, por decisões registradas nas OPENs. Seguem o mesmo processo (PR, CI e roteiro de validação manual) e estão nos requisitos indicados.
+
+| Complemento | Decisão | Requisitos | Validação |
+|---|---|---|---|
+| Recuperação de senha do Recrutador, pelo e-mail, com as mesmas regras do candidato e da Empresa (link de 30 minutos, uso único, 3 pedidos por 15 minutos) | OPEN-001 (ampliação) | RF-02, RB-21 | `docs/operacao/validacao-manual-recrutador-senha-e-termos.md` |
+| Aceite obrigatório dos Termos de Uso e da Política de Privacidade (versionados) no cadastro de candidato e de Empresa e na ativação do recrutador pelo convite; sem aceite, não há conta | OPEN-100 | RF-42, RNF-08 | idem |
+| Botão para mostrar e ocultar a senha nos formulários de entrada, cadastro e redefinição | — | RF-45 | testes automatizados |
+| Entrada do Administrador em `/admin/login`, separada das demais | — | RF-01, RF-40 | `scripts/create-admin.mjs` e testes |
+
+---
 
 # SPEC-002 — Gerenciar perfil e necessidades de acessibilidade do candidato
 
@@ -473,13 +485,23 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 
 ## 14. Definition of Done
 
-- [ ] Texto revisado e aprovado.
-- [ ] Campos e validações conferidos com RF-04, RF-19, RB-26 a RB-29 e UC-01.
-- [ ] Questões em aberto decididas ou mantidas como pendências explícitas.
-- [ ] Layouts anexados em docs/layout/ e aprovados separadamente.
-- [ ] Critérios e testes revisados.
-- [ ] Invariantes de confidencialidade, integridade e autorização verificáveis.
-- [ ] Nenhuma implementação iniciada antes da aprovação do texto e layout.
+- [x] Texto revisado e aprovado.
+- [x] Campos e validações conferidos com RF-04, RF-19, RB-26 a RB-29 e UC-01.
+- [x] Questões em aberto decididas ou mantidas como pendências explícitas.
+- [ ] Layouts anexados em docs/layout/ e aprovados separadamente. *(layout aprovado pelo responsável sobre as telas implementadas; não há protótipo anexado em docs/layout/)*
+- [x] Critérios e testes revisados.
+- [x] Invariantes de confidencialidade, integridade e autorização verificáveis.
+- [ ] Nenhuma implementação iniciada antes da aprovação do texto e layout. *(registro: a implementação foi autorizada pela aprovação dos textos (REV-018) e o layout foi aprovado depois, sobre as telas implementadas; ver `docs/Implementacao/desvios.md`)*
+
+---
+
+## Complementos posteriores ao encerramento (registrados em 23/11/2026)
+
+| Complemento | Decisão | Requisitos | Validação |
+|---|---|---|---|
+| Consentimento específico para os dados de acessibilidade, separado dos Termos; sem ele as necessidades não são salvas; a retirada apaga os dados e fica registrada | OPEN-100 | RF-43, RB-47, RNF-18 | `docs/operacao/validacao-manual-recrutador-senha-e-termos.md` |
+| Foto de perfil opcional (candidato e recrutador): JPG, PNG ou WebP até 1 MB, guardada no banco; a do candidato só é vista por ele e pelas empresas das vagas em que se candidatou | OPEN-101 | RF-41, RB-48 | `docs/operacao/validacao-manual-aviso-e-foto.md` |
+| Comprovantes limitados a 4 MB e guardados no banco (antes 10 MB em disco), por causa da hospedagem | OPEN-099 | RF-19, RNF-08 | `docs/Implementacao/SPEC-002.md` |
 
 ---
 
@@ -615,19 +637,19 @@ São contratos de comportamento da interface, não APIs públicas.
 
 ## 10. RNFs aplicáveis
 
-- **RNF-01 Acessibilidade:** o projeto cita WCAG 2.1 nível AA.
+- **RNF-01 Acessibilidade:** o projeto adota WCAG 2.2 nível AA (revisão de 23/11/2026; o texto original citava a 2.1).
 - **RNF-02 Compatibilidade com leitores de tela:** controles, conteúdo e mensagens utilizáveis com leitores de tela.
 - **RNF-03 Responsividade:** adaptação aos dispositivos previstos.
 - **RNF-04 Usabilidade:** ações, controles e feedback compreensíveis e operáveis.
 - **RNF-13 Compatibilidade:** ambientes de uso cobertos pela baseline considerados na validação.
 
-A referência a WCAG 2.1 AA não determina por si só ferramentas, combinações de navegador/leitor de tela ou evidências de validação. O plano de avaliação precisa ser definido.
+A referência a WCAG 2.2 AA não determina por si só ferramentas, combinações de navegador/leitor de tela ou evidências de validação. O plano de avaliação precisa ser definido.
 
 ## 11. Critérios de aceitação
 
 - [x] Recursos e controles essenciais são operáveis por teclado, com foco perceptível e ordem coerente.
 - [x] Nome, função e estado dos controles são identificáveis por tecnologia assistiva.
-- [ ] Contraste e redimensionamento são verificados conforme RNF-01 a RNF-04, usando o procedimento de validação ainda a definir em OPEN-016. *(pendente: voz em aberto para implementar depois; plano de avaliação nas OPEN-015/OPEN-016)*
+- [ ] Contraste e redimensionamento são verificados conforme RNF-01 a RNF-04, usando o procedimento de validação ainda a definir em OPEN-016. *(pendente: o contraste é verificado pelo axe-core e o redimensionamento no roteiro manual, mas o procedimento formal de avaliação continua em aberto na OPEN-016)*
 
 
 - [x] Fluxos essenciais do Bloco 1 podem ser operados sem mouse.
@@ -636,9 +658,9 @@ A referência a WCAG 2.1 AA não determina por si só ferramentas, combinações
 - [x] Erros e resultados de ações são apresentados de forma acessível.
 - [x] Informações importantes não dependem exclusivamente de cor.
 - [x] Alto contraste, conforme RF-16, pode ser utilizado sem ocultar conteúdo necessário.
-- [ ] Se comandos de voz forem confirmados, há alternativa acessível e tratamento de falhas definido. *(pendente: voz em aberto para implementar depois; plano de avaliação nas OPEN-015/OPEN-016)*
+- [ ] Se comandos de voz forem confirmados, há alternativa acessível e tratamento de falhas definido. *(não se aplica nesta versão: comandos de voz próprios não foram implementados; roteiro de implementação no PR #67)*
 - [x] Fluxos são utilizáveis nos tamanhos de tela contemplados por RNF-03.
-- [ ] Evidências suficientes são registradas para avaliar RNFs aplicáveis. *(pendente: voz em aberto para implementar depois; plano de avaliação nas OPEN-015/OPEN-016)*
+- [ ] Evidências suficientes são registradas para avaliar RNFs aplicáveis. *(pendente: plano formal de avaliação nas OPEN-015/OPEN-016)*
 - [x] Biblioteca específica não é critério de aceitação, pois não foi selecionada.
 
 ## 12. Casos de teste derivados
@@ -663,19 +685,19 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 - **OPEN-012 (decisão aprovada):** abordagem combinada para alto contraste: respeitar preferências de contraste do sistema operacional/navegador e oferecer controle próprio para ativar/desativar na plataforma. A persistência fica para OPEN-013; divergência entre preferências, estratégia técnica e validação permanecem pendentes.
 - **OPEN-013 (decisão aprovada):** salvar as preferências de acessibilidade definidas pela plataforma na conta do usuário e reaplicá-las em sessões futuras, inclusive em outro dispositivo. O alto contraste mantém o controle próprio da OPEN-012 e considera preferências externas suportadas. Permanecem pendentes o catálogo de preferências persistidas, divergências entre configurações internas/externas, usuários não autenticados e estratégia técnica de armazenamento/recuperação.
 - **OPEN-014 (decisão aprovada):** interação por voz em português brasileiro (pt-BR), para navegação e operações comuns em formulários nos fluxos suportados, incluindo navegação entre áreas, acionamento de controles, preenchimento de campos e confirmação de ações, sempre respeitando permissões, validações e confirmações exigidas. Deve comunicar resultados/falhas de forma acessível quando aplicável e não substituir alternativas acessíveis. Permanecem pendentes o catálogo e frases exatas, cobertura de fluxos/controles, tratamento detalhado de ambiguidades/falhas/confirmações, tecnologia e compatibilidade dos ambientes e eventual suporte a outros idiomas.
-- **OPEN-015 (decisão aprovada):** estabelecer matriz de ambientes de referência para validar teclado, leitores de tela, contraste, responsividade e fluxos essenciais da SPEC-003, incluindo entrada/autenticação, perfil do candidato e necessidades de acessibilidade. A matriz combinará navegadores, tecnologias assistivas e dispositivos e será referência de teste, não lista exclusiva de suporte. Nomes/versões, cobertura mínima por combinação, frequência de revalidação e evidências específicas por ambiente permanecem pendentes; processo e evidências de avaliação WCAG 2.1 AA ficam na OPEN-016.
-- **OPEN-016 (decisão aprovada):** adotar validação combinada por ferramentas automatizadas e avaliações manuais, registrando evidências nos ambientes de referência da OPEN-015. Avaliar teclado/foco, controles, mensagens/estados, contraste, redimensionamento, recursos de acessibilidade e leitores de tela nos ambientes aplicáveis. Registrar ambiente, fluxo, procedimento, resultado, problemas encontrados e situação após correção/reverificação. Ferramentas, cobertura mínima, frequência, formato/local das evidências, severidade/priorização/aceite de problemas e condições formais de conformidade permanecem pendentes. Testes automatizados ou parciais isoladamente não comprovam conformidade integral com WCAG 2.1 AA.
+- **OPEN-015 (decisão aprovada):** estabelecer matriz de ambientes de referência para validar teclado, leitores de tela, contraste, responsividade e fluxos essenciais da SPEC-003, incluindo entrada/autenticação, perfil do candidato e necessidades de acessibilidade. A matriz combinará navegadores, tecnologias assistivas e dispositivos e será referência de teste, não lista exclusiva de suporte. Nomes/versões, cobertura mínima por combinação, frequência de revalidação e evidências específicas por ambiente permanecem pendentes; processo e evidências de avaliação WCAG 2.2 AA ficam na OPEN-016.
+- **OPEN-016 (decisão aprovada):** adotar validação combinada por ferramentas automatizadas e avaliações manuais, registrando evidências nos ambientes de referência da OPEN-015. Avaliar teclado/foco, controles, mensagens/estados, contraste, redimensionamento, recursos de acessibilidade e leitores de tela nos ambientes aplicáveis. Registrar ambiente, fluxo, procedimento, resultado, problemas encontrados e situação após correção/reverificação. Ferramentas, cobertura mínima, frequência, formato/local das evidências, severidade/priorização/aceite de problemas e condições formais de conformidade permanecem pendentes. Testes automatizados ou parciais isoladamente não comprovam conformidade integral com WCAG 2.2 AA.
 
 ## 14. Definition of Done
 
-- [ ] Texto revisado e aprovado.
-- [ ] Escopo de RF-16 confirmado, especialmente alto contraste e comandos de voz.
-- [ ] Questões em aberto decididas ou mantidas explicitamente como pendências.
-- [ ] Layouts anexados em docs/layout/ e aprovados separadamente.
-- [ ] Critérios de aceitação e testes revisados.
-- [ ] Evidências de teclado, leitor de tela, responsividade e contraste documentadas conforme plano aprovado.
-- [ ] Acessibilidade tratada como requisito transversal.
-- [ ] Nenhuma implementação iniciada antes da aprovação do texto e do layout.
+- [x] Texto revisado e aprovado.
+- [x] Escopo de RF-16 confirmado, especialmente alto contraste e comandos de voz. *(RF-16: alto contraste automático, ligado ou desligado e tema escuro; comandos de voz próprios fora desta versão)*
+- [x] Questões em aberto decididas ou mantidas explicitamente como pendências.
+- [ ] Layouts anexados em docs/layout/ e aprovados separadamente. *(layout aprovado pelo responsável sobre as telas implementadas; não há protótipo anexado em docs/layout/)*
+- [ ] Critérios de aceitação e testes revisados. *(pendente: depende da OPEN-016)*
+- [ ] Evidências de teclado, leitor de tela, responsividade e contraste documentadas conforme plano aprovado. *(pendente: há roteiros e testes em docs/operacao/, mas o plano formal de avaliação depende da OPEN-016)*
+- [x] Acessibilidade tratada como requisito transversal.
+- [ ] Nenhuma implementação iniciada antes da aprovação do texto e do layout. *(registro: a implementação foi autorizada pela aprovação dos textos (REV-018) e o layout foi aprovado depois, sobre as telas implementadas; ver `docs/Implementacao/desvios.md`)*
 
 ---
 
@@ -700,6 +722,17 @@ As questões abaixo estão centralizadas em [OPEN.md](OPEN.md). Não são decis�
 # Bloco 2 — Empresa, vagas próprias e ingestão externa
 
 Este bloco detalha SPEC-004, SPEC-005 e SPEC-006. As questões pendentes são referenciadas em `docs/OPEN.md`; nenhuma delas é considerada decidida por estar descrita aqui.
+
+---
+
+## Complementos posteriores ao encerramento (registrados em 23/11/2026)
+
+| Complemento | Decisão | Requisitos | Validação |
+|---|---|---|---|
+| Tema escuro, além do claro e do alto contraste, com a escolha guardada na conta | Processo de implementação (seção "Tema claro e tema escuro") | RF-16, RNF-19 | testes `theme-provider` e axe-core |
+| Aviso ao sair com alterações não salvas (perfil, editor de vaga, infraestrutura) e "Sair sem enviar?" nos formulários de denúncia e avaliação | OPEN-101 | RF-44, RNF-04 | `docs/operacao/validacao-manual-aviso-e-foto.md` |
+| Mostrar e ocultar a senha | — | RF-45 | testes automatizados |
+| Comandos de voz próprios: **não implementados**; roteiro de implementação proposto no PR #67 | seção 5.4 | RF-16 | — |
 
 ---
 
@@ -872,10 +905,10 @@ Contratos conceituais, sem definir endpoints HTTP:
 - [x] Alterações relevantes são rastreáveis.
 - [x] Dados podem ser disponibilizados a consumidores autorizados.
 - [x] A capacidade não calcula nota pública nem compatibilidade.
-- [ ] Uma divergência registrada não provoca alteração automática das informações declaradas.
-- [ ] A decisão administrativa e sua justificativa ficam rastreáveis, com identificação do responsável.
-- [ ] Alterações decorrentes só são realizadas quando autorizadas pela decisão registrada e pelas regras aplicáveis.
-- [ ] A recorrência de relatos, isoladamente, não é tratada como comprovação de declaração incorreta.
+- [ ] Uma divergência registrada não provoca alteração automática das informações declaradas. *(adiado: o tratamento de divergências recorrentes (seção 5.5, RB-08) não foi implementado)*
+- [ ] A decisão administrativa e sua justificativa ficam rastreáveis, com identificação do responsável. *(adiado: o tratamento de divergências recorrentes (seção 5.5, RB-08) não foi implementado)*
+- [ ] Alterações decorrentes só são realizadas quando autorizadas pela decisão registrada e pelas regras aplicáveis. *(adiado: o tratamento de divergências recorrentes (seção 5.5, RB-08) não foi implementado)*
+- [ ] A recorrência de relatos, isoladamente, não é tratada como comprovação de declaração incorreta. *(adiado: o tratamento de divergências recorrentes (seção 5.5, RB-08) não foi implementado)*
 - [x] Informações gerais da Empresa são distintas dos critérios específicos da vaga e não geram aplicabilidade automática.
 - [x] A infraestrutura geral não preenche automaticamente TRAVA_CRITICA_VAGA nem calcula compatibilidade.
 
@@ -904,10 +937,10 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 
 ## 14. Definition of Done
 
-- [ ] Texto revisado e aprovado.
-- [ ] Campos e obrigatoriedades conferidos com a baseline.
-- [ ] Questões em aberto decididas ou mantidas explicitamente.
-- [ ] Layout funcional anexado e aprovado quando aplicável.
+- [x] Texto revisado e aprovado.
+- [x] Campos e obrigatoriedades conferidos com a baseline. *(os seis itens são obrigatórios, decisão de 27/10/2026)*
+- [x] Questões em aberto decididas ou mantidas explicitamente.
+- [ ] Layout funcional anexado e aprovado quando aplicável. *(layout aprovado pelo responsável sobre as telas implementadas; não há protótipo anexado em docs/layout/)*
 
 # SPEC-005 — Cadastrar e gerenciar vagas próprias
 
@@ -1223,8 +1256,8 @@ dos em `docs/layout/` e aprovados separadamente.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-006 |
-| Estado do texto | aprovada; pronta para implementação |
-| Estado do layout | não se aplica ao núcleo de ingestão; eventual interface administrativa permanece pendente |
+| Estado do texto | aprovada; **não implementada na `main`**. A implementação está em revisão no PR #68 (branch `feat/spec-006-vagas-externas`) e a decisão de incluí-la no escopo ainda não foi tomada. Por isso os critérios abaixo continuam desmarcados e RF-05, RF-36 e RF-37 são tratados como *Optional feature* |
+| Estado do layout | não se aplica ao núcleo de ingestão; a tela administrativa `/admin/vagas-externas` existe só no PR #68, sem aprovação de layout |
 | Capacidade | Receber dados externos estruturados, validar, normalizar, deduplicar e registrar o resultado da ingestão |
 
 ## 2. Rastreabilidade
@@ -1555,7 +1588,6 @@ Este bloco detalha SPEC-007 a SPEC-010. As lacunas são registradas em docs/OPEN
 | Campo | Valor |
 |---|---|
 | ID | SPEC-007 |
-|
 | Estado do texto | aprovada; implementada e encerrada em 29/10/2026, exceto os critérios que dependem de vagas externas (SPEC-006); ver `docs/Implementacao/SPEC-007.md` |
 | Estado do layout | não se aplica ao cálculo; tela provisória de validação (`/candidato/compatibilidade`) e a opção "Indispensável para mim" no perfil aprovadas pelo responsável em 29/10/2026 nas telas implementadas (sem protótipo em docs/layout/); a apresentação definitiva pertence à SPEC-010 |
 | Capacidade | Aplicar trava crítica e calcular score determinístico de compatibilidade |
@@ -1698,13 +1730,13 @@ Contratos conceituais, sem endpoints HTTP.
 - [x] Perfil incompleto gera indicação de complementação, conforme UC-13.
 - [x] Resultado expõe fatores considerados.
 - [x] Mesmas entradas e regras produzem resultado consistente.
-- [ ] Vaga externa só é analisada depois de validada e normalizada.
+- [ ] Vaga externa só é analisada depois de validada e normalizada. *(depende da SPEC-006, não implementada na main)*
 - [x] Cálculo pode ser testado isoladamente.
 - [x] Subpontuações e score final seguem a fórmula aprovada na OPEN-031, com arredondamento apenas no resultado final.
 - [x] Quando faltar informação necessária em qualquer dimensão, análise sinaliza “dados insuficientes”, sem score final completo; informa dimensões avaliadas e dados faltantes, sem converter ausência em zero ou compatibilidade presumida.
-- [ ] Endereço de trabalho de vaga externa tem fonte e estado de validação registrados antes de estimar deslocamento.
-- [ ] Endereço da sede não é tratado automaticamente como destino da vaga.
-- [ ] Localização divergente ou não confirmada não gera tempo de deslocamento inventado nem score final completo quando a localização for necessária.
+- [ ] Endereço de trabalho de vaga externa tem fonte e estado de validação registrados antes de estimar deslocamento. *(depende da SPEC-006, não implementada na main)*
+- [ ] Endereço da sede não é tratado automaticamente como destino da vaga. *(depende da SPEC-006, não implementada na main)*
+- [ ] Localização divergente ou não confirmada não gera tempo de deslocamento inventado nem score final completo quando a localização for necessária. *(depende da SPEC-006, não implementada na main)*
 
 > Evidência: testes Vitest (motor, adaptador HERE, limite de uso, serviço, API, critérios) e E2E (`scripts/auth-e2e.mjs`, com HERE simulado) verdes na CI. Teste manual executado pelo responsável em 29/10/2026 com a HERE real (plano gratuito, dados fictícios em São Paulo); ajustes aplicados durante o teste (idiomas por lista no editor da vaga, correspondência de competências, endereço só com cidade recusado, necessidade indispensável marcada pelo candidato, limite de 60% da cota). Permanecem abertos os critérios de vaga externa (análise só após validação e os três de localização), que dependem da SPEC-006 e da validação de localização da seção 6.3; hoje apenas vagas próprias são analisadas.
 
@@ -1744,7 +1776,7 @@ Contratos conceituais, sem endpoints HTTP.
 - [x] Texto aprovado.
 - [x] Fórmula e dados mínimos confirmados na baseline ou por decisão registrada.
 - [x] Trava crítica e pesos cobertos por testes.
-- [ ] Apresentação do resultado aprovada na SPEC-010. (pendente: pertence à SPEC-010)
+- [x] Apresentação do resultado aprovada na SPEC-010. *(SPEC-010 encerrada em 31/10/2026)*
 - [x] Critérios e testes revisados.
 - [x] Sem implementação antes das aprovações necessárias.
 
@@ -1756,7 +1788,7 @@ Contratos conceituais, sem endpoints HTTP.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-008 |
-| Estado do texto | aprovada; implementada e encerrada em 29/10/2026, exceto os itens que dependem da SPEC-006 e da SPEC-009; ver `docs/Implementacao/SPEC-008.md` |
+| Estado do texto | aprovada; implementada e encerrada em 29/10/2026, exceto os itens que dependem da SPEC-006 (vagas externas); a integração com a SPEC-009 foi concluída em 31/10/2026; ver `docs/Implementacao/SPEC-008.md` |
 | Estado do layout | aprovado pelo responsável em 29/10/2026 sobre as telas implementadas (Início, Vagas com busca, filtros e paginação, diálogo do score e perfil na área do candidato); referência visual em `docs/layout/SPEC-008-010-referencia-area-candidato.png` |
 | Capacidade | Buscar e filtrar vagas elegíveis e ordená-las por compatibilidade |
 
@@ -1854,7 +1886,7 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 - [x] Resultados seguem o score da SPEC-007.
 - [x] A consulta apresenta até 100 vagas elegíveis, em páginas de 20; paginação numerada anterior/próxima preserva busca, filtros e ordenação, e alterações em busca/filtros reiniciam na primeira página.
 - [x] Ordenações alternativas são maior compatibilidade (padrão), mais recentes e mais antigas; empates mantêm ordem estável por identificador interno não exposto.
-- [ ] Vagas externas não validadas são excluídas.
+- [ ] Vagas externas não validadas são excluídas. *(depende da SPEC-006: hoje só vagas próprias participam da busca)*
 - [x] Status atual da vaga é respeitado.
 - [x] Informações de acessibilidade aparecem antes da candidatura.
 - [x] Estado sem resultados é comunicado de forma acessível.
@@ -1882,9 +1914,9 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 ## 14. Definition of Done
 - [x] Texto aprovado.
 - [x] Filtros conferidos na baseline.
-- [ ] Integração com SPEC-007/SPEC-009 testável. (SPEC-007 integrada e testada; SPEC-009 pendente)
+- [x] Integração com SPEC-007/SPEC-009 testável. *(SPEC-007 e SPEC-009 integradas; vaga pausada, encerrada ou fora do prazo sai da busca)*
 - [x] Layouts e estados vazios anexados e aprovados.
-- [ ] Acessibilidade e desempenho verificáveis. (acessibilidade verificada por axe-core e teste manual; desempenho sem medição formal)
+- [ ] Acessibilidade e desempenho verificáveis. *(acessibilidade verificada por axe-core e teste manual; desempenho ainda sem medição formal do RNF-05)*
 - [x] Sem implementação antes das aprovações necessárias.
 
 ## SPEC-008 — Decisões de implementação (29/10/2026)
@@ -1905,7 +1937,7 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 | Campo | Valor |
 |---|---|
 | ID | SPEC-009 |
-| Estado do texto | aprovada; implementada e encerrada em 31/10/2026, exceto a comunicação aos candidatos ativos, que depende da SPEC-011 e da SPEC-017; ver `docs/Implementacao/SPEC-009.md` |
+| Estado do texto | aprovada; implementada e encerrada em 31/10/2026; a comunicação aos candidatos ativos quando a vaga é encerrada foi entregue com a SPEC-017 em 01/11/2026; ver `docs/Implementacao/SPEC-009.md` |
 | Estado do layout | aprovado pelo responsável em 31/10/2026 sobre as telas implementadas (indicador de status, mensagens de indisponível/encerrada e aviso de mudança no detalhe da vaga) |
 | Capacidade | Exibir o estado atual da vaga e impedir ações incompatíveis com sua disponibilidade |
 
@@ -1953,7 +1985,7 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 10. Alterações de status são permitidas somente ao Recrutador autorizado da Empresa responsável e apenas nas transições da OPEN-041; operações inválidas ou não autorizadas são recusadas sem alteração. Alterações relevantes são rastreáveis
 
 ## 6. Regras e invariantes
-1. Candidatura somente em vaga aberta e não bloqueada (RB-01).
+1. Candidatura somente em vaga aberta e dentro do prazo (RB-01); vaga pausada, encerrada ou com prazo vencido não aceita candidatura.
 2. Vaga indisponível bloqueia candidaturas enquanto permanecer nesse estado; pode voltar a aberta por operação autorizada, conforme OPEN-041.
 3. Vaga encerrada não aceita novas candidaturas naquela publicação; nova oportunidade exige nova publicação conforme regras aplicáveis. Candidatos ativos são identificados para comunicação (RB-42).
 4. Status relevante deve ser claro antes da candidatura (RB-13, RB-23).
@@ -2023,7 +2055,7 @@ RNF-05 (desempenho), RNF-09 (consistência), RNF-14 (rastreabilidade) e RNF-07 (
 - [x] Estados e permissões conferidos.
 - [x] Verificação de disponibilidade testável no backend.
 - [x] Layouts dos estados aprovados.
-- [ ] Integração com candidatura/notificação testável. (depende da SPEC-011 e da SPEC-017)
+- [x] Integração com candidatura/notificação testável. *(SPEC-011 recusa candidatura em vaga indisponível e SPEC-017 avisa os candidatos ativos quando a vaga é encerrada)*
 - [x] Sem implementação antes das aprovações necessárias.
 
 ---
@@ -2124,7 +2156,7 @@ A apresentação compõe dados dos serviços de vaga, status e compatibilidade, 
 - **Verificar possibilidade de prosseguir:** orienta a ação, sem substituir validação final da SPEC-011.
 
 ## 10. RNFs aplicáveis
-RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04 (usabilidade), RNF-13 (compatibilidade) e RNF-08 (privacidade).
+RNF-01 (WCAG 2.2 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04 (usabilidade), RNF-13 (compatibilidade) e RNF-08 (privacidade).
 
 ## 11. Critérios de aceitação
 
@@ -2164,7 +2196,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 ## 14. Definition of Done
 - [x] Texto aprovado.
 - [x] Campos e explicação confirmados com a baseline.
-- [ ] Integração com compatibilidade e status testável. (compatibilidade da SPEC-007 integrada e testada; o status usa o catálogo da SPEC-009 sobre o estado da vaga, e a consulta própria da SPEC-009 continua pendente)
+- [x] Integração com compatibilidade e status testável. *(compatibilidade da SPEC-007 e consulta de status da SPEC-009 integradas e testadas)*
 - [x] Protótipos anexados em docs/layout/ e aprovados separadamente.
 - [x] Acessibilidade validável.
 - [x] Sem implementação antes das aprovações necessárias.
@@ -2189,7 +2221,6 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 | Campo | Valor |
 |---|---|
 | ID | SPEC-011 |
-|
 | Estado do texto | aprovada; implementada e encerrada em 31/10/2026 (notificação do registro pertence à SPEC-017); ver `docs/Implementacao/SPEC-011.md` |
 | Estado do layout | aprovado pelo responsável em 31/10/2026 sobre as telas implementadas (confirmação, resultado do registro, estado não elegível e "já se candidatou" no detalhe da vaga) |
 | Capacidade | Registrar candidatura |
@@ -2203,7 +2234,7 @@ RNF-01 (WCAG 2.1 AA), RNF-02 (leitores de tela), RNF-03 (responsividade), RNF-04
 ## 3. Escopo
 > **Revisão de 31/10/2026 (responsável):** somente a trava crítica impede a candidatura. Dados insuficientes não impedem: a candidatura é registrada com o resultado da SPEC-007 como está e score vazio quando ele não pôde ser calculado (revisão das OPEN-048/049). As menções a score obrigatório abaixo ficam substituídas por esta decisão.
 
-Validar autenticação, status atual da vaga, compatibilidade/trava crítica, existência de candidatura ativa e disponibilidade do score determinístico. Se válido, registrar candidato, vaga, score obrigatório, data gerada pelo sistema no momento do registro e estado inicial `Inscrito`. Não permitir candidatura duplicada ativa nem criar registro parcial.
+Validar autenticação, status atual da vaga, existência de candidatura ativa e trava crítica no resultado da SPEC-007. Se válido, registrar candidato, vaga, resultado de compatibilidade do momento, score (vazio quando não pôde ser calculado por falta de dados, revisão de 31/10/2026), data gerada pelo sistema no momento do registro e estado inicial `Inscrito`. Não permitir candidatura duplicada ativa nem criar registro parcial.
 
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
@@ -2221,13 +2252,13 @@ SPEC-001, 002, 007, 009, 010. As dependências fornecem dados e capacidades; est
 1. Candidato autenticado seleciona vaga elegível e solicita candidatura.
 2. Sistema consulta o status atual da vaga e verifica bloqueio, trava crítica e compatibilidade obrigatória.
 3. Sistema verifica se já existe candidatura ativa do candidato para a vaga.
-4. Sistema confirma que o score determinístico de compatibilidade está calculado; o score é obrigatório para registrar a candidatura.
-5. Se alguma condição falhar ou o score não estiver disponível, recusa o registro e informa o motivo; nenhuma candidatura parcial é criada.
+4. Sistema obtém o resultado de compatibilidade da SPEC-007. Somente a trava crítica impede o registro; com dados insuficientes, a candidatura é registrada com o resultado como está e score vazio, sem presumir valor (revisão de 31/10/2026).
+5. Se alguma condição falhar (vaga indisponível, candidatura ativa existente ou trava crítica), recusa o registro e informa o motivo; nenhuma candidatura parcial é criada.
 6. Se todas as condições forem satisfeitas, registra a candidatura com estado inicial `Inscrito`, gera `data_inscricao` no momento do registro e disponibiliza o resultado ao candidato.
 7. Sistema registra o evento e aciona a capacidade de notificação quando aplicável.
 
 ## 6. Regras e invariantes
-- Vaga disponível e não bloqueada; trava crítica prevalece; uma candidatura ativa por vaga; operação auditável.
+- Vaga aberta e dentro do prazo; trava crítica prevalece; uma candidatura ativa por vaga; operação auditável.
 - Cada avaliação contém duas notas obrigatórias e independentes, ambas em escala de 1 a 5 estrelas: acessibilidade e postura inclusiva. Comentário textual é opcional.
 - Após o envio, a avaliação é imutável para o candidato; não oferecer fluxo de edição ou reenvio para alterar uma avaliação já registrada. Denúncias e moderação continuam no fluxo existente.
 - Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
@@ -2243,7 +2274,7 @@ A capacidade mantém separação entre interface, regras de domínio e persistê
 
 ## 9. Contratos necessários
 - **Solicitar candidatura:** recebe a identificação da vaga e a identidade autenticada do candidato; não aceita identidade de candidato enviada como autoridade pelo cliente.
-- **Consultar elegibilidade da vaga:** obtém status atual, bloqueio e resultado de compatibilidade/trava nas Specs responsáveis.
+- **Consultar elegibilidade da vaga:** obtém status atual e resultado de compatibilidade/trava nas Specs responsáveis.
 - **Verificar candidatura ativa:** consulta duplicidade para o mesmo candidato e vaga.
 - **Registrar candidatura:** cria o vínculo candidato-vaga somente após todas as validações; retorna confirmação ou motivo de recusa.
 - **Publicar evento de candidatura:** disponibiliza a mudança para acompanhamento/notificação, sem acoplar o registro à entrega da notificação.
@@ -2275,12 +2306,12 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 |---|---|---|
 | T-011-01 | Candidato autenticado envia candidatura a vaga disponível, sem duplicidade, sem trava crítica e com score calculado | Candidatura única é registrada com estado `Inscrito`, data gerada pelo sistema e score associado; confirmação é apresentada |
 | T-011-02 | Visitante ou usuário não candidato tenta candidatar-se | Operação recusada sem registro |
-| T-011-03 | Vaga encerrada, indisponível ou bloqueada | Operação recusada sem registro parcial |
+| T-011-03 | Vaga encerrada, pausada ou com prazo vencido | Operação recusada sem registro parcial |
 | T-011-04 | Existe candidatura ativa para o mesmo candidato e vaga | Nova candidatura é recusada |
 | T-011-05 | Compatibilidade indica trava crítica | Candidatura é recusada independentemente do score |
 | T-011-06 | Falha ocorre antes da persistência | Nenhuma candidatura parcial permanece |
 | T-011-07 | Candidatura é registrada com sucesso | Vínculo candidato-vaga e evento são rastreáveis |
-| T-011-08 | Score determinístico não está disponível | Registro é recusado sem criar candidatura parcial |
+| T-011-08 | Score determinístico não pôde ser calculado por falta de dados | Candidatura é registrada com o resultado da SPEC-007 e score vazio (revisão de 31/10/2026) |
 
 ## 13. Questões em aberto
 As OPEN-047, OPEN-048 e OPEN-049 foram resolvidas e registradas em `docs/OPEN.md`. Novas lacunas identificadas para esta SPEC devem ser registradas ali antes de alterar comportamentos não definidos.
@@ -2313,7 +2344,7 @@ As OPEN-047, OPEN-048 e OPEN-049 foram resolvidas e registradas em `docs/OPEN.md
 - **Questões abertas:** OPEN-050, OPEN-051 e OPEN-052 foram resolvidas e registradas em `docs/OPEN.md`.
 
 ## 3. Escopo
-Escopo de RF-28: (1) consultar somente candidaturas próprias; (2) acompanhar status, etapas e histórico disponível; e (3) cancelar a própria candidatura nos estados ativos `Inscrito`, `Triagem`, `Entrevista` e `Finalista`, com a vaga aberta; com a vaga encerrada, o processo seletivo pode continuar e o cancelamento permanece permitido nos estados `Inscrito`, `Triagem` e `Entrevista` (revisão de 01/11/2026, OPEN-050); preservar histórico após cancelamento. Editar uma candidatura já enviada, excluir seu registro ou alterar etapas do processo seletivo não fazem parte deste escopo.
+Escopo de RF-28: (1) consultar somente candidaturas próprias; (2) acompanhar status, etapas e histórico disponível; e (3) cancelar a própria candidatura nos estados ativos `Inscrito`, `Triagem`, `Entrevista` e `Finalista`, com a vaga não encerrada (aberta ou pausada); com a vaga encerrada, o processo seletivo pode continuar e o cancelamento permanece permitido nos estados `Inscrito`, `Triagem` e `Entrevista` (revisão de 01/11/2026, OPEN-050); preservar histórico após cancelamento. Editar uma candidatura já enviada, excluir seu registro ou alterar etapas do processo seletivo não fazem parte deste escopo.
 
 ## 3.1. Telas e evidência de layout
 | Área/tela | Finalidade | Layout |
@@ -2333,13 +2364,13 @@ SPEC-001, 011, 013, 016, 017. As dependências fornecem dados e capacidades; est
 3. Candidato seleciona uma candidatura para analisar; o sistema apresenta estado atual, vaga e histórico disponível na tela de detalhe/análise.
 4. A linha do tempo inclui, quando aplicáveis, os eventos “Candidatura realizada”, “Status” e “Candidatura cancelada”. Cada evento apresenta a data, sem exigir horário, uma descrição breve e compreensível e o status ou etapa resultante quando aplicável. Os eventos são exibidos do mais recente para o mais antigo.
 5. O histórico exibido é limitado à própria candidatura do candidato autenticado e não expõe dados de terceiros nem informações internas não destinadas ao acompanhamento.
-6. Na tela de detalhe/análise, se a candidatura estiver em estado `Inscrito`, `Triagem`, `Entrevista` ou `Finalista` com a vaga aberta — ou em `Inscrito`, `Triagem` ou `Entrevista` com a vaga encerrada (revisão de 01/11/2026) —, o sistema disponibiliza a ação **Cancelar candidatura**. O botão não aparece na tela de resultado do cancelamento.
+6. Na tela de detalhe/análise, se a candidatura estiver em estado `Inscrito`, `Triagem`, `Entrevista` ou `Finalista` com a vaga não encerrada (aberta ou pausada) — ou em `Inscrito`, `Triagem` ou `Entrevista` com a vaga encerrada (revisão de 01/11/2026) —, o sistema disponibiliza a ação **Cancelar candidatura**. O botão não aparece na tela de resultado do cancelamento.
 7. Ao acionar **Cancelar candidatura**, o sistema solicita confirmação explícita. Se o candidato confirmar, valida novamente a titularidade e as condições de cancelamento e registra o estado final `Cancelada`; se cancelar a confirmação ou se a validação falhar, não altera o estado.
 8. Após cancelamento confirmado, a candidatura permanece no histórico e aparece como **Cancelada** na área Minhas candidaturas. O sistema registra o evento “Candidatura cancelada” e disponibiliza o estado atualizado para acompanhamento/notificação conforme SPEC-017.
 9. Uma candidatura `Contratado`, `Recusada` ou já `Cancelada` não pode ser cancelada novamente.
 
 ## 6. Regras e invariantes
-- Candidato só acessa seus processos. A ação `Cancelar candidatura` fica na tela de detalhe/análise da candidatura e só é oferecida nos estados `Inscrito`, `Triagem`, `Entrevista` e `Finalista`, com a vaga aberta; com a vaga encerrada, apenas em `Inscrito`, `Triagem` e `Entrevista` (revisão de 01/11/2026, OPEN-050). Ao acioná-la, o sistema exige confirmação; após confirmação e validação, muda o estado para `Cancelada`, preserva registro/histórico e apresenta a candidatura como cancelada em Minhas candidaturas. O botão não aparece na tela de resultado do cancelamento. `Contratado`, `Recusada` e `Cancelada` não permitem novo cancelamento.
+- Candidato só acessa seus processos. A ação `Cancelar candidatura` fica na tela de detalhe/análise da candidatura e só é oferecida nos estados `Inscrito`, `Triagem`, `Entrevista` e `Finalista`, com a vaga não encerrada (aberta ou pausada); com a vaga encerrada, apenas em `Inscrito`, `Triagem` e `Entrevista` (revisão de 01/11/2026, OPEN-050). Ao acioná-la, o sistema exige confirmação; após confirmação e validação, muda o estado para `Cancelada`, preserva registro/histórico e apresenta a candidatura como cancelada em Minhas candidaturas. O botão não aparece na tela de resultado do cancelamento. `Contratado`, `Recusada` e `Cancelada` não permitem novo cancelamento.
 - Não presumir campos, estados, canais, fórmulas ou políticas não definidos na baseline; lacunas permanecem em OPEN.md.
 - Operações protegidas são validadas no backend.
 - Dados pessoais e de acessibilidade são disponibilizados somente a usuários autorizados e para a finalidade necessária.
@@ -2385,9 +2416,9 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 |---|---|---|
 | T-012-01 | Candidato consulta suas candidaturas | Somente registros próprios são apresentados |
 | T-012-02 | Candidato tenta consultar candidatura de outra pessoa | Acesso negado sem revelar os dados |
-| T-012-03 | Candidatura em `Inscrito`, `Triagem`, `Entrevista` ou `Finalista` com vaga aberta, ou em `Inscrito`, `Triagem` ou `Entrevista` com vaga encerrada | Na tela de detalhe, ação de cancelamento é oferecida; após confirmação, estado `Cancelada` é registrado, candidatura aparece como cancelada e histórico é preservado |
+| T-012-03 | Candidatura em `Inscrito`, `Triagem`, `Entrevista` ou `Finalista` com vaga não encerrada, ou em `Inscrito`, `Triagem` ou `Entrevista` com vaga encerrada | Na tela de detalhe, ação de cancelamento é oferecida; após confirmação, estado `Cancelada` é registrado, candidatura aparece como cancelada e histórico é preservado |
 | T-012-04 | Candidatura em `Contratado`, `Recusada` ou já cancelada | Operação recusada e estado mantido |
-| T-012-08 | Vaga encerrada ou bloqueada de forma que impeça cancelamento | Operação recusada sem alteração de estado |
+| T-012-08 | Vaga encerrada e candidatura em Finalista (revisão de 01/11/2026: em vaga encerrada o cancelamento vale até Entrevista) | Operação recusada sem alteração de estado |
 | T-012-05 | Duas solicitações de cancelamento concorrentes | Não ocorre duplicação nem corrupção do estado |
 | T-012-06 | Cancelamento concluído | Estado atualizado fica disponível para acompanhamento/notificação |
 | T-012-07 | Histórico é consultado após cancelamento | Eventos anteriores continuam disponíveis conforme retenção aprovada |
@@ -2528,7 +2559,6 @@ OPEN-055 e OPEN-056 foram resolvidas e estão registradas em `docs/OPEN.md`. O a
 | Campo | Valor |
 |---|---|
 | ID | SPEC-016 |
-|
 | Estado do texto | aprovada; implementada e encerrada em 01/11/2026; ver `docs/Implementacao/SPEC-016.md` |
 | Estado do layout | aprovado pelo responsável em 01/11/2026 sobre as telas implementadas (painel Minhas candidaturas, linha do tempo no detalhe, situação atual e estados encerrado/cancelado) |
 | Capacidade | Acompanhar candidatura e processo seletivo |
@@ -2746,7 +2776,6 @@ OPEN-066 a OPEN-069 estão resolvidas conforme `docs/OPEN.md`. As notificações
 | Campo | Valor |
 |---|---|
 | ID | SPEC-018 |
-|
 | Estado do texto | aprovada; implementada e encerrada em 01/11/2026, com o cadastro de entrevistas no funil (OPEN-094) e o critério de indício de abuso provisório (OPEN-095); a apresentação pública da distribuição fica para a SPEC-021; ver `docs/Implementacao/SPEC-018.md` |
 | Estado do layout | aprovado pelo responsável em 01/11/2026 sobre as telas implementadas (entrevista no funil da empresa: agendar, alterar, cancelar e concluir; entrevista e formulário de avaliação com revisão, confirmação e consulta da própria avaliação no detalhe da candidatura) |
 | Capacidade | Avaliar processo seletivo |
@@ -2932,20 +2961,20 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
-- [ ] O registro exige vaga válida, categoria da situação e descrição/justificativa; evidências adicionais são opcionais e laudos médicos/documentos pessoais sensíveis não são exigidos como condição de registro.
-- [ ] A denúncia fica vinculada à vaga e à Empresa responsável; quando questiona avaliação específica, pode ser vinculada à avaliação correspondente após validação.
-- [ ] Denúncia e evidências não comprovam irregularidade nem provocam bloqueio da vaga ou alteração de nota sem decisão administrativa.
-- [ ] Denúncia é acessível apenas a atores autorizados e o registro não publica identidade ou conteúdo privado indevidamente (RNF-07/RNF-08).
-- [ ] Registrar denúncia não bloqueia automaticamente vaga nem altera a nota antes da análise administrativa.
+- [x] O registro exige vaga válida, categoria da situação e descrição/justificativa; evidências adicionais são opcionais e laudos médicos/documentos pessoais sensíveis não são exigidos como condição de registro. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] A denúncia fica vinculada à vaga e à Empresa responsável; quando questiona avaliação específica, pode ser vinculada à avaliação correspondente após validação. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Denúncia e evidências não comprovam irregularidade nem provocam bloqueio da vaga ou alteração de nota sem decisão administrativa. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Denúncia é acessível apenas a atores autorizados e o registro não publica identidade ou conteúdo privado indevidamente (RNF-07/RNF-08). *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Registrar denúncia não bloqueia automaticamente vaga nem altera a nota antes da análise administrativa. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
 
-- [ ] Acesso limitado ao ator autorizado.
-- [ ] Pré-condições e regras são validadas no backend.
-- [ ] Operações inválidas são recusadas sem alteração indevida.
-- [ ] Operação válida produz o estado esperado.
-- [ ] Dados pessoais e de acessibilidade respeitam autorização.
-- [ ] Alterações relevantes ficam rastreáveis.
-- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
-- [ ] Lacunas permanecem explicitadas em OPEN.md.
+- [x] Acesso limitado ao ator autorizado. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Pré-condições e regras são validadas no backend. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Operações inválidas são recusadas sem alteração indevida. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Operação válida produz o estado esperado. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Dados pessoais e de acessibilidade respeitam autorização. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Alterações relevantes ficam rastreáveis. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] A capacidade não executa responsabilidades atribuídas a outras Specs. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Lacunas permanecem explicitadas em OPEN.md.
 
 ## 12. Casos de teste derivados
 
@@ -2963,12 +2992,12 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 OPEN-074 a OPEN-077 estão resolvidas. As decisões aprovadas sobre elegibilidade, campos obrigatórios e evidências opcionais, vínculo à vaga/Empresa e avaliação quando aplicável, limite de até 3 denúncias por candidato em 24 horas, prevenção de repetição da mesma denúncia para a mesma vaga enquanto estiver em análise, confidencialidade e estados de andamento estão registradas em `docs/OPEN.md` e refletidas nesta Spec.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
-- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
-- [ ] Questões decididas ou mantidas explicitamente em aberto.
-- [ ] Layout funcional anexado e aprovado quando aplicável.
-- [ ] Critérios de aceitação e testes revisados.
-- [ ] Nenhuma implementação antes das aprovações exigidas.
+- [x] Texto revisado e aprovado.
+- [x] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo. *(conferida na revisão da documentação de 23/11/2026: RF, RNF e RB em EARS, casos de uso, modelo conceitual e mapa de Specs)*
+- [x] Questões decididas ou mantidas explicitamente em aberto.
+- [ ] Layout funcional anexado e aprovado quando aplicável. *(pendente: layout ainda não aprovado)*
+- [ ] Critérios de aceitação e testes revisados. *(pendente: teste manual do roteiro `docs/operacao/validacao-manual-spec-019-020.md`)*
+- [ ] Nenhuma implementação antes das aprovações exigidas. *(registro: a implementação foi autorizada pela aprovação dos textos (REV-018); o layout ainda não foi aprovado; ver `docs/Implementacao/desvios.md`)*
 
 ---
 
@@ -3040,17 +3069,17 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 ## 11. Critérios de aceitação
 
-- [ ] Operações de moderação são recusadas para Recrutador ou Empresa sem papel de Administrador da plataforma.
-- [ ] Decisão e alterações decorrentes são rastreáveis; denúncia não analisada não provoca bloqueio nem alteração automática da nota (RNF-07/RNF-09/RNF-14).
+- [x] Operações de moderação são recusadas para Recrutador ou Empresa sem papel de Administrador da plataforma. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Decisão e alterações decorrentes são rastreáveis; denúncia não analisada não provoca bloqueio nem alteração automática da nota (RNF-07/RNF-09/RNF-14). *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
 
-- [ ] Acesso limitado ao ator autorizado.
-- [ ] Pré-condições e regras são validadas no backend.
-- [ ] Operações inválidas são recusadas sem alteração indevida.
-- [ ] Operação válida produz o estado esperado.
-- [ ] Dados pessoais e de acessibilidade respeitam autorização.
-- [ ] Alterações relevantes ficam rastreáveis.
-- [ ] A capacidade não executa responsabilidades atribuídas a outras Specs.
-- [ ] Lacunas permanecem explicitadas em OPEN.md.
+- [x] Acesso limitado ao ator autorizado. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Pré-condições e regras são validadas no backend. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Operações inválidas são recusadas sem alteração indevida. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Operação válida produz o estado esperado. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Dados pessoais e de acessibilidade respeitam autorização. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Alterações relevantes ficam rastreáveis. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] A capacidade não executa responsabilidades atribuídas a outras Specs. *(conferido no código e nos testes automatizados da CI; teste manual pendente)*
+- [x] Lacunas permanecem explicitadas em OPEN.md.
 
 ## 12. Casos de teste derivados
 
@@ -3068,12 +3097,12 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 OPEN-078 a OPEN-081 estão resolvidas. As decisões sobre critérios/evidências, catálogo de decisões, meta de análise em até 5 dias úteis com extensão justificada quando houver informação adicional, prioridade para riscos relevantes à acessibilidade/segurança e comunicação às partes estão registradas em `docs/OPEN.md` e refletidas nesta Spec.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
-- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
-- [ ] Questões decididas ou mantidas explicitamente em aberto.
-- [ ] Layout funcional anexado e aprovado quando aplicável.
-- [ ] Critérios de aceitação e testes revisados.
-- [ ] Nenhuma implementação antes das aprovações exigidas.
+- [x] Texto revisado e aprovado.
+- [x] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo. *(conferida na revisão da documentação de 23/11/2026: RF, RNF e RB em EARS, casos de uso, modelo conceitual e mapa de Specs)*
+- [x] Questões decididas ou mantidas explicitamente em aberto.
+- [ ] Layout funcional anexado e aprovado quando aplicável. *(pendente: layout ainda não aprovado)*
+- [ ] Critérios de aceitação e testes revisados. *(pendente: teste manual do roteiro `docs/operacao/validacao-manual-spec-019-020.md`)*
+- [ ] Nenhuma implementação antes das aprovações exigidas. *(registro: a implementação foi autorizada pela aprovação dos textos (REV-018); o layout ainda não foi aprovado; ver `docs/Implementacao/desvios.md`)*
 
 ---
 
@@ -3178,26 +3207,50 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 As decisões de apresentação por estrelas, mínimo de uma avaliação válida e estado sem dados suficientes estão registradas. A OPEN-085 foi resolvida: administradores tratam denúncias, mas não alteram diretamente avaliações nem a distribuição pública de estrelas.
 
 ## 14. Definition of Done
-- [ ] Texto revisado e aprovado.
-- [ ] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo.
-- [ ] Questões decididas ou mantidas explicitamente em aberto.
-- [ ] Layout funcional anexado e aprovado quando aplicável.
-- [ ] Critérios de aceitação e testes revisados.
-- [ ] Nenhuma implementação antes das aprovações exigidas.
+- [x] Texto revisado e aprovado.
+- [x] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo. *(conferida na revisão da documentação de 23/11/2026: RF, RNF e RB em EARS, casos de uso, modelo conceitual e mapa de Specs)*
+- [x] Questões decididas ou mantidas explicitamente em aberto.
+- [x] Layout funcional anexado e aprovado quando aplicável. *(aprovado em 01/11/2026 sobre as telas implementadas)*
+- [x] Critérios de aceitação e testes revisados.
+- [ ] Nenhuma implementação antes das aprovações exigidas. *(registro: a implementação foi autorizada pela aprovação dos textos (REV-018) e o layout foi aprovado depois, sobre as telas implementadas; ver `docs/Implementacao/desvios.md`)*
 
 ---
 
 
 ## Registro consolidado de aprovação para implementação
 
-| Specs | Estado dos textos | Bloqueio |
+| Specs | Estado dos textos | Bloqueio (na aprovação) |
 |---|---|---|
-| SPEC-001 a SPEC-006 | aprovadas; prontas para implementação | Nenhum bloqueio por OPEN-088. Em SPEC-006, a etapa aprovada permanece limitada ao lote de teste de até 25 chamadas; uso contínuo/produção do Adzuna não está autorizado por este registro. |
-| SPEC-007 a SPEC-008 | aprovadas; prontas para implementação | OPEN-088 resolvida. Implementar estimativa padrão via HERE Routing API dentro do plano gratuito, sem ajuste por horário/trânsito; falhas/ausência de rota seguem OPEN-033. Respeitar limites de uso e as demais dependências. |
-| SPEC-009 | aprovada; pronta para implementação | Nenhum bloqueio por OPEN-088. |
-| SPEC-010 | aprovada; pronta para implementação | Depende da SPEC-007; OPEN-088 não é mais bloqueio. |
-| SPEC-011 a SPEC-013 | aprovadas; prontas para implementação | Nenhum bloqueio por OPEN-088. |
-| SPEC-016 a SPEC-021 | aprovadas; prontas para implementação | Nenhum bloqueio por OPEN-088. |
+| SPEC-001 a SPEC-006 | aprovadas | Nenhum bloqueio por OPEN-088. Em SPEC-006, a etapa aprovada permanece limitada ao lote de teste de até 25 chamadas; uso contínuo/produção do Adzuna não está autorizado por este registro. |
+| SPEC-007 a SPEC-008 | aprovadas | OPEN-088 resolvida. Implementar estimativa padrão via HERE Routing API dentro do plano gratuito, sem ajuste por horário/trânsito; falhas/ausência de rota seguem OPEN-033. |
+| SPEC-009 a SPEC-013 | aprovadas | Nenhum bloqueio por OPEN-088. SPEC-010 depende da SPEC-007. |
+| SPEC-016 a SPEC-021 | aprovadas | Nenhum bloqueio por OPEN-088. |
+
+### Situação da implementação (main, 23/11/2026)
+
+| Spec | Situação | Pendências registradas |
+|---|---|---|
+| SPEC-001 | implementada e encerrada (26/10/2026); complementos de OPEN-001 e OPEN-100 | protótipos não anexados em `docs/layout/` |
+| SPEC-002 | implementada e encerrada (27/10/2026); complementos de OPEN-099, OPEN-100 e OPEN-101 | OPEN-099, OPEN-100, OPEN-101 (provisórias) |
+| SPEC-003 | implementada e encerrada (28/10/2026), exceto comandos de voz | voz (PR #67); plano formal de avaliação (OPEN-015/016) |
+| SPEC-004 | implementada e encerrada (27/10/2026), exceto divergências recorrentes (seção 5.5) | RB-08 adiada |
+| SPEC-005 | implementada (27/10/2026 e 31/10/2026) | — |
+| SPEC-006 | **não implementada na `main`**; implementação em revisão no PR #68 | decisão de escopo pendente |
+| SPEC-007 | implementada e encerrada (29/10/2026), exceto critérios de vagas externas | depende da SPEC-006 |
+| SPEC-008 | implementada e encerrada (29/10/2026), exceto vagas externas | depende da SPEC-006; desempenho sem medição formal |
+| SPEC-009 | implementada e encerrada (31/10/2026) | — |
+| SPEC-010 | implementada e encerrada (31/10/2026) | — |
+| SPEC-011 | implementada e encerrada (31/10/2026); score pode ser vazio (revisão de 31/10/2026) | — |
+| SPEC-012 | implementada e encerrada (01/11/2026) | — |
+| SPEC-013 | implementada e encerrada (01/11/2026), exceto pendências impeditivas | OPEN-092 |
+| SPEC-016 | implementada e encerrada (01/11/2026) | — |
+| SPEC-017 | implementada e encerrada (01/11/2026) | OPEN-093 (provisória) |
+| SPEC-018 | implementada e encerrada (01/11/2026) | OPEN-095 (provisória) |
+| SPEC-019 | implementada; aguardando teste manual e aprovação do layout | OPEN-097 (provisória) |
+| SPEC-020 | implementada; aguardando teste manual e aprovação do layout | OPEN-096 (provisória) |
+| SPEC-021 | implementada e encerrada (01/11/2026) | OPEN-098 |
+
+As OPENs marcadas como provisórias têm implementação em funcionamento, mas a decisão definitiva ainda é do responsável; elas estão descritas em `docs/OPEN.md`.
 
 Esta aprovação se refere aos **textos das Specs** e autoriza implementação controlada das capacidades marcadas como prontas, respeitando os limites registrados nas OPENs e a decisão atual REV-018. Para Adzuna, o escopo autorizado é exclusivamente até 25 chamadas de teste; não autoriza coleta contínua nem operação de produção. A aprovação não altera nem aprova layouts: protótipos e layouts aplicáveis continuam sujeitos à aprovação visual própria. SPEC-007, SPEC-008 e SPEC-010 não têm mais bloqueio por OPEN-088; a implementação pode prosseguir conforme este registro, aplicando HERE Routing API no plano gratuito, estimativa padrão sem trânsito/horário e tratamento de falhas conforme OPEN-033. A aprovação não altera nem aprova layouts: protótipos e layouts aplicáveis continuam sujeitos à aprovação visual própria.
 
@@ -3259,7 +3312,7 @@ A integração com Adzuna permanece limitada a **até 25 chamadas de teste**. Es
 
 ## SPEC-007 — Decisões de implementação (28/10/2026)
 
-- Mapa fixo entre necessidades do catálogo e os seis itens da vaga (A01, A02, A04, A06, T01); demais necessidades ficam "não avaliáveis".
+- Mapa fixo entre cinco necessidades do catálogo e cinco dos seis itens da vaga: A01 → rampas, A02 → elevadores, A04 → banheiros adaptados, A06 → sinalização acessível e T01 → leitores de tela. O sexto item (políticas inclusivas) não tem necessidade correspondente; as demais necessidades ficam "não avaliáveis".
 - Critérios técnicos estruturados definidos pelo recrutador no editor da vaga; a integração com LLM não é usada nesta etapa.
 - Dimensão sem critério aplicável é excluída e os pesos restantes são normalizados (OPEN-090, aprovada em 29/10/2026).
 - O candidato marca no perfil quais necessidades são indispensáveis (RB-06); a marcação obrigatória do catálogo pelo ADMIN continua válida.

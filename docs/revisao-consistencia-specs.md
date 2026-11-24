@@ -11,7 +11,7 @@ A revisão **não aprova os textos**, não aprova layouts e não autoriza implem
 **Status atual:** REV-009, REV-011 e REV-013 permanecem encerradas. OPEN-088 foi resolvida: HERE Routing API no plano gratuito aprovado, duração padrão da rota sem ajuste por horário/trânsito em tempo real e tratamento de falhas/dados ausentes conforme OPEN-033. OPEN-089, OPEN-086 e OPEN-087 também estão resolvidas conforme `docs/OPEN.md`. REV-002 foi encerrada após aprovação humana do detalhamento aplicado. REV-008 foi encerrada após a decisão de que a administração da plataforma atua sobre denúncias, sem alterar diretamente as avaliações ou a distribuição pública de estrelas. A REV-014 registra a revisão de consistência atual, correções documentais e lacunas de cobertura que não foram resolvidas por inferência.
 
 - O mapa e o documento de detalhamento cobrem as Specs ativas do escopo: SPEC-001 a SPEC-013 e SPEC-016 a SPEC-021. SPEC-014 e SPEC-015 foram removidas e não devem ser contadas como Specs vigentes; os IDs posteriores foram preservados.
-- A conferência atual de `OPEN.md` identificou 84 entradas de questões com IDs únicos, todas resolvidas. Há lacunas históricas na sequência, portanto não se deve afirmar que a numeração é contínua. O estado está consolidado na seção 4.
+- Na data das REV-011 a REV-019, `OPEN.md` tinha 84 entradas, todas resolvidas. Durante a implementação foram abertas novas questões; em 23/11/2026 são 94 entradas: 84 resolvidas, 1 parcialmente resolvida (OPEN-008) e 9 abertas com implementação provisória (OPEN-092, 093, 095 a 101). Ver REV-020 e a seção "Situação em 23/11/2026" de `OPEN.md`.
 - Todas as RBs identificadas na baseline aparecem referenciadas em algum ponto de `Specs.md`; isso não garante, por si só, que cada regra esteja associada à Spec correta.
 - RF-34 e RF-35 estão associados, respectivamente, à SPEC-012 e à SPEC-013.
 - O detalhamento de contratos e testes das SPEC-011 a SPEC-013 e SPEC-016 a SPEC-021 foi ampliado e aprovado pelo grupo (REV-002 encerrada).
@@ -212,4 +212,21 @@ Esta é uma auditoria de consistência documental. Ela identifica cobertura e pr
 **Resultado:** registrar este processo em `docs/Specs.md` e nesta revisão para manter rastreabilidade. A atualização documental não autoriza implementação de funcionalidades, merge à `main` ou publicação em produção.
 
 **Rastreabilidade:** complementa o registro de prontidão REV-018; não altera decisões funcionais já aprovadas, limites de APIs ou aprovações visuais específicas.
+
+## REV-020 — Revisão da documentação contra o código (23/11/2026)
+
+**Motivo:** depois da implementação das Specs, parte da documentação ainda descrevia decisões antigas (por exemplo, score obrigatório na candidatura, vaga "bloqueada", avaliação anônima, WCAG 2.1, comandos de voz e LLM como entregues). O código da `main` foi tomado como referência; a documentação foi ajustada a ele, sem mudar código.
+
+**O que foi revisado (PR #69):**
+- RF, RNF e RB reescritos em EARS, com tipo e Specs de cada requisito; novos RF-41 a RF-45, RNF-17 a RNF-19 e RB-47/RB-48 para funcionalidades entregues depois das Specs (OPEN-099 a OPEN-101).
+- Casos de uso UC-00 a UC-14 e visão geral; UC-10 fora do escopo; UC-14 não implementado na `main`.
+- Modelo conceitual igual ao `prisma/schema.prisma`; estados da vaga e do funil.
+- ADRs (ADR-005 da stack), decisões técnicas, drivers, personas e visão do produto.
+- `Specs.md`: SPEC-011 sem score obrigatório; WCAG 2.2; estados de SPEC-006, 008 e 009 atualizados; checklists marcados só onde há implementação e evidência, com o motivo dos itens que continuam desmarcados; complementos posteriores registrados nas SPEC-001 a 003; registro consolidado com a situação de cada Spec.
+- `mapa-specs.md` com os novos requisitos e os nomes atuais das entidades; `OPEN.md` com o resumo das questões abertas.
+- Desvios entre a arquitetura planejada e o código registrados em `docs/Implementacao/desvios.md`; catálogo de eventos de auditoria em `docs/logging.md`.
+- Diagramas de casos de uso refeitos em PlantUML (fontes em `docs/Diagramas Caso De Uso/fonte/`), diagrama ER do modelo conceitual e diagrama de estados do funil.
+- README transformado em índice da documentação, com o estado atual.
+
+**Escopo:** esta revisão só descreve o estado atual. A SPEC-006, o teste manual das SPEC-019/020 e as OPENs abertas seguem em trabalhos e PRs próprios e não fazem parte dela.
 

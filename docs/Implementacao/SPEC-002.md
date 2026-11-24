@@ -9,9 +9,9 @@
 - Declaração distingue `NOT_INFORMED`, `NO_NEEDS_DECLARED` e `NEEDS_DECLARED`.
 - Necessidades e recursos são autodeclarados; não há upload de laudos médicos nem campo para dados clínicos. Os anexos são restritos a cursos e certificações.
 - Idiomas possuem opções de idioma e nível, incluindo opção de texto livre para idioma não listado.
-- Cursos e certificações são registrados por nome (sem exigir arquivo); o comprovante é opcional e aceita PDF, DOC, DOCX, JPG ou PNG de até 10 MB, armazenados em diretório privado local fora da pasta pública; os arquivos podem ser listados, baixados e removidos apenas pela conta candidata proprietária.
+- Cursos e certificações são registrados por nome (sem exigir arquivo); o comprovante é opcional e aceita PDF, DOC, DOCX, JPG ou PNG de até 10 MB, armazenados em diretório privado local fora da pasta pública; os arquivos podem ser listados, baixados e removidos apenas pela conta candidata proprietária. *(Atualizado em 01/11/2026, OPEN-099: o limite passou a 4 MB e o conteúdo passou a ser guardado no banco de dados, na tabela `CandidateDocumentContent`, porque a hospedagem na Vercel não tem disco persistente e recusa requisições acima de 4,5 MB. O diretório local só é lido para arquivos enviados antes dessa mudança, na instalação de desenvolvimento.)*
 - A declaração de acessibilidade é apresentada antes dos campos detalhados; as opções do catálogo e a descrição livre só aparecem quando a pessoa declara que precisa de adaptações.
-- A API de documentos valida autenticação, origem das gravações, extensão e assinatura inicial do arquivo, gera nome de armazenamento aleatório e não expõe o caminho interno. O diretório `.private-uploads/` é ignorado pelo Git.
+- A API de documentos valida autenticação, origem das gravações, extensão e assinatura inicial do arquivo, gera nome de armazenamento aleatório e não expõe o caminho interno. O diretório `.private-uploads/` é ignorado pelo Git. *(Atualizado: ver a nota acima sobre o armazenamento no banco.)*
 - API de perfil restrita ao candidato autenticado; alterações verificam origem da requisição.
 - Auditoria de criação/atualização registra categorias alteradas sem copiar valores profissionais ou de acessibilidade para metadados.
 - Catálogo estruturado persistido no banco, com os 16 códigos aprovados na OPEN-008, separados em grupos arquitetônico, comunicação e tecnológico.
@@ -76,3 +76,10 @@
 - O E2E (`scripts/auth-e2e.mjs`) cobre perfil, catálogo e anexos: acesso anônimo recusado, validação da declaração, rejeição de texto antigo e de código inexistente, origem cruzada, persistência estruturada de formação/idiomas, auditoria sem valores, envio/lista/download/remoção de anexo com conteúdo validado. Depende de PostgreSQL e roda na CI.
 - Teste manual do roteiro `docs/operacao/validacao-manual-spec-002.md` executado pelo responsável em 27/10/2026; ajustes aplicados. Layout aprovado pelo responsável na mesma data, sobre as telas implementadas.
 - SPEC-002 encerrada em 27/10/2026. Itens herdados: RB-06 e RB-16 na análise de vaga (SPEC-007) e fonte de competências (SPEC-007).
+
+## Complementos posteriores
+
+- **Consentimento para dados de acessibilidade (OPEN-100, 05/11/2026):** sem consentimento específico, necessidades e recursos indispensáveis não são salvos; a retirada apaga esses dados e fica registrada em `ConsentRecord` (RF-43, RB-47).
+- **Foto de perfil (OPEN-101, 09/11/2026):** opcional, JPG, PNG ou WebP até 1 MB, guardada na tabela `UserPhoto` (RF-41, RB-48).
+- **Catálogo de necessidades:** mantido pelo Administrador em `/admin/catalogo-acessibilidade`.
+
