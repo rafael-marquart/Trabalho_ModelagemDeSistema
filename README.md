@@ -51,7 +51,7 @@ O projeto segue o processo SDD (Spec-Driven Development). A documentação fica 
 
 - **Implementado na `main`:** SPEC-001 a SPEC-005 e SPEC-007 a SPEC-021: cadastro e entrada dos quatro perfis, perfil do candidato com consentimento para dados de acessibilidade, infraestrutura da empresa e recrutadores, vagas, compatibilidade, busca, candidatura, funil com entrevistas, avisos, avaliação, nota pública, denúncias e moderação.
 - **Em revisão:** SPEC-006 (vagas externas, PR #68) e roteiro de comandos de voz (PR #67).
-- **Aguardando o grupo:** teste manual e aprovação de layout das SPEC-019 e SPEC-020; decisões das OPENs abertas (resumo em `docs/OPEN.md`).
+- **Situação das SPEC-019 e SPEC-020:** implementadas; o estado de teste manual e de layout está no registro consolidado de `docs/Specs.md`. As questões abertas estão resumidas em `docs/OPEN.md`.
 - **Qualidade:** a CI roda checagem de tipos, lint, testes (Vitest, com verificação axe-core das telas), build e o teste de ponta a ponta `scripts/auth-e2e.mjs` em todo pull request.
 
 ## Aplicação web

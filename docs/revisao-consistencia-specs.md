@@ -228,5 +228,5 @@ Esta é uma auditoria de consistência documental. Ela identifica cobertura e pr
 - Diagramas de casos de uso refeitos em PlantUML (fontes em `docs/Diagramas Caso De Uso/fonte/`), diagrama ER do modelo conceitual e diagrama de estados do funil.
 - README transformado em índice da documentação, com o estado atual.
 
-**Pendências que dependem do grupo:** decisão sobre a SPEC-006 (PR #68); teste manual e aprovação de layout das SPEC-019 e SPEC-020; decisões das OPENs abertas; protótipos de layout em `docs/layout/`.
+**Escopo:** esta revisão só descreve o estado atual. A SPEC-006, o teste manual das SPEC-019/020 e as OPENs abertas seguem em trabalhos e PRs próprios e não fazem parte dela.
 
