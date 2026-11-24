@@ -18,7 +18,7 @@ Permitir que o candidato encontre vagas abertas, com busca por texto e filtros, 
 
 ## Fluxo Principal
 
-1. O candidato acessa "Vagas" e, se quiser, digita termos de busca e escolhe filtros por cargo, área profissional, modalidade, localização e recursos de acessibilidade da vaga (os seis itens da infraestrutura, UC-07).
+1. O candidato acessa "Vagas" e, se quiser, digita termos de busca e escolhe filtros por área profissional, modalidade, localização e recursos de acessibilidade da vaga (os seis itens da infraestrutura, UC-07). Para procurar um cargo, a pessoa digita o nome na busca por texto. Nas vagas externas, a área profissional é inferida pelo título (UC-14).
 2. A busca por texto procura no título, na descrição e no nome da empresa; ignora maiúsculas, minúsculas e acentos, compara pela raiz das palavras ("engenharia" encontra "engenheiro") e exige que todos os termos apareçam em algum desses campos. Não há sinônimos, correção de digitação nem interpretação por IA. Busca vazia não restringe.
 3. Filtros de categorias diferentes se combinam por "e"; valores da mesma categoria, por "ou". Remover um filtro mantém os demais.
 4. O sistema considera vagas abertas e dentro do prazo de inscrição, publicadas por empresas na plataforma ou importadas de fonte externa já validada (UC-14). Vagas externas aparecem com o selo "Vaga externa · Adzuna".
@@ -57,7 +57,7 @@ Permitir que o candidato encontre vagas abertas, com busca por texto e filtros, 
 
 ## Vagas externas
 
-Vagas externas (SPEC-006, UC-14) entram na busca só depois de validadas e normalizadas. A acessibilidade delas aparece como "Não informado" e modalidade, área e critérios técnicos ficam vazios, então a compatibilidade é "dados insuficientes" (RB-16). Não há candidatura nem denúncia pela plataforma: o detalhe mostra o link para o anúncio original.
+Vagas externas (SPEC-006, UC-14) entram na busca só depois de validadas e normalizadas. A acessibilidade delas aparece como "Não informado", modalidade e critérios técnicos ficam vazios e a área profissional é inferida pelo título, então a compatibilidade é "dados insuficientes" (RB-16). Não há candidatura nem denúncia pela plataforma: o detalhe mostra o link para o anúncio original.
 
 ## Critérios de aceitação
 

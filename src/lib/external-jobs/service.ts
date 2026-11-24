@@ -1,3 +1,4 @@
+import { inferProfessionalArea } from "@/lib/jobs/area";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { adzunaRecordSchema, callAdzuna, type FetchFn } from "./adzuna";
@@ -79,7 +80,7 @@ async function processRecord(raw: unknown, phrase: string, runId: string, config
       if (duplicate) { await write("DUPLICATE", { ...base, reason: duplicate }, tx); return "DUPLICATE" as const; }
       const job = await tx.job.create({ data: {
         origin: "EXTERNAL", status: "OPEN", companyId: null, createdByUserId: null,
-        title: candidate.title, description: candidate.description, requirements: "", modality: null, professionalArea: "",
+        title: candidate.title, description: candidate.description, requirements: "", modality: null, professionalArea: inferProfessionalArea(candidate.title),
         locationCity: candidate.city, locationState: candidate.state, locationAddress: "", deadline: null,
         salaryMin: candidate.salaryMin, salaryMax: candidate.salaryMax !== null && candidate.salaryMin !== null && candidate.salaryMax < candidate.salaryMin ? null : candidate.salaryMax,
         // RB-16: nothing about accessibility is declared by the source; every item stays "não informado".

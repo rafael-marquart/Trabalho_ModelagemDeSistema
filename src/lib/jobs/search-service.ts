@@ -1,3 +1,4 @@
+import { jobProfessionalArea } from "./area";
 import { prisma } from "@/lib/prisma";
 import { infrastructureItems, statusLabels } from "@/lib/company-infrastructure/items";
 import { analyzeWithContext, loadCandidateContext, type CompatibilityView } from "@/lib/compatibility/service";
@@ -31,7 +32,7 @@ export async function searchJobsForCandidate(userId: string, query: SearchQuery,
     row,
     job: {
       id: row.id, title: row.title, description: row.description, companyName: jobCompanyName(row.company, row.externalCompanyName),
-      modality: (row.modality ?? "") as SearchableJob["modality"], professionalArea: row.professionalArea,
+      modality: (row.modality ?? "") as SearchableJob["modality"], professionalArea: jobProfessionalArea(row),
       locationCity: row.locationCity, locationState: row.locationState, publishedAt: row.publishedAt,
       accessibility: (row.accessibility && typeof row.accessibility === "object" && !Array.isArray(row.accessibility) ? row.accessibility : {}) as Record<string, string>
     } satisfies SearchableJob
