@@ -4,8 +4,8 @@ Este arquivo centraliza lacunas e decisões pendentes da baseline. Cada questão
 
 ## Situação em 23/11/2026
 
-- **94 questões** registradas (OPEN-001 a OPEN-101; a OPEN-102 existe só no PR #68, junto com a SPEC-006).
-- **84 resolvidas**, **1 parcialmente resolvida** (OPEN-008) e **9 abertas** (OPEN-092, 093, 095 a 101).
+- **95 questões** registradas (OPEN-001 a OPEN-102).
+- **84 resolvidas**, **1 parcialmente resolvida** (OPEN-008) e **10 abertas** (OPEN-092, 093, 095 a 102).
 - Todas as abertas já têm **implementação provisória** em funcionamento na `main`, descrita na própria linha; o que falta é a decisão definitiva do responsável. Nenhuma delas bloqueia o uso do sistema.
 
 | OPEN | Spec | O que está em vigor | O que falta decidir |
@@ -19,6 +19,7 @@ Este arquivo centraliza lacunas e decisões pendentes da baseline. Cada questão
 | OPEN-099 | SPEC-002 | Comprovantes até 4 MB, guardados no banco | Voltar a 10 MB com armazenamento de arquivos |
 | OPEN-100 | SPEC-001/002 | Termos, Privacidade e consentimento implementados | Revisão jurídica, novo aceite de contas antigas, exclusão de conta |
 | OPEN-101 | SPEC-002/003 | Aviso de alterações não salvas e foto de perfil | Ocultar a foto das empresas até alguma etapa |
+| OPEN-102 | SPEC-006 | Vagas externas do Adzuna com lote de teste de 25 chamadas, coleta diária desligada e LLM desligada | Aprovação do teste manual e do layout; encerrar vagas externas que saírem da fonte |
 
 ## Antes de revisar as questões em aberto
 

@@ -67,7 +67,7 @@ Não implementada nesta versão: a seção 5.5 da SPEC-004 foi adiada.
 
 Número não usado na baseline aprovada.
 
-## Vagas externas (SPEC-006, decisão de escopo pendente)
+## Vagas externas (SPEC-006)
 
 ### RB-10 Vagas externas
 

@@ -230,3 +230,7 @@ Esta é uma auditoria de consistência documental. Ela identifica cobertura e pr
 
 **Escopo:** esta revisão só descreve o estado atual. A SPEC-006, o teste manual das SPEC-019/020 e as OPENs abertas seguem em trabalhos e PRs próprios e não fazem parte dela.
 
+
+## REV-021 — Documentação da SPEC-006 integrada (24/11/2026)
+
+Com a decisão de manter a SPEC-006 nesta versão (OPEN-102), a revisão REV-020 foi trazida para a branch da SPEC-006 e os trechos que diziam "não implementada" foram atualizados: UC-02, UC-13, UC-14 e UC-geral (com diagramas), estados da trilha, RF-05/36/37, RNF-16, RB de vagas externas, ADR-003, DT-05/06, drivers DA-05/06, visão do produto, modelo conceitual (execuções e registros da importação), `logging.md`, `desvios.md`, `mapa-specs.md`, `OPEN.md`, README e o registro consolidado de `Specs.md`. O mapeamento dos campos do Adzuna foi documentado em `docs/Implementacao/SPEC-006.md`. A SPEC-006 continua aguardando o teste manual e a aprovação do layout.

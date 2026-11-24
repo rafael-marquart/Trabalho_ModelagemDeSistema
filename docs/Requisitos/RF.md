@@ -109,19 +109,19 @@ Comandos de voz próprios do sistema não fazem parte desta versão (seção 5.4
 
 ### RF-05 Importação de vagas externas
 
-**Tipo EARS:** Optional feature · **Specs:** SPEC-006 (decisão de escopo pendente)
+**Tipo EARS:** Optional feature · **Specs:** SPEC-006 (vale quando as credenciais da fonte estão configuradas)
 
 **WHERE** a importação de vagas externas estiver habilitada, o sistema **SHALL** mostrar ao candidato as vagas externas validadas, com a origem e o link do anúncio original (RB-10, RB-33).
 
 ### RF-36 Importação de dados estruturados
 
-**Tipo EARS:** Optional feature · **Specs:** SPEC-006 (decisão de escopo pendente)
+**Tipo EARS:** Optional feature · **Specs:** SPEC-006 (vale quando as credenciais da fonte estão configuradas)
 
 **WHERE** a importação de vagas externas estiver habilitada, o sistema **SHALL** receber as vagas no formato JSON da fonte autorizada, respeitando o limite de chamadas configurado, e **SHALL** registrar cada execução e o resultado de cada registro.
 
 ### RF-37 Normalização de dados externos
 
-**Tipo EARS:** Optional feature · **Specs:** SPEC-006 (decisão de escopo pendente)
+**Tipo EARS:** Optional feature · **Specs:** SPEC-006 (vale quando as credenciais da fonte estão configuradas)
 
 **WHERE** a importação de vagas externas estiver habilitada, o sistema **SHALL** converter cada registro válido para o modelo comum de vaga e descartar duplicados (RB-31), sem presumir dados de acessibilidade.
 

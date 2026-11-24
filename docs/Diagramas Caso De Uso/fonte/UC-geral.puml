@@ -8,6 +8,7 @@ actor "Empresa" as E
 actor "Recrutador" as R
 actor "Administrador" as A
 actor "HERE" as H
+actor "Adzuna" as Z
 rectangle "AcessaVagas" {
   usecase "UC-00 Login" as U0
   usecase "UC-01 Gerenciar perfil" as U1
@@ -21,6 +22,7 @@ rectangle "AcessaVagas" {
   usecase "UC-11 Denunciar vaga" as U11
   usecase "UC-12 Status da vaga" as U12
   usecase "UC-13 Calcular compatibilidade" as U13
+  usecase "UC-14 Ingerir vagas externas" as U14
 }
 C -- U0
 C -- U1
@@ -45,4 +47,6 @@ U2 ..> U13 : <<include>>
 U3 ..> U13 : <<include>>
 U5 ..> U12 : <<include>>
 U13 -- H
+A -- U14
+U14 -- Z
 @enduml

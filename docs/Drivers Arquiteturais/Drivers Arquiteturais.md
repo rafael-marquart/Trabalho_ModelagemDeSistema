@@ -389,8 +389,8 @@ Esse conjunto representa as principais restrições que o desenho arquitetural p
 | DA-02 Autenticação e autorização | Atendido: sessão no servidor, Argon2id, bloqueio por tentativas, verificação de perfil em toda rota de API | `src/lib/auth`, `src/lib/security`, `src/app/api` |
 | DA-03 Trava de barreira crítica | Atendido: a trava roda antes do cálculo ponderado e prevalece sobre o score | `src/lib/compatibility/engine.ts` |
 | DA-04 Cálculo determinístico | Atendido: função pura, pesos 50/30/20, resultado registrado com versão das regras | `src/lib/compatibility` |
-| DA-05 LLM opcional e substituível | Não aplicado na `main`: não há uso de LLM. A implementação da SPEC-006 (PR #68, em revisão) usa LLM opcional atrás de um adaptador, desligada por padrão | PR #68 |
-| DA-06 Padronização de vagas de várias fontes | Parcial: o modelo de vaga tem o campo `origem`, mas só existe a origem própria. A normalização de vagas externas depende da SPEC-006 | `prisma/schema.prisma` (`Job.origin`), PR #68 |
+| DA-05 LLM opcional e substituível | Atendido na SPEC-006: a LLM fica atrás de um adaptador, só no servidor, desligada por padrão, e só complementa empresa ou localidade com valores escritos no anúncio | `src/lib/external-jobs/llm.ts` |
+| DA-06 Padronização de vagas de várias fontes | Atendido: vagas externas viram `Job` com origem `EXTERNAL`, depois de validadas, normalizadas e deduplicadas; a fonte e o link original ficam registrados | `src/lib/external-jobs`, `prisma/schema.prisma` (`Job.origin`) |
 | DA-07 Rastreabilidade e anonimato das avaliações | Atendido: avaliações individuais restritas, nota pública só agregada, anonimização após 1 ano, histórico imutável no banco | `src/lib/evaluations`, `src/lib/public-rating`, `scripts/evaluation-retention.mjs` |
 | DA-08 Desempenho | Atendido: chamadas externas com tempo limite (trajeto 8 s), cache do trajeto, e-mails enviados fora da requisição principal | `src/lib/compatibility/travel.ts`, `src/lib/notifications` |
 

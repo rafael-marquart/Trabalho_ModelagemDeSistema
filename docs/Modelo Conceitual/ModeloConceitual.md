@@ -95,9 +95,10 @@ Um recrutador tem no máximo um vínculo ativo (garantido pelo banco).
 
 ### VAGA (`Job`)
 
-- `id` (PK), `id_empresa` (FK), `id_criador` (FK USUARIO)
+- `id` (PK), `id_empresa` (FK, vazio na vaga externa), `id_criador` (FK USUARIO, vazio na vaga externa)
 - `status`: rascunho, aberta, pausada ou encerrada
-- `origem`: própria (única origem implementada; vagas externas dependem da SPEC-006)
+- `origem`: própria (publicada por empresa na plataforma) ou externa (SPEC-006)
+- na vaga externa: `fonte` (Adzuna), `id_externo`, `link_original`, `empresa_contratante`, a origem de cada dado mínimo (fonte ou LLM) e as chaves de deduplicação
 - `titulo`, `descricao`, `requisitos`, `area_profissional`
 - `modalidade`: presencial, híbrido ou remoto
 - `cidade`, `estado`, `endereco`
@@ -105,6 +106,21 @@ Um recrutador tem no máximo um vínculo ativo (garantido pelo banco).
 - `acessibilidade`: estado declarado de cada um dos seis itens (é a trava crítica da vaga)
 - `criterios_tecnicos`: competências, experiências, escolaridade mínima e idiomas
 - `publicada_em`, `encerrada_em`
+
+### EXECUCAO_IMPORTACAO (`ExternalImportRun`)
+
+Cada execução da importação de vagas externas (SPEC-006).
+
+- `id` (PK), `fonte`, `disparo` (administrador ou agendamento), `id_iniciador` (FK USUARIO, opcional)
+- `status`: em execução, concluída, concluída com falhas ou malsucedida
+- `limite_chamadas`, `chamadas_feitas`, `consultas` (frase, tentativas e resultado de cada chamada, sem as credenciais)
+- totais: recebidos, processados, rejeitados, duplicados e falhas; `inicio`, `fim`
+
+### REGISTRO_IMPORTACAO (`ExternalImportRecord`)
+
+- `id` (PK), `id_execucao` (FK), `id_vaga` (FK, quando virou vaga)
+- `frase`, `id_externo`, `titulo`
+- `resultado`: processado, rejeitado, duplicado ou falha; `motivo`; `usou_llm`
 
 ### RESULTADO_COMPATIBILIDADE (`CompatibilityResult`)
 
@@ -192,7 +208,10 @@ Histórico da moderação, que o banco não permite alterar nem apagar: `tipo`, 
 | EMPRESA | possui | INFRAESTRUTURA_EMPRESA | 1 : 0..1 |
 | EMPRESA | envia | CONVITE_RECRUTADOR | 1 : 0..N |
 | EMPRESA | mantém | VINCULO_RECRUTADOR com USUARIO (recrutador) | 1 : 0..N (no máximo um ativo por recrutador) |
-| EMPRESA | publica | VAGA | 1 : 0..N |
+| EMPRESA | publica | VAGA (própria) | 1 : 0..N |
+| USUARIO (administrador) | inicia | EXECUCAO_IMPORTACAO | 1 : 0..N |
+| EXECUCAO_IMPORTACAO | registra | REGISTRO_IMPORTACAO | 1 : 0..N |
+| REGISTRO_IMPORTACAO | pode gerar | VAGA (externa) | N : 0..1 |
 | USUARIO (empresa ou recrutador) | cria | VAGA | 1 : 0..N |
 | USUARIO (candidato) + VAGA | geram | RESULTADO_COMPATIBILIDADE | N : N |
 | USUARIO (candidato) | realiza | CANDIDATURA | 1 : 0..N |
@@ -224,7 +243,10 @@ erDiagram
   EMPRESA ||--o{ CONVITE_RECRUTADOR : envia
   EMPRESA ||--o{ VINCULO_RECRUTADOR : mantem
   USUARIO ||--o{ VINCULO_RECRUTADOR : "atua como recrutador"
-  EMPRESA ||--o{ VAGA : publica
+  EMPRESA |o--o{ VAGA : publica
+  USUARIO |o--o{ EXECUCAO_IMPORTACAO : inicia
+  EXECUCAO_IMPORTACAO ||--o{ REGISTRO_IMPORTACAO : registra
+  VAGA |o--o{ REGISTRO_IMPORTACAO : "origina"
   USUARIO ||--o{ RESULTADO_COMPATIBILIDADE : "é analisado em"
   VAGA ||--o{ RESULTADO_COMPATIBILIDADE : "é analisada em"
   USUARIO ||--o{ CANDIDATURA : realiza
@@ -260,5 +282,6 @@ Existem no banco, mas não representam conceitos do negócio:
 - ADMINISTRADOR e RECRUTADOR são perfis de USUARIO, não entidades próprias.
 - A avaliação não tem campo `is_anonima`; a denúncia se liga à vaga (e só opcionalmente à avaliação).
 - O score da candidatura pode ser vazio (decisão de 31/10/2026).
+- Vagas externas (SPEC-006) usam a mesma VAGA, com origem externa; as execuções da importação ficam em EXECUCAO_IMPORTACAO e REGISTRO_IMPORTACAO.
 - Entraram COMPROVANTE, FOTO, CONSENTIMENTO, PREFERENCIA, CONVITE_RECRUTADOR, VINCULO_RECRUTADOR, RESULTADO_COMPATIBILIDADE, EVENTO_ETAPA, EVENTO_DENUNCIA, NOTIFICACAO e REGISTRO_AUDITORIA.
 - O Administrador não altera o status das vagas; isso é da Empresa e do Recrutador.

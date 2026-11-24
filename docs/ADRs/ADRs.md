@@ -34,7 +34,7 @@ As ADRs registram **o que foi escolhido** quando a escolha é estrutural e difí
 | ADR-004 | Arquitetura em camadas | Alterar posteriormente a organização estrutural exigiria redistribuir responsabilidades e dependências do sistema |
 | ADR-005 | Aplicação web única em Next.js (TypeScript) com PostgreSQL via Prisma | Trocar framework, linguagem ou banco exigiria reescrever telas, rotas, modelo persistido e migrações |
 
-Status de todas: **aceita**. As ADR-001, 002, 004 e 005 estão aplicadas no código desde a primeira implementação (SPEC-001, outubro de 2026); a ADR-004 com desvios registrados. A ADR-003 é a diretriz para quando houver LLM: nesta versão a aplicação não usa LLM (a SPEC-006, única que a usaria, não está implementada na `main`; ver PR #68).
+Status de todas: **aceita**. As ADR-001, 002, 004 e 005 estão aplicadas no código desde a primeira implementação (SPEC-001, outubro de 2026); a ADR-004 com desvios registrados. A ADR-003 está aplicada na SPEC-006 (vagas externas), única funcionalidade que usa LLM, que vem desligada por padrão.
 
 Cada ADR tem **Status**, **Contexto (por que foi tomada)**, **Decisão**, **Alternativas consideradas** e **Consequências**.
 
@@ -55,7 +55,7 @@ Estas escolhas foram tomadas, mas podem ser trocadas sem reescrever a arquitetur
 | Cálculo de trajeto | API da HERE, com o tempo de trajeto guardado no banco (`TravelTimeCache`), coordenadas em cache de memória por 24 h e limite de uso configurável (60% da cota gratuita) | Isolado num adaptador da compatibilidade; sem a chave, o deslocamento fica sem valor e o resultado vira "dados insuficientes" |
 | Avisos e reenvios | Fila de notificações em tabela do banco, processada por rotas agendadas (Vercel Cron diário e GitHub Actions a cada 15 min) | Pode virar uma fila dedicada sem mudar as regras de aviso |
 | Arquivos enviados | Comprovantes e fotos guardados no próprio banco | Pode migrar para armazenamento de objetos sem mudar as telas |
-| Provedor de LLM | Nenhum nesta versão | A ADR-003 define a porta; o provedor é escolha de configuração |
+| Provedor de LLM | Gemini, opcional e desligado por padrão (`EXTERNAL_JOBS_LLM="off"`), usado só na SPEC-006 | A ADR-003 define a porta; o provedor é escolha de configuração |
 | Cache de aplicação, fila assíncrona dedicada, microsserviços | Não usados | Os drivers atuais não exigem |
 | Testes | Vitest com Testing Library e axe-core; teste de ponta a ponta em `scripts/auth-e2e.mjs`; integração contínua no GitHub Actions | Ferramentas trocáveis; a exigência está no RNF-15 |
 
@@ -169,7 +169,7 @@ A autorização é aplicada antes da execução das operações de escrita e das
 
 ## Status
 
-Aceita como diretriz. **Não aplicada nesta versão:** a aplicação da `main` não usa LLM. A única funcionalidade que usaria (complemento de dados de vagas externas, SPEC-006) está no PR #68, ainda em análise; nele, a LLM fica atrás de uma porta, só no servidor e desligada por padrão.
+Aceita. **Aplicada na SPEC-006:** a LLM só é usada para complementar empresa ou localidade de vagas externas, fica atrás de uma porta no servidor (`src/lib/external-jobs/llm.ts`), vem desligada por padrão e só aceita valores escritos no anúncio original (RB-11, RB-18).
 
 ## Decisão
 

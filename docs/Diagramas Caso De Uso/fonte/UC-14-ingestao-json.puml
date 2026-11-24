@@ -2,12 +2,12 @@
 skinparam shadowing false
 skinparam defaultFontName DejaVu Sans
 left to right direction
-title UC-14 — Ingerir vagas externas (não implementado na main)
+title UC-14 — Ingerir vagas externas
 actor "Agendador" as AG
 actor "Administrador" as A
 actor "Adzuna" as Z
 actor "LLM (opcional)" as L
-rectangle "AcessaVagas (PR #68)" {
+rectangle "AcessaVagas" {
   usecase "Coletar vagas externas" as C
   usecase "Validar e normalizar" as V
   usecase "Extrair dados com LLM" as X
@@ -21,5 +21,5 @@ C ..> V : <<include>>
 C ..> D : <<include>>
 X .> V : <<extend>>
 X -- L
-note bottom of C : Em revisão no PR #68;\nnão faz parte da versão atual.
+note bottom of C : Lote de teste de 25 chamadas;\ncoleta diária desligada (OPEN-087).
 @enduml

@@ -24,7 +24,7 @@ Eliminar a questão de "falsa inclusão" e desenvolver uma plataforma que ofere�
 - Uso sem barreiras da plataforma, pensada para que qualquer pessoa navegue com autonomia usando leitor de tela, teclado, alto contraste ou tema escuro (comandos de voz próprios não fazem parte desta versão; a navegação por voz do sistema operacional funciona pelos nomes acessíveis dos controles);
 - Sistema de reputação: avaliação feita pelo candidato após a entrevista, que forma a nota pública de acessibilidade da empresa (distribuição de estrelas);
 - Canal de denúncia de incompatibilidade ou falsa inclusão, analisado pela administração;
-- Visualização de vagas publicadas fora da plataforma: prevista (SPEC-006), ainda não disponível nesta versão.
+- Visualização de vagas publicadas fora da plataforma (Adzuna), validadas antes de aparecer, com link para o anúncio original.
 
 6) Público-alvo:
    -
@@ -38,7 +38,7 @@ Eliminar a questão de "falsa inclusão" e desenvolver uma plataforma que ofere�
 - Mapeamento de necessidades e perfis: cadastro estruturado dos candidatos (necessidades funcionais, com consentimento específico, e perfil técnico), das empresas (infraestrutura e acessibilidade oferecidas) e dos recrutadores vinculados;
 - Gestão de vagas:
   1) Publicação nativa: painel para a empresa e seus recrutadores criarem, publicarem, pausarem, reabrirem e encerrarem vagas;
-  2) Agregador de vagas externas (SPEC-006): captura automatizada de vagas de fontes autorizadas, com extração opcional por LLM e validação antes do uso. Em revisão no PR #68; fora da versão atual.
+  2) Agregador de vagas externas (SPEC-006): captura automatizada de vagas de fontes autorizadas, com extração opcional por LLM e validação antes do uso. Implementado com lote de teste de 25 chamadas; a coleta diária fica desligada até a autorização de uso contínuo da fonte.
 - Algoritmo determinístico de correspondência: compatibilidade em três dimensões: (1) 50% acessibilidade, com trava que oculta a vaga quando há barreira incompatível; (2) 30% perfil técnico; (3) 20% modalidade e tempo de deslocamento. O cálculo não usa IA; quando faltam dados, o resultado é "dados insuficientes", sem presumir compatibilidade;
 - Gestão do processo seletivo (visão da empresa e do recrutador): painel para mover candidaturas entre as etapas Inscrito → Triagem → Entrevista → Finalista → Contratado (ou Recusada), com agendamento de entrevistas presenciais ou on-line e os recursos de acessibilidade oferecidos;
 - Gestão do processo seletivo (visão do candidato): "Minhas candidaturas", com etapa, histórico, entrevistas e cancelamento;

@@ -1445,50 +1445,50 @@ Contratos conceituais, sem definir endpoints HTTP:
 
 ## 11. Critérios de aceitação
 
-- [ ] A coleta diária ocorre automaticamente, sem exigir início manual por Administrador; configuração e credenciais, quando existentes, são protegidas.
-- [ ] Respostas válidas da API são processadas conforme o formato suportado.
-- [ ] Estrutura inválida é rejeitada e registrada sem comprometer dados válidos existentes.
-- [ ] Registros inválidos/incompletos não são disponibilizados como vagas válidas.
-- [ ] Cada vaga externa disponibilizada possui título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, além dos demais dados obrigatórios aplicáveis da baseline.
-- [ ] Campos presentes, mas vazios, genéricos sem utilidade ou inconsistentes, não satisfazem a obrigatoriedade.
-- [ ] Dados extraídos por LLM passam por validação antes de uso; a LLM não inventa empresa ou localidade nem converte suposições em fatos.
-- [ ] Falha recuperável ou resposta inválida da LLM provoca somente tentativas adicionais limitadas, e cada resposta é validada antes do uso.
-- [ ] Quando os dados originais já atendem aos requisitos aplicáveis, a vaga pode ser processada sem depender da LLM.
-- [ ] Esgotadas as tentativas, dados inválidos não são persistidos como fatos; se faltarem dados mínimos obrigatórios, a vaga não é disponibilizada como válida e a falha é registrada.
-- [ ] Falhas da LLM não comprometem registros válidos existentes, e uma execução futura pode reavaliar o anúncio.
-- [ ] Vagas externas válidas são normalizadas para o modelo comum.
-- [ ] Origem externa é preservada.
-- [ ] Registros com o mesmo identificador externo na mesma fonte são reconhecidos como duplicados.
-- [ ] URLs originais equivalentes após normalização são reconhecidas como duplicadas quando o identificador não estabelece a equivalência.
-- [ ] Na ausência de identificadores suficientes, atributos normalizados confiáveis permitem classificar duplicidade somente quando há evidências suficientes; semelhança superficial não basta.
-- [ ] Registros com equivalência incerta permanecem separados.
-- [ ] Registros externos duplicados não geram representações equivalentes múltiplas, e o resultado individual registra duplicidade e motivo relevante disponível.
-- [ ] A deduplicação não é aplicada automaticamente a vagas próprias nem exclui, funde ou sobrescreve vagas válidas por semelhança incerta.
-- [ ] Falhas não comprometem registros válidos existentes.
-- [ ] Cada execução de ingestão possui identificação própria e resultado agregado rastreável.
-- [ ] O resultado agregado registra origem, consultas realizadas, quantitativos e falhas relevantes.
-- [ ] Cada registro recebido está associado à execução correspondente e possui resultado individual distinguível entre processado, rejeitado, duplicado e falha de processamento.
-- [ ] Motivos relevantes de rejeição/falha e resultados das consultas podem ser investigados.
-- [ ] Os quantitativos consolidados são coerentes com os resultados individuais.
-- [ ] A rastreabilidade não exige o registro detalhado de cada etapa interna.
-- [ ] Falhas parciais não comprometem registros válidos existentes.
-- [ ] A operação não depende de um fornecedor LLM específico.
-- [ ] A integração valida as respostas conforme o contrato e o formato suportado da fonte autorizada.
-- [ ] Os campos de origem utilizados possuem regras de mapeamento documentadas para o modelo comum de VAGA, incluindo conversões aplicáveis.
-- [ ] Os registros aceitos após normalização são compatíveis com o modelo comum, respeitando tipos, formatos e dados mínimos exigidos.
-- [ ] Estruturas ou valores que não possam ser interpretados com segurança são rejeitados ou tratados como falha, com motivo rastreável, sem conversão silenciosa em fatos incorretos.
-- [ ] A normalização preserva o significado dos dados de origem e não inventa informações; campos opcionais não utilizados podem ser descartados conforme o mapeamento documentado.
-- [ ] Cada fonte externa autorizada possui testes para os campos utilizados, conversões aplicáveis e tratamento de dados ausentes ou inválidos.
-- [ ] A deduplicação não é aplicada a vagas próprias por esta Spec.
-- [ ] Falha em um registro não impede o processamento de outros registros independentes quando for seguro continuar.
-- [ ] Falha durante a persistência de um registro não deixa alterações parciais ou estado inválido.
-- [ ] Somente falhas recuperáveis provocam tentativas adicionais, e o limite operacional é respeitado.
-- [ ] Erros permanentes, dados inválidos e violações de regra não são repetidos indefinidamente.
-- [ ] Reexecução de execução interrompida ou parcialmente malsucedida verifica o estado existente e não cria representações equivalentes adicionais.
-- [ ] Falha em um registro não exclui, funde ou sobrescreve indevidamente uma vaga válida existente.
-- [ ] Falhas não recuperáveis ficam registradas com os motivos relevantes disponíveis.
-- [ ] O resultado agregado distingue sucesso integral, sucesso parcial e execução malsucedida, com quantitativos coerentes com os resultados individuais.
-- [ ] Uma nova execução preserva a rastreabilidade das execuções anteriores.
+- [ ] A coleta diária ocorre automaticamente, sem exigir início manual por Administrador; configuração e credenciais, quando existentes, são protegidas. *(pendente: a rota de coleta diária existe e é protegida pelo `CRON_SECRET`, mas fica desligada até a autorização de uso contínuo da fonte, OPEN-086/087)*
+- [x] Respostas válidas da API são processadas conforme o formato suportado. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Estrutura inválida é rejeitada e registrada sem comprometer dados válidos existentes. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Registros inválidos/incompletos não são disponibilizados como vagas válidas. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Cada vaga externa disponibilizada possui título significativo, descrição útil, empresa contratante identificável, localidade utilizável e origem rastreável, além dos demais dados obrigatórios aplicáveis da baseline. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Campos presentes, mas vazios, genéricos sem utilidade ou inconsistentes, não satisfazem a obrigatoriedade. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Dados extraídos por LLM passam por validação antes de uso; a LLM não inventa empresa ou localidade nem converte suposições em fatos. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Falha recuperável ou resposta inválida da LLM provoca somente tentativas adicionais limitadas, e cada resposta é validada antes do uso. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Quando os dados originais já atendem aos requisitos aplicáveis, a vaga pode ser processada sem depender da LLM. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Esgotadas as tentativas, dados inválidos não são persistidos como fatos; se faltarem dados mínimos obrigatórios, a vaga não é disponibilizada como válida e a falha é registrada. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Falhas da LLM não comprometem registros válidos existentes, e uma execução futura pode reavaliar o anúncio. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Vagas externas válidas são normalizadas para o modelo comum. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Origem externa é preservada. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Registros com o mesmo identificador externo na mesma fonte são reconhecidos como duplicados. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] URLs originais equivalentes após normalização são reconhecidas como duplicadas quando o identificador não estabelece a equivalência. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Na ausência de identificadores suficientes, atributos normalizados confiáveis permitem classificar duplicidade somente quando há evidências suficientes; semelhança superficial não basta. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Registros com equivalência incerta permanecem separados. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Registros externos duplicados não geram representações equivalentes múltiplas, e o resultado individual registra duplicidade e motivo relevante disponível. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] A deduplicação não é aplicada automaticamente a vagas próprias nem exclui, funde ou sobrescreve vagas válidas por semelhança incerta. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Falhas não comprometem registros válidos existentes. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Cada execução de ingestão possui identificação própria e resultado agregado rastreável. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] O resultado agregado registra origem, consultas realizadas, quantitativos e falhas relevantes. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Cada registro recebido está associado à execução correspondente e possui resultado individual distinguível entre processado, rejeitado, duplicado e falha de processamento. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Motivos relevantes de rejeição/falha e resultados das consultas podem ser investigados. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Os quantitativos consolidados são coerentes com os resultados individuais. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] A rastreabilidade não exige o registro detalhado de cada etapa interna. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Falhas parciais não comprometem registros válidos existentes. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] A operação não depende de um fornecedor LLM específico. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] A integração valida as respostas conforme o contrato e o formato suportado da fonte autorizada. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Os campos de origem utilizados possuem regras de mapeamento documentadas para o modelo comum de VAGA, incluindo conversões aplicáveis. *(tabela em `docs/Implementacao/SPEC-006.md`)*
+- [x] Os registros aceitos após normalização são compatíveis com o modelo comum, respeitando tipos, formatos e dados mínimos exigidos. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Estruturas ou valores que não possam ser interpretados com segurança são rejeitados ou tratados como falha, com motivo rastreável, sem conversão silenciosa em fatos incorretos. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] A normalização preserva o significado dos dados de origem e não inventa informações; campos opcionais não utilizados podem ser descartados conforme o mapeamento documentado. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Cada fonte externa autorizada possui testes para os campos utilizados, conversões aplicáveis e tratamento de dados ausentes ou inválidos. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] A deduplicação não é aplicada a vagas próprias por esta Spec. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Falha em um registro não impede o processamento de outros registros independentes quando for seguro continuar. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Falha durante a persistência de um registro não deixa alterações parciais ou estado inválido. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Somente falhas recuperáveis provocam tentativas adicionais, e o limite operacional é respeitado. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Erros permanentes, dados inválidos e violações de regra não são repetidos indefinidamente. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Reexecução de execução interrompida ou parcialmente malsucedida verifica o estado existente e não cria representações equivalentes adicionais. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Falha em um registro não exclui, funde ou sobrescreve indevidamente uma vaga válida existente. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Falhas não recuperáveis ficam registradas com os motivos relevantes disponíveis. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] O resultado agregado distingue sucesso integral, sucesso parcial e execução malsucedida, com quantitativos coerentes com os resultados individuais. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
+- [x] Uma nova execução preserva a rastreabilidade das execuções anteriores. *(conferido no código e nos testes automatizados da CI, com o Adzuna simulado; teste manual pendente)*
 
 ## 12. Casos de teste derivados
 
@@ -1555,13 +1555,13 @@ As questões estão centralizadas em [OPEN.md](OPEN.md).
 
 ## 14. Definition of Done
 
-- [ ] Texto revisado e aprovado.
-- [ ] Requisitos, regras, UC-14, drivers e ADRs conferidos.
-- [ ] Questões em aberto decididas ou mantidas explicitamente.
-- [ ] Se existir interface administrativa, layout anexado em `docs/layout/` e aprovado; se não existir, registrar formalmente não se aplica.
-- [ ] Critérios e testes revisados.
-- [ ] Validação, normalização, deduplicação, integridade e rastreabilidade verificáveis.
-- [ ] Nenhuma implementação iniciada antes das aprovações exigidas.
+- [x] Texto revisado e aprovado.
+- [x] Requisitos, regras, UC-14, drivers e ADRs conferidos. *(conferidos em 24/11/2026, junto com a integração da documentação revisada)*
+- [x] Questões em aberto decididas ou mantidas explicitamente.
+- [ ] Se existir interface administrativa, layout anexado em `docs/layout/` e aprovado; se não existir, registrar formalmente não se aplica. *(pendente: a página "Vagas externas" do administrador ainda não teve o layout aprovado)*
+- [ ] Critérios e testes revisados. *(pendente: teste manual do roteiro `docs/operacao/validacao-manual-spec-006.md`)*
+- [x] Validação, normalização, deduplicação, integridade e rastreabilidade verificáveis.
+- [ ] Nenhuma implementação iniciada antes das aprovações exigidas. *(registro: a implementação foi autorizada pela aprovação do texto (REV-018) e pela decisão da OPEN-102; o layout ainda não foi aprovado; ver `docs/Implementacao/desvios.md`)*
 
 ---
 
@@ -1730,13 +1730,13 @@ Contratos conceituais, sem endpoints HTTP.
 - [x] Perfil incompleto gera indicação de complementação, conforme UC-13.
 - [x] Resultado expõe fatores considerados.
 - [x] Mesmas entradas e regras produzem resultado consistente.
-- [ ] Vaga externa só é analisada depois de validada e normalizada. *(depende da SPEC-006, não implementada na main)*
+- [x] Vaga externa só é analisada depois de validada e normalizada. *(só vagas externas validadas são publicadas, SPEC-006)*
 - [x] Cálculo pode ser testado isoladamente.
 - [x] Subpontuações e score final seguem a fórmula aprovada na OPEN-031, com arredondamento apenas no resultado final.
 - [x] Quando faltar informação necessária em qualquer dimensão, análise sinaliza “dados insuficientes”, sem score final completo; informa dimensões avaliadas e dados faltantes, sem converter ausência em zero ou compatibilidade presumida.
-- [ ] Endereço de trabalho de vaga externa tem fonte e estado de validação registrados antes de estimar deslocamento. *(depende da SPEC-006, não implementada na main)*
-- [ ] Endereço da sede não é tratado automaticamente como destino da vaga. *(depende da SPEC-006, não implementada na main)*
-- [ ] Localização divergente ou não confirmada não gera tempo de deslocamento inventado nem score final completo quando a localização for necessária. *(depende da SPEC-006, não implementada na main)*
+- [x] Endereço de trabalho de vaga externa tem fonte e estado de validação registrados antes de estimar deslocamento. *(a vaga externa não tem endereço confirmado (OPEN-089 não implementada), então o deslocamento não é estimado)*
+- [x] Endereço da sede não é tratado automaticamente como destino da vaga. *(vaga externa não tem empresa da plataforma nem sede; nada é usado como destino)*
+- [x] Localização divergente ou não confirmada não gera tempo de deslocamento inventado nem score final completo quando a localização for necessária. *(sem endereço confirmado, o deslocamento fica sem valor e o resultado é "dados insuficientes")*
 
 > Evidência: testes Vitest (motor, adaptador HERE, limite de uso, serviço, API, critérios) e E2E (`scripts/auth-e2e.mjs`, com HERE simulado) verdes na CI. Teste manual executado pelo responsável em 29/10/2026 com a HERE real (plano gratuito, dados fictícios em São Paulo); ajustes aplicados durante o teste (idiomas por lista no editor da vaga, correspondência de competências, endereço só com cidade recusado, necessidade indispensável marcada pelo candidato, limite de 60% da cota). Permanecem abertos os critérios de vaga externa (análise só após validação e os três de localização), que dependem da SPEC-006 e da validação de localização da seção 6.3; hoje apenas vagas próprias são analisadas.
 
@@ -1788,7 +1788,7 @@ Contratos conceituais, sem endpoints HTTP.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-008 |
-| Estado do texto | aprovada; implementada e encerrada em 29/10/2026, exceto os itens que dependem da SPEC-006 (vagas externas); a integração com a SPEC-009 foi concluída em 31/10/2026; ver `docs/Implementacao/SPEC-008.md` |
+| Estado do texto | aprovada; implementada e encerrada em 29/10/2026; a integração com a SPEC-009 foi concluída em 31/10/2026 e a com a SPEC-006 (vagas externas validadas), em 24/11/2026; ver `docs/Implementacao/SPEC-008.md` |
 | Estado do layout | aprovado pelo responsável em 29/10/2026 sobre as telas implementadas (Início, Vagas com busca, filtros e paginação, diálogo do score e perfil na área do candidato); referência visual em `docs/layout/SPEC-008-010-referencia-area-candidato.png` |
 | Capacidade | Buscar e filtrar vagas elegíveis e ordená-las por compatibilidade |
 
@@ -1886,12 +1886,12 @@ RNF-01/02 (acessibilidade e leitores de tela); RNF-03/04 (responsividade e usabi
 - [x] Resultados seguem o score da SPEC-007.
 - [x] A consulta apresenta até 100 vagas elegíveis, em páginas de 20; paginação numerada anterior/próxima preserva busca, filtros e ordenação, e alterações em busca/filtros reiniciam na primeira página.
 - [x] Ordenações alternativas são maior compatibilidade (padrão), mais recentes e mais antigas; empates mantêm ordem estável por identificador interno não exposto.
-- [ ] Vagas externas não validadas são excluídas. *(depende da SPEC-006: hoje só vagas próprias participam da busca)*
+- [x] Vagas externas não validadas são excluídas. *(só vagas externas validadas são publicadas, SPEC-006)*
 - [x] Status atual da vaga é respeitado.
 - [x] Informações de acessibilidade aparecem antes da candidatura.
 - [x] Estado sem resultados é comunicado de forma acessível.
 
-> Evidência: testes Vitest (busca, filtros, ordenação, paginação, serviço, API, interface com axe-core) e E2E verdes na CI; teste manual executado pelo responsável em 29/10/2026 (ajuste aplicado: busca por palavras com a mesma raiz, complemento da OPEN-037). "Status atual respeitado": apenas vagas publicadas e dentro do prazo entram na busca e uma vaga encerrada sai dela (E2E); a apresentação do status pertence à SPEC-009. Permanece aberto o critério de vagas externas, que depende da SPEC-006 (hoje só vagas próprias participam).
+> Evidência: testes Vitest (busca, filtros, ordenação, paginação, serviço, API, interface com axe-core) e E2E verdes na CI; teste manual executado pelo responsável em 29/10/2026 (ajuste aplicado: busca por palavras com a mesma raiz, complemento da OPEN-037). "Status atual respeitado": apenas vagas publicadas e dentro do prazo entram na busca e uma vaga encerrada sai dela (E2E); a apresentação do status pertence à SPEC-009. O critério de vagas externas foi atendido com a SPEC-006 (24/11/2026): só vagas externas validadas são publicadas e entram na busca (E2E com o Adzuna simulado).
 
 ## 12. Casos de teste derivados
 | ID | Cenário | Resultado esperado |
@@ -3226,7 +3226,7 @@ As decisões de apresentação por estrelas, mínimo de uma avaliação válida 
 | SPEC-009 a SPEC-013 | aprovadas | Nenhum bloqueio por OPEN-088. SPEC-010 depende da SPEC-007. |
 | SPEC-016 a SPEC-021 | aprovadas | Nenhum bloqueio por OPEN-088. |
 
-### Situação da implementação (main, 23/11/2026)
+### Situação da implementação (24/11/2026)
 
 | Spec | Situação | Pendências registradas |
 |---|---|---|
@@ -3235,9 +3235,9 @@ As decisões de apresentação por estrelas, mínimo de uma avaliação válida 
 | SPEC-003 | implementada e encerrada (28/10/2026), exceto comandos de voz | voz (PR #67); plano formal de avaliação (OPEN-015/016) |
 | SPEC-004 | implementada e encerrada (27/10/2026), exceto divergências recorrentes (seção 5.5) | RB-08 adiada |
 | SPEC-005 | implementada (27/10/2026 e 31/10/2026) | — |
-| SPEC-006 | **não implementada na `main`**; implementação em revisão no PR #68 | decisão de escopo pendente |
-| SPEC-007 | implementada e encerrada (29/10/2026), exceto critérios de vagas externas | depende da SPEC-006 |
-| SPEC-008 | implementada e encerrada (29/10/2026), exceto vagas externas | depende da SPEC-006; desempenho sem medição formal |
+| SPEC-006 | implementada (Adzuna, lote de teste de 25 chamadas); aguardando teste manual e aprovação do layout | coleta diária desligada (OPEN-086/087); OPEN-089 e OPEN-102 |
+| SPEC-007 | implementada e encerrada (29/10/2026); critérios de vagas externas atendidos com a SPEC-006 | — |
+| SPEC-008 | implementada e encerrada (29/10/2026); vagas externas validadas entram na busca com a SPEC-006 | desempenho sem medição formal |
 | SPEC-009 | implementada e encerrada (31/10/2026) | — |
 | SPEC-010 | implementada e encerrada (31/10/2026) | — |
 | SPEC-011 | implementada e encerrada (31/10/2026); score pode ser vazio (revisão de 31/10/2026) | — |

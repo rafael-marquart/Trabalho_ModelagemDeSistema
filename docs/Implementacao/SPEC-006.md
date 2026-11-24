@@ -12,6 +12,24 @@
 - **Coleta diária (T-006-01):** rota `/api/cron/vagas-externas`, protegida pelo `CRON_SECRET`, que fica **desligada** (`EXTERNAL_IMPORT_SCHEDULE=off`) até a autorização de uso contínuo da fonte. Não foi incluída no `vercel.json`.
 - **Para o candidato:** vagas externas entram na busca (selo "Vaga externa · Adzuna"), na compatibilidade (SPEC-007) e no detalhe (SPEC-010). Acessibilidade aparece como "Não informado" (RB-16). Não há candidatura nem denúncia dentro da plataforma; o detalhe leva ao anúncio original, com atribuição ao Adzuna.
 
+## Mapeamento do Adzuna para o modelo comum de vaga
+
+Implementado em `src/lib/external-jobs/record.ts` (`fromAdzuna`). Os textos passam por limpeza de HTML e espaços antes do uso.
+
+| Campo do Adzuna | Campo da vaga (`Job`) | Conversão |
+|---|---|---|
+| `id` | `externalId` | Texto; com `externalSource = "ADZUNA"` forma a chave única |
+| `redirect_url` | `externalUrl` e `externalUrlKey` | Link original; a chave tira parâmetros de rastreio, `www.` e barra final |
+| `title` | `title` | Até 200 caracteres; títulos genéricos ("Vaga", "Emprego"…) são rejeitados |
+| `description` | `description` | Até 8000 caracteres; exige pelo menos 60 caracteres e 8 palavras |
+| `company.display_name` | `externalCompanyName` | Até 200 caracteres; "Adzuna", "confidencial" e equivalentes são rejeitados |
+| `location.area` (ou `location.display_name`) | `city` e `state` | UF pelo segundo nível da área (ou pelo final do nome); cidade pelo terceiro nível |
+| `created` | `publishedAt` | Data; ignorada se inválida |
+| `salary_min` / `salary_max` | `salaryMin` / `salaryMax` | Só quando o salário não é estimado pelo Adzuna (`salary_is_predicted` diferente de 1) |
+| — | `origin`, `status` | `EXTERNAL` e `OPEN` |
+| — | acessibilidade, modalidade, área, critérios técnicos | Vazios ("não informado"): o Adzuna não traz esses dados |
+| — | `externalFieldOrigins` | Registra se empresa, cidade e UF vieram da fonte (`SOURCE`) ou da LLM |
+
 ## Desvios e limites
 
 - O texto da SPEC-006 não fixa a forma física da execução; foram criadas as tabelas `ExternalImportRun` e `ExternalImportRecord`.

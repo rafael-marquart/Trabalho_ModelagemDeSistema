@@ -8,8 +8,8 @@ Este documento registra somente decisões técnicas sustentadas pelos Drivers Ar
 | DT-02 | DA-02 | Autenticação centralizada e autorização por perfis com validação no backend. |
 | DT-03 | DA-03 | Trava de barreira crítica executada antes do cálculo ponderado. |
 | DT-04 | DA-04 | Serviço específico para cálculo determinístico de compatibilidade. |
-| DT-05 | DA-05 | Camada de integração para extração, validação e normalização de dados de LLM, sem dependência direta do domínio de provedor específico. **Não aplicada nesta versão:** a `main` não usa LLM (ver ADR-003 e SPEC-006). |
-| DT-06 | DA-06 | Modelo comum para vagas internas e externas. Nesta versão a tabela `Job` já registra a origem da vaga (`OWN`); vagas externas dependem da SPEC-006. |
+| DT-05 | DA-05 | Camada de integração para extração, validação e normalização de dados de LLM, sem dependência direta do domínio de provedor específico. Aplicada na SPEC-006: adaptador em `src/lib/external-jobs/llm.ts`, desligado por padrão (ver ADR-003). |
+| DT-06 | DA-06 | Modelo comum para vagas internas e externas. A tabela `Job` registra a origem da vaga (`OWN` ou `EXTERNAL`) e, nas externas, a fonte, o identificador e o link original (SPEC-006). |
 | DT-07 | DA-07 | Separação entre dados de auditoria e informações apresentadas publicamente, preservando anonimato. |
 | DT-08 | ADR-004 | Arquitetura em camadas: apresentação, aplicação, domínio e infraestrutura. |
 
@@ -35,5 +35,5 @@ Esta seção substitui a diretriz escrita em 25/10/2026, antes de existir códig
 
 ## Decisões ainda não definidas
 
-- Se a importação de vagas externas (SPEC-006) entra nesta versão e, com ela, o uso de LLM e o provedor (ADR-003).
+- Autorização de uso contínuo do Adzuna e da coleta diária (OPEN-086/087).
 - Mecanismo assíncrono dedicado (fila): não usado; as rotinas periódicas rodam por agendamento.
