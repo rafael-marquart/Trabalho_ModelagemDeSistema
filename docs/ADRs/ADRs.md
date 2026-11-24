@@ -32,26 +32,32 @@ As ADRs registram **o que foi escolhido** quando a escolha é estrutural e difí
 | ADR-002 | Autenticação e autorização centralizadas no backend | Mover posteriormente a fronteira de confiança exigiria alterar todas as operações protegidas |
 | ADR-003 | LLM somente no backend, atrás de adaptador | Acoplar o domínio ou frontend ao fornecedor dificultaria substituição, testes e controle de segurança |
 | ADR-004 | Arquitetura em camadas | Alterar posteriormente a organização estrutural exigiria redistribuir responsabilidades e dependências do sistema |
+| ADR-005 | Aplicação web única em Next.js (TypeScript) com PostgreSQL via Prisma | Trocar framework, linguagem ou banco exigiria reescrever telas, rotas, modelo persistido e migrações |
+
+Status de todas: **aceita**. As ADR-001, 002, 004 e 005 estão aplicadas no código desde a primeira implementação (SPEC-001, outubro de 2026). A ADR-003 é a diretriz para quando houver LLM: nesta versão a aplicação não usa LLM (a SPEC-006, única que a usaria, não está implementada na `main`; ver PR #68).
+
+Cada ADR tem **Status**, **Contexto (por que foi tomada)**, **Decisão**, **Alternativas consideradas** e **Consequências**.
 
 ---
 
 ## 2. O que deliberadamente não tem ADR
 
-Estas escolhas são reversíveis ou ainda não foram tomadas.
+Estas escolhas foram tomadas, mas podem ser trocadas sem reescrever a arquitetura; por isso ficam fora das ADRs.
 
-| Tema | Por que não é ADR agora |
-|---|---|
-| Biblioteca específica de componentes de UI | Pode ser substituída sem alterar o domínio |
-| Biblioteca CSS | Não altera o contrato do backend |
-| Framework HTTP específico | Pode ser trocado mantendo a API e as camadas |
-| Banco de dados específico | Ainda não existe driver que obrigue uma tecnologia específica |
-| JWT versus sessão/cookie | É um mecanismo de autenticação; a decisão estrutural é manter autorização no backend |
-| Provedor LLM específico | O adaptador permite substituir o fornecedor |
-| Fila assíncrona | Pode ser introduzida posteriormente caso o desempenho ou algum cenário exija |
-| Cache | Não é exigido pelos drivers atuais |
-| Microserviços | Os drivers não exigem distribuição; introduzir essa complexidade agora seria uma decisão estrutural adicional |
-| Biblioteca específica de leitor de tela | A arquitetura deve ser acessível, mas não depende de um fornecedor específico |
-| Serviço específico de hospedagem | Ainda não há driver que obrigue um provedor |
+| Tema | Escolha desta versão | Por que não é ADR |
+|---|---|---|
+| Biblioteca de componentes de UI | Nenhuma: componentes próprios em React, com CSS próprio (`src/app/globals.css`) | Pode ser trocada sem alterar regras de negócio nem dados |
+| Mecanismo de sessão | Sessão guardada no banco; o navegador recebe só um token opaco em cookie `HttpOnly`, cujo hash fica na tabela `Session` | A decisão estrutural é a ADR-002 (autorização no servidor); o formato da sessão pode mudar sem tocar nas regras |
+| Hash de senha | Argon2id (biblioteca `argon2`) | Trocável com rehash no próximo login |
+| Validação de dados | Zod nas rotas e serviços | Trocável sem alterar o modelo persistido |
+| Hospedagem | Vercel (aplicação) e Neon (PostgreSQL), região São Paulo; ambiente de testes separado | O código não depende de recurso exclusivo do provedor além das rotas agendadas |
+| Envio de e-mail | SMTP via Nodemailer (Brevo em produção, Ethereal no ambiente de testes, Mailpit no local) | Trocar de provedor é configuração |
+| Cálculo de trajeto | API da HERE, com cache de 24 h e limite de uso configurável | Isolado num adaptador da compatibilidade; sem a chave, o deslocamento fica "não informado" |
+| Avisos e reenvios | Fila de notificações em tabela do banco, processada por rotas agendadas (Vercel Cron diário e GitHub Actions a cada 15 min) | Pode virar uma fila dedicada sem mudar as regras de aviso |
+| Arquivos enviados | Comprovantes e fotos guardados no próprio banco | Pode migrar para armazenamento de objetos sem mudar as telas |
+| Provedor de LLM | Nenhum nesta versão | A ADR-003 define a porta; o provedor é escolha de configuração |
+| Cache de aplicação, fila assíncrona dedicada, microsserviços | Não usados | Os drivers atuais não exigem |
+| Testes | Vitest com Testing Library e axe-core; teste de ponta a ponta em `scripts/auth-e2e.mjs`; integração contínua no GitHub Actions | Ferramentas trocáveis; a exigência está no RNF-15 |
 
 ---
 
@@ -59,15 +65,15 @@ Estas escolhas são reversíveis ou ainda não foram tomadas.
 
 ## Status
 
-Proposta.
+Aceita. Aplicada: todas as telas são verificadas com axe-core (WCAG 2.2 AA) e conferidas com teclado e leitor de tela antes da aprovação do layout.
 
 ## Decisão
 
-O AcessaVagas será desenvolvido como uma aplicação web cuja camada de apresentação incorpora acessibilidade desde a construção dos componentes e fluxos de interação.
+O AcessaVagas é uma aplicação web cuja camada de apresentação incorpora acessibilidade desde a construção dos componentes e fluxos de interação.
 
-A acessibilidade será tratada como responsabilidade arquitetural da camada de apresentação, e não como uma adaptação posterior.
+A acessibilidade é tratada como responsabilidade arquitetural da camada de apresentação, e não como uma adaptação posterior.
 
-A interface deverá considerar:
+A interface considera:
 
 - navegação por teclado;
 - leitores de tela;
@@ -77,12 +83,12 @@ A interface deverá considerar:
 - adaptação a diferentes dispositivos;
 - recursos de acessibilidade previstos pelo sistema.
 
-A implementação específica de biblioteca de componentes ou CSS permanece aberta.
+Nesta versão não se usa biblioteca de componentes: os componentes são próprios, com HTML semântico, foco visível, temas claro, escuro e de alto contraste e textos para leitores de tela.
 
-## Por que foi tomada
+## Contexto (por que foi tomada)
 
 - DA-01 define acessibilidade como driver arquitetural.
-- RNF-01 estabelece conformidade com WCAG 2.1 nível AA.
+- RNF-01 estabelece conformidade com a WCAG 2.2 nível AA.
 - RNF-02 exige compatibilidade com leitores de tela.
 - RNF-04 exige usabilidade e autonomia.
 - RF-16 exige recursos de acessibilidade.
@@ -112,23 +118,24 @@ A implementação específica de biblioteca de componentes ou CSS permanece aber
 
 ## Status
 
-Proposta.
+Aceita. Aplicada: cada rota da API e cada página protegida confere a sessão e o perfil no servidor.
 
 ## Decisão
 
-Autenticação, autorização por perfil e validação das operações protegidas serão realizadas no backend.
+Autenticação, autorização por perfil e validação das operações protegidas são realizadas no backend.
 
-A aplicação terá perfis distintos, como:
+A aplicação tem quatro perfis:
 
 - candidato;
-- recrutador/empresa;
+- empresa (conta organizacional);
+- recrutador (convidado pela empresa e vinculado a ela);
 - administrador.
 
-O frontend poderá ocultar funcionalidades que o usuário não possui permissão para executar, mas a API será a fronteira de confiança e deverá validar todas as operações protegidas.
+O frontend poderá ocultar funcionalidades que o usuário não possui permissão para executar, mas a API é a fronteira de confiança e valida todas as operações protegidas.
 
-A autorização será aplicada antes da execução das operações de escrita e das operações que envolvam dados protegidos.
+A autorização é aplicada antes da execução das operações de escrita e das operações que envolvam dados protegidos.
 
-## Por que foi tomada
+## Contexto (por que foi tomada)
 
 - DA-02 define autenticação e autorização como driver arquitetural.
 - RF-03 define perfis de acesso distintos.
@@ -162,7 +169,7 @@ A autorização será aplicada antes da execução das operações de escrita e 
 
 ## Status
 
-Proposta.
+Aceita como diretriz. **Não aplicada nesta versão:** a aplicação da `main` não usa LLM. A única funcionalidade que usaria (complemento de dados de vagas externas, SPEC-006) está no PR #68, ainda em análise; nele, a LLM fica atrás de uma porta, só no servidor e desligada por padrão.
 
 ## Decisão
 
@@ -183,7 +190,7 @@ Nenhuma chave ou credencial do provedor deverá ficar no frontend.
 
 A LLM poderá ser desabilitada sem comprometer as funcionalidades que não dependem diretamente dela.
 
-## Por que foi tomada
+## Contexto (por que foi tomada)
 
 - DA-05 determina que a LLM seja opcional, validada e substituível.
 - DA-06 exige normalização das vagas externas.
@@ -219,11 +226,11 @@ A LLM poderá ser desabilitada sem comprometer as funcionalidades que não depen
 
 ## Status
 
-Proposta.
+Aceita. Aplicada com desvios registrados em `docs/Implementacao/desvios.md`: parte das rotas da API acessa o banco diretamente, sem passar por um serviço de domínio.
 
 ## Decisão
 
-O AcessaVagas será organizado em camadas com responsabilidades separadas:
+O AcessaVagas é organizado em camadas com responsabilidades separadas:
 
     Apresentação
           ↓
@@ -233,7 +240,7 @@ O AcessaVagas será organizado em camadas com responsabilidades separadas:
           ↓
     Infraestrutura
 
-A camada de domínio será responsável pelas regras de negócio centrais, incluindo:
+A camada de domínio é responsável pelas regras de negócio centrais, incluindo:
 
 - compatibilidade;
 - barreiras críticas;
@@ -241,11 +248,20 @@ A camada de domínio será responsável pelas regras de negócio centrais, inclu
 - regras de candidatura;
 - avaliação e critérios de acessibilidade.
 
-A infraestrutura será responsável por integrações externas e mecanismos técnicos, incluindo persistência e comunicação com serviços externos.
+A infraestrutura é responsável por integrações externas e mecanismos técnicos, incluindo persistência e comunicação com serviços externos.
 
-A camada de aplicação coordenará os casos de uso sem concentrar as regras de negócio que pertencem ao domínio.
+A camada de aplicação coordena os casos de uso sem concentrar as regras de negócio que pertencem ao domínio.
 
-## Por que foi tomada
+Como isso aparece no código (ADR-005):
+
+| Camada | Onde fica |
+|---|---|
+| Apresentação | Páginas e componentes React em `src/app/**/page.tsx` e `src/components/` |
+| Aplicação (entrada) | Rotas da API em `src/app/api/**/route.ts`: conferem sessão, perfil, origem e dados de entrada |
+| Domínio e serviços | Módulos em `src/lib/` (compatibilidade, funil, candidaturas, denúncias, avaliações, notificações); o cálculo de compatibilidade (`src/lib/compatibility/engine.ts`) não depende de banco nem de serviço externo |
+| Infraestrutura | Prisma e PostgreSQL (`src/lib/prisma.ts`, `prisma/`), envio de e-mail (`src/lib/email.ts`), API da HERE (`src/lib/compatibility/travel.ts`) |
+
+## Contexto (por que foi tomada)
 
 - DA-02 exige uma fronteira clara para autenticação e autorização.
 - DA-03 e DA-04 exigem concentração das regras de compatibilidade no domínio.
@@ -273,6 +289,44 @@ A camada de aplicação coordenará os casos de uso sem concentrar as regras de 
 
 ---
 
+# ADR-005 — Aplicação web única em Next.js (TypeScript) com PostgreSQL via Prisma
+
+## Status
+
+Aceita. Aplicada desde a SPEC-001.
+
+## Contexto (por que foi tomada)
+
+- O projeto precisa de interface web acessível (ADR-001) e de uma API que seja a fronteira de confiança (ADR-002), com equipe pequena e prazo de um semestre.
+- As regras dependem de integridade transacional: uma candidatura ativa por vaga, histórico imutável do funil e da moderação, vínculo único do recrutador (RNF-09).
+- A hospedagem precisa ser gratuita ou barata, com HTTPS e banco gerenciado.
+
+## Decisão
+
+- Uma única aplicação **Next.js 15** (App Router) com **React 19** e **TypeScript**: as páginas e a API (Route Handlers em `src/app/api`) são o mesmo projeto e o mesmo deploy.
+- Banco **PostgreSQL**, acessado pelo **Prisma**; o esquema e as migrações ficam em `prisma/`. Regras que o banco consegue garantir (índices únicos parciais, gatilhos que impedem alterar históricos, restrições de checagem) ficam no banco.
+- Toda autorização é feita no servidor (rotas e páginas de servidor); o navegador nunca recebe chaves de serviços externos.
+
+## Alternativas consideradas
+
+| Alternativa | Por que foi rejeitada |
+|---|---|
+| Front em React (Vite) e API separada em Node/Express ou NestJS | Dois projetos, dois deploys e um contrato a manter, sem requisito que justifique para o tamanho do projeto |
+| Banco de documentos (MongoDB) | Não oferece as restrições relacionais e transações de que as regras dependem |
+| Banco embutido (SQLite) | Não atende à hospedagem serverless com várias instâncias |
+| Aplicativo nativo | Nenhum driver exige; a web responsiva atende celular e computador (RNF-03) |
+
+## Consequências
+
+- Telas e API compartilham tipos e validações (Zod), o que reduz divergência entre o que a tela envia e o que a API aceita.
+- A separação em camadas (ADR-004) depende de disciplina, porque o framework permite acessar o banco direto de uma rota; os casos em que isso ocorre estão em `docs/Implementacao/desvios.md`.
+- A hospedagem (Vercel + Neon) não precisa de servidor próprio, mas as rotinas periódicas precisam de agendador externo (Vercel Cron e GitHub Actions).
+- Trocar o framework ou o banco exigiria reescrever telas, rotas e migrações.
+
+**Drivers:** DA-01, DA-02, DA-03, DA-04, RNF-03, RNF-07, RNF-09, RNF-12.
+
+---
+
 ## 3. Rastreabilidade entre ADRs, Drivers e baseline
 
 | ADR | Drivers | RF | RNF | RB | Casos de Uso | Decisão Técnica |
@@ -280,6 +334,7 @@ A camada de aplicação coordenará os casos de uso sem concentrar as regras de 
 | ADR-001 | DA-01 | RF-16 | RNF-01, RNF-02, RNF-04 | — | UC-01, UC-02, UC-03 | DT-01 |
 | ADR-002 | DA-02 | RF-01, RF-02, RF-03, RF-40 | RNF-07, RNF-08 | RB-12, RB-21, RB-22 | UC-00, UC-09, UC-10, UC-14 | DT-02 |
 | ADR-003 | DA-05, DA-06, DA-08 | RF-05, RF-36, RF-37, RF-39 | RNF-05, RNF-16 | RB-10, RB-11, RB-17, RB-18, RB-31, RB-32, RB-33 | UC-08, UC-14 | DT-05, DT-06 |
+| ADR-005 | DA-01, DA-02, DA-03, DA-04 | — | RNF-03, RNF-07, RNF-09, RNF-12 | RB-14, RB-27 | Todos | DT-08 |
 | ADR-004 | DA-02, DA-03, DA-04, DA-05, DA-06, DA-08 | RF-01, RF-03, RF-05, RF-07, RF-08, RF-09, RF-18, RF-36, RF-37, RF-38, RF-39, RF-40 | RNF-05, RNF-07, RNF-08, RNF-10, RNF-11, RNF-15, RNF-16 | RB-02, RB-03, RB-04, RB-05, RB-06, RB-07, RB-10, RB-11, RB-12, RB-15, RB-17, RB-18, RB-32, RB-39, RB-41 | UC-00, UC-02, UC-03, UC-09, UC-10, UC-14 | DT-08 |
 
 ### Critério de leitura
@@ -294,10 +349,11 @@ A camada de aplicação coordenará os casos de uso sem concentrar as regras de 
 
 | ADR | Decisão em aberto |
 |---|---|
-| ADR-001 | Biblioteca específica de componentes e CSS. |
-| ADR-002 | Mecanismo específico de sessão/autenticação. |
-| ADR-003 | Provedor LLM específico e eventual mecanismo assíncrono. |
-| ADR-004 | Tecnologias específicas de cada camada. |
+| ADR-001 | Nenhuma. |
+| ADR-002 | Nenhuma. |
+| ADR-003 | Se a LLM entra nesta versão (decisão sobre a SPEC-006) e qual provedor usar. |
+| ADR-004 | Levar para serviços de domínio as rotas que ainda acessam o banco direto (ver desvios). |
+| ADR-005 | Nenhuma. |
 
 
 ---
@@ -314,4 +370,4 @@ Os Drivers Arquiteturais identificam quais desses elementos realmente pressionam
 
 As ADRs registram as decisões estruturais que foram tomadas para atender aos drivers.
 
-As escolhas ainda reversíveis ou sem evidência suficiente permanecem abertas e não são transformadas em ADRs.
+As escolhas reversíveis ficam na tabela da seção 2, com o que foi escolhido nesta versão.
