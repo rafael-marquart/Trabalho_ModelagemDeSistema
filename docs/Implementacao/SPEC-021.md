@@ -10,9 +10,11 @@
 - **Rastreabilidade:** cada nova avaliação grava, na mesma transação, o evento de auditoria `PUBLIC_RATING_UPDATED` com o total e as contagens por estrela da empresa (só números).
 - **Retenção de 1 ano (T-021-08):** a rotina `npm run evaluations:retention -- --execute` agora também reduz a data de envio ao ano (1º de janeiro), além de apagar comentário e vínculos com candidato, candidatura e entrevista. O gatilho do banco só aceita essa mudança de data dentro da anonimização. A linha anonimizada (empresa, notas, ano) continua contando na distribuição.
 
-## Pontos em aberto
+## Implementações futuras
 
-- **OPEN-098 (nova):** com uma única avaliação válida (OPEN-083), a distribuição mostra exatamente as estrelas dadas, e quem sabe quem fez entrevista com a empresa pode deduzir a avaliação. A implementação reduz o risco (soma por empresa, sem datas nem comentários, ano apenas após 1 ano), mas a tensão com T-021-09 precisa de decisão do responsável.
+Decisão de 26/11/2026: o comportamento descrito em cada item é o definitivo nesta versão; o restante fica como implementação futura (ver `docs/OPEN.md`).
+
+- **OPEN-098:** com uma única avaliação válida (OPEN-083), a distribuição mostra exatamente as estrelas dadas, e quem sabe quem fez entrevista com a empresa pode deduzir a avaliação. A implementação reduz o risco (soma por empresa, sem datas nem comentários, ano apenas após 1 ano), mas a tensão com T-021-09 precisa de decisão do responsável.
 
 ## Arquivos principais
 

@@ -63,7 +63,7 @@ Situação em 26/11/2026.
 | Vagas externas e uso de LLM | SPEC-006, ADR-003, UC-14 | Implementação futura: código só na branch `desenvolvimento-do-projeto` (PR #68), fora da versão entregue (OPEN-102) |
 | Comandos de voz próprios | SPEC-003 seção 5.4, RF-16 | Não implementado; roteiro no PR #67 |
 | Divergências recorrentes de acessibilidade | SPEC-004 seção 5.5, RB-08 | Adiado |
-| Validar requisitos da seleção | UC-10 | Fora do escopo; depende da OPEN-092 |
+| Validar requisitos da seleção | UC-10 | Fora do escopo; implementação futura (OPEN-092) |
 
 ## D-11 — Pedidos de recuperação de senha sem limpeza
 

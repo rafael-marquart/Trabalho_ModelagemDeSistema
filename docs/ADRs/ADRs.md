@@ -351,7 +351,7 @@ Aceita. Aplicada desde a SPEC-001.
 |---|---|
 | ADR-001 | Nenhuma. |
 | ADR-002 | Nenhuma. |
-| ADR-003 | Se a LLM entra nesta versão (decisão sobre a SPEC-006) e qual provedor usar. |
+| ADR-003 | Qual provedor de LLM usar, quando a SPEC-006 (implementação futura) for incluída. |
 | ADR-004 | Levar para serviços de domínio as rotas que ainda acessam o banco direto (ver desvios). |
 | ADR-005 | Nenhuma. |
 

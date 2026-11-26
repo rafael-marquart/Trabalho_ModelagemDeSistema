@@ -19,7 +19,9 @@
 - **Retenção:** `npm run notifications:retention` (simulação) e `-- --execute` apagam registros enviados ou com falha final com mais de 1 ano (OPEN-006); pendentes nunca são apagados.
 - Duas rodadas ao mesmo tempo não enviam o mesmo e-mail: cada registro é "reservado" com atualização condicional antes do envio; um registro preso em envio (servidor reiniciado no meio) volta a pendente após 10 min.
 
-## Pontos em aberto
+## Implementações futuras
+
+Decisão de 26/11/2026: o comportamento descrito em cada item é o definitivo nesta versão; o restante fica como implementação futura (ver `docs/OPEN.md`).
 
 - **OPEN-093:** quem é o "recrutador responsável". Provisório: quem criou a vaga, se ainda puder agir pela empresa; senão, a conta da Empresa.
 - **Entrevistas:** item 3 da OPEN-066 atendido em 01/11/2026 com o cadastro de entrevistas feito na SPEC-018.

@@ -39,7 +39,7 @@ O projeto segue o processo SDD (Spec-Driven Development). A documentação fica 
 | Decisões técnicas | [`docs/Decisões Técnicas/decisões tecnicas.md`](docs/Decis%C3%B5es%20T%C3%A9cnicas/decis%C3%B5es%20tecnicas.md) |
 | Mapa de Specs | [`docs/mapa-specs.md`](docs/mapa-specs.md) |
 | Specs detalhadas | [`docs/Specs.md`](docs/Specs.md) (situação de cada Spec no "Registro consolidado", ao final) |
-| Questões em aberto | [`docs/OPEN.md`](docs/OPEN.md) |
+| Questões (OPENs) e implementações futuras | [`docs/OPEN.md`](docs/OPEN.md) |
 | Revisões de consistência | [`docs/revisao-consistencia-specs.md`](docs/revisao-consistencia-specs.md) |
 | Notas de implementação por Spec | [`docs/Implementacao/`](docs/Implementacao/) |
 | Desvios entre o planejado e o implementado | [`docs/Implementacao/desvios.md`](docs/Implementacao/desvios.md) |
@@ -52,7 +52,7 @@ O projeto segue o processo SDD (Spec-Driven Development). A documentação fica 
 - **Implementado na `main`:** SPEC-001 a SPEC-005 e SPEC-007 a SPEC-021: cadastro e entrada dos quatro perfis, perfil do candidato com consentimento para dados de acessibilidade, infraestrutura da empresa e recrutadores, vagas, compatibilidade, busca, candidatura, funil com entrevistas, avisos, avaliação, nota pública, denúncias e moderação.
 - **Mudanças de 24/11/2026:** o perfil do candidato voltou a ter o campo Competências, usado também no cálculo do perfil técnico da compatibilidade; a busca deixou de ter o filtro por cargo e as listas de Localização e Área profissional ficam recolhidas quando têm mais de 6 opções.
 - **Implementações futuras (fora da versão entregue):** SPEC-006 (vagas externas do Adzuna), com código só na branch `desenvolvimento-do-projeto` (OPEN-102), e comandos de voz próprios (roteiro proposto no PR #67, fechado sem merge).
-- **SPEC-019 e SPEC-020 (denúncias e moderação):** teste manual e layout aprovados em 26/11/2026; todas as Specs da versão entregue estão encerradas. As questões abertas, todas com implementação provisória em funcionamento, estão resumidas em `docs/OPEN.md`.
+- **SPEC-019 e SPEC-020 (denúncias e moderação):** teste manual e layout aprovados em 26/11/2026; todas as Specs da versão entregue estão encerradas. Não há questões em aberto: em 26/11/2026, as soluções provisórias das OPEN-092, 093 e 095 a 101 passaram a ser as definitivas, e o que faltava decidir ficou como implementação futura (`docs/OPEN.md`).
 - **Qualidade:** a CI roda checagem de tipos, lint, testes (Vitest, com verificação axe-core das telas), build e o teste de ponta a ponta `scripts/auth-e2e.mjs` em todo pull request.
 
 ## Aplicação web

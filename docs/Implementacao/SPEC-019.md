@@ -16,7 +16,9 @@ Implementada junto com a SPEC-020 (moderação); ver `docs/Implementacao/SPEC-02
 - **Sem efeito automático (RB-44):** registrar a denúncia não altera a vaga, avaliações nem nota.
 - Auditoria: `REPORT_SUBMITTED` e `REPORT_REFUSED` (limite diário).
 
-## Pontos em aberto
+## Implementações futuras
+
+Decisão de 26/11/2026: o comportamento descrito em cada item é o definitivo nesta versão; o restante fica como implementação futura (ver `docs/OPEN.md`).
 
 - **OPEN-097:** evidências só em texto (sem envio de arquivos).
 
