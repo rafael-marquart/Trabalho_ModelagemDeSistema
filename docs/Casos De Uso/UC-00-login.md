@@ -31,7 +31,7 @@ Permitir que cada perfil acesse a plataforma de forma segura, com credenciais va
 - EX01 (Credenciais inválidas): o sistema informa que não foi possível entrar, sem revelar qual dado está errado, e não inicia a sessão.
 - EX02 (Conta bloqueada): após 10 tentativas incorretas consecutivas, a conta fica bloqueada por 15 minutos; o sistema informa e orienta a recuperação de senha.
 - EX03 (Recuperação de senha): candidato (por e-mail ou CPF), Empresa e Recrutador (por e-mail) podem pedir um link de redefinição, válido por 30 minutos e de uso único; o sistema não revela se a conta existe (RF-02).
-- EX04 (Empresa aguardando validação): a conta empresarial fica indisponível até a confirmação do e-mail corporativo. O cadastro aceita apenas empresas brasileiras com CNPJ de 14 dígitos, sem verificar dígitos verificadores nem fonte oficial.
+- EX04 (Empresa aguardando validação): a conta empresarial fica indisponível até a confirmação do e-mail corporativo. O CNPJ é opcional; se informado, precisa ter 14 dígitos e não pode pertencer a outra Empresa, sem verificar dígitos verificadores nem fonte oficial.
 - EX05 (Perfil diferente): uma conta que tentar entrar pelo formulário de outro perfil não é aceita naquele formulário.
 
 ## Pós-condições

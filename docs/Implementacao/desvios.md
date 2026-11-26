@@ -2,7 +2,7 @@
 
 Este arquivo registra onde o código da `main` se afasta do que as ADRs, os requisitos ou o processo previam, e por quê. Um desvio registrado aqui não é um erro escondido: é uma diferença conhecida, com o motivo e o que seria preciso para eliminá-la.
 
-Situação em 23/11/2026.
+Situação em 26/11/2026.
 
 ## D-01 — Rotas da API acessam o banco diretamente
 
@@ -60,7 +60,7 @@ Situação em 23/11/2026.
 
 | Item | Onde estava previsto | Situação |
 |---|---|---|
-| Vagas externas e uso de LLM | SPEC-006, ADR-003, UC-14 | Em revisão no PR #68 |
+| Vagas externas e uso de LLM | SPEC-006, ADR-003, UC-14 | Implementação futura: código só na branch `desenvolvimento-do-projeto` (PR #68), fora da versão entregue (OPEN-102) |
 | Comandos de voz próprios | SPEC-003 seção 5.4, RF-16 | Não implementado; roteiro no PR #67 |
 | Divergências recorrentes de acessibilidade | SPEC-004 seção 5.5, RB-08 | Adiado |
 | Validar requisitos da seleção | UC-10 | Fora do escopo; depende da OPEN-092 |

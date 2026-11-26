@@ -95,7 +95,7 @@ Publicar vagas com informações de acessibilidade claras, receber candidatos qu
 - Distribui o acompanhamento das vagas entre analistas de RH.
 
 ### Restrições
-- Precisa de uma conta organizacional com CNPJ e e-mail corporativo confirmado.
+- Precisa de uma conta organizacional com e-mail corporativo confirmado (o CNPJ é opcional).
 - Não quer acesso a laudos nem a dados médicos dos candidatos (LGPD).
 - Precisa delegar a gestão das vagas a outras pessoas da equipe.
 

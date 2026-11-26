@@ -5,7 +5,7 @@
 | Ator | Quem é | Como entra |
 |---|---|---|
 | Candidato PcD | Pessoa com deficiência procurando vaga | Cria a própria conta; entra com e-mail ou CPF |
-| Empresa | Conta organizacional, com CNPJ e e-mail corporativo confirmado | Cria a própria conta; entra com e-mail |
+| Empresa | Conta organizacional, com e-mail corporativo confirmado (CNPJ opcional) | Cria a própria conta; entra com e-mail |
 | Recrutador | Pessoa convidada pela Empresa, com vínculo ativo | Aceita o convite da Empresa; entra com e-mail |
 | Administrador | Equipe da plataforma | Conta criada pela equipe; entra por `/admin/login` |
 | Serviço de trajeto (HERE) | Sistema externo | Ator secundário do UC-13 |
@@ -31,7 +31,7 @@ Empresa e Recrutador fazem as mesmas operações de vagas e funil, sempre sobre 
 | UC-11 | Denunciar vaga incompatível | Candidato, Administrador, Empresa | Implementado (SPEC-019, SPEC-020) |
 | UC-12 | Status da vaga | Candidato | Implementado (SPEC-009, SPEC-010) |
 | UC-13 | Calcular compatibilidade | Candidato, HERE | Implementado (SPEC-007) |
-| UC-14 | Coletar e ingerir vagas externas | Sistema, Adzuna, Administrador | Não implementado na `main` (SPEC-006 em revisão no PR #68) |
+| UC-14 | Coletar e ingerir vagas externas | Sistema, Adzuna, Administrador | Não implementado na `main`: implementação futura (SPEC-006, OPEN-102) |
 
 Os avisos (na plataforma e por e-mail, SPEC-017) acompanham UC-03, UC-05, UC-08, UC-09 e UC-11 e não têm caso de uso próprio.
 

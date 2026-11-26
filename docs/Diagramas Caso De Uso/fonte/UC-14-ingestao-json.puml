@@ -7,7 +7,7 @@ actor "Agendador" as AG
 actor "Administrador" as A
 actor "Adzuna" as Z
 actor "LLM (opcional)" as L
-rectangle "AcessaVagas (PR #68)" {
+rectangle "AcessaVagas (implementação futura)" {
   usecase "Coletar vagas externas" as C
   usecase "Validar e normalizar" as V
   usecase "Extrair dados com LLM" as X
@@ -21,5 +21,5 @@ C ..> V : <<include>>
 C ..> D : <<include>>
 X .> V : <<extend>>
 X -- L
-note bottom of C : Em revisão no PR #68;\nnão faz parte da versão atual.
+note bottom of C : Implementação futura (OPEN-102):\ncódigo só na branch desenvolvimento-do-projeto;\nfora da versão entregue.
 @enduml

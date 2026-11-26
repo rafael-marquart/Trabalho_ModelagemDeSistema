@@ -29,7 +29,7 @@ Eliminar a questão de "falsa inclusão" e desenvolver uma plataforma que ofere�
 6) Público-alvo:
    -
 - Candidato PcD: profissionais com deficiências físicas, auditivas, visuais ou neurodivergências que buscam confiança, inclusão e acessibilidade em processos de recrutamento;
-- Empresa: conta organizacional (CNPJ e e-mail corporativo) que declara sua infraestrutura, publica vagas e convida recrutadores;
+- Empresa: conta organizacional (razão social e e-mail corporativo; CNPJ opcional) que declara sua infraestrutura, publica vagas e convida recrutadores;
 - Recrutador: pessoa da equipe de RH convidada pela empresa para publicar vagas e conduzir os processos seletivos;
 - Administrador: equipe da plataforma que modera denúncias e mantém o catálogo de necessidades de acessibilidade.
 
@@ -38,7 +38,7 @@ Eliminar a questão de "falsa inclusão" e desenvolver uma plataforma que ofere�
 - Mapeamento de necessidades e perfis: cadastro estruturado dos candidatos (necessidades funcionais, com consentimento específico, e perfil técnico), das empresas (infraestrutura e acessibilidade oferecidas) e dos recrutadores vinculados;
 - Gestão de vagas:
   1) Publicação nativa: painel para a empresa e seus recrutadores criarem, publicarem, pausarem, reabrirem e encerrarem vagas;
-  2) Agregador de vagas externas (SPEC-006): captura automatizada de vagas de fontes autorizadas, com extração opcional por LLM e validação antes do uso. Em revisão no PR #68; fora da versão atual.
+  2) Agregador de vagas externas (SPEC-006): captura automatizada de vagas de fontes autorizadas, com extração opcional por LLM e validação antes do uso. Implementação futura, fora da versão entregue: o código está só na branch `desenvolvimento-do-projeto` (OPEN-102).
 - Algoritmo determinístico de correspondência: compatibilidade em três dimensões: (1) 50% acessibilidade, com trava que oculta a vaga quando há barreira incompatível; (2) 30% perfil técnico; (3) 20% modalidade e tempo de deslocamento. O cálculo não usa IA; quando faltam dados, o resultado é "dados insuficientes", sem presumir compatibilidade;
 - Gestão do processo seletivo (visão da empresa e do recrutador): painel para mover candidaturas entre as etapas Inscrito → Triagem → Entrevista → Finalista → Contratado (ou Recusada), com agendamento de entrevistas presenciais ou on-line e os recursos de acessibilidade oferecidos;
 - Gestão do processo seletivo (visão do candidato): "Minhas candidaturas", com etapa, histórico, entrevistas e cancelamento;

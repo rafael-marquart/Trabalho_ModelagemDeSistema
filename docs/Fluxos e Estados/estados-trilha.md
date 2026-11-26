@@ -7,7 +7,7 @@ Descrever o fluxo de processamento e apresentação das vagas compatíveis, comp
 ## Pré-condições
 
 - Candidato autenticado. O perfil pode estar incompleto: o que faltar aparece como "não informado".
-- Existem vagas publicadas por empresas na plataforma. Vagas externas não entram nesta versão (SPEC-006 em revisão no PR #68).
+- Existem vagas publicadas por empresas na plataforma. Vagas externas não entram nesta versão (SPEC-006 é implementação futura, OPEN-102).
 
 ## Fluxo principal
 

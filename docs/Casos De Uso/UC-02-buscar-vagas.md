@@ -57,7 +57,7 @@ Permitir que o candidato encontre vagas abertas, com busca por texto e filtros, 
 
 ## Vagas externas
 
-Vagas externas (SPEC-006, UC-14) não aparecem na busca desta versão: a implementação está em revisão (PR #68) e a decisão de escopo ainda não foi tomada.
+Vagas externas (SPEC-006, UC-14) não aparecem na busca desta versão: ficaram como implementação futura (OPEN-102), com código só na branch `desenvolvimento-do-projeto`.
 
 ## Critérios de aceitação
 

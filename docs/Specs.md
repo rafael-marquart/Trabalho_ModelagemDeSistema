@@ -1257,8 +1257,8 @@ dos em `docs/layout/` e aprovados separadamente.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-006 |
-| Estado do texto | aprovada; **não implementada na `main`**. A implementação está em revisão no PR #68 (branch `feat/spec-006-vagas-externas`) e a decisão de incluí-la no escopo ainda não foi tomada. Por isso os critérios abaixo continuam desmarcados e RF-05, RF-36 e RF-37 são tratados como *Optional feature* |
-| Estado do layout | não se aplica ao núcleo de ingestão; a tela administrativa `/admin/vagas-externas` existe só no PR #68, sem aprovação de layout |
+| Estado do texto | aprovada; **não implementada na `main`**. Decisão de 24/11/2026 (OPEN-102): fica como implementação futura, fora da versão entregue; o código está só na branch `desenvolvimento-do-projeto` (PR #68). Por isso os critérios abaixo continuam desmarcados e RF-05, RF-36 e RF-37 são tratados como *Optional feature* |
+| Estado do layout | não se aplica ao núcleo de ingestão; a tela administrativa `/admin/vagas-externas` existe só na branch `desenvolvimento-do-projeto`, sem aprovação de layout |
 | Capacidade | Receber dados externos estruturados, validar, normalizar, deduplicar e registrar o resultado da ingestão |
 
 ## 2. Rastreabilidade
@@ -3227,7 +3227,7 @@ As decisões de apresentação por estrelas, mínimo de uma avaliação válida 
 | SPEC-009 a SPEC-013 | aprovadas | Nenhum bloqueio por OPEN-088. SPEC-010 depende da SPEC-007. |
 | SPEC-016 a SPEC-021 | aprovadas | Nenhum bloqueio por OPEN-088. |
 
-### Situação da implementação (main, 23/11/2026)
+### Situação da implementação (main, 26/11/2026)
 
 | Spec | Situação | Pendências registradas |
 |---|---|---|
@@ -3236,7 +3236,7 @@ As decisões de apresentação por estrelas, mínimo de uma avaliação válida 
 | SPEC-003 | implementada e encerrada (28/10/2026), exceto comandos de voz | voz (PR #67); plano formal de avaliação (OPEN-015/016) |
 | SPEC-004 | implementada e encerrada (27/10/2026), exceto divergências recorrentes (seção 5.5) | RB-08 adiada |
 | SPEC-005 | implementada (27/10/2026 e 31/10/2026) | — |
-| SPEC-006 | **não implementada na `main`**; implementação em revisão no PR #68 | decisão de escopo pendente |
+| SPEC-006 | **não implementada na `main`**; implementação futura, com código só na branch `desenvolvimento-do-projeto` | fora da versão entregue (OPEN-102) |
 | SPEC-007 | implementada e encerrada (29/10/2026), exceto critérios de vagas externas | depende da SPEC-006 |
 | SPEC-008 | implementada e encerrada (29/10/2026), exceto vagas externas | depende da SPEC-006; desempenho sem medição formal |
 | SPEC-009 | implementada e encerrada (31/10/2026) | — |
