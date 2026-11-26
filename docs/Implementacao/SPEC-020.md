@@ -1,5 +1,7 @@
 # SPEC-020 — Implementação da moderação de denúncias
 
+**Situação:** encerrada em 26/11/2026, com teste manual (`docs/operacao/validacao-manual-spec-019-020.md`) e layout aprovados pelo responsável.
+
 ## Escopo implementado
 
 - **Só o Administrador da plataforma (RB-25):** novo item "Denúncias" no menu da administração. Conta da Empresa, Recrutador e candidato são recusados em todas as rotas de moderação.

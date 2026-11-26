@@ -40,3 +40,7 @@ e entre por http://localhost:3000/admin/login.
 | 20 | Teclado, leitor de tela, celular e tema escuro | Formulários, abas e botões alcançáveis; mensagens anunciadas; tabela vira cartões no celular |
 
 Registre abaixo os números com problema antes de encerrar as SPEC-019 e SPEC-020.
+
+## Resultado
+
+- **26/11/2026:** roteiro executado no site pelo responsável, sem problemas registrados. Teste manual e layout aprovados; SPEC-019 e SPEC-020 encerradas.

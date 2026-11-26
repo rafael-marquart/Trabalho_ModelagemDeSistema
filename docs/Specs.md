@@ -2900,8 +2900,8 @@ OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado
 | Campo | Valor |
 |---|---|
 | ID | SPEC-019 |
-| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-019.md` |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada (26/11/2026); ver `docs/Implementacao/SPEC-019.md` |
+| Estado do layout | aprovado pelo responsável em 26/11/2026 sobre as telas implementadas, junto com o teste manual de denúncias e moderação |
 | Capacidade | Denunciar incompatibilidade ou falsa inclusão |
 
 ## 2. Rastreabilidade
@@ -2996,9 +2996,9 @@ OPEN-074 a OPEN-077 estão resolvidas. As decisões aprovadas sobre elegibilidad
 - [x] Texto revisado e aprovado.
 - [x] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo. *(conferida na revisão da documentação de 23/11/2026: RF, RNF e RB em EARS, casos de uso, modelo conceitual e mapa de Specs)*
 - [x] Questões decididas ou mantidas explicitamente em aberto.
-- [ ] Layout funcional anexado e aprovado quando aplicável. *(pendente: layout ainda não aprovado)*
-- [ ] Critérios de aceitação e testes revisados. *(pendente: teste manual do roteiro `docs/operacao/validacao-manual-spec-019-020.md`)*
-- [ ] Nenhuma implementação antes das aprovações exigidas. *(registro: a implementação foi autorizada pela aprovação dos textos (REV-018); o layout ainda não foi aprovado; ver `docs/Implementacao/desvios.md`)*
+- [x] Layout funcional anexado e aprovado quando aplicável. *(aprovado em 26/11/2026 sobre as telas implementadas)*
+- [x] Critérios de aceitação e testes revisados. *(testes automatizados na CI; teste manual do roteiro `docs/operacao/validacao-manual-spec-019-020.md` feito e aprovado pelo responsável em 26/11/2026)*
+- [ ] Nenhuma implementação antes das aprovações exigidas. *(registro: a implementação foi autorizada pela aprovação dos textos (REV-018) e o layout foi aprovado depois, sobre as telas implementadas; ver `docs/Implementacao/desvios.md`)*
 
 ---
 
@@ -3009,8 +3009,8 @@ OPEN-074 a OPEN-077 estão resolvidas. As decisões aprovadas sobre elegibilidad
 | Campo | Valor |
 |---|---|
 | ID | SPEC-020 |
-| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-020.md` |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada (26/11/2026); ver `docs/Implementacao/SPEC-020.md` |
+| Estado do layout | aprovado pelo responsável em 26/11/2026 sobre as telas implementadas, junto com o teste manual de denúncias e moderação |
 | Capacidade | Moderar denúncias de incompatibilidade |
 
 ## 2. Rastreabilidade
@@ -3101,9 +3101,9 @@ OPEN-078 a OPEN-081 estão resolvidas. As decisões sobre critérios/evidências
 - [x] Texto revisado e aprovado.
 - [x] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo. *(conferida na revisão da documentação de 23/11/2026: RF, RNF e RB em EARS, casos de uso, modelo conceitual e mapa de Specs)*
 - [x] Questões decididas ou mantidas explicitamente em aberto.
-- [ ] Layout funcional anexado e aprovado quando aplicável. *(pendente: layout ainda não aprovado)*
-- [ ] Critérios de aceitação e testes revisados. *(pendente: teste manual do roteiro `docs/operacao/validacao-manual-spec-019-020.md`)*
-- [ ] Nenhuma implementação antes das aprovações exigidas. *(registro: a implementação foi autorizada pela aprovação dos textos (REV-018); o layout ainda não foi aprovado; ver `docs/Implementacao/desvios.md`)*
+- [x] Layout funcional anexado e aprovado quando aplicável. *(aprovado em 26/11/2026 sobre as telas implementadas)*
+- [x] Critérios de aceitação e testes revisados. *(testes automatizados na CI; teste manual do roteiro `docs/operacao/validacao-manual-spec-019-020.md` feito e aprovado pelo responsável em 26/11/2026)*
+- [ ] Nenhuma implementação antes das aprovações exigidas. *(registro: a implementação foi autorizada pela aprovação dos textos (REV-018) e o layout foi aprovado depois, sobre as telas implementadas; ver `docs/Implementacao/desvios.md`)*
 
 ---
 
@@ -3247,8 +3247,8 @@ As decisões de apresentação por estrelas, mínimo de uma avaliação válida 
 | SPEC-016 | implementada e encerrada (01/11/2026) | — |
 | SPEC-017 | implementada e encerrada (01/11/2026) | OPEN-093 (provisória) |
 | SPEC-018 | implementada e encerrada (01/11/2026) | OPEN-095 (provisória) |
-| SPEC-019 | implementada; aguardando teste manual e aprovação do layout | OPEN-097 (provisória) |
-| SPEC-020 | implementada; aguardando teste manual e aprovação do layout | OPEN-096 (provisória) |
+| SPEC-019 | implementada e encerrada (26/11/2026) | OPEN-097 (provisória) |
+| SPEC-020 | implementada e encerrada (26/11/2026) | OPEN-096 (provisória) |
 | SPEC-021 | implementada e encerrada (01/11/2026) | OPEN-098 |
 
 As OPENs marcadas como provisórias têm implementação em funcionamento, mas a decisão definitiva ainda é do responsável; elas estão descritas em `docs/OPEN.md`.

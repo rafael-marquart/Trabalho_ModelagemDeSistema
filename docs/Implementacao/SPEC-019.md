@@ -1,5 +1,7 @@
 # SPEC-019 — Implementação de denúncias de incompatibilidade ou falsa inclusão
 
+**Situação:** encerrada em 26/11/2026, com teste manual (`docs/operacao/validacao-manual-spec-019-020.md`) e layout aprovados pelo responsável.
+
 Implementada junto com a SPEC-020 (moderação); ver `docs/Implementacao/SPEC-020.md`.
 
 ## Escopo implementado

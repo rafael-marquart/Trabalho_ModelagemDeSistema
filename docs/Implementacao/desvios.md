@@ -54,7 +54,7 @@ Situação em 26/11/2026.
 ## D-09 — Ordem entre implementação e aprovação de layout
 
 - **Previsto (DoD das Specs):** nenhuma implementação antes da aprovação do texto e do layout.
-- **Implementado:** a implementação foi autorizada pela aprovação dos textos (REV-018). Com exceção da SPEC-001, cujos protótipos foram aprovados antes, os layouts foram aprovados depois, sobre as telas implementadas. As SPEC-019 e SPEC-020 ainda aguardam essa aprovação.
+- **Implementado:** a implementação foi autorizada pela aprovação dos textos (REV-018). Com exceção da SPEC-001, cujos protótipos foram aprovados antes, os layouts foram aprovados depois, sobre as telas implementadas. As SPEC-019 e SPEC-020 tiveram o layout aprovado por último, em 26/11/2026.
 
 ## D-10 — Funcionalidades previstas não implementadas
 
