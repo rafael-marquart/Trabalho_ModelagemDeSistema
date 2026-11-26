@@ -22,6 +22,22 @@ Repositório para o trabalho de modelagem de sistemas - GRUPO: Gabriella Mansur 
 * **Acessibilidade por design (WCAG 2.2 AA):** em conformidade com a Lei Brasileira de Inclusão (LBI nº 13.146/2015): leitores de tela, navegação por teclado, alto contraste e tema escuro. Comandos de voz próprios não fazem parte desta versão.
 * **Funil seletivo transparente:** etapas, histórico e entrevistas visíveis ao candidato, com avisos na plataforma e por e-mail a cada mudança.
 
+ # Tecnologias
+* **Next.js 15** (App Router) + **React 19** + **TypeScript**: frontend e backend (rotas da API) na mesma aplicação web (ADR-005), organizada em camadas (ADR-004).
+* **PostgreSQL** + **Prisma 6**: banco relacional e ORM, com migrações versionadas; os históricos de funil, moderação e consentimentos são protegidos contra alteração por *triggers* no banco (ADR-005).
+* **Autenticação própria no backend**: sessão guardada no banco com token opaco em cookie `HttpOnly`, autorização por perfil validada no servidor (ADR-002) e senhas com **Argon2id**.
+* **Zod**: validação dos dados de entrada nas rotas da API.
+* **CSS próprio** com as fontes **Atkinson Hyperlegible Next** e **Manrope** (Fontsource): interface acessível (WCAG 2.2 AA) com alto contraste e tema escuro (ADR-001).
+* **Nodemailer**: envio de e-mails, pelo **Mailpit** no ambiente local e pelo SMTP da **Brevo** em produção.
+* **API da HERE**: tempo de trajeto usado na dimensão de deslocamento da compatibilidade.
+* **Vitest** + **Testing Library** + **jsdom** + **axe-core**: testes automatizados, com verificação de acessibilidade das telas.
+* **ESLint**: padronização do código.
+* **GitHub Actions**: CI (tipos, lint, testes, build e teste de ponta a ponta) em todo pull request e agendador dos avisos por e-mail a cada 15 minutos.
+* **Vercel**: hospedagem da aplicação e rotinas agendadas (Vercel Cron) de retenção de dados e de avisos.
+* **Neon**: hospedagem do banco PostgreSQL em produção.
+* **Docker Compose**: PostgreSQL e Mailpit no ambiente local.
+* **Figma** (protótipos), **PlantUML** e **Mermaid** (diagramas): modelagem e documentação.
+
 # Documentação
 
 O projeto segue o processo SDD (Spec-Driven Development). A documentação fica em `docs/`:
