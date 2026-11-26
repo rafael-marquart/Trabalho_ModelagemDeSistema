@@ -9,7 +9,9 @@
 - **Histórico (OPEN-056):** tabela `ApplicationStageEvent` com etapa anterior e resultante, data e hora, ator, tipo (registro, avanço, recusa, contratação) e observação. Um gatilho no banco impede editar ou apagar eventos. A candidatura passa a registrar também o evento inicial (Inscrito); candidaturas anteriores recebem esse evento na migração.
 - Etapa, evento de histórico e auditoria (`APPLICATION_STAGE_CHANGED`) são gravados na mesma transação.
 
-## Ponto em aberto (OPEN-092)
+## Pendências impeditivas (OPEN-092)
+
+- **Decisão de 26/11/2026:** fica como está nesta versão (nenhuma pendência impeditiva aplicada); definir pendências e o pedido de complementação é implementação futura.
 
 - "Pendências impeditivas conhecidas" (OPEN-054): a baseline não define nenhum tipo de pendência. Existe um único ponto no código (`knownBlockingIssues` em `src/lib/applications/funnel.ts`) que hoje não aponta pendência; a solicitação de complementação ao candidato depende dessa definição e das Specs do candidato.
 - Justificativa obrigatória: nenhuma regra a exige; a observação é opcional em todos os movimentos.

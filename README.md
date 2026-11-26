@@ -18,7 +18,7 @@ Repositório para o trabalho de modelagem de sistemas - GRUPO: Gabriella Mansur 
   * Com dados faltando, o resultado é "dados insuficientes", sem presumir compatibilidade.
 * **Avaliação pós-entrevista:** depois de uma entrevista concluída, o candidato avalia acessibilidade e postura inclusiva (1 a 5 estrelas). A nota pública da empresa mostra só a distribuição de estrelas, sem identificar ninguém.
 * **Denúncia moderada:** quem participou do processo pode denunciar incompatibilidade ou falsa inclusão; a administração analisa em até 5 dias úteis, pode ouvir a empresa (sem revelar o denunciante) e registra a decisão.
-* **Publicação nativa de vagas:** a empresa e seus recrutadores cadastram vagas declarando a acessibilidade item a item. Vagas externas (SPEC-006) estão em revisão no PR #68 e não fazem parte da versão atual.
+* **Publicação nativa de vagas:** a empresa e seus recrutadores cadastram vagas declarando a acessibilidade item a item. Vagas externas (SPEC-006) ficaram como implementação futura, fora da versão entregue: o código está só na branch `desenvolvimento-do-projeto` (OPEN-102).
 * **Acessibilidade por design (WCAG 2.2 AA):** em conformidade com a Lei Brasileira de Inclusão (LBI nº 13.146/2015): leitores de tela, navegação por teclado, alto contraste e tema escuro. Comandos de voz próprios não fazem parte desta versão.
 * **Funil seletivo transparente:** etapas, histórico e entrevistas visíveis ao candidato, com avisos na plataforma e por e-mail a cada mudança.
 
@@ -39,7 +39,7 @@ O projeto segue o processo SDD (Spec-Driven Development). A documentação fica 
 | Decisões técnicas | [`docs/Decisões Técnicas/decisões tecnicas.md`](docs/Decis%C3%B5es%20T%C3%A9cnicas/decis%C3%B5es%20tecnicas.md) |
 | Mapa de Specs | [`docs/mapa-specs.md`](docs/mapa-specs.md) |
 | Specs detalhadas | [`docs/Specs.md`](docs/Specs.md) (situação de cada Spec no "Registro consolidado", ao final) |
-| Questões em aberto | [`docs/OPEN.md`](docs/OPEN.md) |
+| Questões (OPENs) e implementações futuras | [`docs/OPEN.md`](docs/OPEN.md) |
 | Revisões de consistência | [`docs/revisao-consistencia-specs.md`](docs/revisao-consistencia-specs.md) |
 | Notas de implementação por Spec | [`docs/Implementacao/`](docs/Implementacao/) |
 | Desvios entre o planejado e o implementado | [`docs/Implementacao/desvios.md`](docs/Implementacao/desvios.md) |
@@ -47,11 +47,12 @@ O projeto segue o processo SDD (Spec-Driven Development). A documentação fica 
 | Operação, publicação e roteiros de teste manual | [`docs/operacao/`](docs/operacao/) |
 | Identidade visual e layout | [`docs/Identidade Visual/`](docs/Identidade%20Visual/), [`docs/layout/`](docs/layout/) |
 
-# Estado atual (23/11/2026)
+# Estado atual (26/11/2026)
 
 - **Implementado na `main`:** SPEC-001 a SPEC-005 e SPEC-007 a SPEC-021: cadastro e entrada dos quatro perfis, perfil do candidato com consentimento para dados de acessibilidade, infraestrutura da empresa e recrutadores, vagas, compatibilidade, busca, candidatura, funil com entrevistas, avisos, avaliação, nota pública, denúncias e moderação.
-- **Em revisão:** SPEC-006 (vagas externas, PR #68) e roteiro de comandos de voz (PR #67).
-- **Situação das SPEC-019 e SPEC-020:** implementadas; o estado de teste manual e de layout está no registro consolidado de `docs/Specs.md`. As questões abertas estão resumidas em `docs/OPEN.md`.
+- **Mudanças de 24/11/2026:** o perfil do candidato voltou a ter o campo Competências, usado também no cálculo do perfil técnico da compatibilidade; a busca deixou de ter o filtro por cargo e as listas de Localização e Área profissional ficam recolhidas quando têm mais de 6 opções.
+- **Implementações futuras (fora da versão entregue):** SPEC-006 (vagas externas do Adzuna), com código só na branch `desenvolvimento-do-projeto` (OPEN-102), e comandos de voz próprios (roteiro proposto no PR #67, fechado sem merge).
+- **SPEC-019 e SPEC-020 (denúncias e moderação):** teste manual e layout aprovados em 26/11/2026; todas as Specs da versão entregue estão encerradas. Não há questões em aberto: em 26/11/2026, as soluções provisórias das OPEN-092, 093 e 095 a 101 passaram a ser as definitivas, e o que faltava decidir ficou como implementação futura (`docs/OPEN.md`).
 - **Qualidade:** a CI roda checagem de tipos, lint, testes (Vitest, com verificação axe-core das telas), build e o teste de ponta a ponta `scripts/auth-e2e.mjs` em todo pull request.
 
 ## Aplicação web

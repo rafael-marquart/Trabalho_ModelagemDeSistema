@@ -142,7 +142,7 @@ As regras de negócio críticas (compatibilidade, funil, permissões, denúncias
 
 **Tipo EARS:** Optional feature
 
-**WHERE** a importação de vagas externas estiver habilitada (SPEC-006, decisão de escopo pendente), o sistema **SHALL** normalizar as vagas recebidas para o modelo comum de vaga, manter a identificação da origem (RB-33) e respeitar o limite de chamadas configurado para a fonte. As credenciais da fonte **SHALL** ficar apenas no servidor.
+**WHERE** a importação de vagas externas estiver habilitada (SPEC-006, implementação futura), o sistema **SHALL** normalizar as vagas recebidas para o modelo comum de vaga, manter a identificação da origem (RB-33) e respeitar o limite de chamadas configurado para a fonte. As credenciais da fonte **SHALL** ficar apenas no servidor.
 
 ## RNF-17 Registro de operação (log)
 

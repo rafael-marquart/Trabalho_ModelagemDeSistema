@@ -183,3 +183,5 @@ No plano Hobby, os deploys de Preview ficam protegidos por login da Vercel (**Se
 ## Atualizações seguintes
 
 Basta fazer o merge em `main`: a Vercel publica sozinha e, se houver migração nova, ela é aplicada no build antes do site novo entrar no ar. Se uma migração falhar, o deploy falha e o site anterior continua no ar.
+
+**Quem faz o merge (plano Hobby):** a Vercel Hobby só publica commits cujo autor é membro do projeto na Vercel (a conta do Rafael). Se o merge for feito por outra conta do GitHub, o deploy é bloqueado. Por isso o merge na `main` (e na `desenvolvimento-do-projeto`) é feito pela conta do Rafael; a aprovação do PR fica com outra integrante, porque o autor não pode aprovar o próprio PR. Se alguém de fora fizer o merge, o Rafael abre o deploy bloqueado na Vercel (**Deployments**) e usa **Redeploy**.

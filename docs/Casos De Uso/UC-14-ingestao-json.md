@@ -1,6 +1,6 @@
 # UC-14 — Coletar e Ingerir Vagas Externas
 
-> **Situação nesta versão (main):** não implementado. A implementação (SPEC-006) está em revisão no PR #68 e a decisão de incluí-la no escopo ainda não foi tomada. No PR #68, a complementação por LLM (ADR-003) é opcional e vem desligada por padrão; desligada, os registros sem os dados mínimos são rejeitados. Enquanto isso, RF-05, RF-36 e RF-37 ficam como requisitos opcionais (*Optional feature*) e a busca e a candidatura consideram somente vagas publicadas por empresas na plataforma. O fluxo abaixo descreve o comportamento previsto na SPEC-006.
+> **Situação nesta versão (main):** não implementado. Decisão de 24/11/2026 (OPEN-102): a SPEC-006 fica como implementação futura, fora da versão entregue; o código está só na branch `desenvolvimento-do-projeto`. Nesse código, a complementação por LLM (ADR-003) é opcional e vem desligada por padrão; desligada, os registros sem os dados mínimos são rejeitados. Enquanto isso, RF-05, RF-36 e RF-37 ficam como requisitos opcionais (*Optional feature*) e a busca e a candidatura consideram somente vagas publicadas por empresas na plataforma. O fluxo abaixo descreve o comportamento previsto na SPEC-006.
 
 ## Objetivo
 Coletar automaticamente vagas de fontes externas autorizadas, inicialmente pela API do Adzuna, e processá-las com validação, eventual enriquecimento por LLM, normalização, deduplicação e rastreabilidade.

@@ -70,7 +70,7 @@ Registro de cada aceite ou retirada; o banco não permite alterá-lo.
 
 - `id` (PK)
 - `razao_social`, `nome_fantasia`
-- `cnpj` (único, 14 dígitos)
+- `cnpj` (opcional; quando informado, único e com 14 dígitos)
 - `email_contato`, `email_confirmado_em`
 - `id_usuario_conta` (FK, único): a conta COMPANY dona da Empresa
 

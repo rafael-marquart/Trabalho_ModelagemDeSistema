@@ -1257,8 +1257,8 @@ dos em `docs/layout/` e aprovados separadamente.
 | Campo | Valor |
 |---|---|
 | ID | SPEC-006 |
-| Estado do texto | aprovada; **não implementada na `main`**. A implementação está em revisão no PR #68 (branch `feat/spec-006-vagas-externas`) e a decisão de incluí-la no escopo ainda não foi tomada. Por isso os critérios abaixo continuam desmarcados e RF-05, RF-36 e RF-37 são tratados como *Optional feature* |
-| Estado do layout | não se aplica ao núcleo de ingestão; a tela administrativa `/admin/vagas-externas` existe só no PR #68, sem aprovação de layout |
+| Estado do texto | aprovada; **não implementada na `main`**. Decisão de 24/11/2026 (OPEN-102): fica como implementação futura, fora da versão entregue; o código está só na branch `desenvolvimento-do-projeto` (PR #68). Por isso os critérios abaixo continuam desmarcados e RF-05, RF-36 e RF-37 são tratados como *Optional feature* |
+| Estado do layout | não se aplica ao núcleo de ingestão; a tela administrativa `/admin/vagas-externas` existe só na branch `desenvolvimento-do-projeto`, sem aprovação de layout |
 | Capacidade | Receber dados externos estruturados, validar, normalizar, deduplicar e registrar o resultado da ingestão |
 
 ## 2. Rastreabilidade
@@ -2670,7 +2670,7 @@ OPEN-063 a OPEN-065 estão resolvidas conforme `docs/OPEN.md`. A linha do tempo 
 | Campo | Valor |
 |---|---|
 | ID | SPEC-017 |
-| Estado do texto | aprovada; implementada e encerrada em 01/11/2026, com o "Recrutador responsável" provisório (OPEN-093); o aviso de entrevista foi incluído com a SPEC-018; ver `docs/Implementacao/SPEC-017.md` |
+| Estado do texto | aprovada; implementada e encerrada em 01/11/2026, com o "Recrutador responsável" definido na OPEN-093; o aviso de entrevista foi incluído com a SPEC-018; ver `docs/Implementacao/SPEC-017.md` |
 | Estado do layout | aprovado pelo responsável em 01/11/2026 sobre as telas implementadas (aba Notificações com contador no menu e opção de e-mail, e-mails de aviso, "Remover da lista" em Minhas candidaturas) |
 | Capacidade | Notificar alterações do processo seletivo |
 
@@ -2777,7 +2777,7 @@ OPEN-066 a OPEN-069 estão resolvidas conforme `docs/OPEN.md`. As notificações
 | Campo | Valor |
 |---|---|
 | ID | SPEC-018 |
-| Estado do texto | aprovada; implementada e encerrada em 01/11/2026, com o cadastro de entrevistas no funil (OPEN-094) e o critério de indício de abuso provisório (OPEN-095); a apresentação pública da distribuição fica para a SPEC-021; ver `docs/Implementacao/SPEC-018.md` |
+| Estado do texto | aprovada; implementada e encerrada em 01/11/2026, com o cadastro de entrevistas no funil (OPEN-094) e o critério de indício de abuso da OPEN-095; a apresentação pública da distribuição fica para a SPEC-021; ver `docs/Implementacao/SPEC-018.md` |
 | Estado do layout | aprovado pelo responsável em 01/11/2026 sobre as telas implementadas (entrevista no funil da empresa: agendar, alterar, cancelar e concluir; entrevista e formulário de avaliação com revisão, confirmação e consulta da própria avaliação no detalhe da candidatura) |
 | Capacidade | Avaliar processo seletivo |
 
@@ -2900,8 +2900,8 @@ OPEN-070 foi resolvida: elegibilidade restrita a candidato autenticado vinculado
 | Campo | Valor |
 |---|---|
 | ID | SPEC-019 |
-| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-019.md` |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada (26/11/2026); ver `docs/Implementacao/SPEC-019.md` |
+| Estado do layout | aprovado pelo responsável em 26/11/2026 sobre as telas implementadas, junto com o teste manual de denúncias e moderação |
 | Capacidade | Denunciar incompatibilidade ou falsa inclusão |
 
 ## 2. Rastreabilidade
@@ -2996,9 +2996,9 @@ OPEN-074 a OPEN-077 estão resolvidas. As decisões aprovadas sobre elegibilidad
 - [x] Texto revisado e aprovado.
 - [x] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo. *(conferida na revisão da documentação de 23/11/2026: RF, RNF e RB em EARS, casos de uso, modelo conceitual e mapa de Specs)*
 - [x] Questões decididas ou mantidas explicitamente em aberto.
-- [ ] Layout funcional anexado e aprovado quando aplicável. *(pendente: layout ainda não aprovado)*
-- [ ] Critérios de aceitação e testes revisados. *(pendente: teste manual do roteiro `docs/operacao/validacao-manual-spec-019-020.md`)*
-- [ ] Nenhuma implementação antes das aprovações exigidas. *(registro: a implementação foi autorizada pela aprovação dos textos (REV-018); o layout ainda não foi aprovado; ver `docs/Implementacao/desvios.md`)*
+- [x] Layout funcional anexado e aprovado quando aplicável. *(aprovado em 26/11/2026 sobre as telas implementadas)*
+- [x] Critérios de aceitação e testes revisados. *(testes automatizados na CI; teste manual do roteiro `docs/operacao/validacao-manual-spec-019-020.md` feito e aprovado pelo responsável em 26/11/2026)*
+- [ ] Nenhuma implementação antes das aprovações exigidas. *(registro: a implementação foi autorizada pela aprovação dos textos (REV-018) e o layout foi aprovado depois, sobre as telas implementadas; ver `docs/Implementacao/desvios.md`)*
 
 ---
 
@@ -3009,8 +3009,8 @@ OPEN-074 a OPEN-077 estão resolvidas. As decisões aprovadas sobre elegibilidad
 | Campo | Valor |
 |---|---|
 | ID | SPEC-020 |
-| Estado do texto | aprovada; implementada (aguardando teste manual e aprovação); ver `docs/Implementacao/SPEC-020.md` |
-| Estado do layout | pendente |
+| Estado do texto | aprovada; implementada e encerrada (26/11/2026); ver `docs/Implementacao/SPEC-020.md` |
+| Estado do layout | aprovado pelo responsável em 26/11/2026 sobre as telas implementadas, junto com o teste manual de denúncias e moderação |
 | Capacidade | Moderar denúncias de incompatibilidade |
 
 ## 2. Rastreabilidade
@@ -3101,9 +3101,9 @@ OPEN-078 a OPEN-081 estão resolvidas. As decisões sobre critérios/evidências
 - [x] Texto revisado e aprovado.
 - [x] Rastreabilidade conferida com requisitos, regras, RNFs, casos de uso e modelo. *(conferida na revisão da documentação de 23/11/2026: RF, RNF e RB em EARS, casos de uso, modelo conceitual e mapa de Specs)*
 - [x] Questões decididas ou mantidas explicitamente em aberto.
-- [ ] Layout funcional anexado e aprovado quando aplicável. *(pendente: layout ainda não aprovado)*
-- [ ] Critérios de aceitação e testes revisados. *(pendente: teste manual do roteiro `docs/operacao/validacao-manual-spec-019-020.md`)*
-- [ ] Nenhuma implementação antes das aprovações exigidas. *(registro: a implementação foi autorizada pela aprovação dos textos (REV-018); o layout ainda não foi aprovado; ver `docs/Implementacao/desvios.md`)*
+- [x] Layout funcional anexado e aprovado quando aplicável. *(aprovado em 26/11/2026 sobre as telas implementadas)*
+- [x] Critérios de aceitação e testes revisados. *(testes automatizados na CI; teste manual do roteiro `docs/operacao/validacao-manual-spec-019-020.md` feito e aprovado pelo responsável em 26/11/2026)*
+- [ ] Nenhuma implementação antes das aprovações exigidas. *(registro: a implementação foi autorizada pela aprovação dos textos (REV-018) e o layout foi aprovado depois, sobre as telas implementadas; ver `docs/Implementacao/desvios.md`)*
 
 ---
 
@@ -3114,7 +3114,7 @@ OPEN-078 a OPEN-081 estão resolvidas. As decisões sobre critérios/evidências
 | Campo | Valor |
 |---|---|
 | ID | SPEC-021 |
-| Estado do texto | aprovada; implementada e encerrada em 01/11/2026; ver `docs/Implementacao/SPEC-021.md`; o risco de identificação com poucas avaliações permanece em aberto na OPEN-098 |
+| Estado do texto | aprovada; implementada e encerrada em 01/11/2026; ver `docs/Implementacao/SPEC-021.md`; a mitigação do risco de identificação com poucas avaliações ficou como implementação futura (OPEN-098) |
 | Estado do layout | aprovado pelo responsável em 01/11/2026 sobre as telas implementadas (seção "Avaliações de candidatos" no detalhe da vaga e na página inicial da empresa: distribuição por estrelas de Acessibilidade e Postura inclusiva e estado sem dados suficientes) |
 | Capacidade | Gerenciar nota pública de acessibilidade |
 
@@ -3176,7 +3176,7 @@ RNFs relacionados na rastreabilidade, em especial segurança, privacidade, integ
 
 - [x] Nota pública usa apenas dados válidos e apresenta somente distribuição agregada por quantidade de estrelas, sem revelar identidade, identificadores ou comentários individuais (RNF-08/RNF-09).
 - [x] Registros individuais e comentários opcionais têm acesso restrito e são excluídos ou irreversivelmente anonimizados após 1 ano do envio, respeitando obrigações aplicáveis de preservação. *(rotina `evaluations:retention`; a data de envio é reduzida ao ano)*
-- [ ] A distribuição agregada só é mantida por prazo indeterminado se não permitir reconstruir avaliações individuais nem identificar candidatos. *(em aberto na OPEN-098: com uma única avaliação, a distribuição revela as estrelas dadas; mitigação provisória com soma por empresa, sem datas nem comentários)*
+- [ ] A distribuição agregada só é mantida por prazo indeterminado se não permitir reconstruir avaliações individuais nem identificar candidatos. *(não atendido por completo: com uma única avaliação, a distribuição revela as estrelas dadas; nesta versão vale a soma por empresa, sem datas nem comentários, e o mínimo de avaliações ou as faixas ficaram como implementação futura na OPEN-098)*
 - [x] Denúncia pendente não altera automaticamente a nota; ausência de dados suficientes não é apresentada como nota calculada.
 
 - [x] Acesso limitado ao ator autorizado.
@@ -3227,31 +3227,31 @@ As decisões de apresentação por estrelas, mínimo de uma avaliação válida 
 | SPEC-009 a SPEC-013 | aprovadas | Nenhum bloqueio por OPEN-088. SPEC-010 depende da SPEC-007. |
 | SPEC-016 a SPEC-021 | aprovadas | Nenhum bloqueio por OPEN-088. |
 
-### Situação da implementação (main, 23/11/2026)
+### Situação da implementação (main, 26/11/2026)
 
 | Spec | Situação | Pendências registradas |
 |---|---|---|
 | SPEC-001 | implementada e encerrada (26/10/2026); complementos de OPEN-001 e OPEN-100 | protótipos não anexados em `docs/layout/` |
-| SPEC-002 | implementada e encerrada (27/10/2026); complementos de OPEN-099, OPEN-100 e OPEN-101 | OPEN-099, OPEN-100, OPEN-101 (provisórias) |
+| SPEC-002 | implementada e encerrada (27/10/2026); complementos de OPEN-099, OPEN-100 e OPEN-101 | implementações futuras (OPEN-099, OPEN-100, OPEN-101) |
 | SPEC-003 | implementada e encerrada (28/10/2026), exceto comandos de voz | voz (PR #67); plano formal de avaliação (OPEN-015/016) |
 | SPEC-004 | implementada e encerrada (27/10/2026), exceto divergências recorrentes (seção 5.5) | RB-08 adiada |
 | SPEC-005 | implementada (27/10/2026 e 31/10/2026) | — |
-| SPEC-006 | **não implementada na `main`**; implementação em revisão no PR #68 | decisão de escopo pendente |
+| SPEC-006 | **não implementada na `main`**; implementação futura, com código só na branch `desenvolvimento-do-projeto` | fora da versão entregue (OPEN-102) |
 | SPEC-007 | implementada e encerrada (29/10/2026), exceto critérios de vagas externas | depende da SPEC-006 |
 | SPEC-008 | implementada e encerrada (29/10/2026), exceto vagas externas | depende da SPEC-006; desempenho sem medição formal |
 | SPEC-009 | implementada e encerrada (31/10/2026) | — |
 | SPEC-010 | implementada e encerrada (31/10/2026) | — |
 | SPEC-011 | implementada e encerrada (31/10/2026); score pode ser vazio (revisão de 31/10/2026) | — |
 | SPEC-012 | implementada e encerrada (01/11/2026) | — |
-| SPEC-013 | implementada e encerrada (01/11/2026), exceto pendências impeditivas | OPEN-092 |
+| SPEC-013 | implementada e encerrada (01/11/2026), exceto pendências impeditivas | implementação futura (OPEN-092) |
 | SPEC-016 | implementada e encerrada (01/11/2026) | — |
-| SPEC-017 | implementada e encerrada (01/11/2026) | OPEN-093 (provisória) |
-| SPEC-018 | implementada e encerrada (01/11/2026) | OPEN-095 (provisória) |
-| SPEC-019 | implementada; aguardando teste manual e aprovação do layout | OPEN-097 (provisória) |
-| SPEC-020 | implementada; aguardando teste manual e aprovação do layout | OPEN-096 (provisória) |
-| SPEC-021 | implementada e encerrada (01/11/2026) | OPEN-098 |
+| SPEC-017 | implementada e encerrada (01/11/2026) | implementação futura (OPEN-093) |
+| SPEC-018 | implementada e encerrada (01/11/2026) | implementação futura (OPEN-095) |
+| SPEC-019 | implementada e encerrada (26/11/2026) | implementação futura (OPEN-097) |
+| SPEC-020 | implementada e encerrada (26/11/2026) | implementação futura (OPEN-096) |
+| SPEC-021 | implementada e encerrada (01/11/2026) | implementação futura (OPEN-098) |
 
-As OPENs marcadas como provisórias têm implementação em funcionamento, mas a decisão definitiva ainda é do responsável; elas estão descritas em `docs/OPEN.md`.
+Em 26/11/2026, o responsável adotou como definitivas nesta versão as implementações provisórias das OPEN-092, 093 e 095 a 101; o que faltava decidir em cada uma ficou como implementação futura, descrita em `docs/OPEN.md`.
 
 Esta aprovação se refere aos **textos das Specs** e autoriza implementação controlada das capacidades marcadas como prontas, respeitando os limites registrados nas OPENs e a decisão atual REV-018. Para Adzuna, o escopo autorizado é exclusivamente até 25 chamadas de teste; não autoriza coleta contínua nem operação de produção. A aprovação não altera nem aprova layouts: protótipos e layouts aplicáveis continuam sujeitos à aprovação visual própria. SPEC-007, SPEC-008 e SPEC-010 não têm mais bloqueio por OPEN-088; a implementação pode prosseguir conforme este registro, aplicando HERE Routing API no plano gratuito, estimativa padrão sem trânsito/horário e tratamento de falhas conforme OPEN-033. A aprovação não altera nem aprova layouts: protótipos e layouts aplicáveis continuam sujeitos à aprovação visual própria.
 

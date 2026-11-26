@@ -1,5 +1,7 @@
 # SPEC-020 — Implementação da moderação de denúncias
 
+**Situação:** encerrada em 26/11/2026, com teste manual (`docs/operacao/validacao-manual-spec-019-020.md`) e layout aprovados pelo responsável.
+
 ## Escopo implementado
 
 - **Só o Administrador da plataforma (RB-25):** novo item "Denúncias" no menu da administração. Conta da Empresa, Recrutador e candidato são recusados em todas as rotas de moderação.
@@ -15,7 +17,9 @@
 - **Rastreabilidade:** cada passo grava um evento imutável (`ReportEvent`, protegido por gatilho no banco) com ator e data, e um evento de auditoria (`REPORT_ANALYSIS_STARTED`, `REPORT_PRIORITY_CHANGED`, `REPORT_INFO_REQUESTED`, `REPORT_COMPANY_RESPONDED`, `REPORT_CONCLUDED`). Mudanças de estado usam atualização condicional (a decisão de duas pessoas ao mesmo tempo não se sobrepõe).
 - **Avisos (SPEC-017):** andamento e resultado para o denunciante; pedido de informações e conclusão para a conta da Empresa — no site e, se a pessoa quiser, por e-mail.
 
-## Pontos em aberto
+## Implementações futuras
+
+Decisão de 26/11/2026: o comportamento descrito em cada item é o definitivo nesta versão; o restante fica como implementação futura (ver `docs/OPEN.md`).
 
 - **OPEN-096:** quais medidas podem ser executadas pela moderação (hoje só registradas e comunicadas).
 - Os alertas de abuso das avaliações (`EVALUATION_ABUSE_SUSPECTED`, OPEN-095) ficam na auditoria; não há tela para eles nesta entrega.

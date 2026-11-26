@@ -34,7 +34,7 @@ As ADRs registram **o que foi escolhido** quando a escolha é estrutural e difí
 | ADR-004 | Arquitetura em camadas | Alterar posteriormente a organização estrutural exigiria redistribuir responsabilidades e dependências do sistema |
 | ADR-005 | Aplicação web única em Next.js (TypeScript) com PostgreSQL via Prisma | Trocar framework, linguagem ou banco exigiria reescrever telas, rotas, modelo persistido e migrações |
 
-Status de todas: **aceita**. As ADR-001, 002, 004 e 005 estão aplicadas no código desde a primeira implementação (SPEC-001, outubro de 2026); a ADR-004 com desvios registrados. A ADR-003 é a diretriz para quando houver LLM: nesta versão a aplicação não usa LLM (a SPEC-006, única que a usaria, não está implementada na `main`; ver PR #68).
+Status de todas: **aceita**. As ADR-001, 002, 004 e 005 estão aplicadas no código desde a primeira implementação (SPEC-001, outubro de 2026); a ADR-004 com desvios registrados. A ADR-003 é a diretriz para quando houver LLM: nesta versão a aplicação não usa LLM (a SPEC-006, única que a usaria, ficou como implementação futura, com código só na branch `desenvolvimento-do-projeto`).
 
 Cada ADR tem **Status**, **Contexto (por que foi tomada)**, **Decisão**, **Alternativas consideradas** e **Consequências**.
 
@@ -169,7 +169,7 @@ A autorização é aplicada antes da execução das operações de escrita e das
 
 ## Status
 
-Aceita como diretriz. **Não aplicada nesta versão:** a aplicação da `main` não usa LLM. A única funcionalidade que usaria (complemento de dados de vagas externas, SPEC-006) está no PR #68, ainda em análise; nele, a LLM fica atrás de uma porta, só no servidor e desligada por padrão.
+Aceita como diretriz. **Não aplicada nesta versão:** a aplicação da `main` não usa LLM. A única funcionalidade que usaria (complemento de dados de vagas externas, SPEC-006) ficou como implementação futura (OPEN-102), com código só na branch `desenvolvimento-do-projeto`; nele, a LLM fica atrás de uma porta, só no servidor e desligada por padrão.
 
 ## Decisão
 
@@ -351,7 +351,7 @@ Aceita. Aplicada desde a SPEC-001.
 |---|---|
 | ADR-001 | Nenhuma. |
 | ADR-002 | Nenhuma. |
-| ADR-003 | Se a LLM entra nesta versão (decisão sobre a SPEC-006) e qual provedor usar. |
+| ADR-003 | Qual provedor de LLM usar, quando a SPEC-006 (implementação futura) for incluída. |
 | ADR-004 | Levar para serviços de domínio as rotas que ainda acessam o banco direto (ver desvios). |
 | ADR-005 | Nenhuma. |
 

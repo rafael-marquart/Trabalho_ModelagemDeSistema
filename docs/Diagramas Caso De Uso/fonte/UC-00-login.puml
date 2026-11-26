@@ -10,7 +10,7 @@ actor "Administrador" as A
 rectangle "AcessaVagas" {
   usecase "Entrar\n(e-mail ou CPF para candidato)" as L
   usecase "Criar conta de candidato" as CC
-  usecase "Cadastrar empresa\n(CNPJ e e-mail corporativo)" as CE
+  usecase "Cadastrar empresa\n(e-mail corporativo;\nCNPJ opcional)" as CE
   usecase "Aceitar Termos de Uso\ne Política de Privacidade" as T
   usecase "Confirmar e-mail corporativo" as CF
   usecase "Recuperar senha" as RS
